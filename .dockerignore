@@ -1,0 +1,9 @@
+docker-compose.yml
+README.md
+Makefile
+.dockerignore
+.gitignore
+.github
+.envrc
+.semgrepignore
+Dockerfile
