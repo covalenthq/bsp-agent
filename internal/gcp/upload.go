@@ -26,10 +26,10 @@ func HandleFileUploadToBucket(c *gin.Context) {
 		log.Error(err)
 	}
 
-	bucket := cfg.GeneralConfig.GcpBucketName
+	bucket := cfg.GcpConfig.BucketName
 	ctx := appengine.NewContext(c.Request)
 
-	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile(cfg.GeneralConfig.GcpServiceAccount))
+	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile(cfg.GcpConfig.ServiceAccount))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
