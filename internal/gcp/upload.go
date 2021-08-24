@@ -20,7 +20,7 @@ var (
 )
 
 // HandleFileUploadToBucket uploads file to bucket
-func HandleResultUploadToBucket(object event.ResultEvent, objectName string) error {
+func HandleResultUploadToBucket(object event.ReplicationEvent, objectName string) error {
 
 	cfg, err := config.LoadConfig()
 	if err != nil {
@@ -37,12 +37,12 @@ func HandleResultUploadToBucket(object event.ResultEvent, objectName string) err
 	if err != nil {
 		return err
 	}
-	write(storageClient, bucketResult, objectName, object)
+	writeToStorage(storageClient, bucketResult, objectName, object)
 
 	return nil
 }
 
-func HandleSpecimenUploadToBucket(object event.SpecimenEvent, objectName string) error {
+func HandleSpecimenUploadToBucket(object event.ReplicationEvent, objectName string) error {
 
 	cfg, err := config.LoadConfig()
 	if err != nil {
@@ -59,32 +59,12 @@ func HandleSpecimenUploadToBucket(object event.SpecimenEvent, objectName string)
 	if err != nil {
 		return err
 	}
-	write2(storageClient, bucketSpecimen, objectName, object)
+	writeToStorage(storageClient, bucketSpecimen, objectName, object)
 
 	return nil
 }
 
-func write(client *storage.Client, bucket string, objectName string, object event.ResultEvent) error {
-	// [START upload_file]
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
-	defer cancel()
-	wc := client.Bucket(bucket).Object(objectName).NewWriter(ctx)
-	content, err := json.Marshal(object)
-	if err != nil {
-		return err
-	}
-	if _, err := io.Copy(wc, bytes.NewReader(content)); err != nil {
-		return err
-	}
-	if err := wc.Close(); err != nil {
-		return err
-	}
-	// [END upload_file]
-	return nil
-}
-
-func write2(client *storage.Client, bucket string, objectName string, object event.SpecimenEvent) error {
+func writeToStorage(client *storage.Client, bucket string, objectName string, object event.ReplicationEvent) error {
 	// [START upload_file]
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/gcp"
+	log "github.com/sirupsen/logrus"
 )
 
 type specimenHandler struct {
@@ -17,8 +18,7 @@ func NewSpecimenHandler() Handler {
 }
 
 func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
-	event, ok := e.(*event.SpecimenEvent)
-
+	event, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")
 	}
@@ -27,7 +27,10 @@ func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time,
 	event.Data = data
 	event.DateTime = datetime
 
-	gcp.HandleSpecimenUploadToBucket(*event, event.Hash)
+	err := gcp.HandleSpecimenUploadToBucket(*event, event.Hash)
+	if err != nil {
+		log.Error(err)
+	}
 
 	fmt.Printf("completed uploading block-specimen event %v hash: %v\n", event.ID, event.Hash)
 

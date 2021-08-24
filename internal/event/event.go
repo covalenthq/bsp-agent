@@ -1,7 +1,6 @@
 package event
 
 import (
-	"encoding"
 	"fmt"
 	"time"
 )
@@ -13,8 +12,12 @@ const (
 	ResultType   Type = "block-result"
 )
 
+type ReplicationEvent struct {
+	*Base
+}
+
 type Base struct {
-	ID       string
+	ID       string    `json:"ID"`
 	Type     Type      `json:"type"`
 	Hash     string    `json:"hash"`
 	DateTime time.Time `json:"datetime"`
@@ -29,8 +32,6 @@ type Event interface {
 	GetData() []byte
 	GetHash() string
 	SetID(id string)
-	encoding.BinaryMarshaler
-	encoding.BinaryUnmarshaler
 }
 
 func New(t Type) (Event, error) {
@@ -41,12 +42,12 @@ func New(t Type) (Event, error) {
 	switch t {
 
 	case SpecimenType:
-		return &SpecimenEvent{
+		return &ReplicationEvent{
 			Base: b,
 		}, nil
 
 	case ResultType:
-		return &ResultEvent{
+		return &ReplicationEvent{
 			Base: b,
 		}, nil
 
@@ -72,16 +73,13 @@ func (o *Base) GetDateTime() time.Time {
 }
 
 func (o *Base) String() string {
-
 	return fmt.Sprintf("id:%s type:%s hash:%s", o.ID, o.Type, o.Hash)
 }
 
 func (o *Base) GetData() []byte {
-
 	return o.Data
 }
 
 func (o *Base) GetHash() string {
-
 	return o.Hash
 }
