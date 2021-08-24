@@ -7,7 +7,6 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/event"
 )
 
-//HandlerFactory ...
 func HandlerFactory() func(t event.Type) Handler {
 
 	return func(t event.Type) Handler {
@@ -29,7 +28,6 @@ type Handler interface {
 type defaultHandler struct {
 }
 
-//NewViewHandler ...
 func NewDefaultHandler() Handler {
 	return &defaultHandler{}
 }

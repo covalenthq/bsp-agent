@@ -12,7 +12,6 @@ import (
 type resultHandler struct {
 }
 
-//NewResultHandler ...
 func NewResultHandler() Handler {
 	return &resultHandler{}
 }

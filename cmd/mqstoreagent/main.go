@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"reflect"
 	"strings"
 	"sync"
 	"syscall"
@@ -74,7 +73,6 @@ func createConsumerGroup(streamName, consumerGroup string) {
 	}
 }
 
-// start consume events
 func consumeEvents(streamName, consumerGroup string) {
 	for {
 		func() {
@@ -103,7 +101,6 @@ func consumeEvents(streamName, consumerGroup string) {
 }
 
 func consumePendingEvents(streamName, consumerGroup string) {
-
 	ticker := time.Tick(time.Second * 30)
 	for {
 		select {
@@ -183,18 +180,7 @@ func processStream(stream redis.XMessage, retry bool, handlerFactory func(t even
 		return
 	}
 
-	//client.XDel(streamName, stream.ID)
 	client.XAck(streamName, consumerGroup, stream.ID)
 
-	time.Sleep(2 * time.Second)
-}
-
-func StringFrom(inter interface{}) string {
-	str := ""
-	s := reflect.ValueOf(inter)
-	fmt.Println(s)
-	for i := 0; i < s.Len(); i++ {
-		str += string(s.Index(i).Interface().(uint8))
-	}
-	return str
+	time.Sleep(2 * time.Second) //break for testing
 }

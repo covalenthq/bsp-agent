@@ -12,7 +12,6 @@ import (
 type specimenHandler struct {
 }
 
-//NewSpecimenHandler ...
 func NewSpecimenHandler() Handler {
 	return &specimenHandler{}
 }

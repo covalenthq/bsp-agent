@@ -19,7 +19,6 @@ var (
 	storageClient *storage.Client
 )
 
-// HandleFileUploadToBucket uploads file to bucket
 func HandleResultUploadToBucket(object event.ReplicationEvent, objectName string) error {
 
 	cfg, err := config.LoadConfig()
@@ -65,7 +64,7 @@ func HandleSpecimenUploadToBucket(object event.ReplicationEvent, objectName stri
 }
 
 func writeToStorage(client *storage.Client, bucket string, objectName string, object event.ReplicationEvent) error {
-	// [START upload_file]
+
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
@@ -80,6 +79,6 @@ func writeToStorage(client *storage.Client, bucket string, objectName string, ob
 	if err := wc.Close(); err != nil {
 		return err
 	}
-	// [END upload_file]
+
 	return nil
 }
