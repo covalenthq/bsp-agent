@@ -9,7 +9,8 @@ import (
 type GcpConfig struct {
 	ServiceAccount string `envconfig:"GCP_SERVICE_ACCOUNT"`
 	ProjectId      string `envconfig:"GCP_PROJECT_ID"`
-	BucketName     string `envconfig:"GCP_BUCKET_NAME"`
+	ResultBucket   string `envconfig:"GCP_RESULT_BUCKET"`
+	SpecimenBucket string `envconfig:"GCP_SPECIMEN_BUCKET"`
 }
 
 type RedisConfig struct {

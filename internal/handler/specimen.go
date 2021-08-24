@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/covalenthq/mq-store-agent/internal/event"
+	"github.com/covalenthq/mq-store-agent/internal/gcp"
 )
 
 type specimenHandler struct {
@@ -26,9 +27,9 @@ func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time,
 	event.Data = data
 	event.DateTime = datetime
 
-	// fmt.Printf("processed event %+v UserID: %v Comment:%v \n", event, event.UserID, event.Comment)
+	gcp.HandleSpecimenUploadToBucket(*event, event.Hash)
 
-	fmt.Printf("completed block-specimen event %v hash: %v\n", event.ID, event.Hash)
+	fmt.Printf("completed uploading block-specimen event %v hash: %v\n", event.ID, event.Hash)
 
 	return nil
 }

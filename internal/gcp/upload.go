@@ -1,17 +1,18 @@
 package gcp
 
 import (
+	"bytes"
+	"context"
+	"encoding/json"
 	"io"
-	"net/http"
-	"net/url"
+	"time"
 
 	"cloud.google.com/go/storage"
-	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
-	"google.golang.org/appengine"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
+	"github.com/covalenthq/mq-store-agent/internal/event"
 )
 
 var (
@@ -19,65 +20,86 @@ var (
 )
 
 // HandleFileUploadToBucket uploads file to bucket
-func HandleFileUploadToBucket(c *gin.Context) {
+func HandleResultUploadToBucket(object event.ResultEvent, objectName string) error {
 
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Error(err)
 	}
 
-	bucket := cfg.GcpConfig.BucketName
-	ctx := appengine.NewContext(c.Request)
+	bucketResult := cfg.GcpConfig.ResultBucket
+
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+
+	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(cfg.GcpConfig.ServiceAccount))
+	if err != nil {
+		return err
+	}
+	write(storageClient, bucketResult, objectName, object)
+
+	return nil
+}
+
+func HandleSpecimenUploadToBucket(object event.SpecimenEvent, objectName string) error {
+
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Error(err)
+	}
+
+	bucketSpecimen := cfg.GcpConfig.SpecimenBucket
+
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
 
 	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile(cfg.GcpConfig.ServiceAccount))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
-		})
-		return
+		return err
 	}
+	write2(storageClient, bucketSpecimen, objectName, object)
 
-	f, uploadedFile, err := c.Request.FormFile("file")
+	return nil
+}
+
+func write(client *storage.Client, bucket string, objectName string, object event.ResultEvent) error {
+	// [START upload_file]
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+	wc := client.Bucket(bucket).Object(objectName).NewWriter(ctx)
+	content, err := json.Marshal(object)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
-		})
-		return
+		return err
 	}
-
-	defer f.Close()
-
-	sw := storageClient.Bucket(bucket).Object(uploadedFile.Filename).NewWriter(ctx)
-
-	if _, err := io.Copy(sw, f); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
-		})
-		return
+	if _, err := io.Copy(wc, bytes.NewReader(content)); err != nil {
+		return err
 	}
-
-	if err := sw.Close(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
-		})
-		return
+	if err := wc.Close(); err != nil {
+		return err
 	}
+	// [END upload_file]
+	return nil
+}
 
-	u, err := url.Parse("/" + bucket + "/" + sw.Attrs().Name)
+func write2(client *storage.Client, bucket string, objectName string, object event.SpecimenEvent) error {
+	// [START upload_file]
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+	wc := client.Bucket(bucket).Object(objectName).NewWriter(ctx)
+	content, err := json.Marshal(object)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"Error":   true,
-		})
-		return
+		return err
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message":  "file uploaded successfully",
-		"pathname": u.EscapedPath(),
-	})
+	if _, err := io.Copy(wc, bytes.NewReader(content)); err != nil {
+		return err
+	}
+	if err := wc.Close(); err != nil {
+		return err
+	}
+	// [END upload_file]
+	return nil
 }

@@ -39,22 +39,11 @@ func init() {
 }
 
 func main() {
-
-	// r := gin.Default()
-
-	// r.GET("/ping", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{
-	// 		"message": "pong",
-	// 	})
-	// })
-
-	// r.POST("/cloud-storage-bucket", gcp.HandleFileUploadToBucket)
-
-	// r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 	config, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
 	}
+
 	consumerName = uuid.NewV4().String()
 	streamName := config.RedisConfig.Key
 	consumerGroup := config.RedisConfig.Group
@@ -76,9 +65,7 @@ func main() {
 }
 
 func createConsumerGroup(streamName, consumerGroup string) {
-
 	if _, err := client.XGroupCreateMkStream(streamName, consumerGroup, "0").Result(); err != nil {
-
 		if !strings.Contains(fmt.Sprint(err), "BUSYGROUP") {
 			fmt.Printf("Error on create Consumer Group: %v ...\n", consumerGroup)
 			panic(err)
@@ -89,11 +76,9 @@ func createConsumerGroup(streamName, consumerGroup string) {
 
 // start consume events
 func consumeEvents(streamName, consumerGroup string) {
-
 	for {
 		func() {
 			fmt.Println("New round ", time.Now().Format(time.RFC3339))
-
 			streams, err := client.XReadGroup(&redis.XReadGroupArgs{
 				Streams:  []string{streamName, start},
 				Group:    consumerGroup,
@@ -115,7 +100,6 @@ func consumeEvents(streamName, consumerGroup string) {
 			waitGrp.Wait()
 		}()
 	}
-
 }
 
 func consumePendingEvents(streamName, consumerGroup string) {
@@ -124,9 +108,7 @@ func consumePendingEvents(streamName, consumerGroup string) {
 	for {
 		select {
 		case <-ticker:
-
 			func() {
-
 				var streamsRetry []string
 				pendingStreams, err := client.XPendingExt(&redis.XPendingExtArgs{
 					Stream: streamName,
@@ -166,15 +148,10 @@ func consumePendingEvents(streamName, consumerGroup string) {
 					}
 					waitGrp.Wait()
 				}
-
 				fmt.Println("process pending streams at ", time.Now().Format(time.RFC3339))
-
 			}()
-
 		}
-
 	}
-
 }
 
 func processStream(stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
@@ -187,7 +164,7 @@ func processStream(stream redis.XMessage, retry bool, handlerFactory func(t even
 	timeLayout := time.RFC3339
 	parseDate, err := time.Parse(timeLayout, datetime)
 	if err != nil {
-		fmt.Println("RFC format doesn't work") // You shouldn't see this at all
+		fmt.Println("RFC format doesn't work")
 	}
 
 	decodeData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
@@ -196,13 +173,6 @@ func processStream(stream redis.XMessage, retry bool, handlerFactory func(t even
 	}
 
 	newEvent, _ := event.New(event.Type(typeEvent))
-	//fmt.Println("event:", typeEvent, "hash:", hash, "date:", parseDate)
-	// err = newEvent.UnmarshalBinary(decodeData)
-	// if err != nil {
-	// 	fmt.Printf("error on unmarshal stream:%v\n", stream.ID)
-	// 	return
-	// }
-
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(newEvent.GetType())
