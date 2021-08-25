@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/signal"
@@ -13,6 +14,7 @@ import (
 	"github.com/golang/snappy"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
+	"github.com/ubiq/go-ubiq/rlp"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
@@ -165,11 +167,17 @@ func processStream(stream redis.XMessage, retry bool, handlerFactory func(t even
 		log.Fatal(err)
 	}
 
+	var replicationData []interface{}
+	err = rlp.Decode(bytes.NewReader(decodedData), &replicationData)
+	if err != nil {
+		log.Printf("error on decoding data to plain interface from RLP: %v\n", err)
+	}
+
 	newEvent, _ := event.New(event.Type(typeEvent))
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(event.Type(typeEvent))
-	err = h.Handle(newEvent, hash, parseDate, decodedData, retry)
+	err = h.Handle(newEvent, hash, parseDate, replicationData, retry)
 	if err != nil {
 		log.Printf("error on process event: %v\n", newEvent)
 		log.Printf("unable to handle event: %v\n", err)

@@ -17,7 +17,7 @@ func NewResultHandler() Handler {
 	return &resultHandler{}
 }
 
-func (h *resultHandler) Handle(e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
+func (h *resultHandler) Handle(e event.Event, hash string, datetime time.Time, data []interface{}, retry bool) error {
 	event, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")

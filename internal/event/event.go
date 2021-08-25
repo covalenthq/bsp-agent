@@ -17,17 +17,17 @@ type ReplicationEvent struct {
 }
 
 type Base struct {
-	ID       string    `json:"ID"`
-	Type     Type      `json:"type"`
-	Hash     string    `json:"hash"`
-	DateTime time.Time `json:"datetime"`
-	Data     []byte    `json:"data"`
+	ID       string        `json:"ID"`
+	Type     Type          `json:"type"`
+	Hash     string        `json:"hash"`
+	DateTime time.Time     `json:"datetime"`
+	Data     []interface{} `json:"data"`
 }
 type Event interface {
 	GetID() string
 	GetType() Type
 	GetDateTime() time.Time
-	GetData() []byte
+	GetData() []interface{}
 	GetHash() string
 	SetID(id string)
 }
@@ -74,7 +74,7 @@ func (o *Base) String() string {
 	return fmt.Sprintf("id: %s type: %s hash: %s", o.ID, o.Type, o.Hash)
 }
 
-func (o *Base) GetData() []byte {
+func (o *Base) GetData() []interface{} {
 	return o.Data
 }
 
