@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/covalenthq/mq-store-agent/internal/event"
-	"github.com/covalenthq/mq-store-agent/internal/gcp"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/covalenthq/mq-store-agent/internal/event"
+	"github.com/covalenthq/mq-store-agent/internal/storage"
 )
 
 type specimenHandler struct {
@@ -26,12 +27,12 @@ func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time,
 	event.Data = data
 	event.DateTime = datetime
 
-	err := gcp.HandleSpecimenUploadToBucket(*event, event.Hash)
+	err := storage.HandleSpecimenUploadToBucket(*event, event.Hash)
 	if err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
 
-	fmt.Printf("completed uploading block-specimen event %v hash: %v\n", event.ID, event.Hash)
+	log.Printf("Uploaded block-specimen event: %v \nhash: %v\n", event.ID, event.Hash)
 
 	return nil
 }

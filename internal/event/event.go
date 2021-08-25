@@ -23,8 +23,6 @@ type Base struct {
 	DateTime time.Time `json:"datetime"`
 	Data     []byte    `json:"data"`
 }
-
-// Event ...
 type Event interface {
 	GetID() string
 	GetType() Type
@@ -73,7 +71,7 @@ func (o *Base) GetDateTime() time.Time {
 }
 
 func (o *Base) String() string {
-	return fmt.Sprintf("id:%s type:%s hash:%s", o.ID, o.Type, o.Hash)
+	return fmt.Sprintf("id: %s type: %s hash: %s", o.ID, o.Type, o.Hash)
 }
 
 func (o *Base) GetData() []byte {

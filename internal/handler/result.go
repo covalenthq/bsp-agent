@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/covalenthq/mq-store-agent/internal/event"
-	"github.com/covalenthq/mq-store-agent/internal/gcp"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/covalenthq/mq-store-agent/internal/event"
+	"github.com/covalenthq/mq-store-agent/internal/storage"
 )
 
 type resultHandler struct {
@@ -26,12 +27,11 @@ func (h *resultHandler) Handle(e event.Event, hash string, datetime time.Time, d
 	event.Data = data
 	event.DateTime = datetime
 
-	err := gcp.HandleResultUploadToBucket(*event, event.Hash)
+	err := storage.HandleResultUploadToBucket(*event, event.Hash)
 	if err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
-
-	fmt.Printf("completed uploading block-result event %v hash: %v\n", event.ID, event.Hash)
+	log.Printf("Uploaded block-result event: %v \nhash: %v\n", event.ID, event.Hash)
 
 	return nil
 }

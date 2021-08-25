@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"fmt"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/covalenthq/mq-store-agent/internal/event"
 )
 
 func HandlerFactory() func(t event.Type) Handler {
-
 	return func(t event.Type) Handler {
 		switch t {
 		case event.SpecimenType:
@@ -33,6 +33,6 @@ func NewDefaultHandler() Handler {
 }
 
 func (h *defaultHandler) Handle(e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
-	fmt.Printf("undefined event %+v\n", e)
+	log.Printf("undefined event %+v\n", e)
 	return nil
 }

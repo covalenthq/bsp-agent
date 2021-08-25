@@ -1,4 +1,4 @@
-package gcp
+package storage
 
 import (
 	"bytes"
@@ -20,13 +20,12 @@ var (
 )
 
 func HandleResultUploadToBucket(object event.ReplicationEvent, objectName string) error {
-
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Error(err)
 	}
 
-	bucketResult := cfg.GcpConfig.ResultBucket
+	resultBucket := cfg.GcpConfig.ResultBucket
 
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
@@ -36,19 +35,18 @@ func HandleResultUploadToBucket(object event.ReplicationEvent, objectName string
 	if err != nil {
 		return err
 	}
-	writeToStorage(storageClient, bucketResult, objectName, object)
+	writeToStorage(storageClient, resultBucket, objectName, object)
 
 	return nil
 }
 
 func HandleSpecimenUploadToBucket(object event.ReplicationEvent, objectName string) error {
-
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Error(err)
 	}
 
-	bucketSpecimen := cfg.GcpConfig.SpecimenBucket
+	specimenBucket := cfg.GcpConfig.SpecimenBucket
 
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
@@ -58,24 +56,26 @@ func HandleSpecimenUploadToBucket(object event.ReplicationEvent, objectName stri
 	if err != nil {
 		return err
 	}
-	writeToStorage(storageClient, bucketSpecimen, objectName, object)
+	writeToStorage(storageClient, specimenBucket, objectName, object)
 
 	return nil
 }
 
 func writeToStorage(client *storage.Client, bucket string, objectName string, object event.ReplicationEvent) error {
-
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
+
 	wc := client.Bucket(bucket).Object(objectName).NewWriter(ctx)
 	content, err := json.Marshal(object)
 	if err != nil {
 		return err
 	}
+
 	if _, err := io.Copy(wc, bytes.NewReader(content)); err != nil {
 		return err
 	}
+
 	if err := wc.Close(); err != nil {
 		return err
 	}
