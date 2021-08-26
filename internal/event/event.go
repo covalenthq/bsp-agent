@@ -3,6 +3,8 @@ package event
 import (
 	"fmt"
 	"time"
+
+	"github.com/covalenthq/mq-store-agent/internal/types"
 )
 
 type Type string
@@ -17,11 +19,13 @@ type ReplicationEvent struct {
 }
 
 type Base struct {
-	ID       string    `json:"ID"`
-	Type     Type      `json:"type"`
-	Hash     string    `json:"hash"`
-	DateTime time.Time `json:"datetime"`
-	Data     []byte    `json:"data"`
+	ID       string              `json:"ID"`
+	Type     Type                `json:"type"`
+	Hash     string              `json:"hash"`
+	DateTime time.Time           `json:"datetime"`
+	Data     []byte              `json:"data"`
+	Result   types.BlockResult   `json:"result"`
+	Specimen types.BlockSpecimen `json:"specimen"`
 }
 type Event interface {
 	GetID() string

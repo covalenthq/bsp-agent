@@ -3,7 +3,6 @@ package handler
 import (
 	"bytes"
 	"fmt"
-	"math/big"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/storage"
+	"github.com/covalenthq/mq-store-agent/internal/types"
 )
 
 type resultHandler struct {
@@ -27,16 +27,15 @@ func (h *resultHandler) Handle(e event.Event, hash string, datetime time.Time, d
 	}
 
 	event.Hash = hash
-	event.Data = data
 	event.DateTime = datetime
+	event.Data = data
 
-	var s big.Int
+	var s types.BlockResult
 	err := rlp.Decode(bytes.NewReader(data), &s)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
-	} else {
-		fmt.Printf("Decoded RLP value: %v\n", s)
 	}
+	event.Result = s
 
 	err = storage.HandleResultUploadToBucket(*event, event.Hash)
 	if err != nil {
