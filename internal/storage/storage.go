@@ -60,6 +60,7 @@ func HandleSpecimenUploadToBucket(object event.ReplicationEvent, objectName stri
 
 	return nil
 }
+
 func writeToStorage(client *storage.Client, bucket string, objectName string, object event.ReplicationEvent) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)

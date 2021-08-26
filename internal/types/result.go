@@ -41,7 +41,7 @@ type Header struct {
 	BaseFee     *big.Int       `json:"baseFeePerGas"`
 }
 
-type TransactionExportRLP struct {
+type Transaction struct {
 	AccountNonce uint64          `json:"nonce"    gencodec:"required"`
 	Price        *big.Int        `json:"gasPrice" gencodec:"required"`
 	GasLimit     uint64          `json:"gas"      gencodec:"required"`
@@ -65,7 +65,7 @@ type BlockResult struct {
 	Hash         common.Hash
 	TotalDiff    *big.Int
 	Header       *Header
-	Transactions []*TransactionExportRLP
+	Transactions []*Transaction
 	Uncles       []*Header
 	Receipts     []*Receipt
 	Senders      []interface{}
