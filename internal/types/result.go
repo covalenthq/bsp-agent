@@ -3,6 +3,7 @@ package types
 import (
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ubiq/go-ubiq/common"
 )
 
@@ -22,7 +23,6 @@ const (
 type Bloom [BloomByteLength]byte
 
 type Header struct {
-	//headers
 	ParentHash  common.Hash    `json:"parentHash"       gencodec:"required"`
 	UncleHash   common.Hash    `json:"sha3Uncles"       gencodec:"required"`
 	Coinbase    common.Address `json:"miner"            gencodec:"required"`
@@ -41,7 +41,32 @@ type Header struct {
 	BaseFee     *big.Int       `json:"baseFeePerGas"`
 }
 
+type TransactionExportRLP struct {
+	AccountNonce uint64          `json:"nonce"    gencodec:"required"`
+	Price        *big.Int        `json:"gasPrice" gencodec:"required"`
+	GasLimit     uint64          `json:"gas"      gencodec:"required"`
+	Sender       common.Address  `json:"from"     gencodec:"required"`
+	Recipient    *common.Address `json:"to"       rlp:"nil"` // nil means contract creation
+	Amount       *big.Int        `json:"value"    gencodec:"required"`
+	Payload      []byte          `json:"input"    gencodec:"required"`
+}
+
+type LogForExport types.Log
+
+type Receipt struct {
+	PostStateOrStatus []byte
+	CumulativeGasUsed uint64
+	TxHash            common.Hash
+	ContractAddress   common.Address
+	//Logs              []*LogForExport
+	GasUsed uint64
+}
 type BlockResult struct {
-	Hash   common.Hash
-	Header Header
+	Hash         common.Hash
+	TotalDiff    *big.Int
+	Header       *Header
+	Transactions []*TransactionExportRLP
+	Uncles       []*Header
+	Receipts     []*Receipt
+	Senders      []interface{}
 }
