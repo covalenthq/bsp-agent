@@ -3,20 +3,14 @@ package types
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ubiq/go-ubiq/common"
 )
 
-// A BlockNonce is a 64-bit hash which proves (combined with the
-// mix-hash) that a sufficient amount of computation has been carried
-// out on a block.
 type BlockNonce [8]byte
 
 const (
-	// BloomByteLength represents the number of bytes used in a header log bloom.
 	BloomByteLength = 256
-	// BloomBitLength represents the number of bits used in a header log bloom.
-	BloomBitLength = 8 * BloomByteLength
+	BloomBitLength  = 8 * BloomByteLength
 )
 
 // Bloom represents a 2048 bit bloom filter.
@@ -51,15 +45,25 @@ type Transaction struct {
 	Payload      []byte          `json:"input"    gencodec:"required"`
 }
 
-type LogForExport types.Log
+type Logs struct {
+	Address     common.Address `json:"address" gencodec:"required"`
+	Topics      []common.Hash  `json:"topics" gencodec:"required"`
+	Data        []byte         `json:"data" gencodec:"required"`
+	BlockNumber uint64         `json:"blockNumber" rlp:"-"`
+	TxHash      common.Hash    `json:"transactionHash" gencodec:"required" rlp:"-"`
+	TxIndex     uint           `json:"transactionIndex" rlp:"-"`
+	BlockHash   common.Hash    `json:"blockHash" rlp:"-"`
+	Index       uint           `json:"logIndex" rlp:"-"`
+	Removed     bool           `json:"removed" rlp:"-"`
+}
 
 type Receipt struct {
 	PostStateOrStatus []byte
 	CumulativeGasUsed uint64
 	TxHash            common.Hash
 	ContractAddress   common.Address
-	//Logs              []*LogForExport
-	GasUsed uint64
+	Logs              []*Logs
+	GasUsed           uint64
 }
 type BlockResult struct {
 	Hash         common.Hash
