@@ -36,7 +36,7 @@ func (h *resultHandler) Handle(e event.Event, hash string, datetime time.Time, d
 	var decodedResult types.BlockResult
 	err := rlp.Decode(bytes.NewReader(data), &decodedResult)
 	if err != nil {
-		return fmt.Errorf("error decoding RLP bytes to block result: %v", err)
+		return fmt.Errorf("error decoding RLP bytes to block-result: %v", err)
 	} else {
 		result.Data = &decodedResult
 	}

@@ -21,7 +21,7 @@ type ResultEvent struct {
 
 type SpecimenEvent struct {
 	ReplicationEvent *ReplicationEvent
-	Data             *[]byte `json:"specimen"` //change this to type expected
+	Data             *types.BlockSpecimen `json:"specimen"`
 }
 
 type ReplicationEvent struct {
@@ -49,17 +49,14 @@ func New(t Type) (Event, error) {
 	}
 
 	switch t {
-
 	case SpecimenType:
 		return &ReplicationEvent{
 			Base: b,
 		}, nil
-
 	case ResultType:
 		return &ReplicationEvent{
 			Base: b,
 		}, nil
-
 	}
 
 	return nil, fmt.Errorf("type %v not supported", t)

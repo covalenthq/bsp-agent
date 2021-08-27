@@ -1,13 +1,16 @@
 package handler
 
 import (
+	"bytes"
 	"fmt"
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/ubiq/go-ubiq/rlp"
 
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/storage"
+	"github.com/covalenthq/mq-store-agent/internal/types"
 )
 
 type specimenHandler struct {
@@ -30,9 +33,15 @@ func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time,
 		ReplicationEvent: Event,
 	}
 
-	specimen.Data = &data
+	var decodedSpecimen types.BlockSpecimen
+	err := rlp.Decode(bytes.NewReader(data), &decodedSpecimen)
+	if err != nil {
+		return fmt.Errorf("error decoding RLP bytes to block-specimen: %v", err)
+	} else {
+		specimen.Data = &decodedSpecimen
+	}
 
-	err := storage.HandleSpecimenUploadToBucket(*specimen, Event.Hash)
+	err = storage.HandleSpecimenUploadToBucket(*specimen, Event.Hash)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -64,6 +64,7 @@ type Receipt struct {
 	Logs              []*Logs
 	GasUsed           uint64
 }
+
 type BlockResult struct {
 	Hash            common.Hash
 	TotalDifficulty *big.Int
@@ -72,4 +73,16 @@ type BlockResult struct {
 	Uncles          []*Header
 	Receipts        []*Receipt
 	Senders         []interface{}
+}
+
+type BlockSpecimen struct {
+	Address  common.Address
+	Nonce    uint64
+	Balance  *big.Int
+	CodeHash common.Hash
+	Account  common.Address
+	SlotKey  common.Hash
+	Value    common.Hash
+	Hash     common.Hash
+	Code     []byte
 }
