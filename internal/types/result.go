@@ -6,14 +6,13 @@ import (
 	"github.com/ubiq/go-ubiq/common"
 )
 
-type BlockNonce [8]byte
-
 const (
 	BloomByteLength = 256
 	BloomBitLength  = 8 * BloomByteLength
 )
 
-// Bloom represents a 2048 bit bloom filter.
+type BlockNonce [8]byte
+
 type Bloom [BloomByteLength]byte
 
 type Header struct {
@@ -66,11 +65,11 @@ type Receipt struct {
 	GasUsed           uint64
 }
 type BlockResult struct {
-	Hash         common.Hash
-	TotalDiff    *big.Int
-	Header       *Header
-	Transactions []*Transaction
-	Uncles       []*Header
-	Receipts     []*Receipt
-	Senders      []interface{}
+	Hash            common.Hash
+	TotalDifficulty *big.Int
+	Header          *Header
+	Transactions    []*Transaction
+	Uncles          []*Header
+	Receipts        []*Receipt
+	Senders         []interface{}
 }

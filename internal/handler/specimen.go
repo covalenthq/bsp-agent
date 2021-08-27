@@ -18,21 +18,26 @@ func NewSpecimenHandler() Handler {
 }
 
 func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
-	event, ok := e.(*event.ReplicationEvent)
+	Event, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")
 	}
 
-	event.Hash = hash
-	event.Data = data
-	event.DateTime = datetime
+	Event.Hash = hash
+	Event.DateTime = datetime
 
-	err := storage.HandleSpecimenUploadToBucket(*event, event.Hash)
+	specimen := &event.SpecimenEvent{
+		ReplicationEvent: Event,
+	}
+
+	specimen.Data = &data
+
+	err := storage.HandleSpecimenUploadToBucket(*specimen, Event.Hash)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Uploaded block-specimen event: %v \nhash: %v\n", event.ID, event.Hash)
+	log.Printf("Uploaded block-specimen event: %v \nhash: %v\n", Event.ID, Event.Hash)
 
 	return nil
 }

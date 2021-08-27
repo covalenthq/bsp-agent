@@ -21,27 +21,31 @@ func NewResultHandler() Handler {
 }
 
 func (h *resultHandler) Handle(e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
-	event, ok := e.(*event.ReplicationEvent)
+	Event, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")
 	}
 
-	event.Hash = hash
-	event.DateTime = datetime
-	event.Data = data
+	Event.Hash = hash
+	Event.DateTime = datetime
 
-	var s types.BlockResult
-	err := rlp.Decode(bytes.NewReader(data), &s)
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+	result := &event.ResultEvent{
+		ReplicationEvent: Event,
 	}
-	event.Result = s
 
-	err = storage.HandleResultUploadToBucket(*event, event.Hash)
+	var decodedResult types.BlockResult
+	err := rlp.Decode(bytes.NewReader(data), &decodedResult)
+	if err != nil {
+		return fmt.Errorf("error decoding RLP bytes to block result: %v", err)
+	} else {
+		result.Data = &decodedResult
+	}
+
+	err = storage.HandleResultUploadToBucket(*result, Event.Hash)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Uploaded block-result event: %v \nhash: %v\n", event.ID, event.Hash)
+	log.Printf("Uploaded block-result event: %v \nhash: %v\n", Event.ID, Event.Hash)
 
 	return nil
 }

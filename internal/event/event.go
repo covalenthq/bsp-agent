@@ -14,26 +14,33 @@ const (
 	ResultType   Type = "block-result"
 )
 
+type ResultEvent struct {
+	ReplicationEvent *ReplicationEvent
+	Data             *types.BlockResult `json:"result"`
+}
+
+type SpecimenEvent struct {
+	ReplicationEvent *ReplicationEvent
+	Data             *[]byte `json:"specimen"` //change this to type expected
+}
+
 type ReplicationEvent struct {
 	*Base
 }
 
 type Base struct {
-	ID       string              `json:"ID"`
-	Type     Type                `json:"type"`
-	Hash     string              `json:"hash"`
-	DateTime time.Time           `json:"datetime"`
-	Data     []byte              `json:"data"`
-	Result   types.BlockResult   `json:"result"`
-	Specimen types.BlockSpecimen `json:"specimen"`
+	ID       string    `json:"ID"`
+	Type     Type      `json:"type"`
+	Hash     string    `json:"hash"`
+	DateTime time.Time `json:"datetime"`
 }
 type Event interface {
 	GetID() string
-	GetType() Type
-	GetDateTime() time.Time
-	GetData() []byte
-	GetHash() string
 	SetID(id string)
+	GetType() Type
+	GetHash() string
+	GetDateTime() time.Time
+	String() string
 }
 
 func New(t Type) (Event, error) {
@@ -76,10 +83,6 @@ func (o *Base) GetDateTime() time.Time {
 
 func (o *Base) String() string {
 	return fmt.Sprintf("id: %s type: %s hash: %s", o.ID, o.Type, o.Hash)
-}
-
-func (o *Base) GetData() []byte {
-	return o.Data
 }
 
 func (o *Base) GetHash() string {

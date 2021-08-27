@@ -19,7 +19,7 @@ var (
 	storageClient *storage.Client
 )
 
-func HandleResultUploadToBucket(object event.ReplicationEvent, objectName string) error {
+func HandleResultUploadToBucket(object event.ResultEvent, objectName string) error {
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Error(err)
@@ -40,7 +40,7 @@ func HandleResultUploadToBucket(object event.ReplicationEvent, objectName string
 	return nil
 }
 
-func HandleSpecimenUploadToBucket(object event.ReplicationEvent, objectName string) error {
+func HandleSpecimenUploadToBucket(object event.SpecimenEvent, objectName string) error {
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Error(err)
@@ -61,7 +61,7 @@ func HandleSpecimenUploadToBucket(object event.ReplicationEvent, objectName stri
 	return nil
 }
 
-func writeToStorage(client *storage.Client, bucket string, objectName string, object event.ReplicationEvent) error {
+func writeToStorage(client *storage.Client, bucket string, objectName string, object interface{}) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
