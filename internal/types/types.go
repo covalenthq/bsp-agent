@@ -72,7 +72,7 @@ type BlockResult struct {
 	Transactions    []*Transaction
 	Uncles          []*Header
 	Receipts        []*Receipt
-	Senders         []interface{}
+	Senders         []common.Address
 }
 
 type BlockSpecimen struct {

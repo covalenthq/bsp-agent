@@ -14,7 +14,7 @@ Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Networ
         Transactions    []*Transaction
         Uncles          []*Header
         Receipts        []*Receipt
-        Senders         []interface{}
+	    Senders      []common.Address
         }
     ```
 
