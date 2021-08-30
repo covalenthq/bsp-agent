@@ -21,9 +21,14 @@ type RedisConfig struct {
 	Group    string `envconfig:"REDIS_CONSUMER_GROUP"`
 }
 
+type GeneralConfig struct {
+	ConsumeEvents int64 `envconfig:"CONSUME_EVENTS"`
+}
+
 type Config struct {
-	GcpConfig   GcpConfig
-	RedisConfig RedisConfig
+	GcpConfig     GcpConfig
+	RedisConfig   RedisConfig
+	GeneralConfig GeneralConfig
 }
 
 func LoadConfig() (*Config, error) {

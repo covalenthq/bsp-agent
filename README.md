@@ -44,4 +44,5 @@ Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Networ
     REDIS_ADDRESS=localhost:6379
     REDIS_STREAM_KEY=replication
     REDIS_CONSUMER_GROUP=replicate
+    CONSUME_EVENTS=10
     ```

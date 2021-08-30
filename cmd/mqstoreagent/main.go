@@ -20,17 +20,18 @@ import (
 )
 
 var (
-	waitGrp       sync.WaitGroup
-	client        *redis.Client
-	start         string = ">"
-	streamName    string
-	consumerGroup string
-	consumerName  string
+	waitGrp            sync.WaitGroup
+	client             *redis.Client
+	start              string = ">"
+	logTimeFormat      string = "2006-01-02 15:04:05"
+	consumeIdleTime    int64  = 30
+	consumePendingTime int64  = 60
+	consumeSleepTime   int64  = 2
 )
 
 func init() {
 	customFormatter := new(log.TextFormatter)
-	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	customFormatter.TimestampFormat = logTimeFormat
 	log.SetFormatter(customFormatter)
 	customFormatter.FullTimestamp = true
 }
@@ -46,15 +47,13 @@ func main() {
 		panic(err)
 	}
 
-	consumerName = uuid.NewV4().String()
-	streamName := config.RedisConfig.Key
-	consumerGroup := config.RedisConfig.Group
+	var consumerName string = uuid.NewV4().String()
 
-	log.Printf("Initializing Consumer: %v\nConsumer Group: %v\nRedis Stream: %v\n", consumerName, consumerGroup, streamName)
+	log.Printf("Initializing Consumer: %v\nConsumer Group: %v\nRedis Stream: %v\n", consumerName, config.RedisConfig.Group, config.RedisConfig.Key)
 
-	createConsumerGroup(streamName, consumerGroup)
-	go consumeEvents(streamName, consumerGroup)
-	go consumePendingEvents(streamName, consumerGroup)
+	createConsumerGroup(config)
+	go consumeEvents(config, consumerName)
+	go consumePendingEvents(config, consumerName)
 
 	//Gracefully disconnect
 	chanOS := make(chan os.Signal, 1)
@@ -65,23 +64,23 @@ func main() {
 	client.Close()
 }
 
-func createConsumerGroup(streamName, consumerGroup string) {
-	if _, err := client.XGroupCreateMkStream(streamName, consumerGroup, "0").Result(); err != nil {
+func createConsumerGroup(config *config.Config) {
+	if _, err := client.XGroupCreateMkStream(config.RedisConfig.Key, config.RedisConfig.Group, "0").Result(); err != nil {
 		if !strings.Contains(fmt.Sprint(err), "BUSYGROUP") {
-			log.Printf("Error on create Consumer Group: %v ...\n", consumerGroup)
+			log.Printf("Error on create Consumer Group: %v ...\n", config.RedisConfig.Group)
 			panic(err)
 		}
 	}
 }
 
-func consumeEvents(streamName, consumerGroup string) {
+func consumeEvents(config *config.Config, consumerName string) {
 	for {
 		log.Println("New round: ", time.Now().Format(time.RFC3339))
 		streams, err := client.XReadGroup(&redis.XReadGroupArgs{
-			Streams:  []string{streamName, start},
-			Group:    consumerGroup,
+			Streams:  []string{config.RedisConfig.Key, start},
+			Group:    config.RedisConfig.Group,
 			Consumer: consumerName,
-			Count:    10,
+			Count:    config.GeneralConfig.ConsumeEvents,
 			Block:    0,
 		}).Result()
 
@@ -92,22 +91,22 @@ func consumeEvents(streamName, consumerGroup string) {
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(stream, false, handler.HandlerFactory())
+			go processStream(config, stream, false, handler.HandlerFactory())
 		}
 		waitGrp.Wait()
 	}
 }
 
-func consumePendingEvents(streamName, consumerGroup string) {
-	ticker := time.Tick(time.Second * 30)
+func consumePendingEvents(config *config.Config, consumerName string) {
+	ticker := time.Tick(time.Second * time.Duration(consumePendingTime))
 	for range ticker {
 		var streamsRetry []string
 		pendingStreams, err := client.XPendingExt(&redis.XPendingExtArgs{
-			Stream: streamName,
-			Group:  consumerGroup,
+			Stream: config.RedisConfig.Key,
+			Group:  config.RedisConfig.Group,
 			Start:  "0",
 			End:    "+",
-			Count:  10,
+			Count:  config.GeneralConfig.ConsumeEvents,
 		}).Result()
 
 		if err != nil {
@@ -120,11 +119,11 @@ func consumePendingEvents(streamName, consumerGroup string) {
 
 		if len(streamsRetry) > 0 {
 			streams, err := client.XClaim(&redis.XClaimArgs{
-				Stream:   streamName,
-				Group:    consumerGroup,
+				Stream:   config.RedisConfig.Key,
+				Group:    config.RedisConfig.Group,
 				Consumer: consumerName,
 				Messages: streamsRetry,
-				MinIdle:  30 * time.Second,
+				MinIdle:  time.Duration(consumeIdleTime) * time.Second,
 			}).Result()
 
 			if err != nil {
@@ -134,7 +133,7 @@ func consumePendingEvents(streamName, consumerGroup string) {
 
 			for _, stream := range streams {
 				waitGrp.Add(1)
-				go processStream(stream, true, handler.HandlerFactory())
+				go processStream(config, stream, true, handler.HandlerFactory())
 			}
 			waitGrp.Wait()
 		}
@@ -142,7 +141,7 @@ func consumePendingEvents(streamName, consumerGroup string) {
 	}
 }
 
-func processStream(stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
+func processStream(config *config.Config, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
 	defer waitGrp.Done()
 
 	typeEvent := stream.Values["type"].(string)
@@ -166,6 +165,6 @@ func processStream(stream redis.XMessage, retry bool, handlerFactory func(t even
 		return
 	}
 
-	client.XAck(streamName, consumerGroup, stream.ID)
-	time.Sleep(2 * time.Second) //break for testing
+	client.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+	time.Sleep(time.Duration(consumeSleepTime) * time.Second) //to provide an interval for breaking (if necessary) between consumer threads
 }

@@ -17,6 +17,7 @@ import (
 
 var (
 	storageClient *storage.Client
+	uploadTimeout int64 = 50
 )
 
 func HandleResultUploadToBucket(object event.ResultEvent, objectName string) error {
@@ -28,7 +29,7 @@ func HandleResultUploadToBucket(object event.ResultEvent, objectName string) err
 	resultBucket := cfg.GcpConfig.ResultBucket
 
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(cfg.GcpConfig.ServiceAccount))
@@ -49,7 +50,7 @@ func HandleSpecimenUploadToBucket(object event.SpecimenEvent, objectName string)
 	specimenBucket := cfg.GcpConfig.SpecimenBucket
 
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
 	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile(cfg.GcpConfig.ServiceAccount))
