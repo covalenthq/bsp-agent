@@ -76,13 +76,25 @@ type BlockResult struct {
 }
 
 type BlockSpecimen struct {
+	AccountRead []*accountRead
+	StorageRead []*storageRead
+	CodeRead    []*codeRead
+}
+
+type accountRead struct {
 	Address  common.Address
 	Nonce    uint64
 	Balance  *big.Int
 	CodeHash common.Hash
-	Account  common.Address
-	SlotKey  common.Hash
-	Value    common.Hash
-	Hash     common.Hash
-	Code     []byte
+}
+
+type storageRead struct {
+	Account common.Address
+	SlotKey common.Hash
+	Value   common.Hash
+}
+
+type codeRead struct {
+	Hash common.Hash
+	Code []byte
 }

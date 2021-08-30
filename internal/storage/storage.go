@@ -64,7 +64,7 @@ func HandleSpecimenUploadToBucket(object event.SpecimenEvent, objectName string)
 
 func writeToStorage(client *storage.Client, bucket string, objectName string, object interface{}) error {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
 	wc := client.Bucket(bucket).Object(objectName).NewWriter(ctx)
