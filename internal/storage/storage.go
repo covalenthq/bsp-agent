@@ -8,56 +8,35 @@ import (
 	"time"
 
 	"cloud.google.com/go/storage"
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
-	"github.com/covalenthq/mq-store-agent/internal/event"
 )
 
 var (
-	storageClient *storage.Client
+	//storageClient *storage.Client
 	uploadTimeout int64 = 50
 )
 
-func HandleResultUploadToBucket(object event.ResultEvent, objectName string) error {
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Error(err)
-	}
-
-	resultBucket := cfg.GcpConfig.ResultBucket
+func HandleObjectUploadToBucket(config *config.Config, objectType string, objectName string, object interface{}) error {
 
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
-	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(cfg.GcpConfig.ServiceAccount))
+	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(config.GcpConfig.ServiceAccount))
 	if err != nil {
 		return err
 	}
-	writeToStorage(storageClient, resultBucket, objectName, object)
 
-	return nil
-}
-
-func HandleSpecimenUploadToBucket(object event.SpecimenEvent, objectName string) error {
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Error(err)
+	switch objectType {
+	case "block-specimen":
+		bucket := config.GcpConfig.SpecimenBucket
+		return writeToStorage(storageClient, bucket, objectName, object)
+	case "block-result":
+		bucket := config.GcpConfig.ResultBucket
+		return writeToStorage(storageClient, bucket, objectName, object)
 	}
-
-	specimenBucket := cfg.GcpConfig.SpecimenBucket
-
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
-	defer cancel()
-
-	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile(cfg.GcpConfig.ServiceAccount))
-	if err != nil {
-		return err
-	}
-	writeToStorage(storageClient, specimenBucket, objectName, object)
 
 	return nil
 }

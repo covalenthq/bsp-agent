@@ -158,7 +158,7 @@ func processStream(config *config.Config, stream redis.XMessage, retry bool, han
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(event.Type(typeEvent))
-	err = h.Handle(newEvent, hash, parseDate, []byte(stream.Values["data"].(string)), retry)
+	err = h.Handle(config, newEvent, hash, parseDate, []byte(stream.Values["data"].(string)), retry)
 	if err != nil {
 		fmt.Printf("error on process event:%v\n", newEvent)
 		fmt.Println(err)

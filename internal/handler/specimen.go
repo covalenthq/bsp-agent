@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
 
+	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
@@ -20,7 +21,7 @@ func NewSpecimenHandler() Handler {
 	return &specimenHandler{}
 }
 
-func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
+func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
 	Event, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")
@@ -41,7 +42,7 @@ func (h *specimenHandler) Handle(e event.Event, hash string, datetime time.Time,
 		specimen.Data = &decodedSpecimen
 	}
 
-	err = storage.HandleSpecimenUploadToBucket(*specimen, Event.Hash)
+	err = storage.HandleObjectUploadToBucket(config, string(Event.Type), Event.Hash, *specimen)
 	if err != nil {
 		log.Fatal(err)
 	}
