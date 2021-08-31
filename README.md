@@ -14,7 +14,7 @@ Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Networ
         Transactions    []*Transaction
         Uncles          []*Header
         Receipts        []*Receipt
-	    Senders      []common.Address
+        Senders         []common.Address
         }
     ```
 
@@ -57,4 +57,10 @@ Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Networ
     REDIS_STREAM_KEY=replication
     REDIS_CONSUMER_GROUP=replicate
     CONSUME_EVENTS=10
+    ```
+
+## run
+
+    ```bash
+        Make run
     ```

@@ -18,11 +18,11 @@ type RedisConfig struct {
 	Password string `envconfig:"REDIS_PASSWORD" default:""`
 	DB       int    `envconfig:"REDIS_DB" default:"0"`
 	Key      string `envconfig:"REDIS_STREAM_KEY" default:"replication"`
-	Group    string `envconfig:"REDIS_CONSUMER_GROUP"`
+	Group    string `envconfig:"REDIS_CONSUMER_GROUP" default:"replicate"`
 }
 
 type GeneralConfig struct {
-	ConsumeEvents int64 `envconfig:"CONSUME_EVENTS"`
+	ConsumeEvents int64 `envconfig:"CONSUME_EVENTS" default:"10"`
 }
 
 type Config struct {

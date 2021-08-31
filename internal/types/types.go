@@ -11,6 +11,22 @@ const (
 	BloomBitLength  = 8 * BloomByteLength
 )
 
+type BlockResult struct {
+	Hash            common.Hash
+	TotalDifficulty *big.Int
+	Header          *Header
+	Transactions    []*Transaction
+	Uncles          []*Header
+	Receipts        []*Receipt
+	Senders         []common.Address
+}
+
+type BlockSpecimen struct {
+	AccountRead []*accountRead
+	StorageRead []*storageRead
+	CodeRead    []*codeRead
+}
+
 type BlockNonce [8]byte
 
 type Bloom [BloomByteLength]byte
@@ -63,22 +79,6 @@ type Receipt struct {
 	ContractAddress   common.Address
 	Logs              []*Logs
 	GasUsed           uint64
-}
-
-type BlockResult struct {
-	Hash            common.Hash
-	TotalDifficulty *big.Int
-	Header          *Header
-	Transactions    []*Transaction
-	Uncles          []*Header
-	Receipts        []*Receipt
-	Senders         []common.Address
-}
-
-type BlockSpecimen struct {
-	AccountRead []*accountRead
-	StorageRead []*storageRead
-	CodeRead    []*codeRead
 }
 
 type accountRead struct {

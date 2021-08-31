@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 
@@ -14,7 +15,6 @@ import (
 )
 
 var (
-	//storageClient *storage.Client
 	uploadTimeout int64 = 50
 )
 
@@ -38,7 +38,7 @@ func HandleObjectUploadToBucket(config *config.Config, objectType string, object
 		return writeToStorage(storageClient, bucket, objectName, object)
 	}
 
-	return nil
+	return fmt.Errorf("type %v not supported", objectType)
 }
 
 func writeToStorage(client *storage.Client, bucket string, objectName string, object interface{}) error {
