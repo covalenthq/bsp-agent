@@ -64,12 +64,12 @@ type Logs struct {
 	Address     common.Address `json:"address" gencodec:"required"`
 	Topics      []common.Hash  `json:"topics" gencodec:"required"`
 	Data        []byte         `json:"data" gencodec:"required"`
-	BlockNumber uint64         `json:"blockNumber" rlp:"-"`
-	TxHash      common.Hash    `json:"transactionHash" gencodec:"required" rlp:"-"`
-	TxIndex     uint           `json:"transactionIndex" rlp:"-"`
-	BlockHash   common.Hash    `json:"blockHash" rlp:"-"`
-	Index       uint           `json:"logIndex" rlp:"-"`
-	Removed     bool           `json:"removed" rlp:"-"`
+	BlockNumber uint64         `json:"blockNumber"`
+	TxHash      common.Hash    `json:"transactionHash" gencodec:"required"`
+	TxIndex     uint           `json:"transactionIndex"`
+	BlockHash   common.Hash    `json:"blockHash"`
+	Index       uint           `json:"logIndex"`
+	Removed     bool           `json:"removed"`
 }
 
 type Receipt struct {
