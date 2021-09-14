@@ -35,6 +35,55 @@
         {
           "indexed": false,
           "internalType": "uint64",
+          "name": "resultSize",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "resultHash",
+          "type": "uint256"
+        }
+      ],
+      "name": "BlockResultPublicationProofAppended",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "seq",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "extractWorker",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainID",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainHeightPos",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "chainHeightLen",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
           "name": "specimenSize",
           "type": "uint64"
         },
@@ -456,6 +505,39 @@
         }
       ],
       "name": "proveBlockSpecimenProduced",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "chainID",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "chainHeightPos",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "chainHeightLen",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "resultSize",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint256",
+          "name": "resultHash",
+          "type": "uint256"
+        }
+      ],
+      "name": "proveBlockResultProduced",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
