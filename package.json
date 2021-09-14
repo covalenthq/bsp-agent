@@ -1,9 +1,17 @@
 {
+  "scripts": {
+    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
+    "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol"
+  },
   "dependencies": {
     "@openzeppelin/contracts": "^4.0.0",
     "@openzeppelin/contracts-upgradeable": "^4.0.0"
   },
   "devDependencies": {
-    "@openzeppelin/truffle-upgrades": "^1.5.1"
+    "@openzeppelin/truffle-upgrades": "^1.5.1",
+    "prettier": "^2.4.0",
+    "prettier-plugin-solidity": "^1.0.0-beta.18",
+    "solhint": "^3.3.6",
+    "solhint-plugin-prettier": "^0.0.5"
   }
 }
