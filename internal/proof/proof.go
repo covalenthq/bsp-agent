@@ -16,20 +16,29 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-func buildSpecimenProofTx(client *ethclient.Client, contractAddress string, chainId int, hash string, blockSpecimen *ty.BlockSpecimen) (string, error) {
+func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, specimenSize uint64, specimenHash *big.Int, blockSpecimen *ty.BlockSpecimen) (string, bool, error) {
 	//todo
 	//return string, error
-
-	addr := common.HexToAddress(contractAddress)
-	ctr, err := contract.NewContract(addr, client)
+	ctx := context.Background()
+	addr := common.HexToAddress(proverContractAddress)
+	contract, err := NewProofChain(addr, client)
 
 	if err != nil {
 		log.Error(err.Error())
 	}
 
+	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLength, specimenSize, specimenHash)
+
+	receipt, err := bind.WaitMined(ctx, client, tx)
+	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Error("Proof Tx call: %v , to contract failed: %v", tx.Hash(), err)
+		return tx.Hash().String(), false, err
+	}
+
+	return tx.Hash().String(), true, err
 }
 
-func buildResultProofTx(chainId int, hash string, blockResult *ty.BlockResult) (string, error) {
+func submitResultProofTx(chainId int, hash string, blockResult *ty.BlockResult) (string, error) {
 	//todo
 	//return string, error
 }
