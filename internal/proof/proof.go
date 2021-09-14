@@ -17,17 +17,18 @@ import (
 )
 
 func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, specimenSize uint64, specimenHash *big.Int, blockSpecimen *ty.BlockSpecimen) (string, bool, error) {
-	//todo
-	//return string, error
+
 	ctx := context.Background()
 	addr := common.HexToAddress(proverContractAddress)
 	contract, err := NewProofChain(addr, client)
-
 	if err != nil {
 		log.Error(err.Error())
 	}
 
 	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLength, specimenSize, specimenHash)
+	if err != nil {
+		log.Error(err.Error())
+	}
 
 	receipt, err := bind.WaitMined(ctx, client, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
@@ -38,9 +39,28 @@ func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, pr
 	return tx.Hash().String(), true, err
 }
 
-func submitResultProofTx(chainId int, hash string, blockResult *ty.BlockResult) (string, error) {
-	//todo
-	//return string, error
+func submitResultProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, specimenSize uint64, specimenHash *big.Int, blockSpecimen *ty.BlockSpecimen) (string, bool, error) {
+
+	ctx := context.Background()
+	addr := common.HexToAddress(proverContractAddress)
+	contract, err := NewProofChain(addr, client)
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	tx, err := contract.ProveBlockResultProduced(opts, chainId, chainHeight, chainLength, specimenSize, specimenHash)
+
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	receipt, err := bind.WaitMined(ctx, client, tx)
+	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Error("Proof Tx call: %v , to contract failed: %v", tx.Hash(), err)
+		return tx.Hash().String(), false, err
+	}
+
+	return tx.Hash().String(), true, err
 }
 
 func getClient(address string) *ethclient.Client {
