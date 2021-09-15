@@ -52,7 +52,7 @@ contract ProofChain is Initializable {
         uint64 chainHeightLen, // number of contiguous blocks contained in specimen
         // (block specimen may only contain contiguous blocks)
         uint64 specimenSize, // specimen object file size, measured in bytes
-        uint256 specimenHash // SHA-256 content-hash of specimen object file;
+        bytes32 specimenHash // SHA-256 content-hash of specimen object file;
         // used to retrieve specimen from IPFS
     );
 
@@ -67,7 +67,7 @@ contract ProofChain is Initializable {
         uint64 chainHeightLen, // number of contiguous blocks contained in specimen
         // (block specimen may only contain contiguous blocks)
         uint64 resultSize, // specimen object file size, measured in bytes
-        uint256 resultHash // SHA-256 content-hash of specimen object file;
+        bytes32 resultHash // SHA-256 content-hash of specimen object file;
         // used to retrieve specimen from IPFS
     );
 
@@ -266,7 +266,7 @@ contract ProofChain is Initializable {
         uint64 chainHeightPos,
         uint64 chainHeightLen,
         uint64 specimenSize,
-        uint256 specimenHash
+        bytes32 specimenHash
     ) public {
         require(hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender), "sender not specimen producer");
 
@@ -286,7 +286,7 @@ contract ProofChain is Initializable {
         uint64 chainHeightPos,
         uint64 chainHeightLen,
         uint64 resultSize,
-        uint256 resultHash
+        bytes32 resultHash
     ) public {
         require(hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender),"sender not result producer");
 
