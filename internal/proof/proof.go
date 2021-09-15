@@ -2,6 +2,8 @@ package proof
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/json"
 	"math/big"
 
 	ty "github.com/covalenthq/mq-store-agent/internal/types"
@@ -16,7 +18,7 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, specimenSize uint64, specimenHash *big.Int, blockSpecimen *ty.BlockSpecimen) (string, bool, error) {
+func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, blockSpecimen *ty.BlockSpecimen) (string, bool, error) {
 
 	ctx := context.Background()
 	addr := common.HexToAddress(proverContractAddress)
@@ -25,21 +27,27 @@ func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, pr
 		log.Error(err.Error())
 	}
 
-	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLength, specimenSize, specimenHash)
+	jsonSpecimen, err := json.Marshal(blockSpecimen)
+	if err != nil {
+		log.Error(err.Error())
+	}
+	sha256Specimen := sha256.Sum256(jsonSpecimen)
+
+	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLength, uint64(len(jsonSpecimen)), sha256Specimen)
 	if err != nil {
 		log.Error(err.Error())
 	}
 
 	receipt, err := bind.WaitMined(ctx, client, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("Proof Tx call: %v , to contract failed: %v", tx.Hash(), err)
+		log.Error("Specimen proof tx call: %v , to contract failed: %v", tx.Hash(), err)
 		return tx.Hash().String(), false, err
 	}
 
 	return tx.Hash().String(), true, err
 }
 
-func submitResultProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, specimenSize uint64, specimenHash *big.Int, blockSpecimen *ty.BlockSpecimen) (string, bool, error) {
+func submitResultProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, blockResult *ty.BlockResult) (string, bool, error) {
 
 	ctx := context.Background()
 	addr := common.HexToAddress(proverContractAddress)
@@ -48,7 +56,13 @@ func submitResultProofTx(client *ethclient.Client, opts *bind.TransactOpts, prov
 		log.Error(err.Error())
 	}
 
-	tx, err := contract.ProveBlockResultProduced(opts, chainId, chainHeight, chainLength, specimenSize, specimenHash)
+	jsonResult, err := json.Marshal(blockResult)
+	if err != nil {
+		log.Error(err.Error())
+	}
+	sha256Result := sha256.Sum256(jsonResult)
+
+	tx, err := contract.ProveBlockResultProduced(opts, chainId, chainHeight, chainLength, uint64(len(jsonResult)), sha256Result)
 
 	if err != nil {
 		log.Error(err.Error())
@@ -56,7 +70,7 @@ func submitResultProofTx(client *ethclient.Client, opts *bind.TransactOpts, prov
 
 	receipt, err := bind.WaitMined(ctx, client, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("Proof Tx call: %v , to contract failed: %v", tx.Hash(), err)
+		log.Error("Result proof tx call: %v , to contract failed: %v", tx.Hash(), err)
 		return tx.Hash().String(), false, err
 	}
 

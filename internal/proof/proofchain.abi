@@ -40,9 +40,9 @@
         },
         {
           "indexed": false,
-          "internalType": "uint256",
+          "internalType": "bytes32",
           "name": "resultHash",
-          "type": "uint256"
+          "type": "bytes32"
         }
       ],
       "name": "BlockResultPublicationProofAppended",
@@ -89,9 +89,9 @@
         },
         {
           "indexed": false,
-          "internalType": "uint256",
+          "internalType": "bytes32",
           "name": "specimenHash",
-          "type": "uint256"
+          "type": "bytes32"
         }
       ],
       "name": "BlockSpecimenPublicationProofAppended",
@@ -499,9 +499,9 @@
           "type": "uint64"
         },
         {
-          "internalType": "uint256",
+          "internalType": "bytes32",
           "name": "specimenHash",
-          "type": "uint256"
+          "type": "bytes32"
         }
       ],
       "name": "proveBlockSpecimenProduced",
@@ -532,9 +532,9 @@
           "type": "uint64"
         },
         {
-          "internalType": "uint256",
+          "internalType": "bytes32",
           "name": "resultHash",
-          "type": "uint256"
+          "type": "bytes32"
         }
       ],
       "name": "proveBlockResultProduced",
