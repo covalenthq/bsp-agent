@@ -6,7 +6,6 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 
 contract ProofChain is Initializable {
-
     using CountersUpgradeable for CountersUpgradeable.Counter;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.Bytes32Set;
@@ -56,7 +55,7 @@ contract ProofChain is Initializable {
         // used to retrieve specimen from IPFS
     );
 
-	event BlockResultPublicationProofAppended(
+    event BlockResultPublicationProofAppended(
         uint64 seq, // sequential ID of this *Appended log-event,
         // among all *Appended events emitted by this contract
         // -- equivalent to a block height
@@ -122,7 +121,7 @@ contract ProofChain is Initializable {
     }
 
     function setRequiredStakeForRole(bytes32 role, uint256 amount) public {
-        require(hasRole(GOVERNANCE_ROLE, msg.sender),"sender not authorized");
+        require(hasRole(GOVERNANCE_ROLE, msg.sender), "sender not authorized");
 
         uint256 prevRequiredStakeForRole = roles[role].requiredStake;
 
@@ -155,7 +154,10 @@ contract ProofChain is Initializable {
     }
 
     function setStakedBalance(address addr, uint256 amount) public {
-        require(hasRole(STAKING_ORACLE_ROLE, msg.sender),"sender not authorized");
+        require(
+            hasRole(STAKING_ORACLE_ROLE, msg.sender),
+            "sender not authorized"
+        );
 
         uint256 prevStakedBalance = stakedBalances[addr];
 
@@ -268,7 +270,10 @@ contract ProofChain is Initializable {
         uint64 specimenSize,
         bytes32 specimenHash
     ) public {
-        require(hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender), "sender not specimen producer");
+        require(
+            hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender),
+            "sender not specimen producer"
+        );
 
         emit BlockSpecimenPublicationProofAppended(
             uint64(nextSeq()),
@@ -281,14 +286,17 @@ contract ProofChain is Initializable {
         );
     }
 
-	function proveBlockResultProduced(
+    function proveBlockResultProduced(
         uint64 chainID,
         uint64 chainHeightPos,
         uint64 chainHeightLen,
         uint64 resultSize,
         bytes32 resultHash
     ) public {
-        require(hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender),"sender not result producer");
+        require(
+            hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender),
+            "sender not result producer"
+        );
 
         emit BlockResultPublicationProofAppended(
             uint64(nextSeq()),
