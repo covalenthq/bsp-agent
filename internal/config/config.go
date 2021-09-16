@@ -21,6 +21,16 @@ type RedisConfig struct {
 	Group    string `envconfig:"REDIS_CONSUMER_GROUP" default:"replicate"`
 }
 
+type EthConfig struct {
+	Client   string `envconfig:"ETH_CLIENT"`
+	Key      string `envconfig:"ETH_PRIVATE_KEY"`
+	Sender   string `envconfig:"ETH_SENDER_ADDRESS"`
+	Contract string `envconfig:"ETH_PROOF_CONTRACT"`
+	ChainId  uint64 `envconfig:"ETH_CHAIN_ID" default:"3"`
+	Keystore string `envconfig:"ETH_KEYSTORE_PATH"`
+	Password string `envconfig:"ETH_KEYSTORE_PWD"`
+}
+
 type GeneralConfig struct {
 	ConsumeEvents int64 `envconfig:"CONSUME_EVENTS" default:"10"`
 }
@@ -29,6 +39,7 @@ type Config struct {
 	GcpConfig     GcpConfig
 	RedisConfig   RedisConfig
 	GeneralConfig GeneralConfig
+	EthConfig     EthConfig
 }
 
 func LoadConfig() (*Config, error) {

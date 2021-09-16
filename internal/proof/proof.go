@@ -2,12 +2,13 @@ package proof
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/json"
 	"math/big"
 
-	ty "github.com/covalenthq/mq-store-agent/internal/types"
-	"github.com/ethereum/go-ethereum"
+	"github.com/covalenthq/mq-store-agent/internal/config"
+	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
@@ -15,14 +16,17 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
 )
 
-func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, blockSpecimen *ty.BlockSpecimen) (string, bool, error) {
+func SubmitSpecimenProofTx(config *config.Config, ethclient *ethclient.Client, chainHeight uint64, chainLength uint64, blockSpecimen event.SpecimenEvent) (string, bool, error) {
 
 	ctx := context.Background()
-	addr := common.HexToAddress(proverContractAddress)
-	contract, err := NewProofChain(addr, client)
+	addr, opts, chainId, secret, err := GetTransactionOpts(config)
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	contract, err := NewProofChain(addr, ethclient)
 	if err != nil {
 		log.Error(err.Error())
 	}
@@ -33,25 +37,36 @@ func submitSpecimenProofTx(client *ethclient.Client, opts *bind.TransactOpts, pr
 	}
 	sha256Specimen := sha256.Sum256(jsonSpecimen)
 
-	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLength, uint64(len(jsonSpecimen)), sha256Specimen)
+	tx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLength, uint64(len(jsonSpecimen)), sha256Specimen)
 	if err != nil {
 		log.Error(err.Error())
 	}
 
-	receipt, err := bind.WaitMined(ctx, client, tx)
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("Specimen proof tx call: %v , to contract failed: %v", tx.Hash(), err)
-		return tx.Hash().String(), false, err
+	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(nil), secret)
+	if err != nil {
+		log.Error(err.Error())
 	}
 
-	return tx.Hash().String(), true, err
+	receipt, err := bind.WaitMined(ctx, ethclient, signedTx)
+	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Error("Specimen proof tx call: %v , to contract failed: %v", tx.Hash(), err)
+		return signedTx.Hash().String(), false, err
+	}
+	log.Info("Proof of specimen tx on: %v signed by : %v has been sent to mempool at nonce: %v", addr, opts.Signer, opts.Nonce)
+
+	return signedTx.Hash().String(), true, err
 }
 
-func submitResultProofTx(client *ethclient.Client, opts *bind.TransactOpts, proverContractAddress string, chainId uint64, chainHeight uint64, chainLength uint64, blockResult *ty.BlockResult) (string, bool, error) {
+func SubmitResultProofTx(config *config.Config, ethclient *ethclient.Client, chainHeight uint64, chainLength uint64, blockResult event.ResultEvent) (string, bool, error) {
 
 	ctx := context.Background()
-	addr := common.HexToAddress(proverContractAddress)
-	contract, err := NewProofChain(addr, client)
+
+	addr, opts, chainId, secret, err := GetTransactionOpts(config)
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	contract, err := NewProofChain(addr, ethclient)
 	if err != nil {
 		log.Error(err.Error())
 	}
@@ -62,102 +77,60 @@ func submitResultProofTx(client *ethclient.Client, opts *bind.TransactOpts, prov
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	tx, err := contract.ProveBlockResultProduced(opts, chainId, chainHeight, chainLength, uint64(len(jsonResult)), sha256Result)
-
+	tx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLength, uint64(len(jsonResult)), sha256Result)
 	if err != nil {
 		log.Error(err.Error())
 	}
 
-	receipt, err := bind.WaitMined(ctx, client, tx)
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("Result proof tx call: %v , to contract failed: %v", tx.Hash(), err)
-		return tx.Hash().String(), false, err
+	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(nil), secret)
+	if err != nil {
+		log.Error(err.Error())
 	}
 
-	return tx.Hash().String(), true, err
+	receipt, err := bind.WaitMined(ctx, ethclient, signedTx)
+	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Error("Result proof tx call: %v , to contract failed: %v", tx.Hash(), err)
+		return signedTx.Hash().String(), false, err
+	}
+
+	log.Info("Proof of result tx on: %v signed by : %v has been sent to mempool at nonce: %v", addr, opts.Signer, opts.Nonce)
+
+	return signedTx.Hash().String(), true, err
 }
 
-func getClient(address string) *ethclient.Client {
+func GetEthClient(config *config.Config) *ethclient.Client {
 
-	cl, err := ethclient.Dial(address)
+	cl, err := ethclient.Dial(config.EthConfig.Client)
 	if err != nil {
 		log.Error(err.Error())
 	}
 	return cl
 }
 
-func createProofTx(ethclient *ethclient.Client, sender common.Address, receiver *common.Address) error {
-	ctx := context.Background()
-	// Use infura
-	infura := "wss://goerli.infura.io/ws/v3/xxxxxx"
+func GetTransactionOpts(config *config.Config) (common.Address, *bind.TransactOpts, uint64, *ecdsa.PrivateKey, error) {
 
-	client := getClient(infura)
-	gasLimit := uint64(21000)
-	data := []byte{}
-	amount := big.NewInt(10 * params.GWei)
+	sKey := config.EthConfig.Key
+	chainId := config.EthConfig.ChainId
 
-	estimateGas, err := client.EstimateGas(ctx, ethereum.CallMsg{
-		From: sender,
-		To:   receiver,
-		Gas:  gasLimit,
-		Data: data,
-	})
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	blockNum, err := client.BlockNumber(ctx)
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	nonce, err := client.NonceAt(ctx, sender, big.NewInt(int64(blockNum)))
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	gasPrice, err := client.SuggestGasPrice(ctx)
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	tx := types.NewTransaction(nonce, *receiver, amount, estimateGas, gasPrice, data)
-
-	err = signProofTx(ctx, tx, client, sender)
-
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	return err
-}
-
-func signProofTx(ctx context.Context, tx *types.Transaction, client *ethclient.Client, address common.Address) error {
-
-	notSecretKey := "0x0000" //replace with env with secret key
-
-	secretKey := crypto.ToECDSAUnsafe(common.FromHex(notSecretKey))
-	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(nil), secretKey)
-
-	opts := bind.NewKeyedTransactor(secretKey)
+	secretKey := crypto.ToECDSAUnsafe(common.FromHex(sKey))
 	addr := crypto.PubkeyToAddress(secretKey.PublicKey)
-
-	err = client.SendTransaction(ctx, signedTx)
+	opts, err := bind.NewKeyedTransactorWithChainID(secretKey, new(big.Int).SetUint64(chainId))
 	if err != nil {
 		log.Error(err.Error())
 	}
-	log.Info("Proof of specimen tx for: %v signed by : %v has been sent to mempool at nonce: %v", addr, opts.Signer, opts.Nonce)
 
-	return err
+	return addr, opts, chainId, secretKey, err
 }
 
-func getKeyStore(ctx context.Context, tx *types.Transaction, client *ethclient.Client, address common.Address) (*bind.TransactOpts, error) {
+func GetKeyStore(ctx context.Context, config *config.Config, tx *types.Transaction, client *ethclient.Client, address common.Address) (*bind.TransactOpts, error) {
 
-	ks := keystore.NewKeyStore("/path/to/keystore", keystore.StandardScryptN, keystore.StandardScryptP)
-	// acc, err := ks.NewAccount("passwordToNewAccount")
+	chainId := config.EthConfig.ChainId
+
+	ks := keystore.NewKeyStore(config.EthConfig.Keystore, keystore.StandardScryptN, keystore.StandardScryptP)
 	accs := ks.Accounts()
-	ks.Unlock(accs[0], "passwordToNewAccount")
-	ksOpts, err := bind.NewKeyStoreTransactor(ks, accs[0])
+	ks.Unlock(accs[0], config.EthConfig.Password)
+
+	ksOpts, err := bind.NewKeyStoreTransactorWithChainID(ks, accs[0], new(big.Int).SetUint64(chainId))
 
 	return ksOpts, err
 }

@@ -2,14 +2,17 @@ package handler
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
+	"github.com/covalenthq/mq-store-agent/internal/proof"
 	"github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 )
@@ -22,6 +25,8 @@ func NewSpecimenHandler() Handler {
 }
 
 func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
+
+	ctx := context.Background()
 	Event, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")
@@ -48,6 +53,21 @@ func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash stri
 	}
 
 	log.Printf("Uploaded block-specimen event: %v \nhash: %v\n", Event.ID, Event.Hash)
+
+	ethClient := proof.GetEthClient(config)
+	blockHash := common.HexToHash(specimen.ReplicationEvent.Hash)
+
+	block, err := ethClient.BlockByHash(ctx, blockHash)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	txHash, mined, err := proof.SubmitSpecimenProofTx(config, ethClient, block.NumberU64(), 1, *specimen)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Block-specimen proof hash: %v \nsubmitted: %v\n", txHash, mined)
 
 	return nil
 }

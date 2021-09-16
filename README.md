@@ -57,6 +57,12 @@ Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Networ
     REDIS_STREAM_KEY=replication
     REDIS_CONSUMER_GROUP=replicate
     CONSUME_EVENTS=10
+    ETH_CLIENT=address/to/ethereum/client
+	ETH_PRIVATE_KEY=private/key/senders
+	ETH_PROOF_CONTRACT=0x121241241251361361236246
+	ETH_CHAIN_ID=3
+	ETH_KEYSTORE_PATH=path/to/keystore/file.json
+	ETH_KEYSTORE_PWD=password/to/access/keystore/file.json
     ```
 
 ## run
