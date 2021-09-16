@@ -13,6 +13,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
+	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/handler"
@@ -23,17 +24,20 @@ var (
 	waitGrp            sync.WaitGroup
 	client             *redis.Client
 	start              string = ">"
-	logTimeFormat      string = "2006-01-02 15:04:05"
 	consumeIdleTime    int64  = 30
 	consumePendingTime int64  = 60
 	consumeSleepTime   int64  = 2
 )
 
 func init() {
-	customFormatter := new(log.TextFormatter)
-	customFormatter.TimestampFormat = logTimeFormat
-	log.SetFormatter(customFormatter)
-	customFormatter.FullTimestamp = true
+	formatter := runtime.Formatter{ChildFormatter: &log.TextFormatter{
+		FullTimestamp: true,
+	}}
+	formatter.Line = true
+	log.SetFormatter(&formatter)
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
+	log.WithFields(log.Fields{"file": "main.go"}).Info("Server is running...")
 }
 
 func main() {
