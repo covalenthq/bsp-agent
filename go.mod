@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	cloud.google.com/go/storage v1.16.0
+	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e // indirect
 	github.com/ethereum/go-ethereum v1.10.8
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
