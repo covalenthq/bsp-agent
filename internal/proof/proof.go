@@ -122,7 +122,7 @@ func GetTransactionOpts(config *config.Config) (common.Address, *bind.TransactOp
 	return addr, opts, chainId, secretKey, err
 }
 
-func GetKeyStore(ctx context.Context, config *config.Config, tx *types.Transaction, client *ethclient.Client, address common.Address) (*bind.TransactOpts, error) {
+func GetKeyStore(config *config.Config) (*bind.TransactOpts, error) {
 
 	chainId := config.EthConfig.ChainId
 

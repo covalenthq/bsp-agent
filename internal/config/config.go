@@ -24,9 +24,8 @@ type RedisConfig struct {
 type EthConfig struct {
 	Client   string `envconfig:"ETH_CLIENT"`
 	Key      string `envconfig:"ETH_PRIVATE_KEY"`
-	Sender   string `envconfig:"ETH_SENDER_ADDRESS"`
 	Contract string `envconfig:"ETH_PROOF_CONTRACT"`
-	ChainId  uint64 `envconfig:"ETH_CHAIN_ID" default:"3"`
+	ChainId  uint64 `envconfig:"ETH_CHAIN_ID" default:"5"`
 	Keystore string `envconfig:"ETH_KEYSTORE_PATH"`
 	Password string `envconfig:"ETH_KEYSTORE_PWD"`
 }
