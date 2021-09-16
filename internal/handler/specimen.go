@@ -67,12 +67,12 @@ func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash stri
 
 	fmt.Println("submitting specimen proof for block number: ", block.Number.Uint64())
 
-	txHash, mined, err := proof.SubmitSpecimenProofTx(config, block.Number.Uint64(), 1, *specimen)
+	proof.SubmitSpecimenProofTx(config, block.Number.Uint64(), *specimen)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Block-specimen proof hash: %v \nsubmitted: %v\n", txHash, mined)
+	//log.Printf("Block-specimen proof hash: %v \nsubmitted: %v\n", txHash, mined)
 
 	return nil
 }

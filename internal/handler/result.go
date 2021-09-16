@@ -64,14 +64,14 @@ func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string
 		log.Error("error in getting block: ", err.Error())
 	}
 
-	fmt.Println("submitting result proof for block number: ", block.Number)
+	fmt.Println("submitting result proof for block number: ", block.Number.Uint64())
 
-	txHash, mined, err := proof.SubmitResultProofTx(config, block.Number.Uint64(), 1, *result)
+	proof.SubmitResultProofTx(config, block.Number.Uint64(), *result)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Block-result proof hash: %v \nsubmitted: %v\n", txHash, mined)
+	//log.Printf("Block-result proof hash: %v \nsubmitted: %v\n", txHash, mined)
 
 	return nil
 }
