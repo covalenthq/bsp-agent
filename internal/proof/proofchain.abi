@@ -25,24 +25,6 @@
           "internalType": "uint64",
           "name": "chainHeightPos",
           "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "chainHeightLen",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "resultSize",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "resultHash",
-          "type": "bytes32"
         }
       ],
       "name": "BlockResultPublicationProofAppended",
@@ -74,24 +56,6 @@
           "internalType": "uint64",
           "name": "chainHeightPos",
           "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "chainHeightLen",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "specimenSize",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "specimenHash",
-          "type": "bytes32"
         }
       ],
       "name": "BlockSpecimenPublicationProofAppended",
@@ -487,26 +451,11 @@
           "internalType": "uint64",
           "name": "chainHeightPos",
           "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "chainHeightLen",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "specimenSize",
-          "type": "uint64"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "specimenHash",
-          "type": "bytes32"
         }
       ],
-      "name": "proveBlockSpecimenProduced",
+      "name": "ProveBlockSpecimenProduced",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -520,26 +469,11 @@
           "internalType": "uint64",
           "name": "chainHeightPos",
           "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "chainHeightLen",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "resultSize",
-          "type": "uint64"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "resultHash",
-          "type": "bytes32"
         }
       ],
-      "name": "proveBlockResultProduced",
+      "name": "ProveBlockResultProduced",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     }
   ]
