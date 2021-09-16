@@ -2,8 +2,6 @@ package proof
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -12,13 +10,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
 )
 
-func SubmitSpecimenProofTx(config *config.Config, chainHeight uint64, chainLength uint64, blockSpecimen event.SpecimenEvent) (string, bool, error) {
+func SubmitSpecimenProofTx(config *config.Config, chainHeight uint64, blockSpecimen event.SpecimenEvent) {
 
 	ctx := context.Background()
 	//var onlyOnce sync.Once
@@ -51,34 +48,36 @@ func SubmitSpecimenProofTx(config *config.Config, chainHeight uint64, chainLengt
 	// 	WatchContractResultPublicationProof(contract)
 	// })
 
-	jsonSpecimen, err := json.Marshal(blockSpecimen)
-	if err != nil {
-		log.Error(err.Error())
-	}
-	sha256Specimen := sha256.Sum256(jsonSpecimen)
+	// jsonSpecimen, err := json.Marshal(blockSpecimen)
+	// if err != nil {
+	// 	log.Error(err.Error())
+	// }
+	//sha256Specimen := sha256.Sum256(jsonSpecimen)
 
-	signedTx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLength, uint64(len(jsonSpecimen)), sha256Specimen)
+	signedTx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight)
 	if err != nil {
 		log.Error("error in calling deployed contract: %v", err)
 	}
+
+	fmt.Println(signedTx)
 
 	// signedTx, err := types.SignTx(tx, types.NewEIP155Signer(nil), secret)
 	// if err != nil {
 	// 	log.Error("error in signing tx: %v", err)
 	// }
 
-	receipt, err := bind.WaitMined(ctx, ethclient, signedTx)
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		panic("Call failed")
-		//log.Error("Specimen proof tx call: %v , to contract failed: %v", signedTx.Hash(), err)
-		//return signedTx.Hash().String(), false, err
-	}
+	// receipt, err := bind.WaitMined(ctx, ethclient, signedTx)
+	// if receipt.Status != types.ReceiptStatusSuccessful {
+	// 	panic("Call failed")
+	// 	//log.Error("Specimen proof tx call: %v , to contract failed: %v", signedTx.Hash(), err)
+	// 	//return signedTx.Hash().String(), false, err
+	// }
 	log.Info("Proof of specimen signed by : %v has been sent to mempool at nonce: %v", opts.Signer, opts.Nonce)
 
-	return signedTx.Hash().String(), true, err
+	//return signedTx.Hash().String(), true, err
 }
 
-func SubmitResultProofTx(config *config.Config, chainHeight uint64, chainLength uint64, blockResult event.ResultEvent) (string, bool, error) {
+func SubmitResultProofTx(config *config.Config, chainHeight uint64, blockResult event.ResultEvent) {
 
 	ctx := context.Background()
 	//var onlyOnce sync.Once
@@ -112,32 +111,34 @@ func SubmitResultProofTx(config *config.Config, chainHeight uint64, chainLength 
 
 	fmt.Println("result:", blockResult.ReplicationEvent.Hash, "sender:", sendAddr, "receiver:", common.HexToAddress(config.EthConfig.Contract), "chainid:", chainId)
 
-	jsonResult, err := json.Marshal(blockResult)
-	if err != nil {
-		log.Error(err.Error())
-	}
-	sha256Result := sha256.Sum256(jsonResult)
+	// jsonResult, err := json.Marshal(blockResult)
+	// if err != nil {
+	// 	log.Error(err.Error())
+	// }
+	// sha256Result := sha256.Sum256(jsonResult)
 
-	signedTx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLength, uint64(len(jsonResult)), sha256Result)
+	signedTx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight)
 	if err != nil {
 		log.Error("error in calling deployed contract: %v", err)
 	}
+
+	fmt.Println(signedTx)
 
 	// signedTx, err := types.SignTx(tx, types.NewEIP155Signer(nil), secret)
 	// if err != nil {
 	// 	log.Error("error in signing tx: %v", err)
 	// }
 
-	receipt, err := bind.WaitMined(ctx, ethclient, signedTx)
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		panic("Call failed")
-		//log.Error("Result proof tx call: %v , to contract failed: %v", signedTx.Hash(), err)
-		//return signedTx.Hash().String(), false, err
-	}
+	// receipt, err := bind.WaitMined(ctx, ethclient, signedTx)
+	// if receipt.Status != types.ReceiptStatusSuccessful {
+	// 	panic("Call failed")
+	// 	//log.Error("Result proof tx call: %v , to contract failed: %v", signedTx.Hash(), err)
+	// 	//return signedTx.Hash().String(), false, err
+	// }
 
 	log.Info("Proof of result tx signed by : %v has been sent to mempool at nonce: %v", opts.Signer, opts.Nonce)
 
-	return signedTx.Hash().String(), true, err
+	//return signedTx.Hash().String(), true, err
 }
 
 func GetEthClient(address string) (*ethclient.Client, error) {
