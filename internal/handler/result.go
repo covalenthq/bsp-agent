@@ -53,15 +53,20 @@ func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string
 	}
 	log.Printf("Uploaded block-result event: %v \nhash: %v\n", Event.ID, Event.Hash)
 
-	ethClient := proof.GetEthClient(config)
+	ethClient, err := proof.GetEthClient(config.EthConfig.SourceClient)
+	if err != nil {
+		log.Error("error in getting source eth client: ", err.Error())
+	}
 	blockHash := common.HexToHash(result.ReplicationEvent.Hash)
 
-	block, err := ethClient.BlockByHash(ctx, blockHash)
+	block, err := ethClient.HeaderByHash(ctx, blockHash)
 	if err != nil {
-		log.Fatal(err)
+		log.Error("error in getting block: ", err.Error())
 	}
 
-	txHash, mined, err := proof.SubmitResultProofTx(config, ethClient, block.NumberU64(), 1, *result)
+	fmt.Println("submitting result proof for block number: ", block.Number)
+
+	txHash, mined, err := proof.SubmitResultProofTx(config, block.Number.Uint64(), 1, *result)
 	if err != nil {
 		log.Fatal(err)
 	}

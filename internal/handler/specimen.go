@@ -54,15 +54,20 @@ func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash stri
 
 	log.Printf("Uploaded block-specimen event: %v \nhash: %v\n", Event.ID, Event.Hash)
 
-	ethClient := proof.GetEthClient(config)
+	ethClient, err := proof.GetEthClient(config.EthConfig.SourceClient)
+	if err != nil {
+		log.Error("error in getting source eth client: ", err.Error())
+	}
 	blockHash := common.HexToHash(specimen.ReplicationEvent.Hash)
 
-	block, err := ethClient.BlockByHash(ctx, blockHash)
+	block, err := ethClient.HeaderByHash(ctx, blockHash)
 	if err != nil {
-		log.Fatal(err)
+		log.Error("error in getting block: ", err.Error())
 	}
 
-	txHash, mined, err := proof.SubmitSpecimenProofTx(config, ethClient, block.NumberU64(), 1, *specimen)
+	fmt.Println("submitting specimen proof for block number: ", block.Number.Uint64())
+
+	txHash, mined, err := proof.SubmitSpecimenProofTx(config, block.Number.Uint64(), 1, *specimen)
 	if err != nil {
 		log.Fatal(err)
 	}
