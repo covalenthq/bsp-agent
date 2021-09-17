@@ -47,12 +47,6 @@ func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string
 		result.Data = &decodedResult
 	}
 
-	err = storage.HandleObjectUploadToBucket(config, string(Event.Type), Event.Hash, *result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Uploaded block-result event: %v \nhash: %v\n", Event.ID, Event.Hash)
-
 	ethClient, err := proof.GetEthClient(config.EthConfig.SourceClient)
 	if err != nil {
 		log.Error("error in getting source eth client: ", err.Error())
@@ -64,14 +58,26 @@ func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string
 		log.Error("error in getting block: ", err.Error())
 	}
 
-	fmt.Println("submitting result proof for block number: ", block.Number.Uint64())
+	log.Info("Submitting block-result proof for: ", block.Number.Uint64())
 
-	proof.SubmitResultProofTx(config, block.Number.Uint64(), *result)
-	if err != nil {
-		log.Fatal(err)
+	proofTxHash := make(chan string, 1)
+
+	go proof.SubmitResultProofTx(config, block.Number.Uint64(), *result, proofTxHash)
+
+	pTxHash := <-proofTxHash
+
+	if pTxHash != "" {
+
+		err = storage.HandleObjectUploadToBucket(config, string(Event.Type), Event.Hash, *result)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Info("Uploaded block-result event: ", Event.Hash, " with proof tx hash: ", pTxHash)
+
+	} else {
+		log.Errorf("Failed to prove & upload block-result event")
 	}
-
-	//log.Printf("Block-result proof hash: %v \nsubmitted: %v\n", txHash, mined)
 
 	return nil
 }

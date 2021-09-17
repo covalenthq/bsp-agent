@@ -47,13 +47,6 @@ func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash stri
 		specimen.Data = &decodedSpecimen
 	}
 
-	err = storage.HandleObjectUploadToBucket(config, string(Event.Type), Event.Hash, *specimen)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("Uploaded block-specimen event: %v \nhash: %v\n", Event.ID, Event.Hash)
-
 	ethClient, err := proof.GetEthClient(config.EthConfig.SourceClient)
 	if err != nil {
 		log.Error("error in getting source eth client: ", err.Error())
@@ -65,14 +58,26 @@ func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash stri
 		log.Error("error in getting block: ", err.Error())
 	}
 
-	fmt.Println("submitting specimen proof for block number: ", block.Number.Uint64())
+	log.Info("Submitting block-specimen proof for: ", block.Number.Uint64())
 
-	proof.SubmitSpecimenProofTx(config, block.Number.Uint64(), *specimen)
-	if err != nil {
-		log.Fatal(err)
+	proofTxHash := make(chan string, 1)
+
+	go proof.SubmitSpecimenProofTx(config, block.Number.Uint64(), *specimen, proofTxHash)
+
+	pTxHash := <-proofTxHash
+
+	if pTxHash != "" {
+
+		err = storage.HandleObjectUploadToBucket(config, string(Event.Type), Event.Hash, *specimen)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Info("Uploaded block-specimen event: ", Event.Hash, " with proof tx hash: ", pTxHash)
+
+	} else {
+		log.Errorf("failed to prove & upload block-specimen event")
 	}
-
-	//log.Printf("Block-specimen proof hash: %v \nsubmitted: %v\n", txHash, mined)
 
 	return nil
 }
