@@ -1,6 +1,6 @@
 # mq-store-agent
 
-Reads block-result, block-specimen produced by geth block specimen/result producers streamed into a redis stream, decodes them from RLP encoding and persists them in object storage in gcp
+Reads block-result, block-specimen produced by geth block specimen/result producers streamed into a redis stream, decodes them from RLP encoding and persists them in object storage in gcp and creates a proof transaction on a virtual chain with a sha-256 checksum of the data in the object stored in the google bucket atomically.
 
 Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Network-Data-Objects-Spec-426cf047602f49a181444e5eeba5c9e4) for more details
 
