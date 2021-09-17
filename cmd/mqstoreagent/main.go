@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"cloud.google.com/go/storage"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
@@ -22,7 +24,6 @@ import (
 
 var (
 	waitGrp            sync.WaitGroup
-	client             *redis.Client
 	start              string = ">"
 	consumeIdleTime    int64  = 30
 	consumePendingTime int64  = 60
@@ -38,6 +39,7 @@ func init() {
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.InfoLevel)
 	log.WithFields(log.Fields{"file": "main.go"}).Info("Server is running...")
+
 }
 
 func main() {
@@ -46,7 +48,22 @@ func main() {
 		panic(err)
 	}
 
-	client, err = utils.NewRedisClient(config.RedisConfig.Address, config.RedisConfig.Password, config.RedisConfig.DB)
+	redisClient, err := utils.NewRedisClient(&config.RedisConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	storageClient, err := utils.NewStorageCliemt(&config.GcpConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	ethSourceClient, err := utils.NewEthClient(config.EthConfig.SourceClient)
+	if err != nil {
+		panic(err)
+	}
+
+	ethProofClient, err := utils.NewEthClient(config.EthConfig.ProofClient)
 	if err != nil {
 		panic(err)
 	}
@@ -55,9 +72,10 @@ func main() {
 
 	log.Printf("Initializing Consumer: %v\nConsumer Group: %v\nRedis Stream: %v\n", consumerName, config.RedisConfig.Group, config.RedisConfig.Key)
 
-	createConsumerGroup(config)
-	go consumeEvents(config, consumerName)
-	go consumePendingEvents(config, consumerName)
+	createConsumerGroup(&config.RedisConfig, redisClient)
+
+	go consumeEvents(config, redisClient, storageClient, ethSourceClient, ethProofClient, consumerName)
+	go consumePendingEvents(config, redisClient, storageClient, ethSourceClient, ethProofClient, consumerName)
 
 	//Gracefully disconnect
 	chanOS := make(chan os.Signal, 1)
@@ -65,22 +83,25 @@ func main() {
 	<-chanOS
 
 	waitGrp.Wait()
-	client.Close()
+	redisClient.Close()
+	storageClient.Close()
+	ethSourceClient.Close()
+	ethProofClient.Close()
 }
 
-func createConsumerGroup(config *config.Config) {
-	if _, err := client.XGroupCreateMkStream(config.RedisConfig.Key, config.RedisConfig.Group, "0").Result(); err != nil {
+func createConsumerGroup(config *config.RedisConfig, redisClient *redis.Client) {
+	if _, err := redisClient.XGroupCreateMkStream(config.Key, config.Group, "0").Result(); err != nil {
 		if !strings.Contains(fmt.Sprint(err), "BUSYGROUP") {
-			log.Printf("Error on create Consumer Group: %v ...\n", config.RedisConfig.Group)
+			log.Printf("Error on create Consumer Group: %v ...\n", config.Group)
 			panic(err)
 		}
 	}
 }
 
-func consumeEvents(config *config.Config, consumerName string) {
+func consumeEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, consumerName string) {
 	for {
 		log.Println("New round: ", time.Now().Format(time.RFC3339))
-		streams, err := client.XReadGroup(&redis.XReadGroupArgs{
+		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
 			Streams:  []string{config.RedisConfig.Key, start},
 			Group:    config.RedisConfig.Group,
 			Consumer: consumerName,
@@ -95,17 +116,17 @@ func consumeEvents(config *config.Config, consumerName string) {
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, stream, false, handler.HandlerFactory())
+			go processStream(config, redisClient, storage, ethSource, ethProof, stream, false, handler.HandlerFactory())
 		}
 		waitGrp.Wait()
 	}
 }
 
-func consumePendingEvents(config *config.Config, consumerName string) {
+func consumePendingEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, consumerName string) {
 	ticker := time.Tick(time.Second * time.Duration(consumePendingTime))
 	for range ticker {
 		var streamsRetry []string
-		pendingStreams, err := client.XPendingExt(&redis.XPendingExtArgs{
+		pendingStreams, err := redisClient.XPendingExt(&redis.XPendingExtArgs{
 			Stream: config.RedisConfig.Key,
 			Group:  config.RedisConfig.Group,
 			Start:  "0",
@@ -122,7 +143,7 @@ func consumePendingEvents(config *config.Config, consumerName string) {
 		}
 
 		if len(streamsRetry) > 0 {
-			streams, err := client.XClaim(&redis.XClaimArgs{
+			streams, err := redisClient.XClaim(&redis.XClaimArgs{
 				Stream:   config.RedisConfig.Key,
 				Group:    config.RedisConfig.Group,
 				Consumer: consumerName,
@@ -137,7 +158,7 @@ func consumePendingEvents(config *config.Config, consumerName string) {
 
 			for _, stream := range streams {
 				waitGrp.Add(1)
-				go processStream(config, stream, true, handler.HandlerFactory())
+				go processStream(config, redisClient, storage, ethSource, ethProof, stream, true, handler.HandlerFactory())
 			}
 			waitGrp.Wait()
 		}
@@ -145,7 +166,7 @@ func consumePendingEvents(config *config.Config, consumerName string) {
 	}
 }
 
-func processStream(config *config.Config, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
+func processStream(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
 	defer waitGrp.Done()
 
 	typeEvent := stream.Values["type"].(string)
@@ -162,13 +183,13 @@ func processStream(config *config.Config, stream redis.XMessage, retry bool, han
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(event.Type(typeEvent))
-	err = h.Handle(config, newEvent, hash, parseDate, []byte(stream.Values["data"].(string)), retry)
+	err = h.Handle(config, storage, ethSource, ethProof, newEvent, hash, parseDate, []byte(stream.Values["data"].(string)), retry)
 	if err != nil {
 		fmt.Printf("error on process event:%v\n", newEvent)
 		fmt.Println(err)
 		return
 	}
 
-	client.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+	redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
 	time.Sleep(time.Duration(consumeSleepTime) * time.Second) //to provide an interval for breaking (if necessary) between consumer threads
 }

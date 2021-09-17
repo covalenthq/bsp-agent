@@ -23,7 +23,7 @@ var (
 	chainLen       uint64 = 1
 )
 
-func SubmitSpecimenProofTx(ctx context.Context, config *config.Config, chainHeight uint64, blockSpecimen event.SpecimenEvent, txHash chan string) {
+func SendBlockSpecimenProofTx(ctx context.Context, config *config.Config, ethProof *ethclient.Client, chainHeight uint64, blockSpecimen event.SpecimenEvent, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -34,13 +34,8 @@ func SubmitSpecimenProofTx(ctx context.Context, config *config.Config, chainHeig
 		log.Error("error in getting transaction ops: %v", err.Error())
 	}
 
-	ethclient, err := GetEthClient(config.EthConfig.ProverClient)
-	if err != nil {
-		log.Error("error in getting prover eth client: ", err.Error())
-	}
-
 	contractAddress := common.HexToAddress(config.EthConfig.Contract)
-	contract, err := NewProofChain(contractAddress, ethclient)
+	contract, err := NewProofChain(contractAddress, ethProof)
 
 	if err != nil {
 		log.Error("error in binding to deployed contract: %v", err.Error())
@@ -61,7 +56,7 @@ func SubmitSpecimenProofTx(ctx context.Context, config *config.Config, chainHeig
 		log.Error("error in calling deployed contract: %v", err.Error())
 	}
 
-	receipt, err := bind.WaitMined(ctx, ethclient, tx)
+	receipt, err := bind.WaitMined(ctx, ethProof, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		log.Error("Block-specimen proof tx call: ", tx.Hash(), " to proof contract failed: ", err)
 	}
@@ -73,7 +68,7 @@ func SubmitSpecimenProofTx(ctx context.Context, config *config.Config, chainHeig
 
 }
 
-func SubmitResultProofTx(ctx context.Context, config *config.Config, chainHeight uint64, blockResult event.ResultEvent, txHash chan string) {
+func SendBlockResultProofTx(ctx context.Context, config *config.Config, ethProof *ethclient.Client, chainHeight uint64, blockResult event.ResultEvent, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -84,13 +79,8 @@ func SubmitResultProofTx(ctx context.Context, config *config.Config, chainHeight
 		log.Error("error in getting transaction ops: %v", err.Error())
 	}
 
-	ethclient, err := GetEthClient(config.EthConfig.ProverClient)
-	if err != nil {
-		log.Error("error in getting prover eth client: ", err.Error())
-	}
-
 	contractAddress := common.HexToAddress(config.EthConfig.Contract)
-	contract, err := NewProofChain(contractAddress, ethclient)
+	contract, err := NewProofChain(contractAddress, ethProof)
 	if err != nil {
 		log.Error("error in binding to deployed contract: %v", err.Error())
 	}
@@ -110,7 +100,7 @@ func SubmitResultProofTx(ctx context.Context, config *config.Config, chainHeight
 		log.Error("error in calling deployed contract: %v", err)
 	}
 
-	receipt, err := bind.WaitMined(ctx, ethclient, tx)
+	receipt, err := bind.WaitMined(ctx, ethProof, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		log.Error("Block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err.Error())
 	}
@@ -119,15 +109,6 @@ func SubmitResultProofTx(ctx context.Context, config *config.Config, chainHeight
 	}
 
 	txHash <- receipt.TxHash.String()
-}
-
-func GetEthClient(address string) (*ethclient.Client, error) {
-
-	cl, err := ethclient.Dial(address)
-	if err != nil {
-		log.Error("error in signing tx: %v", err)
-	}
-	return cl, nil
 }
 
 func GetTransactionOpts(config *config.Config) (common.Address, *bind.TransactOpts, uint64, error) {

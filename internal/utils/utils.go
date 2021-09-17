@@ -1,17 +1,45 @@
 package utils
 
 import (
+	"context"
+
+	"cloud.google.com/go/storage"
+	"github.com/covalenthq/mq-store-agent/internal/config"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
+	"github.com/ubiq/go-ubiq/log"
+	"google.golang.org/api/option"
 )
 
-func NewRedisClient(Address, Password string, DB int) (*redis.Client, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr:     Address,
-		Password: Password,
-		DB:       DB, // use default DB
+func NewRedisClient(config *config.RedisConfig) (*redis.Client, error) {
+
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     config.Address,
+		Password: config.Password,
+		DB:       config.DB, // use default DB
 	})
 
-	_, err := client.Ping().Result()
-	return client, err
+	_, err := redisClient.Ping().Result()
+	return redisClient, err
+}
 
+func NewEthClient(address string) (*ethclient.Client, error) {
+
+	ethClient, err := ethclient.Dial(address)
+	if err != nil {
+		log.Error("error in getting eth client: ", err.Error())
+	}
+
+	return ethClient, nil
+}
+
+func NewStorageCliemt(config *config.GcpConfig) (*storage.Client, error) {
+
+	ctx := context.Background()
+	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(config.ServiceAccount))
+	if err != nil {
+		return nil, err
+	}
+
+	return storageClient, nil
 }

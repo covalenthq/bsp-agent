@@ -6,14 +6,16 @@ import (
 	"fmt"
 	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/proof"
-	"github.com/covalenthq/mq-store-agent/internal/storage"
+	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 )
 
@@ -24,7 +26,7 @@ func NewResultHandler() Handler {
 	return &resultHandler{}
 }
 
-func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
+func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
 
 	ctx := context.Background()
 	Event, ok := e.(*event.ReplicationEvent)
@@ -47,13 +49,9 @@ func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string
 		result.Data = &decodedResult
 	}
 
-	ethClient, err := proof.GetEthClient(config.EthConfig.SourceClient)
-	if err != nil {
-		log.Error("error in getting source eth client: ", err.Error())
-	}
 	blockHash := common.HexToHash(result.ReplicationEvent.Hash)
+	block, err := ethSource.HeaderByHash(ctx, blockHash)
 
-	block, err := ethClient.HeaderByHash(ctx, blockHash)
 	if err != nil {
 		log.Error("error in getting block: ", err.Error())
 	}
@@ -62,13 +60,13 @@ func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SubmitResultProofTx(ctx, config, block.Number.Uint64(), *result, proofTxHash)
+	go proof.SendBlockResultProofTx(ctx, config, ethProof, block.Number.Uint64(), *result, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
 
-		err = storage.HandleObjectUploadToBucket(ctx, config, string(Event.Type), Event.Hash, *result)
+		err = st.HandleObjectUploadToBucket(ctx, config, storage, string(Event.Type), Event.Hash, *result)
 		if err != nil {
 			log.Fatal(err)
 		}

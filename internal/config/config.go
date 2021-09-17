@@ -22,7 +22,7 @@ type RedisConfig struct {
 }
 
 type EthConfig struct {
-	ProverClient string `envconfig:"ETH_PROOF_CLIENT"`
+	ProofClient  string `envconfig:"ETH_PROOF_CLIENT"`
 	SourceClient string `envconfig:"ETH_SOURCE_CLIENT"`
 	Key          string `envconfig:"ETH_PRIVATE_KEY"`
 	Contract     string `envconfig:"ETH_PROOF_CONTRACT"`
