@@ -23,16 +23,15 @@ var (
 	chainLen       uint64 = 1
 )
 
-func SubmitSpecimenProofTx(config *config.Config, chainHeight uint64, blockSpecimen event.SpecimenEvent, txHash chan string) {
+func SubmitSpecimenProofTx(ctx context.Context, config *config.Config, chainHeight uint64, blockSpecimen event.SpecimenEvent, txHash chan string) {
 
-	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 	//var onlyOnce sync.Once
 
 	_, opts, chainId, err := GetTransactionOpts(config)
 	if err != nil {
-		log.Error("error in getting transaction ops: %v", err)
+		log.Error("error in getting transaction ops: %v", err.Error())
 	}
 
 	ethclient, err := GetEthClient(config.EthConfig.ProverClient)
@@ -44,11 +43,11 @@ func SubmitSpecimenProofTx(config *config.Config, chainHeight uint64, blockSpeci
 	contract, err := NewProofChain(contractAddress, ethclient)
 
 	if err != nil {
-		log.Error("error in binding to deployed contract: %v", err)
+		log.Error("error in binding to deployed contract: %v", err.Error())
 	}
 
 	// onlyOnce.Do(func() {
-	// 	WatchContractResultPublicationProof(contract)
+	// 	WatchContractResultPublicationProof(ctx, contract)
 	// })
 
 	jsonSpecimen, err := json.Marshal(blockSpecimen)
@@ -59,7 +58,7 @@ func SubmitSpecimenProofTx(config *config.Config, chainHeight uint64, blockSpeci
 
 	tx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLen, uint64(len(jsonSpecimen)), sha256Specimen)
 	if err != nil {
-		log.Error("error in calling deployed contract: %v", err)
+		log.Error("error in calling deployed contract: %v", err.Error())
 	}
 
 	receipt, err := bind.WaitMined(ctx, ethclient, tx)
@@ -74,9 +73,7 @@ func SubmitSpecimenProofTx(config *config.Config, chainHeight uint64, blockSpeci
 
 }
 
-func SubmitResultProofTx(config *config.Config, chainHeight uint64, blockResult event.ResultEvent, txHash chan string) {
-
-	ctx := context.Background()
+func SubmitResultProofTx(ctx context.Context, config *config.Config, chainHeight uint64, blockResult event.ResultEvent, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -84,7 +81,7 @@ func SubmitResultProofTx(config *config.Config, chainHeight uint64, blockResult 
 
 	_, opts, chainId, err := GetTransactionOpts(config)
 	if err != nil {
-		log.Error("error in getting transaction ops: %v", err)
+		log.Error("error in getting transaction ops: %v", err.Error())
 	}
 
 	ethclient, err := GetEthClient(config.EthConfig.ProverClient)
@@ -95,11 +92,11 @@ func SubmitResultProofTx(config *config.Config, chainHeight uint64, blockResult 
 	contractAddress := common.HexToAddress(config.EthConfig.Contract)
 	contract, err := NewProofChain(contractAddress, ethclient)
 	if err != nil {
-		log.Error("error in binding to deployed contract: %v", err)
+		log.Error("error in binding to deployed contract: %v", err.Error())
 	}
 
 	// onlyOnce.Do(func() {
-	// 	WatchContractSpecimenPublicationProof(contract)
+	// 	WatchContractSpecimenPublicationProof(ctx, contract)
 	// })
 
 	jsonResult, err := json.Marshal(blockResult)
@@ -115,7 +112,7 @@ func SubmitResultProofTx(config *config.Config, chainHeight uint64, blockResult 
 
 	receipt, err := bind.WaitMined(ctx, ethclient, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("Block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err)
+		log.Error("Block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err.Error())
 	}
 	if err != nil {
 		log.Error(err.Error())
@@ -151,8 +148,8 @@ func GetTransactionOpts(config *config.Config) (common.Address, *bind.TransactOp
 func GetKeyStore(config *config.Config) (*bind.TransactOpts, error) {
 
 	chainId := config.EthConfig.ChainId
-
 	ks := keystore.NewKeyStore(config.EthConfig.Keystore, keystore.StandardScryptN, keystore.StandardScryptP)
+
 	accs := ks.Accounts()
 	ks.Unlock(accs[0], config.EthConfig.Password)
 
@@ -164,10 +161,7 @@ func GetKeyStore(config *config.Config) (*bind.TransactOpts, error) {
 	return ksOpts, err
 }
 
-func WatchContractResultPublicationProof(contract *ProofChain) {
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
-	defer cancel()
+func WatchContractResultPublicationProof(ctx context.Context, contract *ProofChain) {
 
 	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
 	channel := make(chan *ProofChainBlockResultPublicationProofAppended)
@@ -185,10 +179,7 @@ func WatchContractResultPublicationProof(contract *ProofChain) {
 
 }
 
-func WatchContractSpecimenPublicationProof(contract *ProofChain) {
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
-	defer cancel()
+func WatchContractSpecimenPublicationProof(ctx context.Context, contract *ProofChain) {
 
 	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
 	channel := make(chan *ProofChainBlockSpecimenPublicationProofAppended)

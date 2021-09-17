@@ -62,13 +62,13 @@ func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash stri
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SubmitSpecimenProofTx(config, block.Number.Uint64(), *specimen, proofTxHash)
+	go proof.SubmitSpecimenProofTx(ctx, config, block.Number.Uint64(), *specimen, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
 
-		err = storage.HandleObjectUploadToBucket(config, string(Event.Type), Event.Hash, *specimen)
+		err = storage.HandleObjectUploadToBucket(ctx, config, string(Event.Type), Event.Hash, *specimen)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -76,7 +76,7 @@ func (h *specimenHandler) Handle(config *config.Config, e event.Event, hash stri
 		log.Info("Uploaded block-specimen event: ", Event.Hash, " with proof tx hash: ", pTxHash)
 
 	} else {
-		log.Errorf("failed to prove & upload block-specimen event")
+		log.Fatal(err)
 	}
 
 	return nil

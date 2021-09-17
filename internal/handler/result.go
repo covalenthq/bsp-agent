@@ -62,13 +62,13 @@ func (h *resultHandler) Handle(config *config.Config, e event.Event, hash string
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SubmitResultProofTx(config, block.Number.Uint64(), *result, proofTxHash)
+	go proof.SubmitResultProofTx(ctx, config, block.Number.Uint64(), *result, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
 
-		err = storage.HandleObjectUploadToBucket(config, string(Event.Type), Event.Hash, *result)
+		err = storage.HandleObjectUploadToBucket(ctx, config, string(Event.Type), Event.Hash, *result)
 		if err != nil {
 			log.Fatal(err)
 		}
