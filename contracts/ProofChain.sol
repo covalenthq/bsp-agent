@@ -40,19 +40,35 @@ contract ProofChain is Initializable {
         address indexed sender
     );
 
-    event BlockSpecimenPublicationProofAppended(
-        uint64 seq,
-        address extractWorker, // submitter of the proof
-        uint64 chainID, // chainID the specimen pertains to
-        uint64 chainHeightPos 
-    );
+	event BlockSpecimenPublicationProofAppended(
+		uint64 seq,           	// sequential ID of this *Appended log-event,
+														// among all *Appended events emitted by this contract
+														// -- equivalent to a block height
+
+		address extractWorker,	// submitter of the proof
+		uint64 chainID,       	// chainID the specimen pertains to
+		uint64 chainHeightPos,	// height of first block contained in specimen
+		uint64 chainHeightLen,	// number of contiguous blocks contained in specimen
+														// (block specimen may only contain contiguous blocks)
+		uint64 specimenSize,  	// specimen object file size, measured in bytes
+		bytes32 specimenHash		// SHA-256 content-hash of specimen object file;
+														// used to retrieve specimen from IPFS
+	);
 
     event BlockResultPublicationProofAppended(
-        uint64 seq, // sequential ID of this *Appended log-event,
-        address extractWorker, // submitter of the proof
-        uint64 chainID, // chainID the specimen pertains to
-        uint64 chainHeightPos // height of first block contained in specimen
-    );
+		uint64 seq,           	// sequential ID of this *Appended log-event,
+														// among all *Appended events emitted by this contract
+														// -- equivalent to a block height
+
+		address extractWorker,	// submitter of the proof
+		uint64 chainID,       	// chainID the specimen pertains to
+		uint64 chainHeightPos,	// height of first block contained in specimen
+		uint64 chainHeightLen,	// number of contiguous blocks contained in specimen
+														// (block specimen may only contain contiguous blocks)
+		uint64 resultSize,  	// specimen object file size, measured in bytes
+		bytes32 resultHash		// SHA-256 content-hash of specimen object file;
+														// used to retrieve specimen from IPFS
+	);
 
     mapping(bytes32 => RoleData) private roles;
     EnumerableSetUpgradeable.Bytes32Set private rolesWithRequiredStake;
@@ -249,10 +265,10 @@ contract ProofChain is Initializable {
 
     function ProveBlockSpecimenProduced(
         uint64 chainID,
-        uint64 chainHeightPos
-        // uint64 chainHeightLen,
-        // uint64 specimenSize,
-        // bytes32 specimenHash
+        uint64 chainHeightPos,
+        uint64 chainHeightLen,
+        uint64 specimenSize,
+        bytes32 specimenHash
     ) public payable {
         // require(
         //     hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender),
@@ -263,19 +279,19 @@ contract ProofChain is Initializable {
             uint64(nextSeq()),
             msg.sender,
             chainID,
-            chainHeightPos
-            // chainHeightLen,
-            // specimenSize,
-            // specimenHash
+            chainHeightPos,
+            chainHeightLen,
+            specimenSize,
+            specimenHash
         );
     }
 
     function ProveBlockResultProduced(
         uint64 chainID,
-        uint64 chainHeightPos
-        // uint64 chainHeightLen,
-        // uint64 resultSize,
-        // bytes32 resultHash
+        uint64 chainHeightPos,
+        uint64 chainHeightLen,
+        uint64 resultSize,
+        bytes32 resultHash
     ) public payable {
         // require(
         //     hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender),
@@ -286,10 +302,10 @@ contract ProofChain is Initializable {
             uint64(nextSeq()),
             msg.sender,
             chainID,
-            chainHeightPos
-            // chainHeightLen,
-            // resultSize,
-            // resultHash
+            chainHeightPos,
+            chainHeightLen,
+            resultSize,
+            resultHash
         );
     }
 }
