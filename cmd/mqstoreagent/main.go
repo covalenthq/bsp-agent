@@ -100,7 +100,7 @@ func createConsumerGroup(config *config.RedisConfig, redisClient *redis.Client) 
 
 func consumeEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, consumerName string) {
 	for {
-		log.Println("New round: ", time.Now().Format(time.RFC3339))
+		log.Info("New round: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
 			Streams:  []string{config.RedisConfig.Key, start},
 			Group:    config.RedisConfig.Group,
@@ -110,7 +110,7 @@ func consumeEvents(config *config.Config, redisClient *redis.Client, storage *st
 		}).Result()
 
 		if err != nil {
-			log.Printf("err on consume events: %+v\n", err)
+			log.Error("err on consume events: ", err.Error())
 			return
 		}
 
@@ -152,7 +152,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 			}).Result()
 
 			if err != nil {
-				log.Printf("error on process pending: %+v\n", err)
+				log.Error("error on process pending: ", err.Error())
 				return
 			}
 
@@ -162,7 +162,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 			}
 			waitGrp.Wait()
 		}
-		log.Println("process pending streams at: ", time.Now().Format(time.RFC3339))
+		log.Info("process pending streams at: ", time.Now().Format(time.RFC3339))
 	}
 }
 
@@ -176,7 +176,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	timeLayout := time.RFC3339
 	parseDate, err := time.Parse(timeLayout, datetime)
 	if err != nil {
-		log.Printf("RFC format doesn't work: %+v\n", err)
+		log.Info("RFC format doesn't work: ", err.Error())
 	}
 
 	newEvent, _ := event.New(event.Type(typeEvent))
@@ -185,8 +185,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	h := handlerFactory(event.Type(typeEvent))
 	err = h.Handle(config, storage, ethSource, ethProof, newEvent, hash, parseDate, []byte(stream.Values["data"].(string)), retry)
 	if err != nil {
-		fmt.Printf("error on process event:%v\n", newEvent)
-		fmt.Println(err)
+		log.Error("error: ", err.Error(), "on process event: ", newEvent)
 		return
 	}
 

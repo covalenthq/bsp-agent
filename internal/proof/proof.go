@@ -29,16 +29,16 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.Config, ethPro
 	defer cancel()
 	//var onlyOnce sync.Once
 
-	_, opts, chainId, err := GetTransactionOpts(config)
+	_, opts, chainId, err := getTransactionOpts(config)
 	if err != nil {
-		log.Error("error in getting transaction ops: %v", err.Error())
+		log.Error("error getting transaction ops: ", err.Error())
 	}
 
 	contractAddress := common.HexToAddress(config.EthConfig.Contract)
 	contract, err := NewProofChain(contractAddress, ethProof)
 
 	if err != nil {
-		log.Error("error in binding to deployed contract: %v", err.Error())
+		log.Error("error binding to deployed contract: ", err.Error())
 	}
 
 	// onlyOnce.Do(func() {
@@ -53,12 +53,12 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.Config, ethPro
 
 	tx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLen, uint64(len(jsonSpecimen)), sha256Specimen)
 	if err != nil {
-		log.Error("error in calling deployed contract: %v", err.Error())
+		log.Error("error calling contract function: ", err.Error())
 	}
 
 	receipt, err := bind.WaitMined(ctx, ethProof, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("Block-specimen proof tx call: ", tx.Hash(), " to proof contract failed: ", err)
+		log.Error("block-specimen proof tx call: ", tx.Hash(), " to proof contract failed: ", err)
 	}
 	if err != nil {
 		log.Error(err.Error())
@@ -74,15 +74,15 @@ func SendBlockResultProofTx(ctx context.Context, config *config.Config, ethProof
 	defer cancel()
 	//var onlyOnce sync.Once
 
-	_, opts, chainId, err := GetTransactionOpts(config)
+	_, opts, chainId, err := getTransactionOpts(config)
 	if err != nil {
-		log.Error("error in getting transaction ops: %v", err.Error())
+		log.Error("error getting transaction ops: ", err.Error())
 	}
 
 	contractAddress := common.HexToAddress(config.EthConfig.Contract)
 	contract, err := NewProofChain(contractAddress, ethProof)
 	if err != nil {
-		log.Error("error in binding to deployed contract: %v", err.Error())
+		log.Error("error binding to deployed contract: ", err.Error())
 	}
 
 	// onlyOnce.Do(func() {
@@ -97,12 +97,12 @@ func SendBlockResultProofTx(ctx context.Context, config *config.Config, ethProof
 
 	tx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
 	if err != nil {
-		log.Error("error in calling deployed contract: %v", err)
+		log.Error("error calling deployed contract: ", err)
 	}
 
 	receipt, err := bind.WaitMined(ctx, ethProof, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("Block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err.Error())
+		log.Error("block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err.Error())
 	}
 	if err != nil {
 		log.Error(err.Error())
@@ -111,7 +111,7 @@ func SendBlockResultProofTx(ctx context.Context, config *config.Config, ethProof
 	txHash <- receipt.TxHash.String()
 }
 
-func GetTransactionOpts(config *config.Config) (common.Address, *bind.TransactOpts, uint64, error) {
+func getTransactionOpts(config *config.Config) (common.Address, *bind.TransactOpts, uint64, error) {
 
 	sKey := config.EthConfig.Key
 	chainId := config.EthConfig.ChainId
@@ -120,13 +120,13 @@ func GetTransactionOpts(config *config.Config) (common.Address, *bind.TransactOp
 	addr := crypto.PubkeyToAddress(secretKey.PublicKey)
 	opts, err := bind.NewKeyedTransactorWithChainID(secretKey, new(big.Int).SetUint64(chainId))
 	if err != nil {
-		log.Error("error in getting new keyed transactor with chain id: ", err.Error())
+		log.Error("error getting new keyed transactor with chain id: ", err.Error())
 	}
 
 	return addr, opts, chainId, err
 }
 
-func GetKeyStore(config *config.Config) (*bind.TransactOpts, error) {
+func getKeyStore(config *config.Config) (*bind.TransactOpts, error) {
 
 	chainId := config.EthConfig.ChainId
 	ks := keystore.NewKeyStore(config.EthConfig.Keystore, keystore.StandardScryptN, keystore.StandardScryptP)
@@ -136,13 +136,13 @@ func GetKeyStore(config *config.Config) (*bind.TransactOpts, error) {
 
 	ksOpts, err := bind.NewKeyStoreTransactorWithChainID(ks, accs[0], new(big.Int).SetUint64(chainId))
 	if err != nil {
-		log.Error("error in getting transaction with chain id: ", err.Error())
+		log.Error("error getting new key store transactor with chain id: ", err.Error())
 	}
 
 	return ksOpts, err
 }
 
-func WatchContractResultPublicationProof(ctx context.Context, contract *ProofChain) {
+func watchContractResultPublicationProof(ctx context.Context, contract *ProofChain) {
 
 	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
 	channel := make(chan *ProofChainBlockResultPublicationProofAppended)
@@ -150,17 +150,17 @@ func WatchContractResultPublicationProof(ctx context.Context, contract *ProofCha
 	go func() {
 		sub, err := contract.WatchBlockResultPublicationProofAppended(watchOpts, channel)
 		if err != nil {
-			log.Error("error in watching contract for result proof event: ", err.Error())
+			log.Error("error watching contract for result proof event: ", err.Error())
 		}
 		defer sub.Unsubscribe()
 	}()
 
 	event := <-channel
-	log.Info("new result event emitted from prover contract: %v", event)
+	log.Info("new result event emitted from prover contract: ", event)
 
 }
 
-func WatchContractSpecimenPublicationProof(ctx context.Context, contract *ProofChain) {
+func watchContractSpecimenPublicationProof(ctx context.Context, contract *ProofChain) {
 
 	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
 	channel := make(chan *ProofChainBlockSpecimenPublicationProofAppended)
@@ -168,11 +168,11 @@ func WatchContractSpecimenPublicationProof(ctx context.Context, contract *ProofC
 	go func() {
 		sub, err := contract.WatchBlockSpecimenPublicationProofAppended(watchOpts, channel)
 		if err != nil {
-			log.Error("error in watching contract for specimen proof event: ", err.Error())
+			log.Error("error watching contract for specimen proof event: ", err.Error())
 		}
 		defer sub.Unsubscribe()
 	}()
 
 	event := <-channel
-	log.Info("new specimen event emitted from prover contract: %v", event)
+	log.Info("new specimen event emitted from prover contract: ", event)
 }

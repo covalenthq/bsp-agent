@@ -29,16 +29,16 @@ func NewResultHandler() Handler {
 func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
 
 	ctx := context.Background()
-	Event, ok := e.(*event.ReplicationEvent)
+	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")
 	}
 
-	Event.Hash = hash
-	Event.DateTime = datetime
+	replEvent.Hash = hash
+	replEvent.DateTime = datetime
 
 	result := &event.ResultEvent{
-		ReplicationEvent: Event,
+		ReplicationEvent: replEvent,
 	}
 
 	var decodedResult types.BlockResult
@@ -66,15 +66,15 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 
 	if pTxHash != "" {
 
-		err = st.HandleObjectUploadToBucket(ctx, config, storage, string(Event.Type), Event.Hash, *result)
+		err = st.HandleObjectUploadToBucket(ctx, config, storage, string(replEvent.Type), replEvent.Hash, *result)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		log.Info("Uploaded block-result event: ", Event.Hash, " with proof tx hash: ", pTxHash)
+		log.Info("Uploaded block-result event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
 
 	} else {
-		log.Errorf("Failed to prove & upload block-result event")
+		log.Fatal(err)
 	}
 
 	return nil

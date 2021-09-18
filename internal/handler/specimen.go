@@ -29,16 +29,16 @@ func NewSpecimenHandler() Handler {
 func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
 
 	ctx := context.Background()
-	Event, ok := e.(*event.ReplicationEvent)
+	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return fmt.Errorf("incorrect event type")
 	}
 
-	Event.Hash = hash
-	Event.DateTime = datetime
+	replEvent.Hash = hash
+	replEvent.DateTime = datetime
 
 	specimen := &event.SpecimenEvent{
-		ReplicationEvent: Event,
+		ReplicationEvent: replEvent,
 	}
 
 	var decodedSpecimen types.BlockSpecimen
@@ -66,12 +66,12 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 
 	if pTxHash != "" {
 
-		err = st.HandleObjectUploadToBucket(ctx, config, storage, string(Event.Type), Event.Hash, *specimen)
+		err = st.HandleObjectUploadToBucket(ctx, config, storage, string(replEvent.Type), replEvent.Hash, *specimen)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		log.Info("Uploaded block-specimen event: ", Event.Hash, " with proof tx hash: ", pTxHash)
+		log.Info("Uploaded block-specimen event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
 
 	} else {
 		log.Fatal(err)
