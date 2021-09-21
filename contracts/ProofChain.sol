@@ -263,7 +263,7 @@ contract ProofChain is Initializable {
         return curProofSeq;
     }
 
-    function ProveBlockSpecimenProduced(
+    function proveBlockSpecimenProduced(
         uint64 chainID,
         uint64 chainHeightPos,
         uint64 chainHeightLen,
@@ -286,7 +286,7 @@ contract ProofChain is Initializable {
         );
     }
 
-    function ProveBlockResultProduced(
+    function proveBlockResultProduced(
         uint64 chainID,
         uint64 chainHeightPos,
         uint64 chainHeightLen,
