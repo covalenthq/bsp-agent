@@ -3,7 +3,6 @@ package handler
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -19,6 +18,7 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/proof"
 	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
+	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
 type specimenHandler struct {
@@ -87,8 +87,8 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 func EncodeSpecimenToAvro(blockSpecimen interface{}) {
 	codec, err := goavro.NewCodec(`
 	{
-		"name": "BlockSpecimen",
 		"type": "record",
+		"name": "BlockSpecimen",
 		"namespace": "com.covalenthq.blockspecimen.avro",
 		"fields": [
 		  {
@@ -111,8 +111,7 @@ func EncodeSpecimenToAvro(blockSpecimen interface{}) {
 				},
 				{
 				  "name": "datetime",
-				  "type": "int",
-				  "logicalType": "date"
+				  "type": "string"
 				}
 			  ]
 			}
@@ -141,7 +140,7 @@ func EncodeSpecimenToAvro(blockSpecimen interface{}) {
 						},
 						{
 						  "name": "Balance",
-						  "type": "long"
+						  "type": "double"
 						},
 						{
 						  "name": "CodeHash",
@@ -204,29 +203,29 @@ func EncodeSpecimenToAvro(blockSpecimen interface{}) {
 		fmt.Println(err)
 	}
 
-	content, err := json.Marshal(blockSpecimen)
+	specimenMap, err := utils.StructToMap(blockSpecimen)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	binary, err := codec.BinaryFromNative(nil, content)
+	// Convert native Go form to binary Avro data
+	binary, err := codec.BinaryFromNative(nil, specimenMap)
 	if err != nil {
 		log.Fatalf("Failed to convert Go map to Avro binary data: %v", err)
 	}
 	_ = binary
 
-	// Convert binary Avro data back to native Go form
+	//Convert binary Avro data back to native Go form
 	native, _, err := codec.NativeFromBinary(binary)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	// Convert native Go form to textual Avro data
+	//Convert native Go form to textual Avro data
 	textual, err := codec.TextualFromNative(nil, native)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println(string(textual))
-
 }
