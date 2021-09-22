@@ -60,13 +60,13 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SendBlockResultProofTx(ctx, config, ethProof, block.Number.Uint64(), *result, proofTxHash)
+	go proof.SendBlockResultProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *result, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
 
-		err = st.HandleObjectUploadToBucket(ctx, config, storage, string(replEvent.Type), replEvent.Hash, *result)
+		err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *result)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -74,7 +74,7 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 		log.Info("Uploaded block-result event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
 
 	} else {
-		log.Fatal(err)
+		log.Errorf("Failed to prove & upload block-result event")
 	}
 
 	return nil

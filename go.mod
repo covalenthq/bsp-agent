@@ -9,6 +9,7 @@ require (
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kr/text v0.2.0 // indirect
+	github.com/linkedin/goavro/v2 v2.10.0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1

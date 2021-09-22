@@ -23,7 +23,7 @@ var (
 	chainLen       uint64 = 1
 )
 
-func SendBlockSpecimenProofTx(ctx context.Context, config *config.Config, ethProof *ethclient.Client, chainHeight uint64, blockSpecimen event.SpecimenEvent, txHash chan string) {
+func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, blockSpecimen event.SpecimenEvent, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -34,7 +34,7 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.Config, ethPro
 		log.Error("error getting transaction ops: ", err.Error())
 	}
 
-	contractAddress := common.HexToAddress(config.EthConfig.Contract)
+	contractAddress := common.HexToAddress(config.Contract)
 	contract, err := NewProofChain(contractAddress, ethProof)
 
 	if err != nil {
@@ -68,7 +68,7 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.Config, ethPro
 
 }
 
-func SendBlockResultProofTx(ctx context.Context, config *config.Config, ethProof *ethclient.Client, chainHeight uint64, blockResult event.ResultEvent, txHash chan string) {
+func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, blockResult event.ResultEvent, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -79,7 +79,7 @@ func SendBlockResultProofTx(ctx context.Context, config *config.Config, ethProof
 		log.Error("error getting transaction ops: ", err.Error())
 	}
 
-	contractAddress := common.HexToAddress(config.EthConfig.Contract)
+	contractAddress := common.HexToAddress(config.Contract)
 	contract, err := NewProofChain(contractAddress, ethProof)
 	if err != nil {
 		log.Error("error binding to deployed contract: ", err.Error())
@@ -111,10 +111,10 @@ func SendBlockResultProofTx(ctx context.Context, config *config.Config, ethProof
 	txHash <- receipt.TxHash.String()
 }
 
-func getTransactionOpts(config *config.Config) (common.Address, *bind.TransactOpts, uint64, error) {
+func getTransactionOpts(config *config.EthConfig) (common.Address, *bind.TransactOpts, uint64, error) {
 
-	sKey := config.EthConfig.Key
-	chainId := config.EthConfig.ChainId
+	sKey := config.Key
+	chainId := config.ChainId
 
 	secretKey := crypto.ToECDSAUnsafe(common.FromHex(sKey))
 	addr := crypto.PubkeyToAddress(secretKey.PublicKey)

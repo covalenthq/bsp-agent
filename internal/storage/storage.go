@@ -17,17 +17,17 @@ var (
 	uploadTimeout int64 = 50
 )
 
-func HandleObjectUploadToBucket(ctx context.Context, config *config.Config, storageClient *storage.Client, objectType string, objectName string, object interface{}) error {
+func HandleObjectUploadToBucket(ctx context.Context, config *config.GcpConfig, storageClient *storage.Client, objectType string, objectName string, object interface{}) error {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
 	switch objectType {
 	case "block-specimen":
-		bucket := config.GcpConfig.SpecimenBucket
+		bucket := config.SpecimenBucket
 		return writeToStorage(ctx, storageClient, bucket, objectName, object)
 	case "block-result":
-		bucket := config.GcpConfig.ResultBucket
+		bucket := config.ResultBucket
 		return writeToStorage(ctx, storageClient, bucket, objectName, object)
 	}
 

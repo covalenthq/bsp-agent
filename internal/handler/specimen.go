@@ -3,12 +3,14 @@ package handler
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
 
@@ -56,17 +58,19 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 		log.Error("error in getting block: ", err.Error())
 	}
 
+	encodeSpecimenToAvro(specimen.Data)
+
 	log.Info("Submitting block-specimen proof for: ", block.Number.Uint64())
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SendBlockSpecimenProofTx(ctx, config, ethProof, block.Number.Uint64(), *specimen, proofTxHash)
+	go proof.SendBlockSpecimenProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *specimen, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
 
-		err = st.HandleObjectUploadToBucket(ctx, config, storage, string(replEvent.Type), replEvent.Hash, *specimen)
+		err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *specimen)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -78,4 +82,139 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	}
 
 	return nil
+}
+
+func encodeSpecimenToAvro(blockSpecimen *types.BlockSpecimen) {
+	codec, err := goavro.NewCodec(`
+	{
+		"name": "BlockSpecimen",
+		"type": "record",
+		"namespace": "com.covalenthq.blockspecimen.avro",
+		"fields": [
+		  {
+			"name": "ReplicationEvent",
+			"type": {
+			  "name": "ReplicationEvent",
+			  "type": "record",
+			  "fields": [
+				{
+				  "name": "ID",
+				  "type": "string"
+				},
+				{
+				  "name": "type",
+				  "type": "string"
+				},
+				{
+				  "name": "hash",
+				  "type": "string"
+				},
+				{
+				  "name": "datetime",
+				  "type": "int",
+				  "logicalType": "date"
+				}
+			  ]
+			}
+		  },
+		  {
+			"name": "specimen",
+			"type": {
+			  "name": "specimen",
+			  "type": "record",
+			  "fields": [
+				{
+				  "name": "AccountRead",
+				  "type": {
+					"type": "array",
+					"items": {
+					  "name": "AccountRead_record",
+					  "type": "record",
+					  "fields": [
+						{
+						  "name": "Address",
+						  "type": "string"
+						},
+						{
+						  "name": "Nonce",
+						  "type": "int"
+						},
+						{
+						  "name": "Balance",
+						  "type": "long"
+						},
+						{
+						  "name": "CodeHash",
+						  "type": "string"
+						}
+					  ]
+					}
+				  }
+				},
+				{
+				  "name": "StorageRead",
+				  "type": {
+					"type": "array",
+					"items": {
+					  "name": "StorageRead_record",
+					  "type": "record",
+					  "fields": [
+						{
+						  "name": "Account",
+						  "type": "string"
+						},
+						{
+						  "name": "SlotKey",
+						  "type": "string"
+						},
+						{
+						  "name": "Value",
+						  "type": "string"
+						}
+					  ]
+					}
+				  }
+				},
+				{
+				  "name": "CodeRead",
+				  "type": {
+					"type": "array",
+					"items": {
+					  "name": "CodeRead_record",
+					  "type": "record",
+					  "fields": [
+						{
+						  "name": "Hash",
+						  "type": "string"
+						},
+						{
+						  "name": "Code",
+						  "type": "string"
+						}
+					  ]
+					}
+				  }
+				}
+			  ]
+			}
+		  }
+		]
+	  }`)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	jsonSpecimen, err := json.Marshal(blockSpecimen)
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	//Convert native Go form to textual Avro data
+	textual, err := codec.TextualFromNative(nil, jsonSpecimen)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(textual))
+
 }

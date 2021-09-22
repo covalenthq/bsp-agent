@@ -194,6 +194,6 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 		return
 	}
 
-	redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+	//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
 	time.Sleep(time.Duration(consumeSleepTime) * time.Second) //to provide an interval for breaking (if necessary) between consumer threads
 }
