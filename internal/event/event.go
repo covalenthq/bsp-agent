@@ -15,12 +15,12 @@ const (
 )
 
 type ResultEvent struct {
-	ReplicationEvent *ReplicationEvent
+	ReplicationEvent *ReplicationEvent  `json:"ReplicationEvent"`
 	Data             *types.BlockResult `json:"result"`
 }
 
 type SpecimenEvent struct {
-	ReplicationEvent *ReplicationEvent
+	ReplicationEvent *ReplicationEvent    `json:"ReplicationEvent"`
 	Data             *types.BlockSpecimen `json:"specimen"`
 }
 
