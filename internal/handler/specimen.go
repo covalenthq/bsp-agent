@@ -58,7 +58,7 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 		log.Error("error in getting block: ", err.Error())
 	}
 
-	encodeSpecimenToAvro(specimen.Data)
+	EncodeSpecimenToAvro(specimen)
 
 	log.Info("Submitting block-specimen proof for: ", block.Number.Uint64())
 
@@ -84,7 +84,7 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	return nil
 }
 
-func encodeSpecimenToAvro(blockSpecimen *types.BlockSpecimen) {
+func EncodeSpecimenToAvro(blockSpecimen interface{}) {
 	codec, err := goavro.NewCodec(`
 	{
 		"name": "BlockSpecimen",
@@ -204,13 +204,25 @@ func encodeSpecimenToAvro(blockSpecimen *types.BlockSpecimen) {
 		fmt.Println(err)
 	}
 
-	jsonSpecimen, err := json.Marshal(blockSpecimen)
+	content, err := json.Marshal(blockSpecimen)
 	if err != nil {
-		log.Error(err.Error())
+		fmt.Println(err)
 	}
 
-	//Convert native Go form to textual Avro data
-	textual, err := codec.TextualFromNative(nil, jsonSpecimen)
+	binary, err := codec.BinaryFromNative(nil, content)
+	if err != nil {
+		log.Fatalf("Failed to convert Go map to Avro binary data: %v", err)
+	}
+	_ = binary
+
+	// Convert binary Avro data back to native Go form
+	native, _, err := codec.NativeFromBinary(binary)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Convert native Go form to textual Avro data
+	textual, err := codec.TextualFromNative(nil, native)
 	if err != nil {
 		fmt.Println(err)
 	}
