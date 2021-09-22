@@ -12,6 +12,7 @@ import (
 	"cloud.google.com/go/storage"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
+	"github.com/golang/snappy"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
@@ -172,6 +173,10 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	typeEvent := stream.Values["type"].(string)
 	hash := stream.Values["hash"].(string)
 	datetime := stream.Values["datetime"].(string)
+	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
+	if err != nil {
+		log.Info("Failed to snappy decode: ", err.Error())
+	}
 
 	timeLayout := time.RFC3339
 	parseDate, err := time.Parse(timeLayout, datetime)
@@ -183,7 +188,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(event.Type(typeEvent))
-	err = h.Handle(config, storage, ethSource, ethProof, newEvent, hash, parseDate, []byte(stream.Values["data"].(string)), retry)
+	err = h.Handle(config, storage, ethSource, ethProof, newEvent, hash, parseDate, decodedData, retry)
 	if err != nil {
 		log.Error("error: ", err.Error(), "on process event: ", newEvent)
 		return

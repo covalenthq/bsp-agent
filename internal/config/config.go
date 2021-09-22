@@ -32,7 +32,7 @@ type EthConfig struct {
 }
 
 type GeneralConfig struct {
-	ConsumeEvents int64 `envconfig:"CONSUME_EVENTS" default:"10"`
+	ConsumeEvents int64 `envconfig:"CONSUME_EVENTS" default:"1"`
 }
 
 type Config struct {
