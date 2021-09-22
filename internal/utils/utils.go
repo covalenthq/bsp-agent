@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/mq-store-agent/internal/config"
@@ -42,4 +43,17 @@ func NewStorageCliemt(config *config.GcpConfig) (*storage.Client, error) {
 	}
 
 	return storageClient, nil
+}
+
+func StructToMap(data interface{}) (map[string]interface{}, error) {
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	mapData := make(map[string]interface{})
+	err = json.Unmarshal(dataBytes, &mapData)
+	if err != nil {
+		return nil, err
+	}
+	return mapData, nil
 }
