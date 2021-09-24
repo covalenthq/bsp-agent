@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/covalenthq/mq-store-agent/internal/types"
+	ty "github.com/covalenthq/mq-store-agent/internal/types"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type Type string
@@ -29,14 +30,14 @@ type SpecimenSegment struct {
 }
 
 type ResultEvent struct {
-	ReplicationEvent *ReplicationEvent  `json:"ReplicationEvent"`
-	Data             *types.BlockResult `json:"result"`
+	ReplicationEvent *ReplicationEvent `json:"ReplicationEvent"`
+	Data             *ty.BlockResult   `json:"result"`
 }
 
 type SpecimenEvent struct {
-	ReplicationEvent *ReplicationEvent    `json:"ReplicationEvent"`
-	Data             *types.BlockSpecimen `json:"specimen"`
-	BlockNumber      uint64               `json:"number"`
+	ReplicationEvent *ReplicationEvent `json:"ReplicationEvent"`
+	Data             *ty.BlockSpecimen `json:"specimen"`
+	BlockHeader      *types.Header     `json:"header"`
 }
 
 type ReplicationEvent struct {

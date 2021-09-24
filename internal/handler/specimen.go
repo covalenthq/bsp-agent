@@ -56,7 +56,7 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 		log.Error("error in getting block: ", err.Error())
 	}
 
-	specimen.BlockNumber = blockHeader.Number.Uint64()
+	specimen.BlockHeader = blockHeader
 
 	// EncodeSpecimenToAvro(specimen)
 
