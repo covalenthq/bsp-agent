@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -20,15 +21,20 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/handler"
+	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
 var (
-	waitGrp            sync.WaitGroup
-	start              string = ">"
-	consumeIdleTime    int64  = 30
-	consumePendingTime int64  = 60
-	consumeSleepTime   int64  = 2
+	waitGrp             sync.WaitGroup
+	start               string = ">"
+	consumeIdleTime     int64  = 30
+	consumePendingTime  int64  = 60
+	consumeSleepTime    int64  = 2
+	resultSegment       event.ResultSegment
+	specimenSegment     event.SpecimenSegment
+	resultSegmentName   string
+	specimenSegmentName string
 )
 
 func init() {
@@ -170,6 +176,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 func processStream(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
 	defer waitGrp.Done()
 
+	ctx := context.Background()
 	typeEvent := stream.Values["type"].(string)
 	hash := stream.Values["hash"].(string)
 	datetime := stream.Values["datetime"].(string)
@@ -188,10 +195,48 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(event.Type(typeEvent))
-	err = h.Handle(config, storage, ethSource, ethProof, newEvent, hash, parseDate, decodedData, retry)
+	specimen, result, err := h.Handle(config, storage, ethSource, ethProof, newEvent, hash, parseDate, decodedData, retry)
 	if err != nil {
 		log.Error("error: ", err.Error(), "on process event: ", newEvent)
 		return
+	} else {
+		if specimen == nil {
+			//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+			resultSegment.BlockResult = append(resultSegment.BlockResult, result)
+			if len(resultSegment.BlockResult) == 1 {
+				resultSegment.StartBlock = result.Data.Header.Number.Uint64()
+			}
+			if len(resultSegment.BlockResult) == int(config.GeneralConfig.SegmentLength) {
+				resultSegment.EndBlock = result.Data.Header.Number.Uint64()
+				resultSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
+				resultSegmentName = fmt.Sprint(resultSegment.StartBlock) + "-" + fmt.Sprint(resultSegment.EndBlock)
+				err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(result.ReplicationEvent.Type), resultSegmentName, resultSegment)
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("Uploaded block-result segment: ", resultSegmentName, " with proof tx hash: ")
+				resultSegment = event.ResultSegment{}
+				resultSegmentName = ""
+			}
+		} else if result == nil {
+			//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
+			if len(specimenSegment.BlockSpecimen) == 1 {
+				specimenSegment.StartBlock = specimen.BlockNumber
+			}
+			if len(specimenSegment.BlockSpecimen) == int(config.GeneralConfig.SegmentLength) {
+				specimenSegment.EndBlock = specimen.BlockNumber
+				specimenSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
+				specimenSegmentName = fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
+				err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(specimen.ReplicationEvent.Type), specimenSegmentName, specimenSegment)
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("Uploaded block-specimen segment: ", specimenSegmentName, " with proof tx hash:")
+				specimenSegment = event.SpecimenSegment{}
+				specimenSegmentName = ""
+			}
+		}
 	}
 
 	//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
