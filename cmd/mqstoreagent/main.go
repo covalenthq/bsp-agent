@@ -21,7 +21,6 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/handler"
-	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
@@ -201,6 +200,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 		return
 	} else {
 		if specimen == nil {
+			//ack stream msg
 			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
 			resultSegment.BlockResult = append(resultSegment.BlockResult, result)
 			if len(resultSegment.BlockResult) == 1 {
@@ -210,17 +210,14 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				resultSegment.EndBlock = result.Data.Header.Number.Uint64()
 				resultSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
 				resultSegmentName = fmt.Sprint(resultSegment.StartBlock) + "-" + fmt.Sprint(resultSegment.EndBlock)
-				err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(result.ReplicationEvent.Type), resultSegmentName, resultSegment)
-				if err != nil {
-					log.Fatal(err)
-				}
-				log.Info("Uploaded block-result segment: ", resultSegmentName, " with proof tx hash: ")
-				handler.EncodeResultSegmentToAvro(resultSegment)
-
+				// encode, prove and upload
+				handler.EncodeProveAndUploadResultSegment(ctx, config, &resultSegment, resultSegmentName, storage, ethProof)
+				// reset segment
 				resultSegment = event.ResultSegment{}
 				resultSegmentName = ""
 			}
 		} else {
+			//ack stream msg
 			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
 			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
 			if len(specimenSegment.BlockSpecimen) == 1 {
@@ -230,19 +227,14 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				specimenSegment.EndBlock = specimen.BlockHeader.Number.Uint64()
 				specimenSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
 				specimenSegmentName = fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
-				err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(specimen.ReplicationEvent.Type), specimenSegmentName, specimenSegment)
-				if err != nil {
-					log.Fatal(err)
-				}
-				log.Info("Uploaded block-specimen segment: ", specimenSegmentName, " with proof tx hash:")
-				handler.EncodeSpecimenSegmentToAvro(specimenSegment)
-
+				// encode, prove and upload
+				handler.EncodeProveAndUploadSpecimenSegment(ctx, config, &specimenSegment, specimenSegmentName, storage, ethProof)
+				// reset segment
 				specimenSegment = event.SpecimenSegment{}
 				specimenSegmentName = ""
 			}
 		}
 	}
 
-	//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
-	time.Sleep(time.Duration(consumeSleepTime) * time.Second) //to provide an interval for breaking (if necessary) between consumer threads
+	//time.Sleep(time.Duration(consumeSleepTime) * time.Second) //provide an interval for proof tx submission
 }
