@@ -84,126 +84,223 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	return specimen, nil, nil
 }
 
-func EncodeSpecimenToAvro(blockSpecimen interface{}) {
+func EncodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) {
 	codec, err := goavro.NewCodec(`
 	{
-		"type": "record",
-		"name": "BlockSpecimen",
-		"namespace": "com.covalenthq.bsp.avro",
-		"fields": [
-		  {
-			"name": "ReplicationEvent",
-			"type": {
-			  "name": "ReplicationEvent",
-			  "type": "record",
-			  "fields": [
-				{
-				  "name": "ID",
-				  "type": "string"
-				},
-				{
-				  "name": "type",
-				  "type": "string"
-				},
-				{
-				  "name": "hash",
-				  "type": "string"
-				},
-				{
-				  "name": "datetime",
-				  "type": "string"
-				}
-			  ]
-			}
-		  },
-		  {
-			"name": "specimen",
-			"type": {
-			  "name": "specimen",
-			  "type": "record",
-			  "fields": [
-				{
-				  "name": "AccountRead",
-				  "type": {
-					"type": "array",
-					"items": {
-					  "name": "AccountRead_record",
-					  "type": "record",
-					  "fields": [
-						{
-						  "name": "Address",
-						  "type": "string"
-						},
-						{
-						  "name": "Nonce",
-						  "type": "int"
-						},
-						{
-						  "name": "Balance",
-						  "type": "double"
-						},
-						{
-						  "name": "CodeHash",
-						  "type": "string"
-						}
-					  ]
-					}
-				  }
-				},
-				{
-				  "name": "StorageRead",
-				  "type": {
-					"type": "array",
-					"items": {
-					  "name": "StorageRead_record",
-					  "type": "record",
-					  "fields": [
-						{
-						  "name": "Account",
-						  "type": "string"
-						},
-						{
-						  "name": "SlotKey",
-						  "type": "string"
-						},
-						{
-						  "name": "Value",
-						  "type": "string"
-						}
-					  ]
-					}
-				  }
-				},
-				{
-				  "name": "CodeRead",
-				  "type": {
-					"type": "array",
-					"items": {
-					  "name": "CodeRead_record",
-					  "type": "record",
-					  "fields": [
-						{
-						  "name": "Hash",
-						  "type": "string"
-						},
-						{
-						  "name": "Code",
-						  "type": "string"
-						}
-					  ]
-					}
-				  }
-				}
-			  ]
-			}
-		  }
+		"type":"record",
+		"namespace":"com.covalenthq.bsp.avro",
+		"name":"BlockReplicationSegment",
+		"fields":[
+		   {
+			  "name":"BlockSpecimen",
+			  "type":{
+				 "type":"array",
+				 "items":{
+					"name":"BlockSpecimen",
+					"type":"record",
+					"fields":[
+					   {
+						  "name":"ReplicationEvent",
+						  "type":{
+							 "name":"ReplicationEvent",
+							 "type":"record",
+							 "fields":[
+								{
+								   "name":"ID",
+								   "type":"string"
+								},
+								{
+								   "name":"type",
+								   "type":"string"
+								},
+								{
+								   "name":"hash",
+								   "type":"string"
+								},
+								{
+								   "name":"datetime",
+								   "type":"string"
+								}
+							 ]
+						  }
+					   },
+					   {
+						  "name":"specimen",
+						  "type":{
+							 "name":"specimen",
+							 "type":"record",
+							 "fields":[
+								{
+								   "name":"AccountRead",
+								   "type":{
+									  "type":"array",
+									  "items":{
+										 "name":"AccountRead_record",
+										 "type":"record",
+										 "fields":[
+											{
+											   "name":"Address",
+											   "type":"string"
+											},
+											{
+											   "name":"Nonce",
+											   "type":"int"
+											},
+											{
+											   "name":"Balance",
+											   "type":"double"
+											},
+											{
+											   "name":"CodeHash",
+											   "type":"string"
+											}
+										 ]
+									  }
+								   }
+								},
+								{
+								   "name":"StorageRead",
+								   "type":{
+									  "type":"array",
+									  "items":{
+										 "name":"StorageRead_record",
+										 "type":"record",
+										 "fields":[
+											{
+											   "name":"Account",
+											   "type":"string"
+											},
+											{
+											   "name":"SlotKey",
+											   "type":"string"
+											},
+											{
+											   "name":"Value",
+											   "type":"string"
+											}
+										 ]
+									  }
+								   }
+								},
+								{
+								   "name":"CodeRead",
+								   "type":{
+									  "type":"array",
+									  "items":{
+										 "name":"CodeRead_record",
+										 "type":"record",
+										 "fields":[
+											{
+											   "name":"Hash",
+											   "type":"string"
+											},
+											{
+											   "name":"Code",
+											   "type":"string"
+											}
+										 ]
+									  }
+								   }
+								}
+							 ]
+						  }
+					   },
+					   {
+						  "name":"header",
+						  "type":{
+							 "name":"header",
+							 "type":"record",
+							 "fields":[
+								{
+								   "name":"parentHash",
+								   "type":"string"
+								},
+								{
+								   "name":"sha3Uncles",
+								   "type":"string"
+								},
+								{
+								   "name":"miner",
+								   "type":"string"
+								},
+								{
+								   "name":"stateRoot",
+								   "type":"string"
+								},
+								{
+								   "name":"transactionsRoot",
+								   "type":"string"
+								},
+								{
+								   "name":"receiptsRoot",
+								   "type":"string"
+								},
+								{
+								   "name":"logsBloom",
+								   "type":"string"
+								},
+								{
+								   "name":"difficulty",
+								   "type":"string"
+								},
+								{
+								   "name":"number",
+								   "type":"string"
+								},
+								{
+								   "name":"gasLimit",
+								   "type":"string"
+								},
+								{
+								   "name":"gasUsed",
+								   "type":"string"
+								},
+								{
+								   "name":"timestamp",
+								   "type":"string"
+								},
+								{
+								   "name":"extraData",
+								   "type":"string"
+								},
+								{
+								   "name":"mixHash",
+								   "type":"string"
+								},
+								{
+								   "name":"nonce",
+								   "type":"string"
+								},
+								{
+								   "name":"baseFeePerGas",
+								   "type":"string"
+								}
+							 ]
+						  }
+					   }
+					]
+				 }
+			  }
+		   },
+		   {
+			  "name":"StartBlock",
+			  "type":"long"
+		   },
+		   {
+			  "name":"EndBlock",
+			  "type":"long"
+		   },
+		   {
+			  "name":"Elements",
+			  "type":"long"
+		   }
 		]
-	  }`)
+	 }`)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	specimenMap, err := utils.StructToMap(blockSpecimen)
+	specimenMap, err := utils.StructToMap(blockSpecimenSegment)
 	if err != nil {
 		fmt.Println(err)
 	}

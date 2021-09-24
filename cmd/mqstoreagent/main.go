@@ -201,7 +201,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 		return
 	} else {
 		if specimen == nil {
-			//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
 			resultSegment.BlockResult = append(resultSegment.BlockResult, result)
 			if len(resultSegment.BlockResult) == 1 {
 				resultSegment.StartBlock = result.Data.Header.Number.Uint64()
@@ -215,13 +215,13 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 					log.Fatal(err)
 				}
 				log.Info("Uploaded block-result segment: ", resultSegmentName, " with proof tx hash: ")
-				handler.EncodeResultToAvro(resultSegment)
+				handler.EncodeResultSegmentToAvro(resultSegment)
 
 				resultSegment = event.ResultSegment{}
 				resultSegmentName = ""
 			}
 		} else {
-			//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
 			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
 			if len(specimenSegment.BlockSpecimen) == 1 {
 				specimenSegment.StartBlock = specimen.BlockHeader.Number.Uint64()
@@ -235,6 +235,8 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 					log.Fatal(err)
 				}
 				log.Info("Uploaded block-specimen segment: ", specimenSegmentName, " with proof tx hash:")
+				handler.EncodeSpecimenSegmentToAvro(specimenSegment)
+
 				specimenSegment = event.SpecimenSegment{}
 				specimenSegmentName = ""
 			}

@@ -23,7 +23,7 @@ type ResultSegment struct {
 }
 
 type SpecimenSegment struct {
-	BlockSpecimen []*SpecimenEvent `json:"BlockResult"`
+	BlockSpecimen []*SpecimenEvent `json:"BlockSpecimen"`
 	StartBlock    uint64           `json:"StartBlock"`
 	EndBlock      uint64           `json:"EndBlock"`
 	Elements      uint64           `json:"Elements"`
