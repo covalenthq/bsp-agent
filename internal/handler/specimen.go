@@ -15,8 +15,6 @@ import (
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
-	"github.com/covalenthq/mq-store-agent/internal/proof"
-	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
@@ -28,12 +26,12 @@ func NewSpecimenHandler() Handler {
 	return &specimenHandler{}
 }
 
-func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
+func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
 	ctx := context.Background()
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
-		return fmt.Errorf("incorrect event type")
+		return nil, nil, fmt.Errorf("incorrect event type")
 	}
 
 	replEvent.Hash = hash
@@ -46,42 +44,44 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	var decodedSpecimen types.BlockSpecimen
 	err := rlp.Decode(bytes.NewReader(data), &decodedSpecimen)
 	if err != nil {
-		return fmt.Errorf("error decoding RLP bytes to block-specimen: %v", err)
+		return nil, nil, fmt.Errorf("error decoding RLP bytes to block-specimen: %v", err)
 	} else {
 		specimen.Data = &decodedSpecimen
 	}
 
 	blockHash := common.HexToHash(specimen.ReplicationEvent.Hash)
 
-	block, err := ethSource.HeaderByHash(ctx, blockHash)
+	blockHeader, err := ethSource.HeaderByHash(ctx, blockHash)
 	if err != nil {
 		log.Error("error in getting block: ", err.Error())
 	}
 
-	EncodeSpecimenToAvro(specimen)
+	specimen.BlockNumber = blockHeader.Number.Uint64()
 
-	log.Info("Submitting block-specimen proof for: ", block.Number.Uint64())
+	// EncodeSpecimenToAvro(specimen)
 
-	proofTxHash := make(chan string, 1)
+	// log.Info("Submitting block-specimen proof for: ", block.Number.Uint64())
 
-	go proof.SendBlockSpecimenProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *specimen, proofTxHash)
+	// proofTxHash := make(chan string, 1)
 
-	pTxHash := <-proofTxHash
+	// go proof.SendBlockSpecimenProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *specimen, proofTxHash)
 
-	if pTxHash != "" {
+	// pTxHash := <-proofTxHash
 
-		err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *specimen)
-		if err != nil {
-			log.Fatal(err)
-		}
+	// if pTxHash != "" {
 
-		log.Info("Uploaded block-specimen event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
+	// 	err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *specimen)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
 
-	} else {
-		log.Fatal(err)
-	}
+	// 	log.Info("Uploaded block-specimen event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
 
-	return nil
+	// } else {
+	// 	log.Fatal(err)
+	// }
+
+	return specimen, nil, nil
 }
 
 func EncodeSpecimenToAvro(blockSpecimen interface{}) {
@@ -89,7 +89,7 @@ func EncodeSpecimenToAvro(blockSpecimen interface{}) {
 	{
 		"type": "record",
 		"name": "BlockSpecimen",
-		"namespace": "com.covalenthq.blockspecimen.avro",
+		"namespace": "com.covalenthq.bsp.avro",
 		"fields": [
 		  {
 			"name": "ReplicationEvent",

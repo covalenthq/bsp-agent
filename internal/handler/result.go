@@ -2,12 +2,10 @@ package handler
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"time"
 
 	"cloud.google.com/go/storage"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
@@ -15,8 +13,6 @@ import (
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
-	"github.com/covalenthq/mq-store-agent/internal/proof"
-	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
@@ -28,12 +24,12 @@ func NewResultHandler() Handler {
 	return &resultHandler{}
 }
 
-func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) error {
+func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
-	ctx := context.Background()
+	//ctx := context.Background()
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
-		return fmt.Errorf("incorrect event type")
+		return nil, nil, fmt.Errorf("incorrect event type")
 	}
 
 	replEvent.Hash = hash
@@ -46,42 +42,41 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 	var decodedResult types.BlockResult
 	err := rlp.Decode(bytes.NewReader(data), &decodedResult)
 	if err != nil {
-		return fmt.Errorf("error decoding RLP bytes to block-result: %v", err)
+		return nil, nil, fmt.Errorf("error decoding RLP bytes to block-result: %v", err)
 	} else {
 		result.Data = &decodedResult
 	}
 
-	blockHash := common.HexToHash(result.ReplicationEvent.Hash)
-	block, err := ethSource.HeaderByHash(ctx, blockHash)
+	// blockHash := common.HexToHash(result.ReplicationEvent.Hash)
+	// block, err := ethSource.HeaderByHash(ctx, blockHash)
+	// if err != nil {
+	// 	log.Error("error in getting block: ", err.Error())
+	// }
 
-	if err != nil {
-		log.Error("error in getting block: ", err.Error())
-	}
+	// EncodeResultToAvro(result)
 
-	EncodeResultToAvro(result)
+	// log.Info("Submitting block-result proof for: ", block.Number.Uint64())
 
-	log.Info("Submitting block-result proof for: ", block.Number.Uint64())
+	// proofTxHash := make(chan string, 1)
 
-	proofTxHash := make(chan string, 1)
+	// go proof.SendBlockResultProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *result, proofTxHash)
 
-	go proof.SendBlockResultProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *result, proofTxHash)
+	// pTxHash := <-proofTxHash
 
-	pTxHash := <-proofTxHash
+	// if pTxHash != "" {
 
-	if pTxHash != "" {
+	// 	err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *result)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
 
-		err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *result)
-		if err != nil {
-			log.Fatal(err)
-		}
+	// 	log.Info("Uploaded block-result event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
 
-		log.Info("Uploaded block-result event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
+	// } else {
+	// 	log.Errorf("Failed to prove & upload block-result event")
+	// }
 
-	} else {
-		log.Errorf("Failed to prove & upload block-result event")
-	}
-
-	return nil
+	return nil, result, nil
 }
 
 func EncodeResultToAvro(blockResult interface{}) {
@@ -89,7 +84,7 @@ func EncodeResultToAvro(blockResult interface{}) {
 	{
 		"type": "record",
 		"name": "BlockResult",
-		"namespace": "com.covalenthq.blockresult.avro",
+		"namespace": "com.covalenthq.brp.avro",
 		"fields": [
 		  {
 			"name": "ReplicationEvent",
