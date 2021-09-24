@@ -15,6 +15,8 @@ import (
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
+	"github.com/covalenthq/mq-store-agent/internal/proof"
+	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
@@ -58,33 +60,10 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 
 	specimen.BlockHeader = blockHeader
 
-	// EncodeSpecimenToAvro(specimen)
-
-	// log.Info("Submitting block-specimen proof for: ", block.Number.Uint64())
-
-	// proofTxHash := make(chan string, 1)
-
-	// go proof.SendBlockSpecimenProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *specimen, proofTxHash)
-
-	// pTxHash := <-proofTxHash
-
-	// if pTxHash != "" {
-
-	// 	err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *specimen)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-
-	// 	log.Info("Uploaded block-specimen event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
-
-	// } else {
-	// 	log.Fatal(err)
-	// }
-
 	return specimen, nil, nil
 }
 
-func EncodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) {
+func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) []byte {
 	codec, err := goavro.NewCodec(`
 	{
 		"type":"record",
@@ -310,19 +289,34 @@ func EncodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) {
 	if err != nil {
 		log.Fatalf("Failed to convert Go map to Avro binary data: %v", err)
 	}
-	_ = binary
 
-	//Convert binary Avro data back to native Go form
-	native, _, err := codec.NativeFromBinary(binary)
-	if err != nil {
-		fmt.Println(err)
+	return binary
+}
+
+func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Config, specimenSegment *event.SpecimenSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) string {
+
+	specimenSegmentAvro := encodeSpecimenSegmentToAvro(specimenSegment)
+
+	log.Info("Submitting block-specimen segment proof for: ", segmentName)
+
+	proofTxHash := make(chan string, 1)
+
+	go proof.SendBlockSpecimenProofTx(ctx, &config.EthConfig, ethProof, specimenSegment.EndBlock, specimenSegment.Elements, specimenSegmentAvro, proofTxHash)
+
+	pTxHash := <-proofTxHash
+
+	if pTxHash != "" {
+		err := st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, "block-specimen", segmentName, specimenSegmentAvro)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Info("Uploaded block-result segment event: ", segmentName, " with proof tx hash: ", pTxHash)
+
+	} else {
+		log.Errorf("Failed to prove & upload block-result event")
 	}
 
-	//Convert native Go form to textual Avro data
-	textual, err := codec.TextualFromNative(nil, native)
-	if err != nil {
-		fmt.Println(err)
-	}
+	return pTxHash
 
-	fmt.Println(string(textual))
 }

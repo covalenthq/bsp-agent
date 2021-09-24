@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
-	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,10 +19,9 @@ import (
 
 var (
 	proofTxTimeout uint64 = 60
-	chainLen       uint64 = 1
 )
 
-func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, blockSpecimen event.SpecimenEvent, txHash chan string) {
+func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, chainLen uint64, specimenSegment []byte, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -45,7 +43,7 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, eth
 	// 	WatchContractResultPublicationProof(ctx, contract)
 	// })
 
-	jsonSpecimen, err := json.Marshal(blockSpecimen)
+	jsonSpecimen, err := json.Marshal(specimenSegment)
 	if err != nil {
 		log.Error(err.Error())
 	}
@@ -68,7 +66,7 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, eth
 
 }
 
-func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, blockResult event.ResultEvent, txHash chan string) {
+func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -89,7 +87,7 @@ func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, ethPr
 	// 	WatchContractSpecimenPublicationProof(ctx, contract)
 	// })
 
-	jsonResult, err := json.Marshal(blockResult)
+	jsonResult, err := json.Marshal(resultSegment)
 	if err != nil {
 		log.Error(err.Error())
 	}

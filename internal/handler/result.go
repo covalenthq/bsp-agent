@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"time"
 
@@ -13,6 +14,8 @@ import (
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
+	"github.com/covalenthq/mq-store-agent/internal/proof"
+	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
@@ -47,39 +50,10 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 		result.Data = &decodedResult
 	}
 
-	// blockHash := common.HexToHash(result.ReplicationEvent.Hash)
-	// block, err := ethSource.HeaderByHash(ctx, blockHash)
-	// if err != nil {
-	// 	log.Error("error in getting block: ", err.Error())
-	// }
-
-	// EncodeResultToAvro(result)
-
-	// log.Info("Submitting block-result proof for: ", block.Number.Uint64())
-
-	// proofTxHash := make(chan string, 1)
-
-	// go proof.SendBlockResultProofTx(ctx, &config.EthConfig, ethProof, block.Number.Uint64(), *result, proofTxHash)
-
-	// pTxHash := <-proofTxHash
-
-	// if pTxHash != "" {
-
-	// 	err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(replEvent.Type), replEvent.Hash, *result)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-
-	// 	log.Info("Uploaded block-result event: ", replEvent.Hash, " with proof tx hash: ", pTxHash)
-
-	// } else {
-	// 	log.Errorf("Failed to prove & upload block-result event")
-	// }
-
 	return nil, result, nil
 }
 
-func EncodeResultSegmentToAvro(blockResultSegment interface{}) {
+func encodeResultSegmentToAvro(blockResultSegment interface{}) []byte {
 	codec, err := goavro.NewCodec(`
 	{
 		"type":"record",
@@ -388,20 +362,33 @@ func EncodeResultSegmentToAvro(blockResultSegment interface{}) {
 	if err != nil {
 		log.Fatalf("Failed to convert Go map to Avro binary data: %v", err)
 	}
-	_ = binary
 
-	//Convert binary Avro data back to native Go form
-	native, _, err := codec.NativeFromBinary(binary)
-	if err != nil {
-		fmt.Println(err)
+	return binary
+}
+
+func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.Config, resultSegment *event.ResultSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) string {
+
+	resultSegmentAvro := encodeResultSegmentToAvro(resultSegment)
+
+	log.Info("Submitting block-result segment proof for: ", segmentName)
+
+	proofTxHash := make(chan string, 1)
+
+	go proof.SendBlockResultProofTx(ctx, &config.EthConfig, ethProof, resultSegment.EndBlock, resultSegment.Elements, resultSegmentAvro, proofTxHash)
+
+	pTxHash := <-proofTxHash
+
+	if pTxHash != "" {
+		err := st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, "block-result", segmentName, resultSegmentAvro)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Info("Uploaded block-result segment event: ", segmentName, " with proof tx hash: ", pTxHash)
+
+	} else {
+		log.Errorf("Failed to prove & upload block-result event")
 	}
 
-	//Convert native Go form to textual Avro data
-	textual, err := codec.TextualFromNative(nil, native)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(string(textual))
-	//return binary
+	return pTxHash
 }
