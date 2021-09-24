@@ -215,17 +215,19 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 					log.Fatal(err)
 				}
 				log.Info("Uploaded block-result segment: ", resultSegmentName, " with proof tx hash: ")
+				handler.EncodeResultToAvro(resultSegment)
+
 				resultSegment = event.ResultSegment{}
 				resultSegmentName = ""
 			}
-		} else if result == nil {
+		} else {
 			//redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
 			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
 			if len(specimenSegment.BlockSpecimen) == 1 {
-				specimenSegment.StartBlock = specimen.BlockNumber
+				specimenSegment.StartBlock = specimen.BlockHeader.Number.Uint64()
 			}
 			if len(specimenSegment.BlockSpecimen) == int(config.GeneralConfig.SegmentLength) {
-				specimenSegment.EndBlock = specimen.BlockNumber
+				specimenSegment.EndBlock = specimen.BlockHeader.Number.Uint64()
 				specimenSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
 				specimenSegmentName = fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
 				err = st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, string(specimen.ReplicationEvent.Type), specimenSegmentName, specimenSegment)
