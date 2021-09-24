@@ -33,6 +33,7 @@ type EthConfig struct {
 
 type GeneralConfig struct {
 	ConsumeEvents int64 `envconfig:"CONSUME_EVENTS" default:"1"`
+	SegmentLength int64 `envconfig:"SEGMENT_LENGTH" default:"10"`
 }
 
 type Config struct {
