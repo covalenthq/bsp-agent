@@ -82,273 +82,294 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 func EncodeResultToAvro(blockResult interface{}) {
 	codec, err := goavro.NewCodec(`
 	{
-		"type": "record",
-		"name": "BlockResult",
-		"namespace": "com.covalenthq.brp.avro",
-		"fields": [
-		  {
-			"name": "ReplicationEvent",
-			"type": {
-			  "name": "ReplicationEvent",
-			  "type": "record",
-			  "fields": [
-				{
-				  "name": "ID",
-				  "type": "string"
-				},
-				{
-				  "name": "type",
-				  "type": "string"
-				},
-				{
-				  "name": "hash",
-				  "type": "string"
-				},
-				{
-				  "name": "datetime",
-				  "type": "string"
-				}
-			  ]
-			}
-		  },
-		  {
-			"name": "result",
-			"type": {
-			  "name": "result",
-			  "type": "record",
-			  "fields": [
-				{
-				  "name": "Hash",
-				  "type": "string"
-				},
-				{
-				  "name": "TotalDifficulty",
-				  "type": "int"
-				},
-				{
-				  "name": "Header",
-				  "type": {
-					"name": "Header",
-					"type": "record",
-					"fields": [
-					  {
-						"name": "parentHash",
-						"type": "string"
-					  },
-					  {
-						"name": "sha3Uncles",
-						"type": "string"
-					  },
-					  {
-						"name": "miner",
-						"type": "string"
-					  },
-					  {
-						"name": "stateRoot",
-						"type": "string"
-					  },
-					  {
-						"name": "transactionsRoot",
-						"type": "string"
-					  },
-					  {
-						"name": "receiptsRoot",
-						"type": "string"
-					  },
-					  {
-						"name": "logsBloom",
-						"type": {
-						  "type": "array",
-						  "items": "int"
-						}
-					  },
-					  {
-						"name": "difficulty",
-						"type": "int"
-					  },
-					  {
-						"name": "number",
-						"type": "int"
-					  },
-					  {
-						"name": "gasLimit",
-						"type": "int"
-					  },
-					  {
-						"name": "gasUsed",
-						"type": "int"
-					  },
-					  {
-						"name": "timestamp",
-						"type": "int"
-					  },
-					  {
-						"name": "extraData",
-						"type": "string"
-					  },
-					  {
-						"name": "mixHash",
-						"type": "string"
-					  },
-					  {
-						"name": "nonce",
-						"type": {
-						  "type": "array",
-						  "items": "int"
-						}
-					  },
-					  {
-						"name": "baseFeePerGas",
-						"type": "int"
-					  }
-					]
-				  }
-				},
-				{
-				  "name": "Transactions",
-				  "type": {
-					"type": "array",
-					"items": {
-					  "name": "Transactions_record",
-					  "type": "record",
-					  "fields": [
-						{
-						  "name": "nonce",
-						  "type": "int"
-						},
-						{
-						  "name": "gasPrice",
-						  "type": "long"
-						},
-						{
-						  "name": "gas",
-						  "type": "int"
-						},
-						{
-						  "name": "from",
-						  "type": "string"
-						},
-						{
-						  "name": "to",
-						  "type": "string"
-						},
-						{
-						  "name": "value",
-						  "type": "long"
-						},
-						{
-						  "name": "input",
-						  "type": "string"
-						}
-					  ]
-					}
-				  }
-				},
-				{
-					"name": "uncles",
-					"type": [
-						"null", {
-							"type": "array",
-							"items": "Header"
-						}
-					],
-					"default": null
-				},
-				{
-				  "name": "Receipts",
-				  "type": {
-					"type": "array",
-					"items": {
-					  "name": "Receipts_record",
-					  "type": "record",
-					  "fields": [
-						{
-						  "name": "PostStateOrStatus",
-						  "type": "string"
-						},
-						{
-						  "name": "CumulativeGasUsed",
-						  "type": "int"
-						},
-						{
-						  "name": "TxHash",
-						  "type": "string"
-						},
-						{
-						  "name": "ContractAddress",
-						  "type": "string"
-						},
-						{
-						  "name": "Logs",
-						  "type": {
-							"type": "array",
-							"items": {
-							  "name": "Logs_record",
-							  "type": "record",
-							  "fields": [
-								{
-								  "name": "address",
-								  "type": "string"
-								},
-								{
-								  "name": "topics",
-								  "type": {
-									"type": "array",
-									"items": "string"
-								  }
-								},
-								{
-								  "name": "data",
-								  "type": "string"
-								},
-								{
-								  "name": "blockNumber",
-								  "type": "int"
-								},
-								{
-								  "name": "transactionHash",
-								  "type": "string"
-								},
-								{
-								  "name": "transactionIndex",
-								  "type": "int"
-								},
-								{
-								  "name": "blockHash",
-								  "type": "string"
-								},
-								{
-								  "name": "logIndex",
-								  "type": "int"
-								},
-								{
-								  "name": "removed",
-								  "type": "boolean"
+		"type":"record",
+		"namespace":"com.covalenthq.brp.avro",
+		"name":"BlockReplicationSegment",
+		"fields":[
+		   {
+			  "name":"BlockResult",
+			  "type":"array",
+			  "items":{
+				 "fields":[
+					{
+					   "name":"ReplicationEvent",
+					   "type":{
+						  "name":"ReplicationEvent",
+						  "type":"record",
+						  "fields":[
+							 {
+								"name":"ID",
+								"type":"string"
+							 },
+							 {
+								"name":"type",
+								"type":"string"
+							 },
+							 {
+								"name":"hash",
+								"type":"string"
+							 },
+							 {
+								"name":"datetime",
+								"type":"string"
+							 }
+						  ]
+					   }
+					},
+					{
+					   "name":"result",
+					   "type":{
+						  "name":"result",
+						  "type":"record",
+						  "fields":[
+							 {
+								"name":"Hash",
+								"type":"string"
+							 },
+							 {
+								"name":"TotalDifficulty",
+								"type":"int"
+							 },
+							 {
+								"name":"Header",
+								"type":{
+								   "name":"Header",
+								   "type":"record",
+								   "fields":[
+									  {
+										 "name":"parentHash",
+										 "type":"string"
+									  },
+									  {
+										 "name":"sha3Uncles",
+										 "type":"string"
+									  },
+									  {
+										 "name":"miner",
+										 "type":"string"
+									  },
+									  {
+										 "name":"stateRoot",
+										 "type":"string"
+									  },
+									  {
+										 "name":"transactionsRoot",
+										 "type":"string"
+									  },
+									  {
+										 "name":"receiptsRoot",
+										 "type":"string"
+									  },
+									  {
+										 "name":"logsBloom",
+										 "type":{
+											"type":"array",
+											"items":"int"
+										 }
+									  },
+									  {
+										 "name":"difficulty",
+										 "type":"int"
+									  },
+									  {
+										 "name":"number",
+										 "type":"int"
+									  },
+									  {
+										 "name":"gasLimit",
+										 "type":"int"
+									  },
+									  {
+										 "name":"gasUsed",
+										 "type":"int"
+									  },
+									  {
+										 "name":"timestamp",
+										 "type":"int"
+									  },
+									  {
+										 "name":"extraData",
+										 "type":"string"
+									  },
+									  {
+										 "name":"mixHash",
+										 "type":"string"
+									  },
+									  {
+										 "name":"nonce",
+										 "type":{
+											"type":"array",
+											"items":"int"
+										 }
+									  },
+									  {
+										 "name":"baseFeePerGas",
+										 "type":"int"
+									  }
+								   ]
 								}
-							  ]
-							}
-						  }
-						},
-						{
-						  "name": "GasUsed",
-						  "type": "int"
-						}
-					  ]
+							 },
+							 {
+								"name":"Transactions",
+								"type":{
+								   "type":"array",
+								   "items":{
+									  "name":"Transactions_record",
+									  "type":"record",
+									  "fields":[
+										 {
+											"name":"nonce",
+											"type":"int"
+										 },
+										 {
+											"name":"gasPrice",
+											"type":"long"
+										 },
+										 {
+											"name":"gas",
+											"type":"int"
+										 },
+										 {
+											"name":"from",
+											"type":"string"
+										 },
+										 {
+											"name":"to",
+											"type":"string"
+										 },
+										 {
+											"name":"value",
+											"type":"long"
+										 },
+										 {
+											"name":"input",
+											"type":"string"
+										 }
+									  ]
+								   }
+								}
+							 },
+							 {
+								"name":"uncles",
+								"type":[
+								   "null",
+								   {
+									  "type":"array",
+									  "items":"Header"
+								   }
+								],
+								"default":null
+							 },
+							 {
+								"name":"Receipts",
+								"type":{
+								   "type":"array",
+								   "items":{
+									  "name":"Receipts_record",
+									  "type":"record",
+									  "fields":[
+										 {
+											"name":"PostStateOrStatus",
+											"type":"string"
+										 },
+										 {
+											"name":"CumulativeGasUsed",
+											"type":"int"
+										 },
+										 {
+											"name":"TxHash",
+											"type":"string"
+										 },
+										 {
+											"name":"ContractAddress",
+											"type":"string"
+										 },
+										 {
+											"name":"Logs",
+											"type":{
+											   "type":"array",
+											   "items":{
+												  "name":"Logs_record",
+												  "type":"record",
+												  "fields":[
+													 {
+														"name":"address",
+														"type":"string"
+													 },
+													 {
+														"name":"topics",
+														"type":{
+														   "type":"array",
+														   "items":"string"
+														}
+													 },
+													 {
+														"name":"data",
+														"type":"string"
+													 },
+													 {
+														"name":"blockNumber",
+														"type":"int"
+													 },
+													 {
+														"name":"transactionHash",
+														"type":"string"
+													 },
+													 {
+														"name":"transactionIndex",
+														"type":"int"
+													 },
+													 {
+														"name":"blockHash",
+														"type":"string"
+													 },
+													 {
+														"name":"logIndex",
+														"type":"int"
+													 },
+													 {
+														"name":"removed",
+														"type":"boolean"
+													 }
+												  ]
+											   }
+											}
+										 },
+										 {
+											"name":"GasUsed",
+											"type":"int"
+										 }
+									  ]
+								   }
+								}
+							 },
+							 {
+								"name":"Senders",
+								"type":{
+								   "type":"array",
+								   "items":"string"
+								}
+							 }
+						  ]
+					   }
 					}
-				  }
-				},
-				{
-				  "name": "Senders",
-				  "type": {
-					"type": "array",
-					"items": "string"
-				  }
-				}
-			  ]
-			}
-		  }
+				 ]
+			  }
+		   },
+		   {
+			  "name":"StartBlock",
+			  "type":"long"
+		   },
+		   {
+			  "name":"StopBlock",
+			  "type":"long"
+		   },
+		   {
+			  "name":"Elements",
+			  "type":"long"
+		   },
 		]
-	  }`)
+	 }`)
 	if err != nil {
 		fmt.Println(err)
 	}

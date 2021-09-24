@@ -14,6 +14,20 @@ const (
 	ResultType   Type = "block-result"
 )
 
+type ResultSegment struct {
+	BlockResult []*ResultEvent `json:"BlockResult"`
+	StartBlock  uint64         `json:"StartBlock"`
+	EndBlock    uint64         `json:"EndBlock"`
+	Elements    uint64         `json:"Elements"`
+}
+
+type SpecimenSegment struct {
+	BlockSpecimen []*SpecimenEvent `json:"BlockResult"`
+	StartBlock    uint64           `json:"StartBlock"`
+	EndBlock      uint64           `json:"EndBlock"`
+	Elements      uint64           `json:"Elements"`
+}
+
 type ResultEvent struct {
 	ReplicationEvent *ReplicationEvent  `json:"ReplicationEvent"`
 	Data             *types.BlockResult `json:"result"`
@@ -22,6 +36,7 @@ type ResultEvent struct {
 type SpecimenEvent struct {
 	ReplicationEvent *ReplicationEvent    `json:"ReplicationEvent"`
 	Data             *types.BlockSpecimen `json:"specimen"`
+	BlockNumber      uint64               `json:"number"`
 }
 
 type ReplicationEvent struct {
