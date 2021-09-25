@@ -32,7 +32,7 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 	//ctx := context.Background()
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
-		return nil, nil, fmt.Errorf("incorrect event type")
+		return nil, nil, fmt.Errorf("incorrect event type: %v", replEvent.Type)
 	}
 
 	replEvent.Hash = hash
@@ -45,7 +45,7 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 	var decodedResult types.BlockResult
 	err := rlp.Decode(bytes.NewReader(data), &decodedResult)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error decoding RLP bytes to block-result: %v", err)
+		return nil, nil, fmt.Errorf("error decoding RLP bytes to block-result: %w", err)
 	} else {
 		result.Data = &decodedResult
 	}
@@ -53,7 +53,7 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 	return nil, result, nil
 }
 
-func encodeResultSegmentToAvro(blockResultSegment interface{}) []byte {
+func encodeResultSegmentToAvro(blockResultSegment interface{}) ([]byte, error) {
 	codec, err := goavro.NewCodec(`
 	{
 		"type":"record",
@@ -349,26 +349,29 @@ func encodeResultSegmentToAvro(blockResultSegment interface{}) []byte {
 		]
 	 }`)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	resultMap, err := utils.StructToMap(blockResultSegment)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	// Convert native Go map[string]interface{} to binary Avro data
 	binary, err := codec.BinaryFromNative(nil, resultMap)
 	if err != nil {
-		log.Fatalf("Failed to convert Go map to Avro binary data: %v", err)
+		log.Fatalf("failed to convert Go map to Avro binary data: %v", err)
 	}
 
-	return binary
+	return binary, nil
 }
 
-func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.Config, resultSegment *event.ResultSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) string {
+func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.Config, resultSegment *event.ResultSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) (string, error) {
 
-	resultSegmentAvro := encodeResultSegmentToAvro(resultSegment)
+	resultSegmentAvro, err := encodeResultSegmentToAvro(resultSegment)
+	if err != nil {
+		return "", err
+	}
 
 	log.Info("Submitting block-result segment proof for: ", segmentName)
 
@@ -381,14 +384,12 @@ func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.Confi
 	if pTxHash != "" {
 		err := st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, "block-result", segmentName, resultSegmentAvro)
 		if err != nil {
-			log.Fatal(err)
+			return "", err
 		}
-
 		log.Info("Uploaded block-result segment event: ", segmentName, " with proof tx hash: ", pTxHash)
-
 	} else {
-		log.Errorf("Failed to prove & upload block-result event")
+		return "", fmt.Errorf("failed to prove & upload block-result segment event: %v", segmentName)
 	}
 
-	return pTxHash
+	return pTxHash, nil
 }

@@ -33,7 +33,7 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	ctx := context.Background()
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
-		return nil, nil, fmt.Errorf("incorrect event type")
+		return nil, nil, fmt.Errorf("incorrect event type: %v", replEvent.Type)
 	}
 
 	replEvent.Hash = hash
@@ -46,7 +46,7 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	var decodedSpecimen types.BlockSpecimen
 	err := rlp.Decode(bytes.NewReader(data), &decodedSpecimen)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error decoding RLP bytes to block-specimen: %v", err)
+		return nil, nil, fmt.Errorf("error decoding RLP bytes to block-specimen: %w", err)
 	} else {
 		specimen.Data = &decodedSpecimen
 	}
@@ -55,7 +55,7 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 
 	blockHeader, err := ethSource.HeaderByHash(ctx, blockHash)
 	if err != nil {
-		log.Error("error in getting block: ", err.Error())
+		log.Error("error getting block: ", err.Error())
 	}
 
 	specimen.BlockHeader = blockHeader
@@ -63,7 +63,7 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	return specimen, nil, nil
 }
 
-func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) []byte {
+func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, error) {
 	codec, err := goavro.NewCodec(`
 	{
 		"type":"record",
@@ -276,27 +276,29 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) []byte {
 		]
 	 }`)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	specimenMap, err := utils.StructToMap(blockSpecimenSegment)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	// Convert native Go form to binary Avro data
 	binary, err := codec.BinaryFromNative(nil, specimenMap)
 	if err != nil {
-		log.Fatalf("Failed to convert Go map to Avro binary data: %v", err)
+		log.Fatalf("failed to convert Go map to Avro binary data: %v", err)
 	}
 
-	return binary
+	return binary, nil
 }
 
-func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Config, specimenSegment *event.SpecimenSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) string {
+func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Config, specimenSegment *event.SpecimenSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) (string, error) {
 
-	specimenSegmentAvro := encodeSpecimenSegmentToAvro(specimenSegment)
-
+	specimenSegmentAvro, err := encodeSpecimenSegmentToAvro(specimenSegment)
+	if err != nil {
+		return "", err
+	}
 	log.Info("Submitting block-specimen segment proof for: ", segmentName)
 
 	proofTxHash := make(chan string, 1)
@@ -308,15 +310,14 @@ func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Con
 	if pTxHash != "" {
 		err := st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, "block-specimen", segmentName, specimenSegmentAvro)
 		if err != nil {
-			log.Fatal(err)
+			return "", err
 		}
-
-		log.Info("Uploaded block-result segment event: ", segmentName, " with proof tx hash: ", pTxHash)
+		log.Info("Uploaded block-specimen segment event: ", segmentName, " with proof tx hash: ", pTxHash)
 
 	} else {
-		log.Errorf("Failed to prove & upload block-result event")
+		return "", fmt.Errorf("failed to prove & upload block-specimen segment event: %v", segmentName)
 	}
 
-	return pTxHash
+	return pTxHash, nil
 
 }
