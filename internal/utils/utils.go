@@ -8,7 +8,7 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
-	"github.com/ubiq/go-ubiq/log"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
 )
 
@@ -56,4 +56,16 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 		return nil, err
 	}
 	return mapData, nil
+}
+
+func AckStreamSegmentBatch(config *config.Config, redisClient *redis.Client, streamIDs []string) {
+
+	if len(streamIDs) == int(config.GeneralConfig.SegmentLength) {
+		for _, streamID := range streamIDs {
+			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, streamID)
+		}
+	} else {
+		log.Fatalf("Failed to match streamIDs length to segment length config")
+	}
+
 }

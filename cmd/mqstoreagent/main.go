@@ -25,15 +25,15 @@ import (
 )
 
 var (
-	waitGrp             sync.WaitGroup
-	start               string = ">"
-	consumeIdleTime     int64  = 30
-	consumePendingTime  int64  = 60
-	consumeSleepTime    int64  = 2
-	resultSegment       event.ResultSegment
-	specimenSegment     event.SpecimenSegment
-	resultSegmentName   string
-	specimenSegmentName string
+	waitGrp              sync.WaitGroup
+	start                string = ">"
+	consumeIdleTime      int64  = 30
+	consumePendingTime   int64  = 60
+	resultSegment        event.ResultSegment
+	specimenSegment      event.SpecimenSegment
+	resultSegmentName    string
+	specimenSegmentName  string
+	streamIdSegmentBatch []string
 )
 
 func init() {
@@ -106,7 +106,7 @@ func createConsumerGroup(config *config.RedisConfig, redisClient *redis.Client) 
 
 func consumeEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, consumerName string) {
 	for {
-		log.Info("New round: ", time.Now().Format(time.RFC3339))
+		log.Info("New sequential stream unit: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
 			Streams:  []string{config.RedisConfig.Key, start},
 			Group:    config.RedisConfig.Group,
@@ -200,8 +200,8 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 		return
 	} else {
 		if specimen == nil {
-			//ack stream msg
-			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+			// collect stream ids and block results
+			streamIdSegmentBatch = append(streamIdSegmentBatch, stream.ID)
 			resultSegment.BlockResult = append(resultSegment.BlockResult, result)
 			if len(resultSegment.BlockResult) == 1 {
 				resultSegment.StartBlock = result.Data.Header.Number.Uint64()
@@ -212,13 +212,15 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				resultSegmentName = fmt.Sprint(resultSegment.StartBlock) + "-" + fmt.Sprint(resultSegment.EndBlock)
 				// encode, prove and upload
 				handler.EncodeProveAndUploadResultSegment(ctx, config, &resultSegment, resultSegmentName, storage, ethProof)
-				// reset segment
+				//ack stream segment batch id
+				utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				// reset segment and name
 				resultSegment = event.ResultSegment{}
 				resultSegmentName = ""
 			}
 		} else {
-			//ack stream msg
-			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, stream.ID)
+			// collect stream ids and block specimens
+			streamIdSegmentBatch = append(streamIdSegmentBatch, stream.ID)
 			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
 			if len(specimenSegment.BlockSpecimen) == 1 {
 				specimenSegment.StartBlock = specimen.BlockHeader.Number.Uint64()
@@ -229,12 +231,12 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				specimenSegmentName = fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
 				// encode, prove and upload
 				handler.EncodeProveAndUploadSpecimenSegment(ctx, config, &specimenSegment, specimenSegmentName, storage, ethProof)
-				// reset segment
+				//ack stream segment batch id
+				utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				// reset segment and name
 				specimenSegment = event.SpecimenSegment{}
 				specimenSegmentName = ""
 			}
 		}
 	}
-
-	//time.Sleep(time.Duration(consumeSleepTime) * time.Second) //provide an interval for proof tx submission
 }
