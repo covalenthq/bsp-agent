@@ -31,7 +31,7 @@ func HandleObjectUploadToBucket(ctx context.Context, config *config.GcpConfig, s
 		return writeToStorage(ctx, storageClient, bucket, objectName, object)
 	}
 
-	return fmt.Errorf("type %v not supported", objectType)
+	return fmt.Errorf("type: %v not supported", objectType)
 }
 
 func writeToStorage(ctx context.Context, client *storage.Client, bucket string, objectName string, object interface{}) error {

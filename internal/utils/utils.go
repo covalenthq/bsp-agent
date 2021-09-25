@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/mq-store-agent/internal/config"
@@ -58,14 +59,15 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 	return mapData, nil
 }
 
-func AckStreamSegmentBatch(config *config.Config, redisClient *redis.Client, streamIDs []string) {
+func AckStreamSegment(config *config.Config, redisClient *redis.Client, streamIDs []string) error {
 
 	if len(streamIDs) == int(config.GeneralConfig.SegmentLength) {
 		for _, streamID := range streamIDs {
 			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, streamID)
 		}
+		return nil
 	} else {
-		log.Fatalf("Failed to match streamIDs length to segment length config")
+		return fmt.Errorf("failed to match streamIDs length to segment length config")
 	}
 
 }
