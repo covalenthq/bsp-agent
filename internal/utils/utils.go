@@ -35,7 +35,7 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 	return ethClient, nil
 }
 
-func NewStorageCliemt(config *config.GcpConfig) (*storage.Client, error) {
+func NewStorageClient(config *config.GcpConfig) (*storage.Client, error) {
 
 	ctx := context.Background()
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(config.ServiceAccount))

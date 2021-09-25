@@ -25,15 +25,16 @@ import (
 )
 
 var (
-	waitGrp              sync.WaitGroup
-	start                string = ">"
-	consumeIdleTime      int64  = 30
-	consumePendingTime   int64  = 60
-	resultSegment        event.ResultSegment
-	specimenSegment      event.SpecimenSegment
-	resultSegmentName    string
-	specimenSegmentName  string
-	streamIdSegmentBatch []string
+	waitGrp                sync.WaitGroup
+	start                  string = ">"
+	consumeIdleTime        int64  = 30
+	consumePendingTime     int64  = 60
+	resultSegment          event.ResultSegment
+	specimenSegment        event.SpecimenSegment
+	resultSegmentName      string
+	specimenSegmentName    string
+	specimenSegmentIdBatch []string
+	resultSegmentIdBatch   []string
 )
 
 func init() {
@@ -59,7 +60,7 @@ func main() {
 		panic(err)
 	}
 
-	storageClient, err := utils.NewStorageCliemt(&config.GcpConfig)
+	storageClient, err := utils.NewStorageClient(&config.GcpConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -201,7 +202,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	} else {
 		if specimen == nil {
 			// collect stream ids and block results
-			streamIdSegmentBatch = append(streamIdSegmentBatch, stream.ID)
+			resultSegmentIdBatch = append(resultSegmentIdBatch, stream.ID)
 			resultSegment.BlockResult = append(resultSegment.BlockResult, result)
 			if len(resultSegment.BlockResult) == 1 {
 				resultSegment.StartBlock = result.Data.Header.Number.Uint64()
@@ -216,17 +217,18 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 					log.Fatalf("failed to avro encode, proove and upload block-result segment: %v with err: %v", resultSegmentName, err)
 				}
 				//ack stream segment batch id
-				err = utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				err = utils.AckStreamSegment(config, redisClient, resultSegmentIdBatch)
 				if err != nil {
 					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
 				}
 				// reset segment and name
 				resultSegment = event.ResultSegment{}
 				resultSegmentName = ""
+				resultSegmentIdBatch = []string{}
 			}
 		} else {
 			// collect stream ids and block specimens
-			streamIdSegmentBatch = append(streamIdSegmentBatch, stream.ID)
+			specimenSegmentIdBatch = append(specimenSegmentIdBatch, stream.ID)
 			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
 			if len(specimenSegment.BlockSpecimen) == 1 {
 				specimenSegment.StartBlock = specimen.BlockHeader.Number.Uint64()
@@ -241,13 +243,14 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 					log.Fatalf("failed to avro encode, proove and upload block-specimen segment: %v with err: %v", resultSegmentName, err)
 				}
 				//ack stream segment batch id
-				err = utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				err = utils.AckStreamSegment(config, redisClient, specimenSegmentIdBatch)
 				if err != nil {
 					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
 				}
 				// reset segment and name
 				specimenSegment = event.SpecimenSegment{}
 				specimenSegmentName = ""
+				specimenSegmentIdBatch = []string{}
 			}
 		}
 	}

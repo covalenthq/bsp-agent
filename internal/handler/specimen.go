@@ -285,12 +285,12 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, erro
 	}
 
 	// Convert native Go form to binary Avro data
-	binary, err := codec.BinaryFromNative(nil, specimenMap)
+	binarySpecimenSegment, err := codec.BinaryFromNative(nil, specimenMap)
 	if err != nil {
 		log.Fatalf("failed to convert Go map to Avro binary data: %v", err)
 	}
 
-	return binary, nil
+	return binarySpecimenSegment, nil
 }
 
 func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Config, specimenSegment *event.SpecimenSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) (string, error) {
