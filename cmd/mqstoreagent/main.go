@@ -211,9 +211,15 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				resultSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
 				resultSegmentName = fmt.Sprint(resultSegment.StartBlock) + "-" + fmt.Sprint(resultSegment.EndBlock)
 				// encode, prove and upload
-				handler.EncodeProveAndUploadResultSegment(ctx, config, &resultSegment, resultSegmentName, storage, ethProof)
+				_, err := handler.EncodeProveAndUploadResultSegment(ctx, config, &resultSegment, resultSegmentName, storage, ethProof)
+				if err != nil {
+					log.Fatalf("failed to avro encode, proove and upload block-result segment: %v with err: %v", resultSegmentName, err)
+				}
 				//ack stream segment batch id
-				utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				err = utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				if err != nil {
+					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
+				}
 				// reset segment and name
 				resultSegment = event.ResultSegment{}
 				resultSegmentName = ""
@@ -230,9 +236,15 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				specimenSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
 				specimenSegmentName = fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
 				// encode, prove and upload
-				handler.EncodeProveAndUploadSpecimenSegment(ctx, config, &specimenSegment, specimenSegmentName, storage, ethProof)
+				_, err := handler.EncodeProveAndUploadSpecimenSegment(ctx, config, &specimenSegment, specimenSegmentName, storage, ethProof)
+				if err != nil {
+					log.Fatalf("failed to avro encode, proove and upload block-specimen segment: %v with err: %v", resultSegmentName, err)
+				}
 				//ack stream segment batch id
-				utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				err = utils.AckStreamSegment(config, redisClient, streamIdSegmentBatch)
+				if err != nil {
+					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
+				}
 				// reset segment and name
 				specimenSegment = event.SpecimenSegment{}
 				specimenSegmentName = ""
