@@ -169,7 +169,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 			}
 			waitGrp.Wait()
 		}
-		log.Info("process pending streams at: ", time.Now().Format(time.RFC3339))
+		log.Info("Process pending streams at: ", time.Now().Format(time.RFC3339))
 	}
 }
 

@@ -167,7 +167,7 @@ func watchContractResultPublicationProof(ctx context.Context, contract *ProofCha
 	}()
 
 	event := <-channel
-	log.Info("new result event emitted from prover contract: ", event)
+	log.Info("New result event emitted from prover contract: ", event)
 
 }
 
@@ -185,5 +185,5 @@ func watchContractSpecimenPublicationProof(ctx context.Context, contract *ProofC
 	}()
 
 	event := <-channel
-	log.Info("new specimen event emitted from prover contract: ", event)
+	log.Info("New specimen event emitted from prover contract: ", event)
 }
