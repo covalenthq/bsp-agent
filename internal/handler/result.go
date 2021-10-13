@@ -212,7 +212,8 @@ func encodeResultSegmentToAvro(blockResultSegment interface{}) ([]byte, error) {
 											},
 											{
 											   "name":"to",
-											   "type":"string"
+											   "type":"string",
+											   "default":"\u00ff"
 											},
 											{
 											   "name":"value",
