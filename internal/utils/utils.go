@@ -2,12 +2,14 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
-	"github.com/ubiq/go-ubiq/log"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
 )
 
@@ -33,7 +35,7 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 	return ethClient, nil
 }
 
-func NewStorageCliemt(config *config.GcpConfig) (*storage.Client, error) {
+func NewStorageClient(config *config.GcpConfig) (*storage.Client, error) {
 
 	ctx := context.Background()
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(config.ServiceAccount))
@@ -42,4 +44,30 @@ func NewStorageCliemt(config *config.GcpConfig) (*storage.Client, error) {
 	}
 
 	return storageClient, nil
+}
+
+func StructToMap(data interface{}) (map[string]interface{}, error) {
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	mapData := make(map[string]interface{})
+	err = json.Unmarshal(dataBytes, &mapData)
+	if err != nil {
+		return nil, err
+	}
+	return mapData, nil
+}
+
+func AckStreamSegment(config *config.Config, redisClient *redis.Client, streamIDs []string) error {
+
+	if len(streamIDs) == int(config.GeneralConfig.SegmentLength) {
+		for _, streamID := range streamIDs {
+			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, streamID)
+		}
+		return nil
+	} else {
+		return fmt.Errorf("failed to match streamIDs length to segment length config")
+	}
+
 }

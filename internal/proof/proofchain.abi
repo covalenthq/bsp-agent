@@ -516,7 +516,7 @@
           "type": "bytes32"
         }
       ],
-      "name": "proveBlockSpecimenProduced",
+      "name": "ProveBlockSpecimenProduced",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function",
@@ -550,7 +550,7 @@
           "type": "bytes32"
         }
       ],
-      "name": "proveBlockResultProduced",
+      "name": "ProveBlockResultProduced",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function",

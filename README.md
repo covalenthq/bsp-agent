@@ -56,7 +56,7 @@ Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Networ
     REDIS_ADDRESS=localhost:6379
     REDIS_STREAM_KEY=replication
     REDIS_CONSUMER_GROUP=replicate
-    CONSUME_EVENTS=10
+    CONSUME_EVENTS=1
     ETH_SOURCE_CLIENT=https://goerli.infura.io/v3/abcdefghijklmnop123456890 #goerli
     ETH_PROOF_CLIENT=http://127.0.0.1:7545 #ganache
 	ETH_PRIVATE_KEY=private/key/senders
@@ -64,6 +64,8 @@ Please refer to this [document](https://www.notion.so/covalenthq/Covalent-Networ
 	ETH_CHAIN_ID=5777 #virt chain id
 	ETH_KEYSTORE_PATH=path/to/keystore/file.json
 	ETH_KEYSTORE_PWD=password/to/access/keystore/file.json
+    ETH_CHAIN_ID=5777
+    SEGMENT_LENGTH=5
     ```
 
 ## run
