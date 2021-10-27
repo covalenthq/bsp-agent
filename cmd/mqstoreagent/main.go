@@ -191,8 +191,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	h := handlerFactory(event.Type(typeEvent))
 	specimen, result, err := h.Handle(config, storage, ethProof, newEvent, hash, parseDate, decodedData, retry)
 	if err != nil {
-		log.Error("error: ", err.Error(), "on process event: ", newEvent)
-		return
+		log.Fatalf("error: ", err.Error(), " on process event: ", newEvent)
 	} else {
 		if specimen == nil {
 			// collect stream ids and block results

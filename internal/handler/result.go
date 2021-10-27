@@ -105,7 +105,7 @@ func encodeResultSegmentToAvro(blockResultSegment interface{}) ([]byte, error) {
 								},
 								{
 								   "name":"TotalDifficulty",
-								   "type":"int"
+								   "type":"double"
 								},
 								{
 								   "name":"Header",
@@ -146,7 +146,7 @@ func encodeResultSegmentToAvro(blockResultSegment interface{}) ([]byte, error) {
 										 },
 										 {
 											"name":"difficulty",
-											"type":"int"
+											"type":"double"
 										 },
 										 {
 											"name":"number",
@@ -181,7 +181,8 @@ func encodeResultSegmentToAvro(blockResultSegment interface{}) ([]byte, error) {
 										 },
 										 {
 											"name":"baseFeePerGas",
-											"type":"int"
+											"type":["null", "int"],
+											"default":null
 										 }
 									  ]
 								   }

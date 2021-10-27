@@ -141,7 +141,7 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, erro
 										 },
 										 {
 											"name":"difficulty",
-											"type":"int"
+											"type":"double"
 										 },
 										 {
 											"name":"number",
@@ -176,7 +176,8 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, erro
 										 },
 										 {
 											"name":"baseFeePerGas",
-											"type":"int"
+											"type":["null", "int"],
+											"default":null
 										 }
 									  ]
 								   }
