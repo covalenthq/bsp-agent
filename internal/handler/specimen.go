@@ -27,7 +27,7 @@ func NewSpecimenHandler() Handler {
 	return &specimenHandler{}
 }
 
-func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
+func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {

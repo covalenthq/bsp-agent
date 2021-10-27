@@ -22,13 +22,12 @@ type RedisConfig struct {
 }
 
 type EthConfig struct {
-	ProofClient  string `envconfig:"ETH_PROOF_CLIENT"`
-	SourceClient string `envconfig:"ETH_SOURCE_CLIENT"`
-	Key          string `envconfig:"ETH_PRIVATE_KEY"`
-	Contract     string `envconfig:"ETH_PROOF_CONTRACT"`
-	ChainId      uint64 `envconfig:"ETH_CHAIN_ID" default:"5"`
-	Keystore     string `envconfig:"ETH_KEYSTORE_PATH"`
-	Password     string `envconfig:"ETH_KEYSTORE_PWD"`
+	ProofClient string `envconfig:"ETH_PROOF_CLIENT"`
+	Key         string `envconfig:"ETH_PRIVATE_KEY"`
+	Contract    string `envconfig:"ETH_PROOF_CONTRACT"`
+	ChainId     uint64 `envconfig:"ETH_CHAIN_ID" default:"5"`
+	Keystore    string `envconfig:"ETH_KEYSTORE_PATH"`
+	Password    string `envconfig:"ETH_KEYSTORE_PWD"`
 }
 
 type GeneralConfig struct {

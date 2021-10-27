@@ -65,11 +65,6 @@ func main() {
 		panic(err)
 	}
 
-	ethSourceClient, err := utils.NewEthClient(config.EthConfig.SourceClient)
-	if err != nil {
-		panic(err)
-	}
-
 	ethProofClient, err := utils.NewEthClient(config.EthConfig.ProofClient)
 	if err != nil {
 		panic(err)
@@ -81,8 +76,8 @@ func main() {
 
 	createConsumerGroup(&config.RedisConfig, redisClient)
 
-	go consumeEvents(config, redisClient, storageClient, ethSourceClient, ethProofClient, consumerName)
-	go consumePendingEvents(config, redisClient, storageClient, ethSourceClient, ethProofClient, consumerName)
+	go consumeEvents(config, redisClient, storageClient, ethProofClient, consumerName)
+	go consumePendingEvents(config, redisClient, storageClient, ethProofClient, consumerName)
 
 	//Gracefully disconnect
 	chanOS := make(chan os.Signal, 1)
@@ -92,7 +87,6 @@ func main() {
 	waitGrp.Wait()
 	redisClient.Close()
 	storageClient.Close()
-	ethSourceClient.Close()
 	ethProofClient.Close()
 }
 
@@ -105,7 +99,7 @@ func createConsumerGroup(config *config.RedisConfig, redisClient *redis.Client) 
 	}
 }
 
-func consumeEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, consumerName string) {
+func consumeEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
 	for {
 		log.Info("New sequential stream unit: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
@@ -123,13 +117,13 @@ func consumeEvents(config *config.Config, redisClient *redis.Client, storage *st
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, redisClient, storage, ethSource, ethProof, stream, false, handler.HandlerFactory())
+			go processStream(config, redisClient, storage, ethProof, stream, false, handler.HandlerFactory())
 		}
 		waitGrp.Wait()
 	}
 }
 
-func consumePendingEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, consumerName string) {
+func consumePendingEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
 	ticker := time.Tick(time.Second * time.Duration(consumePendingTime))
 	for range ticker {
 		var streamsRetry []string
@@ -165,7 +159,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 
 			for _, stream := range streams {
 				waitGrp.Add(1)
-				go processStream(config, redisClient, storage, ethSource, ethProof, stream, true, handler.HandlerFactory())
+				go processStream(config, redisClient, storage, ethProof, stream, true, handler.HandlerFactory())
 			}
 			waitGrp.Wait()
 		}
@@ -173,7 +167,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 	}
 }
 
-func processStream(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
+func processStream(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
 	defer waitGrp.Done()
 
 	ctx := context.Background()
@@ -195,7 +189,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(event.Type(typeEvent))
-	specimen, result, err := h.Handle(config, storage, ethSource, ethProof, newEvent, hash, parseDate, decodedData, retry)
+	specimen, result, err := h.Handle(config, storage, ethProof, newEvent, hash, parseDate, decodedData, retry)
 	if err != nil {
 		log.Error("error: ", err.Error(), "on process event: ", newEvent)
 		return
