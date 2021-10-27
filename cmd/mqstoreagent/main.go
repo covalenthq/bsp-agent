@@ -231,12 +231,14 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 			specimenSegmentIdBatch = append(specimenSegmentIdBatch, stream.ID)
 			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
 			if len(specimenSegment.BlockSpecimen) == 1 {
-				specimenSegment.StartBlock = specimen.BlockHeader.Number.Uint64()
+				specimenSegment.StartBlock = specimen.Data.Header.Number.Uint64()
+				println(specimenSegment.StartBlock, "start block")
 			}
 			if len(specimenSegment.BlockSpecimen) == int(config.GeneralConfig.SegmentLength) {
-				specimenSegment.EndBlock = specimen.BlockHeader.Number.Uint64()
+				specimenSegment.EndBlock = specimen.Data.Header.Number.Uint64()
 				specimenSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
 				specimenSegmentName = fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
+				println(specimenSegment.EndBlock, "end block")
 				// encode, prove and upload
 				_, err := handler.EncodeProveAndUploadSpecimenSegment(ctx, config, &specimenSegment, specimenSegmentName, storage, ethProof)
 				if err != nil {

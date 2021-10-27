@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"cloud.google.com/go/storage"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
@@ -30,7 +29,6 @@ func NewSpecimenHandler() Handler {
 
 func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
-	ctx := context.Background()
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return nil, nil, fmt.Errorf("incorrect event type: %v", replEvent.Type)
@@ -50,15 +48,6 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 	} else {
 		specimen.Data = &decodedSpecimen
 	}
-
-	blockHash := common.HexToHash(specimen.ReplicationEvent.Hash)
-
-	blockHeader, err := ethSource.HeaderByHash(ctx, blockHash)
-	if err != nil {
-		log.Error("error getting block: ", err.Error())
-	}
-
-	specimen.BlockHeader = blockHeader
 
 	return specimen, nil, nil
 }
@@ -110,27 +99,123 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, erro
 							 "type":"record",
 							 "fields":[
 								{
-								   "name":"AccountRead",
+								   "name":"Hash",
+								   "type":"string"
+								},
+								{
+								   "name":"Header",
+								   "type":{
+									  "name":"Header",
+									  "type":"record",
+									  "fields":[
+										 {
+											"name":"parentHash",
+											"type":"string"
+										 },
+										 {
+											"name":"sha3Uncles",
+											"type":"string"
+										 },
+										 {
+											"name":"miner",
+											"type":"string"
+										 },
+										 {
+											"name":"stateRoot",
+											"type":"string"
+										 },
+										 {
+											"name":"transactionsRoot",
+											"type":"string"
+										 },
+										 {
+											"name":"receiptsRoot",
+											"type":"string"
+										 },
+										 {
+											"name":"logsBloom",
+											"type":{
+											   "type":"array",
+											   "items":"int"
+											}
+										 },
+										 {
+											"name":"difficulty",
+											"type":"int"
+										 },
+										 {
+											"name":"number",
+											"type":"int"
+										 },
+										 {
+											"name":"gasLimit",
+											"type":"int"
+										 },
+										 {
+											"name":"gasUsed",
+											"type":"int"
+										 },
+										 {
+											"name":"timestamp",
+											"type":"int"
+										 },
+										 {
+											"name":"extraData",
+											"type":"string"
+										 },
+										 {
+											"name":"mixHash",
+											"type":"string"
+										 },
+										 {
+											"name":"nonce",
+											"type":{
+											   "type":"array",
+											   "items":"int"
+											}
+										 },
+										 {
+											"name":"baseFeePerGas",
+											"type":"int"
+										 }
+									  ]
+								   }
+								},
+								{
+								   "name":"Transactions",
 								   "type":{
 									  "type":"array",
 									  "items":{
-										 "name":"AccountRead_record",
+										 "name":"Transactions_record",
 										 "type":"record",
 										 "fields":[
 											{
-											   "name":"Address",
-											   "type":"string"
-											},
-											{
-											   "name":"Nonce",
+											   "name":"nonce",
 											   "type":"int"
 											},
 											{
-											   "name":"Balance",
+											   "name":"gasPrice",
+											   "type":"long"
+											},
+											{
+											   "name":"gas",
+											   "type":"int"
+											},
+											{
+											   "name":"from",
+											   "type":"string"
+											},
+											{
+											   "name":"to",
+											   "type":"string",
+											   "default":"\u00ff"
+											},
+											{
+											   "name":"value",
 											   "type":"double"
 											},
 											{
-											   "name":"CodeHash",
+											   "name":"input",
 											   "type":"string"
 											}
 										 ]
@@ -138,121 +223,96 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, erro
 								   }
 								},
 								{
-								   "name":"StorageRead",
+								   "name":"uncles",
+								   "type":[
+									  "null",
+									  {
+										 "type":"array",
+										 "items":"Header"
+									  }
+								   ],
+								   "default":null
+								},
+								{
+								   "name":"State",
 								   "type":{
-									  "type":"array",
-									  "items":{
-										 "name":"StorageRead_record",
-										 "type":"record",
-										 "fields":[
-											{
-											   "name":"Account",
-											   "type":"string"
-											},
-											{
-											   "name":"SlotKey",
-											   "type":"string"
-											},
-											{
-											   "name":"Value",
-											   "type":"string"
+									  "name":"State",
+									  "type":"record",
+									  "fields":[
+										 {
+											"name":"AccountRead",
+											"type":{
+											   "type":"array",
+											   "items":{
+												  "name":"AccountRead_record",
+												  "type":"record",
+												  "fields":[
+													 {
+														"name":"Address",
+														"type":"string"
+													 },
+													 {
+														"name":"Nonce",
+														"type":"int"
+													 },
+													 {
+														"name":"Balance",
+														"type":"double"
+													 },
+													 {
+														"name":"CodeHash",
+														"type":"string"
+													 }
+												  ]
+											   }
 											}
-										 ]
-									  }
-								   }
-								},
-								{
-								   "name":"CodeRead",
-								   "type":{
-									  "type":"array",
-									  "items":{
-										 "name":"CodeRead_record",
-										 "type":"record",
-										 "fields":[
-											{
-											   "name":"Hash",
-											   "type":"string"
-											},
-											{
-											   "name":"Code",
-											   "type":"string"
+										 },
+										 {
+											"name":"StorageRead",
+											"type":{
+											   "type":"array",
+											   "items":{
+												  "name":"StorageRead_record",
+												  "type":"record",
+												  "fields":[
+													 {
+														"name":"Account",
+														"type":"string"
+													 },
+													 {
+														"name":"SlotKey",
+														"type":"string"
+													 },
+													 {
+														"name":"Value",
+														"type":"string"
+													 }
+												  ]
+											   }
 											}
-										 ]
-									  }
+										 },
+										 {
+											"name":"CodeRead",
+											"type":{
+											   "type":"array",
+											   "items":{
+												  "name":"CodeRead_record",
+												  "type":"record",
+												  "fields":[
+													 {
+														"name":"Hash",
+														"type":"string"
+													 },
+													 {
+														"name":"Code",
+														"type":"string"
+													 }
+												  ]
+											   }
+											}
+										 }
+									  ]
 								   }
-								}
-							 ]
-						  }
-					   },
-					   {
-						  "name":"header",
-						  "type":{
-							 "name":"header",
-							 "type":"record",
-							 "fields":[
-								{
-								   "name":"parentHash",
-								   "type":"string"
-								},
-								{
-								   "name":"sha3Uncles",
-								   "type":"string"
-								},
-								{
-								   "name":"miner",
-								   "type":"string"
-								},
-								{
-								   "name":"stateRoot",
-								   "type":"string"
-								},
-								{
-								   "name":"transactionsRoot",
-								   "type":"string"
-								},
-								{
-								   "name":"receiptsRoot",
-								   "type":"string"
-								},
-								{
-								   "name":"logsBloom",
-								   "type":"string"
-								},
-								{
-								   "name":"difficulty",
-								   "type":"string"
-								},
-								{
-								   "name":"number",
-								   "type":"string"
-								},
-								{
-								   "name":"gasLimit",
-								   "type":"string"
-								},
-								{
-								   "name":"gasUsed",
-								   "type":"string"
-								},
-								{
-								   "name":"timestamp",
-								   "type":"string"
-								},
-								{
-								   "name":"extraData",
-								   "type":"string"
-								},
-								{
-								   "name":"mixHash",
-								   "type":"string"
-								},
-								{
-								   "name":"nonce",
-								   "type":"string"
-								},
-								{
-								   "name":"baseFeePerGas",
-								   "type":"string"
 								}
 							 ]
 						  }

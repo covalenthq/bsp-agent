@@ -22,6 +22,14 @@ type BlockResult struct {
 }
 
 type BlockSpecimen struct {
+	Hash         common.Hash
+	Header       *Header
+	Transactions []*Transaction
+	Uncles       []*Header
+	State        *StateSpecimen
+}
+
+type StateSpecimen struct {
 	AccountRead []*accountRead
 	StorageRead []*storageRead
 	CodeRead    []*codeRead
