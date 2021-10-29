@@ -14,8 +14,10 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
 	"github.com/golang/snappy"
+	"github.com/linkedin/goavro/v2"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/avro.v0"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	"github.com/covalenthq/mq-store-agent/internal/config"
@@ -35,6 +37,8 @@ var (
 	specimenSegmentName    string
 	specimenSegmentIdBatch []string
 	resultSegmentIdBatch   []string
+	avroCodecs             []*goavro.Codec
+	codecPath              string = "./../../codec/"
 )
 
 func init() {
@@ -46,7 +50,6 @@ func init() {
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.InfoLevel)
 	log.WithFields(log.Fields{"file": "main.go"}).Info("Server is running...")
-
 }
 
 func main() {
@@ -70,14 +73,36 @@ func main() {
 		panic(err)
 	}
 
+	specimenAvro, err := avro.ParseSchemaFile(codecPath + "block-specimen.avsc")
+	if err != nil {
+		log.Fatalf("unable to parse avro schema for specimen: %v", err)
+	}
+
+	specimenCodec, err := goavro.NewCodec(specimenAvro.String())
+	if err != nil {
+		log.Fatalf("unable to gen avro codec for specimen: %v", err)
+	}
+
+	resultAvro, err := avro.ParseSchemaFile(codecPath + "block-result.avsc")
+	if err != nil {
+		log.Fatalf("unable to parse avro schema for result: %v", err)
+	}
+
+	resultCodec, err := goavro.NewCodec(resultAvro.String())
+	if err != nil {
+		log.Fatalf("unable to parse avro schema for result: %v", err)
+	}
+
+	avroCodecs := append(avroCodecs, specimenCodec, resultCodec)
+
 	var consumerName string = uuid.NewV4().String()
 
 	log.Printf("Initializing Consumer: %v\nConsumer Group: %v\nRedis Stream: %v\n", consumerName, config.RedisConfig.Group, config.RedisConfig.Key)
 
 	createConsumerGroup(&config.RedisConfig, redisClient)
 
-	go consumeEvents(config, redisClient, storageClient, ethProofClient, consumerName)
-	go consumePendingEvents(config, redisClient, storageClient, ethProofClient, consumerName)
+	go consumeEvents(config, avroCodecs, redisClient, storageClient, ethProofClient, consumerName)
+	go consumePendingEvents(config, avroCodecs, redisClient, storageClient, ethProofClient, consumerName)
 
 	//Gracefully disconnect
 	chanOS := make(chan os.Signal, 1)
@@ -99,7 +124,7 @@ func createConsumerGroup(config *config.RedisConfig, redisClient *redis.Client) 
 	}
 }
 
-func consumeEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
+func consumeEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
 	for {
 		log.Info("New sequential stream unit: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
@@ -117,13 +142,13 @@ func consumeEvents(config *config.Config, redisClient *redis.Client, storage *st
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, redisClient, storage, ethProof, stream, false, handler.HandlerFactory())
+			go processStream(config, avroCodecs, redisClient, storage, ethProof, stream, false, handler.HandlerFactory())
 		}
 		waitGrp.Wait()
 	}
 }
 
-func consumePendingEvents(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
+func consumePendingEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
 	ticker := time.Tick(time.Second * time.Duration(consumePendingTime))
 	for range ticker {
 		var streamsRetry []string
@@ -159,7 +184,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 
 			for _, stream := range streams {
 				waitGrp.Add(1)
-				go processStream(config, redisClient, storage, ethProof, stream, true, handler.HandlerFactory())
+				go processStream(config, avroCodecs, redisClient, storage, ethProof, stream, true, handler.HandlerFactory())
 			}
 			waitGrp.Wait()
 		}
@@ -167,7 +192,7 @@ func consumePendingEvents(config *config.Config, redisClient *redis.Client, stor
 	}
 }
 
-func processStream(config *config.Config, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
+func processStream(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, stream redis.XMessage, retry bool, handlerFactory func(t event.Type) handler.Handler) {
 	defer waitGrp.Done()
 
 	ctx := context.Background()
@@ -199,7 +224,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				resultSegment.Elements = uint64(config.GeneralConfig.SegmentLength)
 				resultSegmentName = fmt.Sprint(resultSegment.StartBlock) + "-" + fmt.Sprint(resultSegment.EndBlock)
 				// encode, prove and upload
-				_, err := handler.EncodeProveAndUploadResultSegment(ctx, config, &resultSegment, resultSegmentName, storage, ethProof)
+				_, err := handler.EncodeProveAndUploadResultSegment(ctx, config, avroCodecs[1], &resultSegment, resultSegmentName, storage, ethProof)
 				if err != nil {
 					log.Fatalf("failed to avro encode, proove and upload block-result segment: %v with err: %v", resultSegmentName, err)
 				}
@@ -227,7 +252,7 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 				specimenSegmentName = fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
 				println(specimenSegment.EndBlock, "end block")
 				// encode, prove and upload
-				_, err := handler.EncodeProveAndUploadSpecimenSegment(ctx, config, &specimenSegment, specimenSegmentName, storage, ethProof)
+				_, err := handler.EncodeProveAndUploadSpecimenSegment(ctx, config, avroCodecs[0], &specimenSegment, specimenSegmentName, storage, ethProof)
 				if err != nil {
 					log.Fatalf("failed to avro encode, proove and upload block-specimen segment: %v with err: %v", resultSegmentName, err)
 				}
