@@ -12,6 +12,7 @@ const (
 )
 
 type BlockResult struct {
+	NetworkId       uint64
 	Hash            common.Hash
 	TotalDifficulty *big.Int
 	Header          *Header
@@ -22,6 +23,7 @@ type BlockResult struct {
 }
 
 type BlockSpecimen struct {
+	NetworkId    uint64
 	Hash         common.Hash
 	Header       *Header
 	Transactions []*Transaction
@@ -59,21 +61,21 @@ type Header struct {
 }
 
 type Transaction struct {
-	AccountNonce uint64          `json:"nonce"    `
-	Price        *big.Int        `json:"gasPrice" `
-	GasLimit     uint64          `json:"gas"      `
-	Sender       common.Address  `json:"from"     `
-	Recipient    *common.Address `json:"to,omitempty"  rlp:"nil"` // nil means contract creation
-	Amount       *big.Int        `json:"value"    `
-	Payload      []byte          `json:"input"    `
+	AccountNonce uint64          `json:"nonce"`
+	Price        *big.Int        `json:"gasPrice"`
+	GasLimit     uint64          `json:"gas"`
+	Sender       common.Address  `json:"from"`
+	Recipient    *common.Address `json:"to,omitempty" rlp:"nil"` // nil means contract creation
+	Amount       *big.Int        `json:"value"`
+	Payload      []byte          `json:"input"`
 }
 
 type Logs struct {
-	Address     common.Address `json:"address" `
-	Topics      []common.Hash  `json:"topics" `
-	Data        []byte         `json:"data" `
+	Address     common.Address `json:"address"`
+	Topics      []common.Hash  `json:"topics"`
+	Data        []byte         `json:"data"`
 	BlockNumber uint64         `json:"blockNumber"`
-	TxHash      common.Hash    `json:"transactionHash" `
+	TxHash      common.Hash    `json:"transactionHash"`
 	TxIndex     uint           `json:"transactionIndex"`
 	BlockHash   common.Hash    `json:"blockHash"`
 	Index       uint           `json:"logIndex"`
