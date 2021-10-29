@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -27,7 +26,7 @@ func NewResultHandler() Handler {
 	return &resultHandler{}
 }
 
-func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
+func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, ethProof *ethclient.Client, e event.Event, hash string, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
 	//ctx := context.Background()
 	replEvent, ok := e.(*event.ReplicationEvent)
@@ -36,7 +35,6 @@ func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, e
 	}
 
 	replEvent.Hash = hash
-	replEvent.DateTime = datetime
 
 	result := &event.ResultEvent{
 		ReplicationEvent: replEvent,

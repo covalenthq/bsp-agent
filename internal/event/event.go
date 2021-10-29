@@ -2,7 +2,6 @@ package event
 
 import (
 	"fmt"
-	"time"
 
 	ty "github.com/covalenthq/mq-store-agent/internal/types"
 )
@@ -43,17 +42,15 @@ type ReplicationEvent struct {
 }
 
 type Base struct {
-	ID       string    `json:"ID"`
-	Type     Type      `json:"type"`
-	Hash     string    `json:"hash"`
-	DateTime time.Time `json:"datetime"`
+	ID   string `json:"ID"`
+	Type Type   `json:"type"`
+	Hash string `json:"hash"`
 }
 type Event interface {
 	GetID() string
 	SetID(id string)
 	GetType() Type
 	GetHash() string
-	GetDateTime() time.Time
 	String() string
 }
 
@@ -86,10 +83,6 @@ func (o *Base) SetID(id string) {
 
 func (o *Base) GetType() Type {
 	return o.Type
-}
-
-func (o *Base) GetDateTime() time.Time {
-	return o.DateTime
 }
 
 func (o *Base) String() string {

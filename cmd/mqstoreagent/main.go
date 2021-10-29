@@ -173,23 +173,17 @@ func processStream(config *config.Config, redisClient *redis.Client, storage *st
 	ctx := context.Background()
 	typeEvent := stream.Values["type"].(string)
 	hash := stream.Values["hash"].(string)
-	datetime := stream.Values["datetime"].(string)
+
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
 	if err != nil {
 		log.Info("Failed to snappy decode: ", err.Error())
-	}
-
-	timeLayout := time.RFC3339
-	parseDate, err := time.Parse(timeLayout, datetime)
-	if err != nil {
-		log.Info("RFC format doesn't work: ", err.Error())
 	}
 
 	newEvent, _ := event.New(event.Type(typeEvent))
 	newEvent.SetID(stream.ID)
 
 	h := handlerFactory(event.Type(typeEvent))
-	specimen, result, err := h.Handle(config, storage, ethProof, newEvent, hash, parseDate, decodedData, retry)
+	specimen, result, err := h.Handle(config, storage, ethProof, newEvent, hash, decodedData, retry)
 	if err != nil {
 		log.Fatalf("error: ", err.Error(), " on process event: ", newEvent)
 	} else {
