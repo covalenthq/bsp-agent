@@ -15,14 +15,21 @@ import (
 
 func NewRedisClient(config *config.RedisConfig) (*redis.Client, error) {
 
+	opt, err := redis.ParseURL(config.Url)
+	fmt.Println(config.Url, config.Key, config.Group)
+	if err != nil {
+		panic(err)
+	}
+
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     config.Address,
-		Password: config.Password,
-		DB:       config.DB, // use default DB
+		Addr:     opt.Addr,
+		Password: opt.Password,
+		DB:       opt.DB, // use default DB
 	})
 
-	_, err := redisClient.Ping().Result()
+	_, err = redisClient.Ping().Result()
 	return redisClient, err
+
 }
 
 func NewEthClient(address string) (*ethclient.Client, error) {

@@ -38,7 +38,7 @@ var (
 	specimenSegmentIdBatch []string
 	resultSegmentIdBatch   []string
 	avroCodecs             []*goavro.Codec
-	codecPath              string = "./../../codec/"
+	codecPath              string = "./codec/"
 )
 
 func init() {

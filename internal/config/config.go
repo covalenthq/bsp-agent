@@ -14,11 +14,9 @@ type GcpConfig struct {
 }
 
 type RedisConfig struct {
-	Address  string `envconfig:"REDIS_ADDRESS"`
-	Password string `envconfig:"REDIS_PASSWORD" default:""`
-	DB       int    `envconfig:"REDIS_DB" default:"0"`
-	Key      string `envconfig:"REDIS_STREAM_KEY" default:"replication"`
-	Group    string `envconfig:"REDIS_CONSUMER_GROUP" default:"replicate"`
+	Url   string `envconfig:"REDIS_URL"`
+	Key   string `envconfig:"REDIS_STREAM_KEY" default:"replication"`
+	Group string `envconfig:"REDIS_CONSUMER_GROUP" default:"replicate"`
 }
 
 type EthConfig struct {
