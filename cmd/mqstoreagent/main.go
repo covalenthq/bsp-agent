@@ -28,9 +28,10 @@ import (
 
 var (
 	waitGrp                sync.WaitGroup
+	ConsumeEvents          int64  = 1
 	start                  string = ">"
-	consumeIdleTime        int64  = 30
-	consumePendingTime     int64  = 60
+	consumerIdleTime       int64  = 30
+	consumerPendingTime    int64  = 60
 	resultSegment          event.ResultSegment
 	specimenSegment        event.SpecimenSegment
 	resultSegmentName      string
@@ -126,12 +127,12 @@ func createConsumerGroup(config *config.RedisConfig, redisClient *redis.Client) 
 
 func consumeEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
 	for {
-		log.Info("New sequential stream unit: ", time.Now().Format(time.RFC3339))
+		log.Debug("New sequential stream unit: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
 			Streams:  []string{config.RedisConfig.Key, start},
 			Group:    config.RedisConfig.Group,
 			Consumer: consumerName,
-			Count:    config.GeneralConfig.ConsumeEvents,
+			Count:    ConsumeEvents,
 			Block:    0,
 		}).Result()
 
@@ -149,7 +150,7 @@ func consumeEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 }
 
 func consumePendingEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
-	ticker := time.Tick(time.Second * time.Duration(consumePendingTime))
+	ticker := time.Tick(time.Second * time.Duration(consumerPendingTime))
 	for range ticker {
 		var streamsRetry []string
 		pendingStreams, err := redisClient.XPendingExt(&redis.XPendingExtArgs{
@@ -157,7 +158,7 @@ func consumePendingEvents(config *config.Config, avroCodecs []*goavro.Codec, red
 			Group:  config.RedisConfig.Group,
 			Start:  "0",
 			End:    "+",
-			Count:  config.GeneralConfig.ConsumeEvents,
+			Count:  ConsumeEvents,
 		}).Result()
 
 		if err != nil {
@@ -174,7 +175,7 @@ func consumePendingEvents(config *config.Config, avroCodecs []*goavro.Codec, red
 				Group:    config.RedisConfig.Group,
 				Consumer: consumerName,
 				Messages: streamsRetry,
-				MinIdle:  time.Duration(consumeIdleTime) * time.Second,
+				MinIdle:  time.Duration(consumerIdleTime) * time.Second,
 			}).Result()
 
 			if err != nil {

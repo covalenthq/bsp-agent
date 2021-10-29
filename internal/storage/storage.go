@@ -11,6 +11,7 @@ import (
 	"cloud.google.com/go/storage"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -52,6 +53,7 @@ func writeToStorage(ctx context.Context, client *storage.Client, bucket string, 
 	if err := wc.Close(); err != nil {
 		return err
 	}
+	log.Info("Object uploaded to: https://storage.cloud.google.com/" + bucket + "/" + objectName)
 
 	return nil
 }
