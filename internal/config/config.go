@@ -15,8 +15,8 @@ type GcpConfig struct {
 
 type RedisConfig struct {
 	Url   string `envconfig:"REDIS_URL"`
-	Key   string `envconfig:"REDIS_STREAM_KEY" default:"replication"`
-	Group string `envconfig:"REDIS_CONSUMER_GROUP" default:"replicate"`
+	Key   string `envconfig:"REDIS_STREAM_KEY"`
+	Group string `envconfig:"REDIS_CONSUMER_GROUP"`
 }
 
 type EthConfig struct {

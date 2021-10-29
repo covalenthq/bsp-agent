@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"strconv"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/mq-store-agent/internal/config"
@@ -15,21 +18,34 @@ import (
 
 func NewRedisClient(config *config.RedisConfig) (*redis.Client, error) {
 
-	opt, err := redis.ParseURL(config.Url)
-	fmt.Println(config.Url, config.Key, config.Group)
+	u, err := url.Parse(config.Url)
+	if err != nil {
+		panic(err)
+	}
+
+	pass, _ := u.User.Password()
+	dbString := strings.Replace(u.Path, "/", "", -1)
+	m, err := url.ParseQuery(u.RawQuery)
+	if err != nil {
+		panic(err)
+	}
+
+	dbInt, err := strconv.Atoi(dbString)
 	if err != nil {
 		panic(err)
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     opt.Addr,
-		Password: opt.Password,
-		DB:       opt.DB, // use default DB
+		Addr:     u.Host,
+		Password: pass,
+		DB:       dbInt, // use default DB
 	})
+
+	config.Key = m["topic"][0]
+	config.Group = u.Fragment
 
 	_, err = redisClient.Ping().Result()
 	return redisClient, err
-
 }
 
 func NewEthClient(address string) (*ethclient.Client, error) {

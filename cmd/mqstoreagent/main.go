@@ -97,7 +97,7 @@ func main() {
 
 	var consumerName string = uuid.NewV4().String()
 
-	log.Printf("Initializing Consumer: %v\nConsumer Group: %v\nRedis Stream: %v\n", consumerName, config.RedisConfig.Group, config.RedisConfig.Key)
+	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, config.RedisConfig.Key, config.RedisConfig.Group)
 
 	createConsumerGroup(&config.RedisConfig, redisClient)
 
