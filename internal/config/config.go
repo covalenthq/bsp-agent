@@ -13,12 +13,6 @@ type GcpConfig struct {
 	SpecimenBucket string `envconfig:"GCP_SPECIMEN_BUCKET"`
 }
 
-type RedisConfig struct {
-	Url   string `envconfig:"REDIS_URL"`
-	Key   string `envconfig:"REDIS_STREAM_KEY"`
-	Group string `envconfig:"REDIS_CONSUMER_GROUP"`
-}
-
 type EthConfig struct {
 	ProofClient string `envconfig:"ETH_PROOF_CLIENT"`
 	Key         string `envconfig:"ETH_PRIVATE_KEY"`
@@ -34,7 +28,6 @@ type GeneralConfig struct {
 
 type Config struct {
 	GcpConfig     GcpConfig
-	RedisConfig   RedisConfig
 	GeneralConfig GeneralConfig
 	EthConfig     EthConfig
 }

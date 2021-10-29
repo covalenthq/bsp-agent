@@ -3,8 +3,10 @@ package utils
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -16,18 +18,18 @@ import (
 	"google.golang.org/api/option"
 )
 
-func NewRedisClient(config *config.RedisConfig) (*redis.Client, error) {
+func NewRedisClient(redisConnection string) (*redis.Client, string, string, error) {
 
-	u, err := url.Parse(config.Url)
+	u, err := url.Parse(redisConnection)
 	if err != nil {
-		panic(err)
+		log.Fatalf("we have an error here 1", err)
 	}
 
 	pass, _ := u.User.Password()
 	dbString := strings.Replace(u.Path, "/", "", -1)
 	m, err := url.ParseQuery(u.RawQuery)
 	if err != nil {
-		panic(err)
+		log.Fatalf("we have an error here 2", err)
 	}
 
 	dbInt, err := strconv.Atoi(dbString)
@@ -41,11 +43,11 @@ func NewRedisClient(config *config.RedisConfig) (*redis.Client, error) {
 		DB:       dbInt, // use default DB
 	})
 
-	config.Key = m["topic"][0]
-	config.Group = u.Fragment
+	streamKey := m["topic"][0]
+	consumerGroup := u.Fragment
 
 	_, err = redisClient.Ping().Result()
-	return redisClient, err
+	return redisClient, streamKey, consumerGroup, err
 }
 
 func NewEthClient(address string) (*ethclient.Client, error) {
@@ -82,15 +84,42 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 	return mapData, nil
 }
 
-func AckStreamSegment(config *config.Config, redisClient *redis.Client, streamIDs []string) error {
+func AckStreamSegment(config *config.Config, redisClient *redis.Client, streamKey, consumerGroup string, streamIDs []string) error {
 
 	if len(streamIDs) == int(config.GeneralConfig.SegmentLength) {
 		for _, streamID := range streamIDs {
-			redisClient.XAck(config.RedisConfig.Key, config.RedisConfig.Group, streamID)
+			redisClient.XAck(streamKey, consumerGroup, streamID)
 		}
 		return nil
 	} else {
 		return fmt.Errorf("failed to match streamIDs length to segment length config")
 	}
 
+}
+
+func LookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
+}
+
+func LookupEnvOrInt(key string, defaultVal int) int {
+	if val, ok := os.LookupEnv(key); ok {
+		v, err := strconv.Atoi(val)
+		if err != nil {
+			log.Fatalf("LookupEnvOrInt[%s]: %v", key, err)
+		}
+		return v
+	}
+	return defaultVal
+}
+
+func GetConfig(fs *flag.FlagSet) []string {
+	cfg := make([]string, 0, 10)
+	fs.VisitAll(func(f *flag.Flag) {
+		cfg = append(cfg, fmt.Sprintf("%s:%q", f.Name, f.Value.String()))
+	})
+
+	return cfg
 }

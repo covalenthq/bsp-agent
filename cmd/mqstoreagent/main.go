@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -27,19 +28,27 @@ import (
 )
 
 var (
-	waitGrp                sync.WaitGroup
-	ConsumeEvents          int64  = 1
-	start                  string = ">"
-	consumerIdleTime       int64  = 30
-	consumerPendingTime    int64  = 60
-	resultSegment          event.ResultSegment
-	specimenSegment        event.SpecimenSegment
-	resultSegmentName      string
-	specimenSegmentName    string
+	waitGrp sync.WaitGroup
+
+	avroCodecs []*goavro.Codec
+
+	ConsumeEvents       int64 = 1
+	consumerIdleTime    int64 = 30
+	consumerPendingTime int64 = 60
+
+	start               string = ">"
+	CodecPath           string = "./codec/"
+	RedisURL            string
+	streamKey           string
+	consumerGroup       string
+	specimenSegmentName string
+	resultSegmentName   string
+
 	specimenSegmentIdBatch []string
 	resultSegmentIdBatch   []string
-	avroCodecs             []*goavro.Codec
-	codecPath              string = "./codec/"
+
+	specimenSegment event.SpecimenSegment
+	resultSegment   event.ResultSegment
 )
 
 func init() {
@@ -54,12 +63,17 @@ func init() {
 }
 
 func main() {
+	flag.StringVar(&RedisURL, "redis-url", utils.LookupEnvOrString("RedisURL", RedisURL), "redis consumer stream url")
+	flag.Parse()
+
 	config, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	redisClient, err := utils.NewRedisClient(&config.RedisConfig)
+	log.Info("Agent config: ", utils.GetConfig(flag.CommandLine))
+
+	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(utils.LookupEnvOrString("RedisURL", RedisURL))
 	if err != nil {
 		panic(err)
 	}
@@ -74,7 +88,7 @@ func main() {
 		panic(err)
 	}
 
-	specimenAvro, err := avro.ParseSchemaFile(codecPath + "block-specimen.avsc")
+	specimenAvro, err := avro.ParseSchemaFile(CodecPath + "block-specimen.avsc")
 	if err != nil {
 		log.Fatalf("unable to parse avro schema for specimen: %v", err)
 	}
@@ -84,7 +98,7 @@ func main() {
 		log.Fatalf("unable to gen avro codec for specimen: %v", err)
 	}
 
-	resultAvro, err := avro.ParseSchemaFile(codecPath + "block-result.avsc")
+	resultAvro, err := avro.ParseSchemaFile(CodecPath + "block-result.avsc")
 	if err != nil {
 		log.Fatalf("unable to parse avro schema for result: %v", err)
 	}
@@ -98,12 +112,12 @@ func main() {
 
 	var consumerName string = uuid.NewV4().String()
 
-	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, config.RedisConfig.Key, config.RedisConfig.Group)
+	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
 
-	createConsumerGroup(&config.RedisConfig, redisClient)
+	createConsumerGroup(redisClient, streamKey, consumerGroup)
 
-	go consumeEvents(config, avroCodecs, redisClient, storageClient, ethProofClient, consumerName)
-	go consumePendingEvents(config, avroCodecs, redisClient, storageClient, ethProofClient, consumerName)
+	go consumeEvents(config, avroCodecs, redisClient, storageClient, ethProofClient, consumerName, streamKey, consumerGroup)
+	go consumePendingEvents(config, avroCodecs, redisClient, storageClient, ethProofClient, consumerName, streamKey, consumerGroup)
 
 	//Gracefully disconnect
 	chanOS := make(chan os.Signal, 1)
@@ -116,21 +130,21 @@ func main() {
 	ethProofClient.Close()
 }
 
-func createConsumerGroup(config *config.RedisConfig, redisClient *redis.Client) {
-	if _, err := redisClient.XGroupCreateMkStream(config.Key, config.Group, "0").Result(); err != nil {
+func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup string) {
+	if _, err := redisClient.XGroupCreateMkStream(streamKey, consumerGroup, "0").Result(); err != nil {
 		if !strings.Contains(fmt.Sprint(err), "BUSYGROUP") {
-			log.Printf("Error on create Consumer Group: %v ...\n", config.Group)
+			log.Printf("Error on create Consumer Group: %v ...\n", consumerGroup)
 			panic(err)
 		}
 	}
 }
 
-func consumeEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
+func consumeEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName, streamKey, consumerGroup string) {
 	for {
 		log.Debug("New sequential stream unit: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
-			Streams:  []string{config.RedisConfig.Key, start},
-			Group:    config.RedisConfig.Group,
+			Streams:  []string{streamKey, start},
+			Group:    consumerGroup,
 			Consumer: consumerName,
 			Count:    ConsumeEvents,
 			Block:    0,
@@ -149,13 +163,13 @@ func consumeEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 	}
 }
 
-func consumePendingEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName string) {
+func consumePendingEvents(config *config.Config, avroCodecs []*goavro.Codec, redisClient *redis.Client, storage *storage.Client, ethProof *ethclient.Client, consumerName, streamKey, consumerGroup string) {
 	ticker := time.Tick(time.Second * time.Duration(consumerPendingTime))
 	for range ticker {
 		var streamsRetry []string
 		pendingStreams, err := redisClient.XPendingExt(&redis.XPendingExtArgs{
-			Stream: config.RedisConfig.Key,
-			Group:  config.RedisConfig.Group,
+			Stream: streamKey,
+			Group:  consumerGroup,
 			Start:  "0",
 			End:    "+",
 			Count:  ConsumeEvents,
@@ -171,8 +185,8 @@ func consumePendingEvents(config *config.Config, avroCodecs []*goavro.Codec, red
 
 		if len(streamsRetry) > 0 {
 			streams, err := redisClient.XClaim(&redis.XClaimArgs{
-				Stream:   config.RedisConfig.Key,
-				Group:    config.RedisConfig.Group,
+				Stream:   streamKey,
+				Group:    consumerGroup,
 				Consumer: consumerName,
 				Messages: streamsRetry,
 				MinIdle:  time.Duration(consumerIdleTime) * time.Second,
@@ -230,7 +244,7 @@ func processStream(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 					log.Fatalf("failed to avro encode, proove and upload block-result segment: %v with err: %v", resultSegmentName, err)
 				}
 				//ack stream segment batch id
-				err = utils.AckStreamSegment(config, redisClient, resultSegmentIdBatch)
+				err = utils.AckStreamSegment(config, redisClient, streamKey, consumerGroup, resultSegmentIdBatch)
 				if err != nil {
 					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
 				}
@@ -258,7 +272,7 @@ func processStream(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 					log.Fatalf("failed to avro encode, proove and upload block-specimen segment: %v with err: %v", resultSegmentName, err)
 				}
 				//ack stream segment batch id
-				err = utils.AckStreamSegment(config, redisClient, specimenSegmentIdBatch)
+				err = utils.AckStreamSegment(config, redisClient, streamKey, consumerGroup, specimenSegmentIdBatch)
 				if err != nil {
 					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
 				}
