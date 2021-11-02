@@ -26,7 +26,7 @@ func NewSpecimenHandler() Handler {
 	return &specimenHandler{}
 }
 
-func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethProof *ethclient.Client, e event.Event, hash string, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
+func (h *specimenHandler) Handle(e event.Event, hash string, data []byte) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
@@ -66,7 +66,7 @@ func encodeSpecimenSegmentToAvro(specimenAvro *goavro.Codec, blockSpecimenSegmen
 	return binarySpecimenSegment, nil
 }
 
-func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Config, specimenAvro *goavro.Codec, specimenSegment *event.SpecimenSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) (string, error) {
+func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.EthConfig, specimenAvro *goavro.Codec, specimenSegment *event.SpecimenSegment, specimenBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
 
 	specimenSegmentAvro, err := encodeSpecimenSegmentToAvro(specimenAvro, specimenSegment)
 	if err != nil {
@@ -76,12 +76,12 @@ func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Con
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SendBlockSpecimenProofTx(ctx, &config.EthConfig, ethProof, specimenSegment.EndBlock, specimenSegment.Elements, specimenSegmentAvro, proofTxHash)
+	go proof.SendBlockSpecimenProofTx(ctx, config, proofChain, ethClient, specimenSegment.EndBlock, specimenSegment.Elements, specimenSegmentAvro, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
-		err := st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, "block-specimen", segmentName, specimenSegmentAvro)
+		err := st.HandleObjectUploadToBucket(ctx, storage, "block-specimen", specimenBucket, segmentName, specimenSegmentAvro)
 		if err != nil {
 			return "", err
 		}

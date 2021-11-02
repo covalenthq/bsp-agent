@@ -10,7 +10,6 @@ import (
 
 	"cloud.google.com/go/storage"
 
-	"github.com/covalenthq/mq-store-agent/internal/config"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -18,17 +17,17 @@ var (
 	uploadTimeout int64 = 50
 )
 
-func HandleObjectUploadToBucket(ctx context.Context, config *config.GcpConfig, storageClient *storage.Client, objectType string, objectName string, object interface{}) error {
+func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, objectType, objectStorage, objectName string, object interface{}) error {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
 	switch objectType {
 	case "block-specimen":
-		bucket := config.SpecimenBucket
+		bucket := objectStorage
 		return writeToStorage(ctx, storageClient, bucket, objectName, object)
 	case "block-result":
-		bucket := config.ResultBucket
+		bucket := objectStorage
 		return writeToStorage(ctx, storageClient, bucket, objectName, object)
 	}
 

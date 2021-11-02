@@ -20,14 +20,14 @@ import (
 
 func NewRedisClient(redisConnection string) (*redis.Client, string, string, error) {
 
-	u, err := url.Parse(redisConnection)
+	redisUrl, err := url.Parse(redisConnection)
 	if err != nil {
 		log.Fatalf("we have an error here 1", err)
 	}
 
-	pass, _ := u.User.Password()
-	dbString := strings.Replace(u.Path, "/", "", -1)
-	m, err := url.ParseQuery(u.RawQuery)
+	pass, _ := redisUrl.User.Password()
+	dbString := strings.Replace(redisUrl.Path, "/", "", -1)
+	m, err := url.ParseQuery(redisUrl.RawQuery)
 	if err != nil {
 		log.Fatalf("we have an error here 2", err)
 	}
@@ -38,13 +38,13 @@ func NewRedisClient(redisConnection string) (*redis.Client, string, string, erro
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     u.Host,
+		Addr:     redisUrl.Host,
 		Password: pass,
 		DB:       dbInt, // use default DB
 	})
 
 	streamKey := m["topic"][0]
-	consumerGroup := u.Fragment
+	consumerGroup := redisUrl.Fragment
 
 	_, err = redisClient.Ping().Result()
 	return redisClient, streamKey, consumerGroup, err
@@ -60,10 +60,10 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 	return ethClient, nil
 }
 
-func NewStorageClient(config *config.GcpConfig) (*storage.Client, error) {
+func NewStorageClient(serviceAccount string) (*storage.Client, error) {
 
 	ctx := context.Background()
-	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(config.ServiceAccount))
+	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(serviceAccount))
 	if err != nil {
 		return nil, err
 	}
@@ -84,9 +84,9 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 	return mapData, nil
 }
 
-func AckStreamSegment(config *config.Config, redisClient *redis.Client, streamKey, consumerGroup string, streamIDs []string) error {
+func AckStreamSegment(config *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) error {
 
-	if len(streamIDs) == int(config.GeneralConfig.SegmentLength) {
+	if len(streamIDs) == int(segmentLength) {
 		for _, streamID := range streamIDs {
 			redisClient.XAck(streamKey, consumerGroup, streamID)
 		}

@@ -26,7 +26,7 @@ func NewResultHandler() Handler {
 	return &resultHandler{}
 }
 
-func (h *resultHandler) Handle(config *config.Config, storage *storage.Client, ethProof *ethclient.Client, e event.Event, hash string, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
+func (h *resultHandler) Handle(e event.Event, hash string, data []byte) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
@@ -66,7 +66,7 @@ func encodeResultSegmentToAvro(resultAvro *goavro.Codec, blockResultSegment inte
 	return binaryResultSegment, nil
 }
 
-func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.Config, resultAvro *goavro.Codec, resultSegment *event.ResultSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) (string, error) {
+func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.EthConfig, resultAvro *goavro.Codec, resultSegment *event.ResultSegment, resultBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
 
 	resultSegmentAvro, err := encodeResultSegmentToAvro(resultAvro, resultSegment)
 	if err != nil {
@@ -77,12 +77,12 @@ func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.Confi
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SendBlockResultProofTx(ctx, &config.EthConfig, ethProof, resultSegment.EndBlock, resultSegment.Elements, resultSegmentAvro, proofTxHash)
+	go proof.SendBlockResultProofTx(ctx, config, proofChain, ethClient, resultSegment.EndBlock, resultSegment.Elements, resultSegmentAvro, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
-		err := st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, "block-result", segmentName, resultSegmentAvro)
+		err := st.HandleObjectUploadToBucket(ctx, storage, "block-result", resultBucket, segmentName, resultSegmentAvro)
 		if err != nil {
 			return "", err
 		}
