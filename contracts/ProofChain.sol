@@ -40,7 +40,7 @@ contract ProofChain is Initializable {
         address indexed sender
     );
 
-	event BlockSpecimenPublicationProofAppended(
+	event BlockReplicaPublicationProofAppended(
 		uint64 seq,           	// sequential ID of this *Appended log-event,
 														// among all *Appended events emitted by this contract
 														// -- equivalent to a block height
@@ -52,21 +52,6 @@ contract ProofChain is Initializable {
 														// (block specimen may only contain contiguous blocks)
 		uint64 specimenSize,  	// specimen object file size, measured in bytes
 		bytes32 specimenHash		// SHA-256 content-hash of specimen object file;
-														// used to retrieve specimen from IPFS
-	);
-
-    event BlockResultPublicationProofAppended(
-		uint64 seq,           	// sequential ID of this *Appended log-event,
-														// among all *Appended events emitted by this contract
-														// -- equivalent to a block height
-
-		address extractWorker,	// submitter of the proof
-		uint64 chainID,       	// chainID the specimen pertains to
-		uint64 chainHeightPos,	// height of first block contained in specimen
-		uint64 chainHeightLen,	// number of contiguous blocks contained in specimen
-														// (block specimen may only contain contiguous blocks)
-		uint64 resultSize,  	// specimen object file size, measured in bytes
-		bytes32 resultHash		// SHA-256 content-hash of specimen object file;
 														// used to retrieve specimen from IPFS
 	);
 
@@ -263,7 +248,7 @@ contract ProofChain is Initializable {
         return curProofSeq;
     }
 
-    function proveBlockSpecimenProduced(
+    function ProveBlockReplicaProduced(
         uint64 chainID,
         uint64 chainHeightPos,
         uint64 chainHeightLen,
@@ -275,7 +260,7 @@ contract ProofChain is Initializable {
         //     "sender not specimen producer"
         // );
 
-        emit BlockSpecimenPublicationProofAppended(
+        emit BlockReplicaPublicationProofAppended(
             uint64(nextSeq()),
             msg.sender,
             chainID,
@@ -283,29 +268,6 @@ contract ProofChain is Initializable {
             chainHeightLen,
             specimenSize,
             specimenHash
-        );
-    }
-
-    function proveBlockResultProduced(
-        uint64 chainID,
-        uint64 chainHeightPos,
-        uint64 chainHeightLen,
-        uint64 resultSize,
-        bytes32 resultHash
-    ) public payable {
-        // require(
-        //     hasRole(BLOCK_SPECIMEN_PRODUCER_ROLE, msg.sender),
-        //     "sender not result producer"
-        // );
-
-        emit BlockResultPublicationProofAppended(
-            uint64(nextSeq()),
-            msg.sender,
-            chainID,
-            chainHeightPos,
-            chainHeightLen,
-            resultSize,
-            resultHash
         );
     }
 }

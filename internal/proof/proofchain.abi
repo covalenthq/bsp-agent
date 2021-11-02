@@ -35,55 +35,6 @@
         {
           "indexed": false,
           "internalType": "uint64",
-          "name": "resultSize",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "resultHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "BlockResultPublicationProofAppended",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "seq",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "extractWorker",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "chainID",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "chainHeightPos",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "chainHeightLen",
-          "type": "uint64"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64",
           "name": "specimenSize",
           "type": "uint64"
         },
@@ -94,7 +45,7 @@
           "type": "bytes32"
         }
       ],
-      "name": "BlockSpecimenPublicationProofAppended",
+      "name": "BlockReplicaPublicationProofAppended",
       "type": "event"
     },
     {
@@ -516,44 +467,10 @@
           "type": "bytes32"
         }
       ],
-      "name": "ProveBlockSpecimenProduced",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function",
-      "payable": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "chainID",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "chainHeightPos",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "chainHeightLen",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "resultSize",
-          "type": "uint64"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "resultHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "ProveBlockResultProduced",
+      "name": "ProveBlockReplicaProduced",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function",
       "payable": true
     }
-  ]
+  ],

@@ -1,43 +1,30 @@
 {
    "type":"record",
-   "namespace":"com.covalenthq.bsp.avro",
-   "name":"BlockReplicationSegment",
+   "namespace":"com.covalenthq.brp.avro",
+   "name":"ReplicationSegment",
    "fields":[
       {
-         "name":"BlockSpecimen",
+         "name":"replicaEvent",
          "type":{
             "type":"array",
             "items":{
-               "name":"BlockSpecimen",
+               "name":"replicaEvent",
                "type":"record",
                "fields":[
                   {
-                     "name":"ReplicationEvent",
-                     "type":{
-                        "name":"ReplicationEvent",
-                        "type":"record",
-                        "fields":[
-                           {
-                              "name":"ID",
-                              "type":"string"
-                           },
-                           {
-                              "name":"type",
-                              "type":"string"
-                           },
-                           {
-                              "name":"hash",
-                              "type":"string"
-                           }
-                        ]
-                     }
+                     "name":"hash",
+                     "type":"string"
                   },
                   {
-                     "name":"specimen",
+                     "name":"data",
                      "type":{
-                        "name":"specimen",
+                        "name":"data",
                         "type":"record",
                         "fields":[
+                           {
+                              "name":"Type",
+                              "type":"string"
+                           },
                            {
                               "name":"NetworkId",
                               "type":"int"
@@ -45,6 +32,10 @@
                            {
                               "name":"Hash",
                               "type":"string"
+                           },
+                           {
+                              "name":"TotalDifficulty",
+                              "type":"double"
                            },
                            {
                               "name":"Header",
@@ -182,6 +173,96 @@
                               "default":null
                            },
                            {
+                              "name":"Receipts",
+                              "type":{
+                                 "type":"array",
+                                 "items":{
+                                    "name":"Receipts_record",
+                                    "type":"record",
+                                    "fields":[
+                                       {
+                                          "name":"PostStateOrStatus",
+                                          "type":"string"
+                                       },
+                                       {
+                                          "name":"CumulativeGasUsed",
+                                          "type":"int"
+                                       },
+                                       {
+                                          "name":"TxHash",
+                                          "type":"string"
+                                       },
+                                       {
+                                          "name":"ContractAddress",
+                                          "type":"string"
+                                       },
+                                       {
+                                          "name":"Logs",
+                                          "type":{
+                                             "type":"array",
+                                             "items":{
+                                                "name":"Logs_record",
+                                                "type":"record",
+                                                "fields":[
+                                                   {
+                                                      "name":"address",
+                                                      "type":"string"
+                                                   },
+                                                   {
+                                                      "name":"topics",
+                                                      "type":{
+                                                         "type":"array",
+                                                         "items":"string"
+                                                      }
+                                                   },
+                                                   {
+                                                      "name":"data",
+                                                      "type":"string"
+                                                   },
+                                                   {
+                                                      "name":"blockNumber",
+                                                      "type":"int"
+                                                   },
+                                                   {
+                                                      "name":"transactionHash",
+                                                      "type":"string"
+                                                   },
+                                                   {
+                                                      "name":"transactionIndex",
+                                                      "type":"int"
+                                                   },
+                                                   {
+                                                      "name":"blockHash",
+                                                      "type":"string"
+                                                   },
+                                                   {
+                                                      "name":"logIndex",
+                                                      "type":"int"
+                                                   },
+                                                   {
+                                                      "name":"removed",
+                                                      "type":"boolean"
+                                                   }
+                                                ]
+                                             }
+                                          }
+                                       },
+                                       {
+                                          "name":"GasUsed",
+                                          "type":"int"
+                                       }
+                                    ]
+                                 }
+                              }
+                           },
+                           {
+                              "name":"Senders",
+                              "type":{
+                                 "type":"array",
+                                 "items":"string"
+                              }
+                           },
+                           {
                               "name":"State",
                               "type":{
                                  "name":"State",
@@ -270,15 +351,15 @@
          }
       },
       {
-         "name":"StartBlock",
+         "name":"startBlock",
          "type":"long"
       },
       {
-         "name":"EndBlock",
+         "name":"endBlock",
          "type":"long"
       },
       {
-         "name":"Elements",
+         "name":"elements",
          "type":"long"
       }
    ]
