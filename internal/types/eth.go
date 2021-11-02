@@ -11,7 +11,8 @@ const (
 	BloomBitLength  = 8 * BloomByteLength
 )
 
-type BlockResult struct {
+type BlockReplica struct {
+	Type            string
 	NetworkId       uint64
 	Hash            common.Hash
 	TotalDifficulty *big.Int
@@ -20,17 +21,8 @@ type BlockResult struct {
 	Uncles          []*Header
 	Receipts        []*Receipt
 	Senders         []common.Address
+	State           *StateSpecimen
 }
-
-type BlockSpecimen struct {
-	NetworkId    uint64
-	Hash         common.Hash
-	Header       *Header
-	Transactions []*Transaction
-	Uncles       []*Header
-	State        *StateSpecimen
-}
-
 type StateSpecimen struct {
 	AccountRead []*accountRead
 	StorageRead []*storageRead

@@ -20,58 +20,7 @@ var (
 	proofTxTimeout uint64 = 60
 )
 
-func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, specimenSegment []byte, txHash chan string) {
-
-	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
-	defer cancel()
-	//var onlyOnce sync.Once
-
-	_, opts, chainId, err := getTransactionOpts(ctx, config, ethClient)
-	if err != nil {
-		log.Error("error getting transaction ops: ", err.Error())
-		return
-	}
-
-	contractAddress := common.HexToAddress(proofChain)
-	contract, err := NewProofChain(contractAddress, ethClient)
-
-	if err != nil {
-		log.Error("error binding to deployed contract: ", err.Error())
-		return
-	}
-
-	// onlyOnce.Do(func() {
-	// 	WatchContractResultPublicationProof(ctx, contract)
-	// })
-
-	jsonSpecimen, err := json.Marshal(specimenSegment)
-	if err != nil {
-		log.Error(err.Error())
-		return
-	}
-	sha256Specimen := sha256.Sum256(jsonSpecimen)
-
-	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLen, uint64(len(jsonSpecimen)), sha256Specimen)
-	if err != nil {
-		log.Error("error calling contract function: ", err.Error())
-		return
-	}
-
-	receipt, err := bind.WaitMined(ctx, ethClient, tx)
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("block-specimen proof tx call: ", tx.Hash(), " to proof contract failed: ", err)
-		return
-	}
-	if err != nil {
-		log.Error(err.Error())
-		return
-	}
-
-	txHash <- receipt.TxHash.String()
-
-}
-
-func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
+func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -101,7 +50,7 @@ func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, proof
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
+	tx, err := contract.ProveBlockReplicaProduced(opts, chainId, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
 		return
@@ -160,10 +109,10 @@ func getKeyStore(ctx context.Context, config *config.EthConfig, ethClient ethcli
 func watchContractResultPublicationProof(ctx context.Context, contract *ProofChain) {
 
 	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
-	channel := make(chan *ProofChainBlockResultPublicationProofAppended)
+	channel := make(chan *ProofChainBlockReplicaPublicationProofAppended)
 
 	go func() {
-		sub, err := contract.WatchBlockResultPublicationProofAppended(watchOpts, channel)
+		sub, err := contract.WatchBlockReplicaPublicationProofAppended(watchOpts, channel)
 		if err != nil {
 			log.Error("error watching contract for result proof event: ", err.Error())
 		}
@@ -178,10 +127,10 @@ func watchContractResultPublicationProof(ctx context.Context, contract *ProofCha
 func watchContractSpecimenPublicationProof(ctx context.Context, contract *ProofChain) {
 
 	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
-	channel := make(chan *ProofChainBlockSpecimenPublicationProofAppended)
+	channel := make(chan *ProofChainBlockReplicaPublicationProofAppended)
 
 	go func() {
-		sub, err := contract.WatchBlockSpecimenPublicationProofAppended(watchOpts, channel)
+		sub, err := contract.WatchBlockReplicaPublicationProofAppended(watchOpts, channel)
 		if err != nil {
 			log.Error("error watching contract for specimen proof event: ", err.Error())
 		}

@@ -6,89 +6,30 @@ import (
 	ty "github.com/covalenthq/mq-store-agent/internal/types"
 )
 
-type Type string
-
-const (
-	SpecimenType Type = "block-specimen"
-	ResultType   Type = "block-result"
-)
-
-type ResultSegment struct {
-	BlockResult []*ResultEvent `json:"BlockResult"`
-	StartBlock  uint64         `json:"StartBlock"`
-	EndBlock    uint64         `json:"EndBlock"`
-	Elements    uint64         `json:"Elements"`
+type ReplicationSegment struct {
+	BlockReplicaEvent []*BlockReplicaEvent `json:"replicaEvent"`
+	StartBlock        uint64               `json:"startBlock"`
+	EndBlock          uint64               `json:"endBlock"`
+	Elements          uint64               `json:"elements"`
+}
+type BlockReplicaEvent struct {
+	Hash string           `json:"hash"`
+	Data *ty.BlockReplica `json:"data"`
 }
 
-type SpecimenSegment struct {
-	BlockSpecimen []*SpecimenEvent `json:"BlockSpecimen"`
-	StartBlock    uint64           `json:"StartBlock"`
-	EndBlock      uint64           `json:"EndBlock"`
-	Elements      uint64           `json:"Elements"`
-}
-
-type ResultEvent struct {
-	ReplicationEvent *ReplicationEvent `json:"ReplicationEvent"`
-	Data             *ty.BlockResult   `json:"result"`
-}
-
-type SpecimenEvent struct {
-	ReplicationEvent *ReplicationEvent `json:"ReplicationEvent"`
-	Data             *ty.BlockSpecimen `json:"specimen"`
-}
-
-type ReplicationEvent struct {
-	*Base
-}
-
-type Base struct {
-	ID   string `json:"ID"`
-	Type Type   `json:"type"`
-	Hash string `json:"hash"`
-}
 type Event interface {
-	GetID() string
-	SetID(id string)
-	GetType() Type
 	GetHash() string
 	String() string
 }
 
-func New(t Type) (Event, error) {
-	b := &Base{
-		Type: t,
-	}
-
-	switch t {
-	case SpecimenType:
-		return &ReplicationEvent{
-			Base: b,
-		}, nil
-	case ResultType:
-		return &ReplicationEvent{
-			Base: b,
-		}, nil
-	}
-
-	return nil, fmt.Errorf("type %v not supported", t)
+func New() (Event, error) {
+	return &BlockReplicaEvent{}, nil
 }
 
-func (o *Base) GetID() string {
-	return o.ID
+func (o *BlockReplicaEvent) String() string {
+	return fmt.Sprintf("hash: %s", o.Hash)
 }
 
-func (o *Base) SetID(id string) {
-	o.ID = id
-}
-
-func (o *Base) GetType() Type {
-	return o.Type
-}
-
-func (o *Base) String() string {
-	return fmt.Sprintf("id: %s type: %s hash: %s", o.ID, o.Type, o.Hash)
-}
-
-func (o *Base) GetHash() string {
+func (o *BlockReplicaEvent) GetHash() string {
 	return o.Hash
 }

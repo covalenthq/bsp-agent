@@ -18,18 +18,25 @@ import (
 	"google.golang.org/api/option"
 )
 
-func NewRedisClient(redisConnection string) (*redis.Client, string, string, error) {
+func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*redis.Client, string, string, error) {
 
+	var pwd string
 	redisUrl, err := url.Parse(redisConnection)
 	if err != nil {
-		log.Fatalf("we have an error here 1", err)
+		log.Fatalf("unable to parse redis connection string", err)
 	}
 
 	pass, _ := redisUrl.User.Password()
+	if pass != "" {
+		log.Fatal("Please remove password from connection string and add in .envrc as `REDIS_PWD`")
+	} else {
+		pwd = redisConfig.Password
+	}
+
 	dbString := strings.Replace(redisUrl.Path, "/", "", -1)
 	m, err := url.ParseQuery(redisUrl.RawQuery)
 	if err != nil {
-		log.Fatalf("we have an error here 2", err)
+		log.Fatalf("unable to parse redis connection string query string", err)
 	}
 
 	dbInt, err := strconv.Atoi(dbString)
@@ -39,15 +46,16 @@ func NewRedisClient(redisConnection string) (*redis.Client, string, string, erro
 
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     redisUrl.Host,
-		Password: pass,
+		Password: pwd,
 		DB:       dbInt, // use default DB
 	})
 
 	streamKey := m["topic"][0]
 	consumerGroup := redisUrl.Fragment
-
 	_, err = redisClient.Ping().Result()
+
 	return redisClient, streamKey, consumerGroup, err
+
 }
 
 func NewEthClient(address string) (*ethclient.Client, error) {
