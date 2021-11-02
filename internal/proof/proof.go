@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
-	"math/big"
 	"time"
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
@@ -21,20 +20,20 @@ var (
 	proofTxTimeout uint64 = 60
 )
 
-func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, chainLen uint64, specimenSegment []byte, txHash chan string) {
+func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, specimenSegment []byte, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 	//var onlyOnce sync.Once
 
-	_, opts, chainId, err := getTransactionOpts(config)
+	_, opts, chainId, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
 		return
 	}
 
-	contractAddress := common.HexToAddress(config.Contract)
-	contract, err := NewProofChain(contractAddress, ethProof)
+	contractAddress := common.HexToAddress(proofChain)
+	contract, err := NewProofChain(contractAddress, ethClient)
 
 	if err != nil {
 		log.Error("error binding to deployed contract: ", err.Error())
@@ -52,13 +51,13 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, eth
 	}
 	sha256Specimen := sha256.Sum256(jsonSpecimen)
 
-	tx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLen, uint64(len(jsonSpecimen)), sha256Specimen)
+	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLen, uint64(len(jsonSpecimen)), sha256Specimen)
 	if err != nil {
 		log.Error("error calling contract function: ", err.Error())
 		return
 	}
 
-	receipt, err := bind.WaitMined(ctx, ethProof, tx)
+	receipt, err := bind.WaitMined(ctx, ethClient, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		log.Error("block-specimen proof tx call: ", tx.Hash(), " to proof contract failed: ", err)
 		return
@@ -72,20 +71,20 @@ func SendBlockSpecimenProofTx(ctx context.Context, config *config.EthConfig, eth
 
 }
 
-func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, ethProof *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
+func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 	//var onlyOnce sync.Once
 
-	_, opts, chainId, err := getTransactionOpts(config)
+	_, opts, chainId, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
 		return
 	}
 
-	contractAddress := common.HexToAddress(config.Contract)
-	contract, err := NewProofChain(contractAddress, ethProof)
+	contractAddress := common.HexToAddress(proofChain)
+	contract, err := NewProofChain(contractAddress, ethClient)
 	if err != nil {
 		log.Error("error binding to deployed contract: ", err.Error())
 		return
@@ -102,13 +101,13 @@ func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, ethPr
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	tx, err := contract.ProveBlockSpecimenProduced(opts, uint64(chainId), chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
+	tx, err := contract.ProveBlockSpecimenProduced(opts, chainId, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
 		return
 	}
 
-	receipt, err := bind.WaitMined(ctx, ethProof, tx)
+	receipt, err := bind.WaitMined(ctx, ethClient, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		log.Error("block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err.Error())
 		return
@@ -121,30 +120,35 @@ func SendBlockResultProofTx(ctx context.Context, config *config.EthConfig, ethPr
 	txHash <- receipt.TxHash.String()
 }
 
-func getTransactionOpts(config *config.EthConfig) (common.Address, *bind.TransactOpts, uint64, error) {
+func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
 
-	sKey := config.Key
-	chainId := config.ChainId
-
+	sKey := config.PrivateKey
+	chainId, err := ethClient.ChainID(ctx)
+	if err != nil {
+		log.Error(err.Error())
+	}
 	secretKey := crypto.ToECDSAUnsafe(common.FromHex(sKey))
 	addr := crypto.PubkeyToAddress(secretKey.PublicKey)
-	opts, err := bind.NewKeyedTransactorWithChainID(secretKey, new(big.Int).SetUint64(chainId))
+	opts, err := bind.NewKeyedTransactorWithChainID(secretKey, chainId)
 	if err != nil {
 		log.Fatalf("error getting new keyed transactor with chain id: ", err.Error())
 	}
 
-	return addr, opts, chainId, err
+	return addr, opts, chainId.Uint64(), err
 }
 
-func getKeyStore(config *config.Config) (*bind.TransactOpts, error) {
+func getKeyStore(ctx context.Context, config *config.EthConfig, ethClient ethclient.Client) (*bind.TransactOpts, error) {
 
-	chainId := config.EthConfig.ChainId
-	ks := keystore.NewKeyStore(config.EthConfig.Keystore, keystore.StandardScryptN, keystore.StandardScryptP)
+	chainId, err := ethClient.ChainID(ctx)
+	if err != nil {
+		log.Error(err.Error())
+	}
+	ks := keystore.NewKeyStore(config.KeystorePath, keystore.StandardScryptN, keystore.StandardScryptP)
 
 	accs := ks.Accounts()
-	ks.Unlock(accs[0], config.EthConfig.Password)
+	ks.Unlock(accs[0], config.KeyStorePwd)
 
-	ksOpts, err := bind.NewKeyStoreTransactorWithChainID(ks, accs[0], new(big.Int).SetUint64(chainId))
+	ksOpts, err := bind.NewKeyStoreTransactorWithChainID(ks, accs[0], chainId)
 	if err != nil {
 		log.Error("error getting new key store transactor with chain id: ", err.Error())
 		return nil, err

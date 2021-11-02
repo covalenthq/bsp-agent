@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"time"
 
 	"cloud.google.com/go/storage"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
@@ -28,16 +26,14 @@ func NewSpecimenHandler() Handler {
 	return &specimenHandler{}
 }
 
-func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client, ethSource *ethclient.Client, ethProof *ethclient.Client, e event.Event, hash string, datetime time.Time, data []byte, retry bool) (*event.SpecimenEvent, *event.ResultEvent, error) {
+func (h *specimenHandler) Handle(e event.Event, hash string, data []byte) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
-	ctx := context.Background()
 	replEvent, ok := e.(*event.ReplicationEvent)
 	if !ok {
 		return nil, nil, fmt.Errorf("incorrect event type: %v", replEvent.Type)
 	}
 
 	replEvent.Hash = hash
-	replEvent.DateTime = datetime
 
 	specimen := &event.SpecimenEvent{
 		ReplicationEvent: replEvent,
@@ -51,233 +47,10 @@ func (h *specimenHandler) Handle(config *config.Config, storage *storage.Client,
 		specimen.Data = &decodedSpecimen
 	}
 
-	blockHash := common.HexToHash(specimen.ReplicationEvent.Hash)
-
-	blockHeader, err := ethSource.HeaderByHash(ctx, blockHash)
-	if err != nil {
-		log.Error("error getting block: ", err.Error())
-	}
-
-	specimen.BlockHeader = blockHeader
-
 	return specimen, nil, nil
 }
 
-func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, error) {
-	codec, err := goavro.NewCodec(`
-	{
-		"type":"record",
-		"namespace":"com.covalenthq.bsp.avro",
-		"name":"BlockReplicationSegment",
-		"fields":[
-		   {
-			  "name":"BlockSpecimen",
-			  "type":{
-				 "type":"array",
-				 "items":{
-					"name":"BlockSpecimen",
-					"type":"record",
-					"fields":[
-					   {
-						  "name":"ReplicationEvent",
-						  "type":{
-							 "name":"ReplicationEvent",
-							 "type":"record",
-							 "fields":[
-								{
-								   "name":"ID",
-								   "type":"string"
-								},
-								{
-								   "name":"type",
-								   "type":"string"
-								},
-								{
-								   "name":"hash",
-								   "type":"string"
-								},
-								{
-								   "name":"datetime",
-								   "type":"string"
-								}
-							 ]
-						  }
-					   },
-					   {
-						  "name":"specimen",
-						  "type":{
-							 "name":"specimen",
-							 "type":"record",
-							 "fields":[
-								{
-								   "name":"AccountRead",
-								   "type":{
-									  "type":"array",
-									  "items":{
-										 "name":"AccountRead_record",
-										 "type":"record",
-										 "fields":[
-											{
-											   "name":"Address",
-											   "type":"string"
-											},
-											{
-											   "name":"Nonce",
-											   "type":"int"
-											},
-											{
-											   "name":"Balance",
-											   "type":"double"
-											},
-											{
-											   "name":"CodeHash",
-											   "type":"string"
-											}
-										 ]
-									  }
-								   }
-								},
-								{
-								   "name":"StorageRead",
-								   "type":{
-									  "type":"array",
-									  "items":{
-										 "name":"StorageRead_record",
-										 "type":"record",
-										 "fields":[
-											{
-											   "name":"Account",
-											   "type":"string"
-											},
-											{
-											   "name":"SlotKey",
-											   "type":"string"
-											},
-											{
-											   "name":"Value",
-											   "type":"string"
-											}
-										 ]
-									  }
-								   }
-								},
-								{
-								   "name":"CodeRead",
-								   "type":{
-									  "type":"array",
-									  "items":{
-										 "name":"CodeRead_record",
-										 "type":"record",
-										 "fields":[
-											{
-											   "name":"Hash",
-											   "type":"string"
-											},
-											{
-											   "name":"Code",
-											   "type":"string"
-											}
-										 ]
-									  }
-								   }
-								}
-							 ]
-						  }
-					   },
-					   {
-						  "name":"header",
-						  "type":{
-							 "name":"header",
-							 "type":"record",
-							 "fields":[
-								{
-								   "name":"parentHash",
-								   "type":"string"
-								},
-								{
-								   "name":"sha3Uncles",
-								   "type":"string"
-								},
-								{
-								   "name":"miner",
-								   "type":"string"
-								},
-								{
-								   "name":"stateRoot",
-								   "type":"string"
-								},
-								{
-								   "name":"transactionsRoot",
-								   "type":"string"
-								},
-								{
-								   "name":"receiptsRoot",
-								   "type":"string"
-								},
-								{
-								   "name":"logsBloom",
-								   "type":"string"
-								},
-								{
-								   "name":"difficulty",
-								   "type":"string"
-								},
-								{
-								   "name":"number",
-								   "type":"string"
-								},
-								{
-								   "name":"gasLimit",
-								   "type":"string"
-								},
-								{
-								   "name":"gasUsed",
-								   "type":"string"
-								},
-								{
-								   "name":"timestamp",
-								   "type":"string"
-								},
-								{
-								   "name":"extraData",
-								   "type":"string"
-								},
-								{
-								   "name":"mixHash",
-								   "type":"string"
-								},
-								{
-								   "name":"nonce",
-								   "type":"string"
-								},
-								{
-								   "name":"baseFeePerGas",
-								   "type":"string"
-								}
-							 ]
-						  }
-					   }
-					]
-				 }
-			  }
-		   },
-		   {
-			  "name":"StartBlock",
-			  "type":"long"
-		   },
-		   {
-			  "name":"EndBlock",
-			  "type":"long"
-		   },
-		   {
-			  "name":"Elements",
-			  "type":"long"
-		   }
-		]
-	 }`)
-	if err != nil {
-		return nil, err
-	}
+func encodeSpecimenSegmentToAvro(specimenAvro *goavro.Codec, blockSpecimenSegment interface{}) ([]byte, error) {
 
 	specimenMap, err := utils.StructToMap(blockSpecimenSegment)
 	if err != nil {
@@ -285,7 +58,7 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, erro
 	}
 
 	// Convert native Go form to binary Avro data
-	binarySpecimenSegment, err := codec.BinaryFromNative(nil, specimenMap)
+	binarySpecimenSegment, err := specimenAvro.BinaryFromNative(nil, specimenMap)
 	if err != nil {
 		log.Fatalf("failed to convert Go map to Avro binary data: %v", err)
 	}
@@ -293,9 +66,9 @@ func encodeSpecimenSegmentToAvro(blockSpecimenSegment interface{}) ([]byte, erro
 	return binarySpecimenSegment, nil
 }
 
-func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Config, specimenSegment *event.SpecimenSegment, segmentName string, storage *storage.Client, ethProof *ethclient.Client) (string, error) {
+func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.EthConfig, specimenAvro *goavro.Codec, specimenSegment *event.SpecimenSegment, specimenBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
 
-	specimenSegmentAvro, err := encodeSpecimenSegmentToAvro(specimenSegment)
+	specimenSegmentAvro, err := encodeSpecimenSegmentToAvro(specimenAvro, specimenSegment)
 	if err != nil {
 		return "", err
 	}
@@ -303,12 +76,12 @@ func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.Con
 
 	proofTxHash := make(chan string, 1)
 
-	go proof.SendBlockSpecimenProofTx(ctx, &config.EthConfig, ethProof, specimenSegment.EndBlock, specimenSegment.Elements, specimenSegmentAvro, proofTxHash)
+	go proof.SendBlockSpecimenProofTx(ctx, config, proofChain, ethClient, specimenSegment.EndBlock, specimenSegment.Elements, specimenSegmentAvro, proofTxHash)
 
 	pTxHash := <-proofTxHash
 
 	if pTxHash != "" {
-		err := st.HandleObjectUploadToBucket(ctx, &config.GcpConfig, storage, "block-specimen", segmentName, specimenSegmentAvro)
+		err := st.HandleObjectUploadToBucket(ctx, storage, "block-specimen", specimenBucket, segmentName, specimenSegmentAvro)
 		if err != nil {
 			return "", err
 		}

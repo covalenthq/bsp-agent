@@ -85,3 +85,6 @@ cache
 artifacts
 
 bin/
+
+./internal/proof/proofchain.abi
+./internal/proof/proofchain.go

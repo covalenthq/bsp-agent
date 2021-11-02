@@ -2,10 +2,8 @@ package event
 
 import (
 	"fmt"
-	"time"
 
 	ty "github.com/covalenthq/mq-store-agent/internal/types"
-	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type Type string
@@ -37,7 +35,6 @@ type ResultEvent struct {
 type SpecimenEvent struct {
 	ReplicationEvent *ReplicationEvent `json:"ReplicationEvent"`
 	Data             *ty.BlockSpecimen `json:"specimen"`
-	BlockHeader      *types.Header     `json:"header"`
 }
 
 type ReplicationEvent struct {
@@ -45,17 +42,15 @@ type ReplicationEvent struct {
 }
 
 type Base struct {
-	ID       string    `json:"ID"`
-	Type     Type      `json:"type"`
-	Hash     string    `json:"hash"`
-	DateTime time.Time `json:"datetime"`
+	ID   string `json:"ID"`
+	Type Type   `json:"type"`
+	Hash string `json:"hash"`
 }
 type Event interface {
 	GetID() string
 	SetID(id string)
 	GetType() Type
 	GetHash() string
-	GetDateTime() time.Time
 	String() string
 }
 
@@ -88,10 +83,6 @@ func (o *Base) SetID(id string) {
 
 func (o *Base) GetType() Type {
 	return o.Type
-}
-
-func (o *Base) GetDateTime() time.Time {
-	return o.DateTime
 }
 
 func (o *Base) String() string {
