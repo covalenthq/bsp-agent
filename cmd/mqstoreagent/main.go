@@ -102,7 +102,7 @@ func main() {
 	EthClient = utils.LookupEnvOrString("EthClient", EthClient)
 	ProofChain = utils.LookupEnvOrString("ProofChain", ProofChain)
 
-	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(utils.LookupEnvOrString("RedisURL", RedisUrl))
+	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(utils.LookupEnvOrString("RedisURL", RedisUrl), &config.RedisConfig)
 
 	if err != nil {
 		panic(err)
