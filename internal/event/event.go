@@ -13,31 +13,29 @@ const (
 	ResultType   Type = "block-result"
 )
 
-type ResultSegment struct {
-	BlockResult []*ResultEvent `json:"BlockResult"`
-	StartBlock  uint64         `json:"StartBlock"`
-	EndBlock    uint64         `json:"EndBlock"`
-	Elements    uint64         `json:"Elements"`
+type ReplicationSegment struct {
+	BlockReplicationData *BlockReplicationData `json:"ReplicationEvent"`
+	StartBlock           uint64                `json:"StartBlock"`
+	EndBlock             uint64                `json:"EndBlock"`
+	Elements             uint64                `json:"Elements"`
 }
 
-type SpecimenSegment struct {
-	BlockSpecimen []*SpecimenEvent `json:"BlockSpecimen"`
-	StartBlock    uint64           `json:"StartBlock"`
-	EndBlock      uint64           `json:"EndBlock"`
-	Elements      uint64           `json:"Elements"`
+type BlockReplicationData struct {
+	Result   []*ResultEvent   `json:"result,omitempty"`
+	Specimen []*SpecimenEvent `json:"specimen,omitempty"`
 }
 
 type ResultEvent struct {
-	ReplicationEvent *ReplicationEvent `json:"ReplicationEvent"`
-	Data             *ty.BlockResult   `json:"result"`
+	Data *ty.BlockResult `json:"data"`
+	Msg  *ReplicationMsg `json:"msg"`
 }
 
 type SpecimenEvent struct {
-	ReplicationEvent *ReplicationEvent `json:"ReplicationEvent"`
-	Data             *ty.BlockSpecimen `json:"specimen"`
+	Data *ty.BlockSpecimen `json:"data"`
+	Msg  *ReplicationMsg   `json:"msg"`
 }
 
-type ReplicationEvent struct {
+type ReplicationMsg struct {
 	*Base
 }
 
@@ -61,11 +59,11 @@ func New(t Type) (Event, error) {
 
 	switch t {
 	case SpecimenType:
-		return &ReplicationEvent{
+		return &ReplicationMsg{
 			Base: b,
 		}, nil
 	case ResultType:
-		return &ReplicationEvent{
+		return &ReplicationMsg{
 			Base: b,
 		}, nil
 	}

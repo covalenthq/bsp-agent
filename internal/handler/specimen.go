@@ -28,7 +28,7 @@ func NewSpecimenHandler() Handler {
 
 func (h *specimenHandler) Handle(e event.Event, hash string, data []byte) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
-	replEvent, ok := e.(*event.ReplicationEvent)
+	replEvent, ok := e.(*event.ReplicationMsg)
 	if !ok {
 		return nil, nil, fmt.Errorf("incorrect event type: %v", replEvent.Type)
 	}
@@ -36,7 +36,7 @@ func (h *specimenHandler) Handle(e event.Event, hash string, data []byte) (*even
 	replEvent.Hash = hash
 
 	specimen := &event.SpecimenEvent{
-		ReplicationEvent: replEvent,
+		Msg: replEvent,
 	}
 
 	var decodedSpecimen types.BlockSpecimen
@@ -66,7 +66,7 @@ func encodeSpecimenSegmentToAvro(specimenAvro *goavro.Codec, blockSpecimenSegmen
 	return binarySpecimenSegment, nil
 }
 
-func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.EthConfig, specimenAvro *goavro.Codec, specimenSegment *event.SpecimenSegment, specimenBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
+func EncodeProveAndUploadSpecimenSegment(ctx context.Context, config *config.EthConfig, specimenAvro *goavro.Codec, specimenSegment *event.ReplicationSegment, specimenBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
 
 	specimenSegmentAvro, err := encodeSpecimenSegmentToAvro(specimenAvro, specimenSegment)
 	if err != nil {

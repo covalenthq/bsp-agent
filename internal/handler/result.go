@@ -28,7 +28,7 @@ func NewResultHandler() Handler {
 
 func (h *resultHandler) Handle(e event.Event, hash string, data []byte) (*event.SpecimenEvent, *event.ResultEvent, error) {
 
-	replEvent, ok := e.(*event.ReplicationEvent)
+	replEvent, ok := e.(*event.ReplicationMsg)
 	if !ok {
 		return nil, nil, fmt.Errorf("incorrect event type: %v", replEvent.Type)
 	}
@@ -36,7 +36,7 @@ func (h *resultHandler) Handle(e event.Event, hash string, data []byte) (*event.
 	replEvent.Hash = hash
 
 	result := &event.ResultEvent{
-		ReplicationEvent: replEvent,
+		Msg: replEvent,
 	}
 
 	var decodedResult types.BlockResult
@@ -66,7 +66,7 @@ func encodeResultSegmentToAvro(resultAvro *goavro.Codec, blockResultSegment inte
 	return binaryResultSegment, nil
 }
 
-func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.EthConfig, resultAvro *goavro.Codec, resultSegment *event.ResultSegment, resultBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
+func EncodeProveAndUploadResultSegment(ctx context.Context, config *config.EthConfig, resultAvro *goavro.Codec, resultSegment *event.ReplicationSegment, resultBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
 
 	resultSegmentAvro, err := encodeResultSegmentToAvro(resultAvro, resultSegment)
 	if err != nil {

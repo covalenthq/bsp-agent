@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -18,12 +19,14 @@ import (
 	"github.com/linkedin/goavro/v2"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
+	"github.com/ubiq/go-ubiq/rlp"
 	"gopkg.in/avro.v0"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/handler"
+	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
@@ -52,11 +55,15 @@ var (
 	consumerGroup          string
 	specimenSegmentName    string
 	resultSegmentName      string
+	typeEvent              string
 	specimenSegmentIdBatch []string
 	resultSegmentIdBatch   []string
 
-	specimenSegment event.SpecimenSegment
-	resultSegment   event.ResultSegment
+	replicationSegment event.ReplicationSegment
+	specimenSegment    event.SpecimenEvent
+	resultSegment      event.ResultEvent
+	decodedResult      types.BlockResult
+	decodedSpecimen    types.BlockSpecimen
 )
 
 func init() {
@@ -242,12 +249,18 @@ func processStream(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 	defer waitGrp.Done()
 
 	ctx := context.Background()
-	typeEvent := stream.Values["type"].(string)
 	hash := stream.Values["hash"].(string)
 
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
 	if err != nil {
 		log.Info("Failed to snappy decode: ", err.Error())
+	}
+
+	err = rlp.Decode(bytes.NewReader(decodedData), &decodedResult)
+	if err != nil {
+		typeEvent = "block-specimen"
+	} else {
+		typeEvent = "block-result"
 	}
 
 	newEvent, _ := event.New(event.Type(typeEvent))
@@ -261,16 +274,16 @@ func processStream(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 		if specimen == nil {
 			// collect stream ids and block results
 			resultSegmentIdBatch = append(resultSegmentIdBatch, stream.ID)
-			resultSegment.BlockResult = append(resultSegment.BlockResult, result)
-			if len(resultSegment.BlockResult) == 1 {
-				resultSegment.StartBlock = result.Data.Header.Number.Uint64()
+			replicationSegment.BlockReplicationData.Result = append(replicationSegment.BlockReplicationData.Result, result)
+			if len(replicationSegment.BlockReplicationData.Result) == 1 {
+				replicationSegment.StartBlock = result.Data.Header.Number.Uint64()
 			}
-			if len(resultSegment.BlockResult) == int(SegmentLength) {
-				resultSegment.EndBlock = result.Data.Header.Number.Uint64()
-				resultSegment.Elements = uint64(SegmentLength)
-				resultSegmentName = fmt.Sprint(result.Data.NetworkId) + "-" + fmt.Sprint(resultSegment.StartBlock) + "-" + fmt.Sprint(resultSegment.EndBlock)
+			if len(replicationSegment.BlockReplicationData.Result) == int(SegmentLength) {
+				replicationSegment.EndBlock = result.Data.Header.Number.Uint64()
+				replicationSegment.Elements = uint64(SegmentLength)
+				resultSegmentName = fmt.Sprint(result.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock)
 				// encode, prove and upload
-				_, err := handler.EncodeProveAndUploadResultSegment(ctx, &config.EthConfig, avroCodecs[1], &resultSegment, ResultBucket, resultSegmentName, storageClient, ethClient, ProofChain)
+				_, err := handler.EncodeProveAndUploadResultSegment(ctx, &config.EthConfig, avroCodecs[1], &replicationSegment, ResultBucket, resultSegmentName, storageClient, ethClient, ProofChain)
 				if err != nil {
 					log.Fatalf("failed to avro encode, proove and upload block-result segment: %v with err: %v", resultSegmentName, err)
 				}
@@ -280,23 +293,23 @@ func processStream(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
 				}
 				// reset segment and name
-				resultSegment = event.ResultSegment{}
+				replicationSegment = event.ReplicationSegment{}
 				resultSegmentName = ""
 				resultSegmentIdBatch = []string{}
 			}
 		} else {
 			// collect stream ids and block specimens
 			specimenSegmentIdBatch = append(specimenSegmentIdBatch, stream.ID)
-			specimenSegment.BlockSpecimen = append(specimenSegment.BlockSpecimen, specimen)
-			if len(specimenSegment.BlockSpecimen) == 1 {
-				specimenSegment.StartBlock = specimen.Data.Header.Number.Uint64()
+			replicationSegment.BlockReplicationData.Specimen = append(replicationSegment.BlockReplicationData.Specimen, specimen)
+			if len(replicationSegment.BlockReplicationData.Specimen) == 1 {
+				replicationSegment.StartBlock = specimen.Data.Header.Number.Uint64()
 			}
-			if len(specimenSegment.BlockSpecimen) == int(SegmentLength) {
-				specimenSegment.EndBlock = specimen.Data.Header.Number.Uint64()
-				specimenSegment.Elements = uint64(SegmentLength)
-				specimenSegmentName = fmt.Sprint(specimen.Data.NetworkId) + "-" + fmt.Sprint(specimenSegment.StartBlock) + "-" + fmt.Sprint(specimenSegment.EndBlock)
+			if len(replicationSegment.BlockReplicationData.Specimen) == int(SegmentLength) {
+				replicationSegment.EndBlock = specimen.Data.Header.Number.Uint64()
+				replicationSegment.Elements = uint64(SegmentLength)
+				specimenSegmentName = fmt.Sprint(specimen.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock)
 				// encode, prove and upload
-				_, err := handler.EncodeProveAndUploadSpecimenSegment(ctx, &config.EthConfig, avroCodecs[0], &specimenSegment, SpecimenBucket, specimenSegmentName, storageClient, ethClient, ProofChain)
+				_, err := handler.EncodeProveAndUploadSpecimenSegment(ctx, &config.EthConfig, avroCodecs[0], &replicationSegment, SpecimenBucket, specimenSegmentName, storageClient, ethClient, ProofChain)
 				if err != nil {
 					log.Fatalf("failed to avro encode, proove and upload block-specimen segment: %v with err: %v", resultSegmentName, err)
 				}
@@ -306,7 +319,7 @@ func processStream(config *config.Config, avroCodecs []*goavro.Codec, redisClien
 					log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
 				}
 				// reset segment and name
-				specimenSegment = event.SpecimenSegment{}
+				replicationSegment = event.ReplicationSegment{}
 				specimenSegmentName = ""
 				specimenSegmentIdBatch = []string{}
 			}
