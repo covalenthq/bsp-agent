@@ -28,7 +28,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 
 	pass, _ := redisUrl.User.Password()
 	if pass != "" {
-		log.Fatal("Please remove password from connection string and add in .envrc as `REDIS_PWD`")
+		log.Fatal("Please remove password from connection string cli flag and add it in .envrc as `REDIS_PWD`")
 	} else {
 		pwd = redisConfig.Password
 	}

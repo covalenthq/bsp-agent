@@ -7,7 +7,6 @@ import (
 )
 
 type RedisConfig struct {
-	Username string `envconfig:"REDIS_USERNAME" default:""`
 	Password string `envconfig:"REDIS_PWD" default:""`
 }
 type EthConfig struct {
