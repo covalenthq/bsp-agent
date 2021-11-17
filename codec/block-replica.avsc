@@ -35,7 +35,7 @@
                            },
                            {
                               "name":"TotalDifficulty",
-                              "type":"double"
+                              "type":"long"
                            },
                            {
                               "name":"Header",
@@ -76,23 +76,23 @@
                                     },
                                     {
                                        "name":"difficulty",
-                                       "type":"double"
+                                       "type":"long"
                                     },
                                     {
                                        "name":"number",
-                                       "type":"int"
+                                       "type":"long"
                                     },
                                     {
                                        "name":"gasLimit",
-                                       "type":"int"
+                                       "type":"long"
                                     },
                                     {
                                        "name":"gasUsed",
-                                       "type":"int"
+                                       "type":"long"
                                     },
                                     {
                                        "name":"timestamp",
-                                       "type":"int"
+                                       "type":"long"
                                     },
                                     {
                                        "name":"extraData",
@@ -106,14 +106,14 @@
                                        "name":"nonce",
                                        "type":{
                                           "type":"array",
-                                          "items":"int"
+                                          "items":"long"
                                        }
                                     },
                                     {
                                        "name":"baseFeePerGas",
                                        "type":[
                                           "null",
-                                          "int"
+                                          "long"
                                        ],
                                        "default":null
                                     }
@@ -130,7 +130,7 @@
                                     "fields":[
                                        {
                                           "name":"nonce",
-                                          "type":"int"
+                                          "type":"long"
                                        },
                                        {
                                           "name":"gasPrice",
@@ -138,7 +138,7 @@
                                        },
                                        {
                                           "name":"gas",
-                                          "type":"int"
+                                          "type":"long"
                                        },
                                        {
                                           "name":"from",
@@ -146,12 +146,15 @@
                                        },
                                        {
                                           "name":"to",
-                                          "type":"string",
-                                          "default":"\u00ff"
+                                          "type":[
+                                             "null",
+                                             "string"
+                                          ],
+                                          "default":null
                                        },
                                        {
                                           "name":"value",
-                                          "type":"double"
+                                          "type":"long"
                                        },
                                        {
                                           "name":"input",
@@ -186,7 +189,7 @@
                                        },
                                        {
                                           "name":"CumulativeGasUsed",
-                                          "type":"int"
+                                          "type":"long"
                                        },
                                        {
                                           "name":"TxHash",
@@ -221,7 +224,7 @@
                                                    },
                                                    {
                                                       "name":"blockNumber",
-                                                      "type":"int"
+                                                      "type":"long"
                                                    },
                                                    {
                                                       "name":"transactionHash",
@@ -249,7 +252,7 @@
                                        },
                                        {
                                           "name":"GasUsed",
-                                          "type":"int"
+                                          "type":"long"
                                        }
                                     ]
                                  }
@@ -264,84 +267,100 @@
                            },
                            {
                               "name":"State",
-                              "type":{
-                                 "name":"State",
-                                 "type":"record",
-                                 "fields":[
-                                    {
-                                       "name":"AccountRead",
-                                       "type":{
-                                          "type":"array",
-                                          "items":{
-                                             "name":"AccountRead_record",
-                                             "type":"record",
-                                             "fields":[
-                                                {
-                                                   "name":"Address",
-                                                   "type":"string"
-                                                },
-                                                {
-                                                   "name":"Nonce",
-                                                   "type":"int"
-                                                },
-                                                {
-                                                   "name":"Balance",
-                                                   "type":"double"
-                                                },
-                                                {
-                                                   "name":"CodeHash",
-                                                   "type":"string"
+                              "type":[
+                                 "null",
+                                 {
+                                    "name":"State",
+                                    "type":"record",
+                                    "fields":[
+                                       {
+                                          "name":"AccountRead",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"array",
+                                                "items":{
+                                                   "name":"AccountRead_record",
+                                                   "type":"record",
+                                                   "fields":[
+                                                      {
+                                                         "name":"Address",
+                                                         "type":"string"
+                                                      },
+                                                      {
+                                                         "name":"Nonce",
+                                                         "type":"long"
+                                                      },
+                                                      {
+                                                         "name":"Balance",
+                                                         "type":"long"
+                                                      },
+                                                      {
+                                                         "name":"CodeHash",
+                                                         "type":"string"
+                                                      }
+                                                   ]
                                                 }
-                                             ]
-                                          }
-                                       }
-                                    },
-                                    {
-                                       "name":"StorageRead",
-                                       "type":{
-                                          "type":"array",
-                                          "items":{
-                                             "name":"StorageRead_record",
-                                             "type":"record",
-                                             "fields":[
-                                                {
-                                                   "name":"Account",
-                                                   "type":"string"
-                                                },
-                                                {
-                                                   "name":"SlotKey",
-                                                   "type":"string"
-                                                },
-                                                {
-                                                   "name":"Value",
-                                                   "type":"string"
+                                             }
+                                          ],
+                                          "default":null
+                                       },
+                                       {
+                                          "name":"StorageRead",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"array",
+                                                "items":{
+                                                   "name":"StorageRead_record",
+                                                   "type":"record",
+                                                   "fields":[
+                                                      {
+                                                         "name":"Account",
+                                                         "type":"string"
+                                                      },
+                                                      {
+                                                         "name":"SlotKey",
+                                                         "type":"string"
+                                                      },
+                                                      {
+                                                         "name":"Value",
+                                                         "type":"string"
+                                                      }
+                                                   ]
                                                 }
-                                             ]
-                                          }
-                                       }
-                                    },
-                                    {
-                                       "name":"CodeRead",
-                                       "type":{
-                                          "type":"array",
-                                          "items":{
-                                             "name":"CodeRead_record",
-                                             "type":"record",
-                                             "fields":[
-                                                {
-                                                   "name":"Hash",
-                                                   "type":"string"
-                                                },
-                                                {
-                                                   "name":"Code",
-                                                   "type":"string"
+                                             }
+                                          ],
+                                          "default":null
+                                       },
+                                       {
+                                          "name":"CodeRead",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"array",
+                                                "items":{
+                                                   "name":"CodeRead_record",
+                                                   "type":"record",
+                                                   "fields":[
+                                                      {
+                                                         "name":"Hash",
+                                                         "type":"string"
+                                                      },
+                                                      {
+                                                         "name":"Code",
+                                                         "type":"string"
+                                                      }
+                                                   ]
                                                 }
-                                             ]
-                                          }
+                                             }
+                                          ],
+                                          "default":null
                                        }
-                                    }
-                                 ]
-                              }
+                                    ]
+                                 }
+                              ],
+                              "default":null
                            }
                         ]
                      }

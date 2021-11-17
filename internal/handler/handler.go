@@ -54,7 +54,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		return "", err
 	}
 
-	log.Info("Submitting block-result segment proof for: ", segmentName)
+	log.Info("Submitting block-replica segment proof for: ", segmentName)
 
 	proofTxHash := make(chan string, 1)
 

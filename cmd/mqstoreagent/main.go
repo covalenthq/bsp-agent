@@ -238,7 +238,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 
 	err = rlp.Decode(bytes.NewReader(decodedData), &blockReplica)
 	if err != nil {
-		log.Fatalf("error decoding RLP bytes to block-result: %w", err)
+		log.Fatalf("error decoding RLP bytes to block-replica: %w", err)
 	}
 
 	newEvent, _ := event.New()

@@ -21,7 +21,7 @@ type BlockReplica struct {
 	Uncles          []*Header
 	Receipts        []*Receipt
 	Senders         []common.Address
-	State           *StateSpecimen
+	State           *StateSpecimen `json:"State" rlp:"nil"` // nil means block-result passed
 }
 type StateSpecimen struct {
 	AccountRead []*accountRead
