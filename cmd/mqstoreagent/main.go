@@ -42,11 +42,11 @@ var (
 	//env string vars
 	CodecPath      string
 	RedisUrl       string
-	SpecimenBucket string
-	ResultBucket   string
+	ReplicaBucket  string
 	GcpSvcAccount  string
 	EthClient      string
 	ProofChain     string
+	BinaryFilePath string
 
 	start                 string = ">"
 	streamKey             string
@@ -74,11 +74,11 @@ func main() {
 
 	flag.StringVar(&CodecPath, "codec-path", utils.LookupEnvOrString("CodecPath", CodecPath), "local path to AVRO .avsc files housing the specimen/result schemas")
 
+	flag.StringVar(&BinaryFilePath, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", BinaryFilePath), "local path to AVRO encoded binary files that contain block-replicas")
+
 	flag.StringVar(&GcpSvcAccount, "gcp-svc-account", utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount), "local path to google cloud platfrom service account auth file")
 
-	flag.StringVar(&SpecimenBucket, "specimen-target", utils.LookupEnvOrString("SpecimenBucket", SpecimenBucket), "google cloud platform object store target for specimen")
-
-	flag.StringVar(&ResultBucket, "result-target", utils.LookupEnvOrString("ResultBucket", ResultBucket), "google cloud platform object store target for result")
+	flag.StringVar(&ReplicaBucket, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", ReplicaBucket), "google cloud platform object store target for specimen")
 
 	flag.StringVar(&EthClient, "eth-client", utils.LookupEnvOrString("EthClient", EthClient), "connection string for ethereum node on which proof-chain contract is deployed")
 
@@ -96,8 +96,8 @@ func main() {
 	log.Info("Agent command line config: ", utils.GetConfig(flag.CommandLine))
 
 	CodecPath = utils.LookupEnvOrString("CodecPath", CodecPath)
-	SpecimenBucket = utils.LookupEnvOrString("SpecimenBucket", SpecimenBucket)
-	ResultBucket = utils.LookupEnvOrString("ResultBucket", ResultBucket)
+	BinaryFilePath = utils.LookupEnvOrString("BinaryFilePath", BinaryFilePath)
+	ReplicaBucket = utils.LookupEnvOrString("ReplicaBucket", ReplicaBucket)
 	GcpSvcAccount = utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount)
 	EthClient = utils.LookupEnvOrString("EthClient", EthClient)
 	ProofChain = utils.LookupEnvOrString("ProofChain", ProofChain)
@@ -242,8 +242,9 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	}
 
 	newEvent, _ := event.New()
-
 	replica, err := handler.Parse(newEvent, hash, &blockReplica)
+	objectType := blockReplica.Type[5:]
+
 	if err != nil {
 		log.Fatalf("error: ", err.Error(), " on process event: ", newEvent)
 	} else {
@@ -256,9 +257,9 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 		if len(replicationSegment.BlockReplicaEvent) == int(SegmentLength) {
 			replicationSegment.EndBlock = replica.Data.Header.Number.Uint64()
 			replicationSegment.Elements = uint64(SegmentLength)
-			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock)
+			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock) + objectType + "-" + "segment"
 			// avro encode, prove and upload
-			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, ResultBucket, replicaSegmentName, storageClient, ethClient, ProofChain)
+			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, ReplicaBucket, replicaSegmentName, storageClient, ethClient, ProofChain)
 			if err != nil {
 				log.Fatalf("failed to avro encode, proove and upload block-result segment: %v with err: %v", replicaSegmentName, err)
 			}

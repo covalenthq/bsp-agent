@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"time"
 
@@ -17,25 +16,25 @@ var (
 	uploadTimeout int64 = 50
 )
 
-func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, objectType, objectStorage, objectName string, object interface{}) error {
-
+func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, storageBucket, objectName string, object interface{}) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
-	switch objectType {
-	case "block-specimen":
-		bucket := objectStorage
-		return writeToStorage(ctx, storageClient, bucket, objectName, object)
-	case "block-result":
-		bucket := objectStorage
-		return writeToStorage(ctx, storageClient, bucket, objectName, object)
-	}
+	return writeToStorage(ctx, storageClient, storageBucket, objectName, object)
 
-	return fmt.Errorf("type: %v not supported", objectType)
+	// switch objectType {
+	// case "block-specimen":
+	// 	bucket := storageBucket
+	// 	return writeToStorage(ctx, storageClient, bucket, objectName, object)
+	// case "block-result":
+	// 	bucket := storageBucket
+	// 	return writeToStorage(ctx, storageClient, bucket, objectName, object)
+	// }
+
+	//return fmt.Errorf("type: %v not supported", objectType)
 }
 
 func writeToStorage(ctx context.Context, client *storage.Client, bucket string, objectName string, object interface{}) error {
-
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
@@ -44,11 +43,9 @@ func writeToStorage(ctx context.Context, client *storage.Client, bucket string, 
 	if err != nil {
 		return err
 	}
-
 	if _, err := io.Copy(wc, bytes.NewReader(content)); err != nil {
 		return err
 	}
-
 	if err := wc.Close(); err != nil {
 		return err
 	}
@@ -56,3 +53,7 @@ func writeToStorage(ctx context.Context, client *storage.Client, bucket string, 
 
 	return nil
 }
+
+// func writeToFile(ctx context.Context, client *storage.Client, bucket string, objectName string, object interface{}) error {
+// 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
+// 	defer cancel()
