@@ -44,7 +44,7 @@ func encodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment i
 	return binaryReplicaSegment, nil
 }
 
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, replicaBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
+func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, binaryPath, replicaBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
 	replicaSegmentAvro, err := encodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
 		return "", err
@@ -55,7 +55,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, proofTxHash)
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
-		err := st.HandleObjectUploadToBucket(ctx, storage, replicaBucket, segmentName, replicaSegmentAvro)
+		err := st.HandleObjectUploadToBucket(ctx, storage, binaryPath, replicaBucket, segmentName, replicaSegmentAvro)
 		if err != nil {
 			return "", err
 		}
