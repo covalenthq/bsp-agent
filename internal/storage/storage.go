@@ -35,7 +35,8 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 				panic(err)
 			}
 		}
-		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
+		return nil
+		//return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
 	}
 }
 

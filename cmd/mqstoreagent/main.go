@@ -40,10 +40,10 @@ var (
 	consumerPendingTime int64 = 60
 
 	//env string vars
-	CodecPath      string
-	RedisUrl       string
-	ReplicaBucket  string
-	GcpSvcAccount  string
+	CodecPath     string
+	RedisUrl      string
+	ReplicaBucket string
+	//GcpSvcAccount  string
 	EthClient      string
 	ProofChain     string
 	BinaryFilePath string
@@ -73,8 +73,8 @@ func main() {
 	flag.StringVar(&RedisUrl, "redis-url", utils.LookupEnvOrString("RedisURL", RedisUrl), "redis consumer stream url")
 	flag.StringVar(&CodecPath, "codec-path", utils.LookupEnvOrString("CodecPath", CodecPath), "local path to AVRO .avsc files housing the specimen/result schemas")
 	flag.StringVar(&BinaryFilePath, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", BinaryFilePath), "local path to AVRO encoded binary files that contain block-replicas")
-	flag.StringVar(&GcpSvcAccount, "gcp-svc-account", utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount), "local path to google cloud platfrom service account auth file")
-	flag.StringVar(&ReplicaBucket, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", ReplicaBucket), "google cloud platform object store target for specimen")
+	// flag.StringVar(&GcpSvcAccount, "gcp-svc-account", utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount), "local path to google cloud platfrom service account auth file")
+	// flag.StringVar(&ReplicaBucket, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", ReplicaBucket), "google cloud platform object store target for specimen")
 	flag.StringVar(&EthClient, "eth-client", utils.LookupEnvOrString("EthClient", EthClient), "connection string for ethereum node on which proof-chain contract is deployed")
 	flag.StringVar(&ProofChain, "proof-chain-address", utils.LookupEnvOrString("ProofChain", ProofChain), "hex string address for deployed proof-chain contract")
 	flag.IntVar(&SegmentLength, "segment-length", utils.LookupEnvOrInt("SegmentLength", SegmentLength), "number of block specimen/results within a single uploaded avro encoded object")
@@ -88,8 +88,8 @@ func main() {
 
 	CodecPath = utils.LookupEnvOrString("CodecPath", CodecPath)
 	BinaryFilePath = utils.LookupEnvOrString("BinaryFilePath", BinaryFilePath)
-	ReplicaBucket = utils.LookupEnvOrString("ReplicaBucket", ReplicaBucket)
-	GcpSvcAccount = utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount)
+	// ReplicaBucket = utils.LookupEnvOrString("ReplicaBucket", ReplicaBucket)
+	// GcpSvcAccount = utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount)
 	EthClient = utils.LookupEnvOrString("EthClient", EthClient)
 	ProofChain = utils.LookupEnvOrString("ProofChain", ProofChain)
 
@@ -102,10 +102,11 @@ func main() {
 		panic(err)
 	}
 
-	storageClient, err := utils.NewStorageClient(GcpSvcAccount)
-	if err != nil {
-		panic(err)
-	}
+	// storageClient, err := utils.NewStorageClient(GcpSvcAccount)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	var storageClient *storage.Client
 
 	ethClient, err := utils.NewEthClient(EthClient)
 	if err != nil {
