@@ -113,7 +113,7 @@ func main() {
 		panic(err)
 	}
 
-	replicaAvro, err := avro.ParseSchemaFile(CodecPath + "block-replica.avsc")
+	replicaAvro, err := avro.ParseSchemaFile(CodecPath)
 	if err != nil {
 		log.Fatalf("unable to parse avro schema for specimen: %v", err)
 	}

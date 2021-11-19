@@ -3,7 +3,6 @@ package storage
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -19,7 +18,7 @@ var (
 	uploadTimeout int64 = 50
 )
 
-func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, path, storageBucket, objectName string, object interface{}) error {
+func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, path, storageBucket, objectName string, object []byte) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
@@ -40,16 +39,16 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 	}
 }
 
-func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, objectName string, object interface{}) error {
+func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, objectName string, object []byte) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
 	wc := client.Bucket(bucket).Object(objectName).NewWriter(ctx)
-	content, err := json.Marshal(object)
-	if err != nil {
-		return err
-	}
-	if _, err := io.Copy(wc, bytes.NewReader(content)); err != nil {
+	// content, err := json.Marshal(object)
+	// if err != nil {
+	// 	return err
+	// }
+	if _, err := io.Copy(wc, bytes.NewReader(object)); err != nil {
 		return err
 	}
 	if err := wc.Close(); err != nil {
@@ -61,7 +60,7 @@ func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, ob
 }
 
 //todo: reading from the AVRO binary file aka cat (need AVRO tools)
-func writeToBinFile(ctx context.Context, path, objectName string, object interface{}) error {
+func writeToBinFile(ctx context.Context, path, objectName string, object []byte) error {
 	// ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	// defer cancel()
 	var _, err = os.Stat(filepath.Join(path, filepath.Base(objectName)))
@@ -71,7 +70,12 @@ func writeToBinFile(ctx context.Context, path, objectName string, object interfa
 			return err
 		}
 		defer fileSave.Close()
-		_, err = fileSave.Write([]byte(fmt.Sprintf("%v", object)))
+
+		// content, err := json.Marshal(object)
+		// if err != nil {
+		// 	return err
+		// }
+		_, err = fileSave.Write(object)
 		if err != nil {
 			panic(err)
 		}
