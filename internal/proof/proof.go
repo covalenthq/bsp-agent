@@ -23,7 +23,6 @@ var (
 func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
-	//var onlyOnce sync.Once
 
 	_, opts, chainId, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
