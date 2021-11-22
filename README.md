@@ -12,7 +12,7 @@ Externally facing workshop [deck.](https://docs.google.com/presentation/d/1qInRe
 
 ## Architecture
 
-![diagram](https://imgur.com/a/zIGw3wu)
+![diagram](arch.png)
 
 ## Block-replica
 
