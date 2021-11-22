@@ -18,60 +18,48 @@ import (
 )
 
 var (
-	BinaryFilePath string
-	CodecPath      string
-	IndentJson     int
+	BinaryFilePathFlag string
+	CodecPathFlag      string
+	IndentJsonFlag     int
 )
 
 func main() {
-
-	flag.StringVar(&BinaryFilePath, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", BinaryFilePath), "local path to AVRO encoded binary files that contain block-replicas")
-	flag.StringVar(&CodecPath, "codec-path", utils.LookupEnvOrString("CodecPath", CodecPath), "local path to AVRO .avsc files housing the specimen/result schemas")
-	flag.IntVar(&IndentJson, "indent-json", utils.LookupEnvOrInt("IndentJson", IndentJson), "allows for an indented view of the AVRO decoded JSON object")
+	flag.StringVar(&BinaryFilePathFlag, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", BinaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
+	flag.StringVar(&CodecPathFlag, "codec-path", utils.LookupEnvOrString("CodecPath", CodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
+	flag.IntVar(&IndentJsonFlag, "indent-json", utils.LookupEnvOrInt("IndentJson", IndentJsonFlag), "allows for an indented view of the AVRO decoded JSON object")
 
 	flag.Parse()
 	fmt.Println("Agent command line config: ", utils.GetConfig(flag.CommandLine))
 
-	CodecPath = utils.LookupEnvOrString("CodecPath", CodecPath)
-	BinaryFilePath = utils.LookupEnvOrString("BinaryFilePath", BinaryFilePath)
-	IndentJson = utils.LookupEnvOrInt("BinaryFilePath", IndentJson)
+	CodecPathFlag = utils.LookupEnvOrString("CodecPath", CodecPathFlag)
+	BinaryFilePathFlag = utils.LookupEnvOrString("BinaryFilePath", BinaryFilePathFlag)
+	IndentJsonFlag = utils.LookupEnvOrInt("BinaryFilePath", IndentJsonFlag)
 
 	colorJson := colorjson.NewFormatter()
-	colorJson.Indent = IndentJson
-	files := readAllFiles(BinaryFilePath)
-	codec := getAvroCodec(CodecPath)
+	colorJson.Indent = IndentJsonFlag
+	files := getBinFiles(BinaryFilePathFlag)
+	codec := getAvroCodec(CodecPathFlag)
 
-	for _, file := range files {
-		var obj map[string]interface{}
-		filename := file.Name()
-
-		f, err := os.Open(filepath.Join(BinaryFilePath, filepath.Base(filename)))
+	for _, fileInf := range files {
+		var fileMap map[string]interface{}
+		filename := fileInf.Name()
+		fileBuff, size, err := copyFileToMemory(BinaryFilePathFlag, filename)
 		if err != nil {
-			fmt.Printf("error opening %s: %s", filename, err)
-			return
+			log.Fatalf("unable to read binary file to memory: %v", err)
 		}
-		defer f.Close()
-
-		buf, err := retrieveROM(f.Name())
+		native, _, err := codec.NativeFromBinary(fileBuff) // convert binary avro data back to native Go form
 		if err != nil {
-			log.Fatalf("unable to read file %v", err)
+			log.Fatalf("unable to convert avro binary file to native Go from avro codec: %v", err)
 		}
-
-		// Convert binary Avro data back to native Go form
-		native, _, err := codec.NativeFromBinary(buf)
+		textAvro, err := codec.TextualFromNative(nil, native) // convert native Go form to textual avro data
 		if err != nil {
-			fmt.Println(err)
+			log.Fatalf("unable to convert from native Go to textual avro: %v", err)
 		}
-		// Convert native Go form to textual Avro data
-		textual, err := codec.TextualFromNative(nil, native)
-		if err != nil {
-			fmt.Println(err)
-		}
+		decodedAvro := string(textAvro)
+		json.Unmarshal([]byte(decodedAvro), &fileMap)
+		colorJsonMap, _ := colorJson.Marshal(fileMap)
 
-		decodedString := string(textual)
-		json.Unmarshal([]byte(decodedString), &obj)
-		s, _ := colorJson.Marshal(obj)
-		fmt.Println("\nfilename:", filename, "\n", string(s))
+		fmt.Println("\nfile: ", filepath.Join(BinaryFilePathFlag, filepath.Base(filename)), "bytes: ", size, "\n", string(colorJsonMap))
 	}
 }
 
@@ -80,7 +68,6 @@ func getAvroCodec(path string) *goavro.Codec {
 	if err != nil {
 		log.Fatalf("unable to parse avro schema for specimen: %v", err)
 	}
-
 	replicaCodec, err := goavro.NewCodec(replicaAvro.String())
 	if err != nil {
 		log.Fatalf("unable to gen avro codec for specimen: %v", err)
@@ -89,32 +76,30 @@ func getAvroCodec(path string) *goavro.Codec {
 	return replicaCodec
 }
 
-func readAllFiles(path string) []fs.FileInfo {
+func getBinFiles(path string) []fs.FileInfo {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		log.Fatalf("unable to read files from directory: %v", err)
 	}
+
 	return files
 }
 
-func retrieveROM(filename string) ([]byte, error) {
-	file, err := os.Open(filename)
-
+func copyFileToMemory(BinaryFilePathFlag, filename string) ([]byte, int, error) {
+	file, err := os.Open(filepath.Join(BinaryFilePathFlag, filepath.Base(filename)))
 	if err != nil {
-		return nil, err
+		return nil, 0, fmt.Errorf("error opening file %s: %s", filename, err)
 	}
 	defer file.Close()
 
 	stats, statsErr := file.Stat()
 	if statsErr != nil {
-		return nil, statsErr
+		return nil, 0, fmt.Errorf("error in file info structure: %s", err)
 	}
-
-	var size int64 = stats.Size()
+	size := stats.Size()
 	bytes := make([]byte, size)
+	buffr := bufio.NewReader(file)
+	sizeBytes, err := buffr.Read(bytes)
 
-	bufr := bufio.NewReader(file)
-	_, err = bufr.Read(bytes)
-
-	return bytes, err
+	return bytes, sizeBytes, err
 }
