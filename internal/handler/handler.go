@@ -17,19 +17,6 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
-func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
-	replEvent, ok := e.(*event.BlockReplicaEvent)
-	if !ok {
-		return nil, fmt.Errorf("incorrect event type: %v", replEvent)
-	}
-	replicaEvent := &event.BlockReplicaEvent{
-		Data: data,
-		Hash: hash,
-	}
-
-	return replicaEvent, nil
-}
-
 func encodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment interface{}) ([]byte, error) {
 	replicaMap, err := utils.StructToMap(blockReplicaSegment)
 	if err != nil {
@@ -44,22 +31,36 @@ func encodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment i
 	return binaryReplicaSegment, nil
 }
 
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, binaryPath, replicaBucket, segmentName string, storage *storage.Client, ethClient *ethclient.Client, proofChain string) (string, error) {
+func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
+	replEvent, ok := e.(*event.BlockReplicaEvent)
+	if !ok {
+		return nil, fmt.Errorf("incorrect event type: %v", replEvent)
+	}
+	replicaEvent := &event.BlockReplicaEvent{
+		Data: data,
+		Hash: hash,
+	}
+
+	return replicaEvent, nil
+}
+
+func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storage *storage.Client, ethClient *ethclient.Client, binaryPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	replicaSegmentAvro, err := encodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
 		return "", err
 	}
+	fmt.Printf("\n---> Processing %v <---\n", segmentName)
 	log.Info("Submitting block-replica segment proof for: ", segmentName)
 
 	proofTxHash := make(chan string, 1)
 	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, proofTxHash)
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
+		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 		err := st.HandleObjectUploadToBucket(ctx, storage, binaryPath, replicaBucket, segmentName, replicaSegmentAvro)
 		if err != nil {
 			return "", err
 		}
-		log.Info("Uploaded block-replica segment event: ", segmentName, " with proof tx hash: ", pTxHash)
 	} else {
 		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
 	}
