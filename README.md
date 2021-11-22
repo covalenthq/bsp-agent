@@ -16,12 +16,13 @@ Externally facing workshop [deck.](https://docs.google.com/presentation/d/1qInRe
 
 ## Block-replica
 
-Block Replicas are created by [BSP](https://docs.google.com/document/d/1BMC9-VXZfpB6mGczSu8ylUXJZ_CIx4ephepDtlruv_Q/edit#heading=h.5owqpz3w99gp) here and fed into redis.
+Block Replicas are created by [BSP](https://docs.google.com/document/d/1BMC9-VXZfpB6mGczSu8ylUXJZ_CIx4ephepDtlruv_Q/edit#heading=h.5owqpz3w99gp) here and fed into [Redis streams](https://redis.io/topics/streams-intro).
 
-These objects are extracted and read into the following struct. There are three types  of objects currently
-    1. Block-replicas have all the data captured shown below.
-    2. Block-results have all the data shown below except "State".
-    3. Block-specimens have all the data shown below except "TotalDifficulty", "Receipts"(&"Logs"), "Senders"
+These objects are extracted and read into the following struct by the agent. There are three types of objects currently -
+
+1. block-replica - have all the data shown below.
+1. block-result - have all the data shown below except "State".
+1. block-specimen - have all the data shown below except "TotalDifficulty", "Receipts"(&"Logs"), "Senders"
 
 ```go
     type BlockReplica struct {
@@ -67,29 +68,26 @@ The "State" is comprised of all state information related to accounts ever touch
 
 ## Environment
 
-The Eth private key allows the validator to make proof transactions to the proof-chain contract and is required.
-Other env vars are optional depending on your redis, eth account configuration.
+The Eth private key allows the validator to make proof transactions to the proof-chain contract and is required. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/mq-store-agent/envrc`
 
-```env
-    ETH_PRIVATE_KEY=private/key/senders #required
-    REDIS_PWD=your-redis-password #optional
-    ETH_KEYSTORE_PATH=path/to/keystore/file.json #optional
-    ETH_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
+```bash
+    export ETH_PRIVATE_KEY=private/key/senders #required
+    export REDIS_PWD=your-redis-password #optional
+    export ETH_KEYSTORE_PATH=path/to/keystore/file.json #optional
+    export ETH_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
 ```
 
 Please `brew install direnv` add the following to you bash -
 
 ```bash
-    # bash users - add the following line to your ~/.bashrc
-    eval "$(direnv hook bash)"
-    # zsh users - add the following line to your ~/.zshrc
-    eval "$(direnv hook zsh)"
+    eval "$(direnv hook bash)" # bash users - add the following line to your ~/.bashrc
+    eval "$(direnv hook zsh)" # zsh users - add the following line to your ~/.zshrc
 ```
 
 And enable the vars with `direnv allow .`
 For which you should see something like -
 
-```shell
+```bash
     direnv: loading ~/Documents/covalent/mq-store-agent/.envrc
     direnv: export +ETH_PRIVATE_KEY
 ```
@@ -103,15 +101,14 @@ go run ./cmd/mqstoreagent/*.go \
     --redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \ 
     --codec-path="./codec/block-replica.avsc" \ 
     --binary-file-path="./bin/block-replica/" \ 
-    --gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \ 
-    --replica-bucket="covalenthq-geth-block-specimen" \ 
+    --gcp-svc-account="/Users/<user>/.config/gcloud/<gcp-service-account.json>" \ 
+    --replica-bucket="<covalenthq-geth-block-replica-bucket>" \ 
     --segment-length=5 \ 
     --eth-client="http://127.0.0.1:7545" \ 
     --proof-chain-address="0xb5B12cbe8bABAF96677F60f65317b81709062C47"
 ```
 
-or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --proof-chain-address
-and run the following.
+Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --proof-chain-address and run with the following.
 
 ```bash
     make run-build
@@ -129,5 +126,9 @@ go run extractor.go \
     --indent-json=0
 ```
 
-Please make sure that the --binary-file-path and --codec-path matches the ones given while running the agent.
---indent-json (0,1,2) can be used to pretty print the AVRO json objects.
+Please make sure that the --binary-file-path and --codec-path matches the ones given while running the agent above. --indent-json (0,1,2) can be used to pretty print and inspect the AVRO json objects.
+
+
+## Docker
+
+Here lay details of how to use the docker version. 
