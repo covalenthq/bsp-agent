@@ -25,7 +25,7 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 	if path == "" {
 		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
 	} else {
-		err := validateDirPath(path, objectName)
+		err := validatePath(path, objectName)
 		if err != nil {
 			panic(err)
 		} else {
@@ -34,8 +34,7 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 				panic(err)
 			}
 		}
-		return nil
-		//return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
+		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
 	}
 }
 
@@ -44,25 +43,18 @@ func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, ob
 	defer cancel()
 
 	wc := client.Bucket(bucket).Object(objectName).NewWriter(ctx)
-	// content, err := json.Marshal(object)
-	// if err != nil {
-	// 	return err
-	// }
 	if _, err := io.Copy(wc, bytes.NewReader(object)); err != nil {
 		return err
 	}
 	if err := wc.Close(); err != nil {
 		return err
 	}
-	log.Info("Object uploaded to: https://storage.cloud.google.com/" + bucket + "/" + objectName)
+	log.Info("File successfully uploaded to: https://storage.cloud.google.com/" + bucket + "/" + objectName)
 
 	return nil
 }
 
-//todo: reading from the AVRO binary file aka cat (need AVRO tools)
 func writeToBinFile(ctx context.Context, path, objectName string, object []byte) error {
-	// ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
-	// defer cancel()
 	var _, err = os.Stat(filepath.Join(path, filepath.Base(objectName)))
 	if os.IsNotExist(err) {
 		fileSave, err := os.Create(filepath.Join(path, filepath.Base(objectName)))
@@ -70,31 +62,26 @@ func writeToBinFile(ctx context.Context, path, objectName string, object []byte)
 			return err
 		}
 		defer fileSave.Close()
-
-		// content, err := json.Marshal(object)
-		// if err != nil {
-		// 	return err
-		// }
 		_, err = fileSave.Write(object)
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		log.Info("File already exists at: ", path, "/", objectName)
+		log.Info("File already exists at: ", path, objectName)
 	}
-	log.Info("File written successfully to: ", path, "/", objectName)
+	log.Info("File written successfully to: ", path, objectName)
 
 	return nil
 }
 
-func validateDirPath(path, objectName string) error {
+func validatePath(path, objectName string) error {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return fmt.Errorf("path does not exist: %v", err)
 	}
 	mode := fileInfo.Mode()
 	if mode.IsDir() {
-		log.Info("Writing block-replica binary file to local directory: ", path, "/", objectName)
+		log.Info("Writing block-replica binary file to local directory: ", path, objectName)
 	}
 
 	return nil
