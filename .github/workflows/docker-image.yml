@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: docker-image-ci
 
 on:
   push:
@@ -10,27 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag mq-store-agent:$(date +%s)
-    
-    - name: Push to GitHub Packages
-      id: push_docker_image
-      uses: docker/build-push-action@v1
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
       with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: docker.pkg.github.com
-        repository: ${{ env.GITHUB_REPOSITORY_OWNER }}/${{ env.GITHUB_REPOSITORY_NAME }}/${{ env.GITHUB_REPOSITORY_NAME }}
-        tag_with_ref: true
-        add_git_labels: true
-        build_args: GOLANG_VERSION=1.16,GITHUB_USER=github-ci,GITHUB_TOKEN=${{ secrets.GOLANG_SHARED_LIB_VIEW_TOKEN }}
+        registry: ghcr.io
+        username: ${{ secrets.CR_USER }}
+        password: ${{ secrets.CR_PAT }}
 
-    - name: Authenticate against GCR
-      run: gcloud auth configure-docker
-
-    - name: Push to GCR
-      run: |
-        export GOOGLE_IMAGE_NAME=$REGISTRY_HOSTNAME/$GKE_PROJECT/${{ env.GITHUB_REPOSITORY_NAME }}:${{ env.GITHUB_SHA_SHORT }}
-        docker tag image $GOOGLE_IMAGE_NAME
-        docker push $GOOGLE_IMAGE_NAME
+    - uses: actions/checkout@v2
+    - name: Build & Publish the Docker image
+      run: | 
+        docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:${{ github.sha }}
+        docker push ghcr.io/covalenthq/mq-store-agent:${{ github.sha }}
