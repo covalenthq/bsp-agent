@@ -19,7 +19,6 @@ import (
 )
 
 func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*redis.Client, string, string, error) {
-
 	var pwd string
 	redisUrl, err := url.Parse(redisConnection)
 	if err != nil {
@@ -49,17 +48,14 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 		Password: pwd,
 		DB:       dbInt, // use default DB
 	})
-
 	streamKey := m["topic"][0]
 	consumerGroup := redisUrl.Fragment
 	_, err = redisClient.Ping().Result()
 
 	return redisClient, streamKey, consumerGroup, err
-
 }
 
 func NewEthClient(address string) (*ethclient.Client, error) {
-
 	ethClient, err := ethclient.Dial(address)
 	if err != nil {
 		log.Error("error in getting eth client: ", err.Error())
@@ -69,7 +65,6 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 }
 
 func NewStorageClient(serviceAccount string) (*storage.Client, error) {
-
 	ctx := context.Background()
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(serviceAccount))
 	if err != nil {
@@ -93,7 +88,6 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 }
 
 func AckStreamSegment(config *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) error {
-
 	if len(streamIDs) == int(segmentLength) {
 		for _, streamID := range streamIDs {
 			redisClient.XAck(streamKey, consumerGroup, streamID)
@@ -102,7 +96,6 @@ func AckStreamSegment(config *config.Config, redisClient *redis.Client, segmentL
 	} else {
 		return fmt.Errorf("failed to match streamIDs length to segment length config")
 	}
-
 }
 
 func LookupEnvOrString(key string, defaultVal string) string {

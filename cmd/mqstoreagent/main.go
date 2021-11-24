@@ -32,21 +32,20 @@ import (
 
 var (
 	waitGrp sync.WaitGroup
-
-	//env int vars
-	SegmentLength       int   = 5
-	ConsumeEvents       int64 = 1
+	//consts
+	consumerEvents      int64 = 1
 	consumerIdleTime    int64 = 30
 	consumerPendingTime int64 = 60
 
-	//env string vars
-	CodecPath      string
-	RedisUrl       string
-	SpecimenBucket string
-	ResultBucket   string
-	GcpSvcAccount  string
-	EthClient      string
-	ProofChain     string
+	//env flags
+	SegmentLengthFlag  int
+	CodecPathFlag      string
+	RedisUrlFlag       string
+	ReplicaBucketFlag  string
+	GcpSvcAccountFlag  string
+	EthClientFlag      string
+	ProofChainFlag     string
+	BinaryFilePathFlag string
 
 	start                 string = ">"
 	streamKey             string
@@ -70,70 +69,57 @@ func init() {
 }
 
 func main() {
-	flag.StringVar(&RedisUrl, "redis-url", utils.LookupEnvOrString("RedisURL", RedisUrl), "redis consumer stream url")
-
-	flag.StringVar(&CodecPath, "codec-path", utils.LookupEnvOrString("CodecPath", CodecPath), "local path to AVRO .avsc files housing the specimen/result schemas")
-
-	flag.StringVar(&GcpSvcAccount, "gcp-svc-account", utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount), "local path to google cloud platfrom service account auth file")
-
-	flag.StringVar(&SpecimenBucket, "specimen-target", utils.LookupEnvOrString("SpecimenBucket", SpecimenBucket), "google cloud platform object store target for specimen")
-
-	flag.StringVar(&ResultBucket, "result-target", utils.LookupEnvOrString("ResultBucket", ResultBucket), "google cloud platform object store target for result")
-
-	flag.StringVar(&EthClient, "eth-client", utils.LookupEnvOrString("EthClient", EthClient), "connection string for ethereum node on which proof-chain contract is deployed")
-
-	flag.StringVar(&ProofChain, "proof-chain-address", utils.LookupEnvOrString("ProofChain", ProofChain), "hex string address for deployed proof-chain contract")
-
-	flag.IntVar(&SegmentLength, "segment-length", utils.LookupEnvOrInt("SegmentLength", SegmentLength), "number of block specimen/results within a single uploaded avro encoded object")
-
+	flag.StringVar(&RedisUrlFlag, "redis-url", utils.LookupEnvOrString("RedisURL", RedisUrlFlag), "redis consumer stream url")
+	flag.StringVar(&CodecPathFlag, "codec-path", utils.LookupEnvOrString("CodecPath", CodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
+	flag.StringVar(&BinaryFilePathFlag, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", BinaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
+	flag.StringVar(&GcpSvcAccountFlag, "gcp-svc-account", utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccountFlag), "local path to google cloud platfrom service account auth file")
+	flag.StringVar(&ReplicaBucketFlag, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", ReplicaBucketFlag), "google cloud platform object store target for specimen")
+	flag.StringVar(&EthClientFlag, "eth-client", utils.LookupEnvOrString("EthClient", EthClientFlag), "connection string for ethereum node on which proof-chain contract is deployed")
+	flag.StringVar(&ProofChainFlag, "proof-chain-address", utils.LookupEnvOrString("ProofChain", ProofChainFlag), "hex string address for deployed proof-chain contract")
+	flag.IntVar(&SegmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", SegmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
 	flag.Parse()
 
 	config, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
 	}
-
 	log.Info("Agent command line config: ", utils.GetConfig(flag.CommandLine))
 
-	CodecPath = utils.LookupEnvOrString("CodecPath", CodecPath)
-	SpecimenBucket = utils.LookupEnvOrString("SpecimenBucket", SpecimenBucket)
-	ResultBucket = utils.LookupEnvOrString("ResultBucket", ResultBucket)
-	GcpSvcAccount = utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccount)
-	EthClient = utils.LookupEnvOrString("EthClient", EthClient)
-	ProofChain = utils.LookupEnvOrString("ProofChain", ProofChain)
+	CodecPathFlag = utils.LookupEnvOrString("CodecPath", CodecPathFlag)
+	BinaryFilePathFlag = utils.LookupEnvOrString("BinaryFilePath", BinaryFilePathFlag)
+	ReplicaBucketFlag = utils.LookupEnvOrString("ReplicaBucket", ReplicaBucketFlag)
+	GcpSvcAccountFlag = utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccountFlag)
+	EthClientFlag = utils.LookupEnvOrString("EthClient", EthClientFlag)
+	ProofChainFlag = utils.LookupEnvOrString("ProofChain", ProofChainFlag)
 
-	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(utils.LookupEnvOrString("RedisURL", RedisUrl), &config.RedisConfig)
-
-	if err != nil {
-		panic(err)
+	if BinaryFilePathFlag == "" {
+		log.Warn("--binary-file-path flag not provided to write block-replica avro encoded binary files to local path", BinaryFilePathFlag)
 	}
 
-	storageClient, err := utils.NewStorageClient(GcpSvcAccount)
+	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(utils.LookupEnvOrString("RedisURL", RedisUrlFlag), &config.RedisConfig)
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to get redis client from redis URL flag : %v", err)
 	}
-
-	ethClient, err := utils.NewEthClient(EthClient)
+	storageClient, err := utils.NewStorageClient(GcpSvcAccountFlag)
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to get gcp storage client from GCP Service account flag: %v", err)
 	}
-
-	replicaAvro, err := avro.ParseSchemaFile(CodecPath + "block-replica.avsc")
+	ethClient, err := utils.NewEthClient(EthClientFlag)
 	if err != nil {
-		log.Fatalf("unable to parse avro schema for specimen: %v", err)
+		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
 	}
-
+	replicaAvro, err := avro.ParseSchemaFile(CodecPathFlag)
+	if err != nil {
+		log.Fatalf("unable to parse avro schema for specimen from codec path flag: %v", err)
+	}
 	replicaCodec, err := goavro.NewCodec(replicaAvro.String())
 	if err != nil {
-		log.Fatalf("unable to gen avro codec for specimen: %v", err)
+		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
 	var consumerName string = uuid.NewV4().String()
-
 	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
-
 	createConsumerGroup(redisClient, streamKey, consumerGroup)
-
 	go consumeEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
 	go consumePendingEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
 
@@ -164,10 +150,9 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 			Streams:  []string{streamKey, start},
 			Group:    consumerGroup,
 			Consumer: consumerName,
-			Count:    ConsumeEvents,
+			Count:    consumerEvents,
 			Block:    0,
 		}).Result()
-
 		if err != nil {
 			log.Error("err on consume events: ", err.Error())
 			return
@@ -190,9 +175,8 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 			Group:  consumerGroup,
 			Start:  "0",
 			End:    "+",
-			Count:  ConsumeEvents,
+			Count:  consumerEvents,
 		}).Result()
-
 		if err != nil {
 			panic(err)
 		}
@@ -200,7 +184,6 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 		for _, stream := range pendingStreams {
 			streamsRetry = append(streamsRetry, stream.ID)
 		}
-
 		if len(streamsRetry) > 0 {
 			streams, err := redisClient.XClaim(&redis.XClaimArgs{
 				Stream:   streamKey,
@@ -209,12 +192,10 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 				Messages: streamsRetry,
 				MinIdle:  time.Duration(consumerIdleTime) * time.Second,
 			}).Result()
-
 			if err != nil {
 				log.Error("error on process pending: ", err.Error())
 				return
 			}
-
 			for _, stream := range streams {
 				waitGrp.Add(1)
 				go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream)
@@ -230,7 +211,6 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 
 	ctx := context.Background()
 	hash := stream.Values["hash"].(string)
-
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
 	if err != nil {
 		log.Info("Failed to snappy decode: ", err.Error())
@@ -238,12 +218,12 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 
 	err = rlp.Decode(bytes.NewReader(decodedData), &blockReplica)
 	if err != nil {
-		log.Fatalf("error decoding RLP bytes to block-result: %w", err)
+		log.Fatalf("error decoding RLP bytes to block-replica: %w", err)
 	}
 
 	newEvent, _ := event.New()
-
 	replica, err := handler.Parse(newEvent, hash, &blockReplica)
+	objectType := blockReplica.Type[5:]
 	if err != nil {
 		log.Fatalf("error: ", err.Error(), " on process event: ", newEvent)
 	} else {
@@ -253,17 +233,17 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 		if len(replicationSegment.BlockReplicaEvent) == 1 {
 			replicationSegment.StartBlock = replica.Data.Header.Number.Uint64()
 		}
-		if len(replicationSegment.BlockReplicaEvent) == int(SegmentLength) {
+		if len(replicationSegment.BlockReplicaEvent) == int(SegmentLengthFlag) {
 			replicationSegment.EndBlock = replica.Data.Header.Number.Uint64()
-			replicationSegment.Elements = uint64(SegmentLength)
-			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock)
+			replicationSegment.Elements = uint64(SegmentLengthFlag)
+			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock) + objectType + "-" + "segment"
 			// avro encode, prove and upload
-			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, ResultBucket, replicaSegmentName, storageClient, ethClient, ProofChain)
+			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, storageClient, ethClient, BinaryFilePathFlag, ReplicaBucketFlag, replicaSegmentName, ProofChainFlag)
 			if err != nil {
 				log.Fatalf("failed to avro encode, proove and upload block-result segment: %v with err: %v", replicaSegmentName, err)
 			}
 			//ack stream segment batch id
-			err = utils.AckStreamSegment(config, redisClient, SegmentLength, streamKey, consumerGroup, replicaSegmentIdBatch)
+			err = utils.AckStreamSegment(config, redisClient, SegmentLengthFlag, streamKey, consumerGroup, replicaSegmentIdBatch)
 			if err != nil {
 				log.Fatalf("failed to match streamIDs length to segment length config: %v", err)
 			}
