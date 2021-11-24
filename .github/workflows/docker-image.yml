@@ -13,3 +13,24 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag mq-store-agent:$(date +%s)
+    
+    - name: Push to GitHub Packages
+      id: push_docker_image
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        repository: ${{ env.GITHUB_REPOSITORY_OWNER }}/${{ env.GITHUB_REPOSITORY_NAME }}/${{ env.GITHUB_REPOSITORY_NAME }}
+        tag_with_ref: true
+        add_git_labels: true
+        build_args: GOLANG_VERSION=1.16,GITHUB_USER=github-ci,GITHUB_TOKEN=${{ secrets.GOLANG_SHARED_LIB_VIEW_TOKEN }}
+
+    - name: Authenticate against GCR
+      run: gcloud auth configure-docker
+
+    - name: Push to GCR
+      run: |
+        export GOOGLE_IMAGE_NAME=$REGISTRY_HOSTNAME/$GKE_PROJECT/${{ env.GITHUB_REPOSITORY_NAME }}:${{ env.GITHUB_SHA_SHORT }}
+        docker tag image $GOOGLE_IMAGE_NAME
+        docker push $GOOGLE_IMAGE_NAME
