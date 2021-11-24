@@ -1,3 +1,0 @@
-[submodule "contracts/cqt-virtnet"]
-	path = contracts/cqt-virtnet
-	url = git@github.com:covalenthq/cqt-virtnet.git
