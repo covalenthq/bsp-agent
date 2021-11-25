@@ -20,5 +20,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build & Publish the Docker image
       run: | 
-        docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:${{ github.sha }}
-        docker push ghcr.io/covalenthq/mq-store-agent:${{ github.sha }}
+        docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:latest
+        docker push ghcr.io/covalenthq/mq-store-agent:latest
