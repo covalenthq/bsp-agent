@@ -24,6 +24,12 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 
 	if path == "" {
 		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
+	} else if storageClient == nil {
+		err := writeToBinFile(ctx, path, objectName, object)
+		if err != nil {
+			panic(err)
+		}
+		return err
 	} else {
 		err := validatePath(path, objectName)
 		if err != nil {

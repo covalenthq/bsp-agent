@@ -102,7 +102,7 @@ func main() {
 	}
 	storageClient, err := utils.NewStorageClient(GcpSvcAccountFlag)
 	if err != nil {
-		log.Fatalf("unable to get gcp storage client from GCP Service account flag: %v", err)
+		log.Warn("unable to get gcp storage client from GCP Service account flag: %v", err)
 	}
 	ethClient, err := utils.NewEthClient(EthClientFlag)
 	if err != nil {
