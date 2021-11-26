@@ -47,7 +47,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - ETH_PRIVATE_KEY=784a6e529c2dd258fa3de885c959f57b8eae2ea184472b5e0371e54edde60088
+      - ETH_PRIVATE_KEY=0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530
     depends_on:
       - redis
       - node
