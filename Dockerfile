@@ -1,9 +1,12 @@
 # Build the project in the first phase. 
+##
+## Build
+##
 FROM golang:1.16-alpine as builder
-
 WORKDIR /build
 
-COPY go.mod go.sum ./
+COPY go.mod ./
+COPY go.sum ./
 RUN go mod download
 
 COPY . .
@@ -25,6 +28,6 @@ COPY --from=builder /build/main /srv/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 WORKDIR /srv
 
-# EXPOSE 8080
+CMD ["./main", "--redis-url=redis://username:@redis:6379/0?topic=replication#replicate", "--codec-path=./codec/block-replica.avsc", "--binary-file-path=./bin/block-replica/", "--gcp-svc-account=/Users/pranay/.config/gcloud/bsp-2.json","--replica-bucket=covalenthq-geth-block-specimen", "--segment-length=5", "--eth-client=0.0.0.1:8545" , "--proof-chain-address=0xb5B12cbe8bABAF96677F60f65317b81709062C47"]
 
-CMD [ "./main" ]
+EXPOSE 8008
