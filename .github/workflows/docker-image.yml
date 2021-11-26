@@ -22,3 +22,10 @@ jobs:
       run: | 
         docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:latest
         docker push ghcr.io/covalenthq/mq-store-agent:latest
+
+    - name: Start containers
+      run: docker-compose -f "docker-compose.yml" up --build --remove-orphans
+
+    - name: Stop containers
+      if: always()
+      run: docker-compose -f "docker-compose.yml" down

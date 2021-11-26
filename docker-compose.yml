@@ -53,6 +53,7 @@ services:
       - node
     ports:
       - 8008:8008
+
   # consumer-one:
   #   container_name: replication-consumer-one
   #   build: '.'
