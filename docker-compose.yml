@@ -3,9 +3,14 @@ version: '3'
 services:
   redis:
     image: redis:alpine
+    command: redis-server
     container_name: redis-srv
     ports:
       - 6379:6379
+    expose:
+      - 6379
+    environment:
+      - REDIS_REPLICATION_MODE=master
 
   redis-commander:
     container_name: redis-commander-web
@@ -17,24 +22,55 @@ services:
     ports:
       - "8081:8081"
 
-  consumer-one:
-    container_name: replication-consumer-one
-    build: '.'
-    environment:
-      REDIS_HOST: redis
-      STREAM: replication
-      GROUP: replicate-1
-    depends_on:
-      - redis
-    restart: always
+  node:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./ganache_data:/ganache_data
+    entrypoint:
+      - node
+      - /app/ganache-core.docker.cli.js
+      - --deterministic
+      - --db=/ganache_data
+      - --mnemonic
+      - 'minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef'
+      - --networkId
+      - '5777'
+      - --hostname
+      - '0.0.0.0'
+      - --debug
 
-  consumer-two:
-    container_name: replication-consumer-two
-    build: '.'
+  mq-store-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
     environment:
-      REDIS_HOST: redis
-      STREAM: replication
-      GROUP: replicate-2
+      - ETH_PRIVATE_KEY=784a6e529c2dd258fa3de885c959f57b8eae2ea184472b5e0371e54edde60088
     depends_on:
       - redis
-    restart: always
+      - node
+    ports:
+      - 8008:8008
+  # consumer-one:
+  #   container_name: replication-consumer-one
+  #   build: '.'
+  #   environment:
+  #     REDIS_HOST: redis
+  #     STREAM: replication
+  #     GROUP: replicate-1
+  #   depends_on:
+  #     - redis
+  #   restart: always
+
+  # consumer-two:
+  #   container_name: replication-consumer-two
+  #   build: '.'
+  #   environment:
+  #     REDIS_HOST: redis
+  #     STREAM: replication
+  #     GROUP: replicate-2
+  #   depends_on:
+  #     - redis
+  #   restart: always
