@@ -44,7 +44,7 @@ func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockRe
 	return replicaEvent, nil
 }
 
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storage *storage.Client, ethClient *ethclient.Client, binaryPath, replicaBucket, segmentName, proofChain string) (string, error) {
+func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storageClient *storage.Client, ethClient *ethclient.Client, binaryPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	replicaSegmentAvro, err := encodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
 		return "", err
@@ -57,7 +57,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-		err := st.HandleObjectUploadToBucket(ctx, storage, binaryPath, replicaBucket, segmentName, replicaSegmentAvro)
+		err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryPath, replicaBucket, segmentName, replicaSegmentAvro)
 		if err != nil {
 			return "", err
 		}
