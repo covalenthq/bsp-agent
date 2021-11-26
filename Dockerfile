@@ -16,9 +16,9 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o main .
 # Copy artifacts from the builder and create an image with scratch
 
 FROM scratch
-LABEL Author "Pranay Valson <pranay.valson@gmail.com>"
-LABEL Maintainer "Pranay Valson <pranay.valson@gmail.com>"
-LABEL Version "0.1"
+LABEL author "Pranay Valson <pranay.valson@gmail.com>"
+LABEL maintainer "Pranay Valson <pranay.valson@gmail.com>"
+LABEL version "0.1"
 
 # Copy the binary from build-phase
 COPY --from=builder /build/main /srv/
