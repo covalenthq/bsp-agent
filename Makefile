@@ -21,4 +21,5 @@ run-agent:
 	--replica-bucket="covalenthq-geth-block-specimen" \
 	--segment-length=5 \
 	--eth-client="http://127.0.0.1:7545" \
-	--proof-chain-address="0xb5B12cbe8bABAF96677F60f65317b81709062C47"
+	--proof-chain-address="0xca59d70517cc581E2277EdCA8587A0dd2BeC5eb9" \
+	--consumer-timeout=80

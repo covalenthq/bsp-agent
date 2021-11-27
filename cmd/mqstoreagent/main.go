@@ -33,12 +33,14 @@ import (
 var (
 	waitGrp sync.WaitGroup
 	//consts
-	consumerEvents      int64 = 1
-	consumerIdleTime    int64 = 30
-	consumerPendingTime int64 = 60
+	consumerEvents            int64 = 1
+	consumerIdleTime          int64 = 15
+	consumerPendingTimeTicker int64 = 30
 
 	//env flags
-	SegmentLengthFlag  int
+	ConsumerPendingTimeoutFlag int = 120 //defaults to 2 mins
+	SegmentLengthFlag          int = 5   //defaults to 5 blocks per segment
+
 	CodecPathFlag      string
 	RedisUrlFlag       string
 	ReplicaBucketFlag  string
@@ -77,6 +79,7 @@ func main() {
 	flag.StringVar(&EthClientFlag, "eth-client", utils.LookupEnvOrString("EthClient", EthClientFlag), "connection string for ethereum node on which proof-chain contract is deployed")
 	flag.StringVar(&ProofChainFlag, "proof-chain-address", utils.LookupEnvOrString("ProofChain", ProofChainFlag), "hex string address for deployed proof-chain contract")
 	flag.IntVar(&SegmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", SegmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
+	flag.IntVar(&ConsumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", ConsumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.Parse()
 
 	config, err := config.LoadConfig()
@@ -167,45 +170,51 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 }
 
 func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
-	ticker := time.Tick(time.Second * time.Duration(consumerPendingTime))
-	for range ticker {
-		var streamsRetry []string
-		pendingStreams, err := redisClient.XPendingExt(&redis.XPendingExtArgs{
-			Stream: streamKey,
-			Group:  consumerGroup,
-			Start:  "0",
-			End:    "+",
-			Count:  consumerEvents,
-		}).Result()
-		if err != nil {
-			panic(err)
-		}
-
-		for _, stream := range pendingStreams {
-			streamsRetry = append(streamsRetry, stream.ID)
-		}
-		if len(streamsRetry) > 0 {
-			streams, err := redisClient.XClaim(&redis.XClaimArgs{
-				Stream:   streamKey,
-				Group:    consumerGroup,
-				Consumer: consumerName,
-				Messages: streamsRetry,
-				MinIdle:  time.Duration(consumerIdleTime) * time.Second,
+	timeout := time.After(time.Second * time.Duration(ConsumerPendingTimeoutFlag))
+	ticker := time.Tick(time.Second * time.Duration(consumerPendingTimeTicker))
+	for {
+		select {
+		case <-timeout:
+			log.Warn("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), "after timeout: ", ConsumerPendingTimeoutFlag, " seconds")
+			os.Exit(1)
+		case <-ticker:
+			var streamsRetry []string
+			pendingStreams, err := redisClient.XPendingExt(&redis.XPendingExtArgs{
+				Stream: streamKey,
+				Group:  consumerGroup,
+				Start:  "0",
+				End:    "+",
+				Count:  consumerEvents,
 			}).Result()
 			if err != nil {
-				log.Error("error on process pending: ", err.Error())
-				return
+				panic(err)
 			}
-			for _, stream := range streams {
-				waitGrp.Add(1)
-				go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream)
+
+			for _, stream := range pendingStreams {
+				streamsRetry = append(streamsRetry, stream.ID)
 			}
-			waitGrp.Wait()
+			if len(streamsRetry) > 0 {
+				streams, err := redisClient.XClaim(&redis.XClaimArgs{
+					Stream:   streamKey,
+					Group:    consumerGroup,
+					Consumer: consumerName,
+					Messages: streamsRetry,
+					MinIdle:  time.Duration(consumerIdleTime) * time.Second,
+				}).Result()
+				if err != nil {
+					log.Error("error on process pending: ", err.Error())
+					return
+				}
+				for _, stream := range streams {
+					waitGrp.Add(1)
+					go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream)
+				}
+				waitGrp.Wait()
+			}
+			log.Info("Process pending streams at: ", time.Now().Format(time.RFC3339))
 		}
-		log.Info("Process pending streams at: ", time.Now().Format(time.RFC3339))
 	}
 }
-
 func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage) {
 	defer waitGrp.Done()
 
