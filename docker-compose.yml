@@ -13,10 +13,10 @@ services:
       - REDIS_REPLICATION_MODE=master
 
   redis-commander:
+    image: rediscommander/redis-commander:latest
     container_name: redis-commander-web
     hostname: redis-commander
-    image: rediscommander/redis-commander:latest
-    restart: always
+    restart: on-failure
     environment:
       - REDIS_HOSTS=local:redis:6379
     ports:
@@ -24,6 +24,8 @@ services:
 
   node:
     image: trufflesuite/ganache-cli:latest
+    container_name: ganache
+    restart: on-failure
     ports:
       - "8545:8545"
     volumes:
@@ -41,11 +43,11 @@ services:
       - '0.0.0.0'
       - --debug
 
-  mq-store-agent:
+  consumer:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+    restart: no
     environment:
       - ETH_PRIVATE_KEY=0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530
     depends_on:
