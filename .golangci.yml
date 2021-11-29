@@ -19,7 +19,6 @@ linters:
     - unused
     - varcheck
     
-
 issues:
   exclude-use-default: false
   max-issues-per-linter: 0
