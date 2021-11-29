@@ -21,10 +21,10 @@ services:
       - REDIS_HOSTS=local:redis:6379
     ports:
       - "8081:8081"
-
+  
   node:
     image: trufflesuite/ganache-cli:latest
-    container_name: ganache
+    container_name: ganache-cli
     restart: on-failure
     ports:
       - "8545:8545"
@@ -43,6 +43,15 @@ services:
       - '0.0.0.0'
       - --debug
 
+  cqt-virtnet:
+    image: "ghcr.io/covalenthq/cqt-virtnet:latest"
+    container_name: proof-chain
+    restart: on-failure
+    depends_on:
+      - node
+    ports:
+      - 8008:8008
+
   consumer:
     build:
       context: .
@@ -54,7 +63,7 @@ services:
       - redis
       - node
     ports:
-      - 8008:8008
+      - 8080:8080
 
   # consumer-one:
   #   container_name: replication-consumer-one
