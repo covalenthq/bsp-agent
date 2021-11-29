@@ -44,6 +44,6 @@ RUN chmod 777 main
 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
-CMD ["./entry.sh"]
+CMD [ "./entry.sh" ]
 
 EXPOSE 8008

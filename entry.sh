@@ -5,5 +5,5 @@
  --replica-bucket=covalenthq-geth-block-specimen \
  --segment-length=10 \
  --eth-client=http://127.0.0.1:7545  \
- --proof-chain-address=0xca59d70517cc581E2277EdCA8587A0dd2BeC5eb9 \
+ --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 \
  --consumer-timeout=80
