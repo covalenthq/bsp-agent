@@ -176,7 +176,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 		select {
 		case <-timeout:
 			log.Warn("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), "after timeout: ", ConsumerPendingTimeoutFlag, " seconds")
-			os.Exit(1)
+			os.Exit(0)
 		case <-ticker:
 			var streamsRetry []string
 			pendingStreams, err := redisClient.XPendingExt(&redis.XPendingExtArgs{
