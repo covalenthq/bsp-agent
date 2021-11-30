@@ -132,4 +132,16 @@ Please make sure that the --binary-file-path and --codec-path matches the ones g
 
 ## Docker
 
-Here lay details of how to use the docker version. 
+The docker image for this service can be found [here](https://github.com/covalenthq/mq-store-agent/pkgs/container/mq-store-agent)
+
+```bash
+    docker pull ghcr.io/covalenthq/mq-store-agent:latest
+    docker run ghcr.io/covalenthq/mq-store-agent:latest
+```
+
+Use docker-compose to get all the necessary services along with to also get running along with the mq-store-agent with the following from root - 
+
+```bash
+    cd mq-store-agent
+    docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans
+```

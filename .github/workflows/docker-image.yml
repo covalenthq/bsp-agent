@@ -27,7 +27,7 @@ jobs:
       run: docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans --abort-on-container-exit
 
     - name: Check running agent
-      run: docker inspect mq-store-agent_consumer_1
+      run: docker inspect mq-store-agent
 
     - name: Check running containers
       run: docker ps
