@@ -3,14 +3,15 @@ version: '3'
 services:
   redis:
     image: redis:alpine
-    command: redis-server
     container_name: redis-srv
-    ports:
-      - 6379:6379
+    command: redis-server
+    restart: on-failure
     expose:
       - 6379
     environment:
       - REDIS_REPLICATION_MODE=master
+    ports:
+      - "6379:6379"
 
   redis-commander:
     image: rediscommander/redis-commander:latest
@@ -26,8 +27,6 @@ services:
     image: trufflesuite/ganache-cli:latest
     container_name: ganache-cli
     restart: on-failure
-    ports:
-      - "8545:8545"
     volumes:
       - ./ganache_data:/ganache_data
     entrypoint:
@@ -42,6 +41,8 @@ services:
       - --hostname
       - '0.0.0.0'
       - --debug
+    ports:
+      - "8545:8545"
 
   cqt-virtnet:
     image: "ghcr.io/covalenthq/cqt-virtnet:latest"
@@ -50,31 +51,22 @@ services:
     depends_on:
       - node
     ports:
-      - 8008:8008
+      - "8008:8008"
 
   consumer:
+    container_name: mq-store-agent
     build:
       context: .
       dockerfile: Dockerfile
     restart: "no"
-    environment:
-      - ETH_PRIVATE_KEY=0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530
     depends_on:
       - redis
+      - cqt-virtnet
       - node
+    environment:
+      - ETH_PRIVATE_KEY=0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530
     ports:
-      - 8080:8080
-
-  # consumer-one:
-  #   container_name: replication-consumer-one
-  #   build: '.'
-  #   environment:
-  #     REDIS_HOST: redis
-  #     STREAM: replication
-  #     GROUP: replicate-1
-  #   depends_on:
-  #     - redis
-  #   restart: always
+      - "8080:8080"
 
   # consumer-two:
   #   container_name: replication-consumer-two

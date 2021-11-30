@@ -46,4 +46,4 @@ ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
 CMD [ "./entry.sh" ]
 
-EXPOSE 8008
+EXPOSE 8080
