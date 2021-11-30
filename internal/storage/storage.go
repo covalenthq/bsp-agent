@@ -18,24 +18,24 @@ var (
 	uploadTimeout int64 = 50
 )
 
-func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, path, storageBucket, objectName string, object []byte) error {
+func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, binaryLocalPath, storageBucket, objectName string, object []byte) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
-	if path == "" {
+	if binaryLocalPath == "" {
 		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
 	} else if storageClient == nil {
-		err := writeToBinFile(ctx, path, objectName, object)
+		err := writeToBinFile(ctx, binaryLocalPath, objectName, object)
 		if err != nil {
 			panic(err)
 		}
 		return err
 	} else {
-		err := validatePath(path, objectName)
+		err := validatePath(binaryLocalPath, objectName)
 		if err != nil {
 			panic(err)
 		} else {
-			err = writeToBinFile(ctx, path, objectName, object)
+			err = writeToBinFile(ctx, binaryLocalPath, objectName, object)
 			if err != nil {
 				panic(err)
 			}
