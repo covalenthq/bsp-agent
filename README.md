@@ -13,7 +13,7 @@ Externally facing workshop [deck.](https://docs.google.com/presentation/d/1qInRe
 ## Architecture
 
 (Temp till digital version)
-![diagram](arch.JPG)
+![diagram](arch.png)
 
 ## Block-replica
 
