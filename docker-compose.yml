@@ -4,12 +4,17 @@ services:
   redis:
     image: redis:alpine
     container_name: redis-srv
-    command: redis-server
+    #command: ["redis-server"]
     restart: on-failure
     expose:
       - 6379
+    volumes:
+      - ./data/redis:/data
     environment:
       - REDIS_REPLICATION_MODE=master
+    networks:
+      - cqt-net
+    entrypoint: redis-server
     ports:
       - "6379:6379"
 
@@ -18,8 +23,12 @@ services:
     container_name: redis-commander-web
     hostname: redis-commander
     restart: on-failure
+    depends_on:
+      - redis
     environment:
       - REDIS_HOSTS=local:redis:6379
+    networks:
+      - cqt-net
     ports:
       - "8081:8081"
   
@@ -41,6 +50,10 @@ services:
       - --hostname
       - '0.0.0.0'
       - --debug
+    depends_on:
+      - redis-commander
+    networks:
+      - cqt-net
     ports:
       - "8545:8545"
 
@@ -50,6 +63,8 @@ services:
     restart: on-failure
     depends_on:
       - node
+    networks:
+      - cqt-net
     ports:
       - "8008:8008"
 
@@ -60,14 +75,19 @@ services:
       dockerfile: Dockerfile
     restart: "no"
     depends_on:
-      - redis
       - cqt-virtnet
-      - node
     environment:
       - ETH_PRIVATE_KEY=0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530
+    networks:
+      - cqt-net
     ports:
       - "8080:8080"
 
+networks:
+  cqt-net:
+
+volumes:
+  data:
   # consumer-two:
   #   container_name: replication-consumer-two
   #   build: '.'
