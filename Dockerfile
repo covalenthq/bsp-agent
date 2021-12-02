@@ -19,6 +19,8 @@ RUN apk update && apk add --no-cache bash
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o main ./cmd/mqstoreagent
 
 RUN chmod 777 main
+
+RUN mkdir -p bin/block-replica
 # ################################################################################
 # # OUTPUT IMAGE
 # # Copy artifacts from the builder and create an image with scratch
@@ -39,8 +41,6 @@ RUN chmod 777 main
 # COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 #RUN export PATH=$PATH:/srv/bin/
-
-RUN mkdir -p /bin/block-replica
 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
