@@ -49,7 +49,6 @@ services:
       - '5777'
       - --hostname
       - '0.0.0.0'
-      - --debug
     depends_on:
       - redis-commander
     networks:
@@ -83,11 +82,6 @@ services:
     ports:
       - "8080:8080"
 
-networks:
-  cqt-net:
-
-volumes:
-  data:
   # consumer-two:
   #   container_name: replication-consumer-two
   #   build: '.'
@@ -98,3 +92,9 @@ volumes:
   #   depends_on:
   #     - redis
   #   restart: always
+
+networks:
+  cqt-net:
+
+volumes:
+  data:
