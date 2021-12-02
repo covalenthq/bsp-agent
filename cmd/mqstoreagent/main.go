@@ -203,7 +203,8 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 				}).Result()
 				if err != nil {
 					log.Error("error on process pending: ", err.Error())
-					return
+					os.Exit(0)
+					//return
 				}
 				for _, stream := range streams {
 					waitGrp.Add(1)

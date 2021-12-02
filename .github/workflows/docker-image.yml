@@ -24,7 +24,7 @@ jobs:
         docker push ghcr.io/covalenthq/mq-store-agent:latest
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans
+      run: docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans --abort-on-container-exit 
 
     - name: Check running agent
       run: docker inspect mq-store-agent
