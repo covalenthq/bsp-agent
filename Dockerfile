@@ -40,7 +40,7 @@ RUN chmod 777 main
 
 #RUN export PATH=$PATH:/srv/bin/
 
-#WORKDIR /srv
+RUN mkdir -p /bin/block-replica
 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
