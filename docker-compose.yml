@@ -4,17 +4,17 @@ services:
   redis:
     image: redis:alpine
     container_name: redis-srv
-    #command: ["redis-server"]
-    restart: on-failure
+    restart: always
     expose:
       - 6379
     volumes:
       - ./data/redis:/data
+      - ./data/redis/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
     networks:
       - cqt-net
-    entrypoint: redis-server
+    entrypoint: redis-server #/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
 
@@ -22,7 +22,7 @@ services:
     image: rediscommander/redis-commander:latest
     container_name: redis-commander-web
     hostname: redis-commander
-    restart: on-failure
+    restart: always
     depends_on:
       - redis
     environment:
@@ -35,7 +35,7 @@ services:
   node:
     image: trufflesuite/ganache-cli:latest
     container_name: ganache-cli
-    restart: on-failure
+    restart: always
     volumes:
       - ./ganache_data:/ganache_data
     entrypoint:
@@ -59,11 +59,13 @@ services:
   cqt-virtnet:
     image: "ghcr.io/covalenthq/cqt-virtnet:latest"
     container_name: proof-chain
-    restart: on-failure
+    restart: always
     depends_on:
       - node
     networks:
       - cqt-net
+    tty:
+      true
     ports:
       - "8008:8008"
 
@@ -95,6 +97,3 @@ services:
 
 networks:
   cqt-net:
-
-volumes:
-  data:
