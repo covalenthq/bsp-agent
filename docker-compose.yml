@@ -60,12 +60,12 @@ services:
     image: "ghcr.io/covalenthq/cqt-virtnet:latest"
     container_name: proof-chain
     restart: always
+    command: ./entry.sh 180
+    entrypoint: [ "/bin/bash", "-l", "-c" ]
     depends_on:
       - node
     networks:
       - cqt-net
-    tty:
-      true
     ports:
       - "8008:8008"
 
