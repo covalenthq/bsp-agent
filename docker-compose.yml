@@ -33,7 +33,7 @@ services:
       - "8081:8081"
   
   node:
-    image: trufflesuite/ganache-cli:latest
+    image: trufflesuite/ganache-cli:v6.12.2
     container_name: ganache-cli
     restart: always
     volumes:
@@ -59,13 +59,14 @@ services:
   cqt-virtnet:
     image: "ghcr.io/covalenthq/cqt-virtnet:latest"
     container_name: proof-chain
-    restart: always
-    command: ./entry.sh 180
-    entrypoint: [ "/bin/bash", "-l", "-c" ]
+    restart: on-failure
+    entrypoint: [ "/bin/bash", "-l", "-c", "./entry.sh 180" ]
     depends_on:
       - node
     networks:
       - cqt-net
+    environment:
+        npm_config_user: "root"
     ports:
       - "8008:8008"
 
