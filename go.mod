@@ -13,7 +13,7 @@ require (
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kr/text v0.2.0 // indirect
-	github.com/linkedin/goavro/v2 v2.10.0
+	github.com/linkedin/goavro/v2 v2.10.1
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/satori/go.uuid v1.2.0
