@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sleep 60
+sleep 80
 
 ./main --redis-url=redis://username:@redis:6379/0?topic=replication#replicate  \
  --codec-path=./codec/block-replica.avsc \
