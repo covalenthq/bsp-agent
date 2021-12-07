@@ -3,28 +3,19 @@ FROM golang:1.16-alpine as builder
 
 WORKDIR /build
 
-COPY go.mod go.sum ./
-RUN go mod download
-
 COPY . .
 
+RUN go mod download
+
+RUN apk update && apk add --no-cache bash=5.1.8-r0
+
 # Build the service
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o main ./cmd/mqstoreagent/
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o main ./cmd/mqstoreagent
 
-################################################################################
-# OUTPUT IMAGE
-# Copy artifacts from the builder and create an image with scratch
+RUN mkdir -p bin/block-replica
 
-FROM scratch
-LABEL Author "Pranay Valson <pranay.valson@gmail.com>"
-LABEL Maintainer "Pranay Valson <pranay.valson@gmail.com>"
-LABEL Version "0.1"
+ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
-# Copy the binary from build-phase
-COPY --from=builder /build/main /srv/
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-WORKDIR /srv
+CMD [ "./entry.sh" ]
 
-# EXPOSE 8080
-
-CMD [ "./main" ]
+EXPOSE 8080

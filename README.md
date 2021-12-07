@@ -12,8 +12,7 @@ Externally facing workshop [deck.](https://docs.google.com/presentation/d/1qInRe
 
 ## Architecture
 
-(Temp till digital version)
-![diagram](arch.JPG)
+![diagram](arch.png)
 
 ## Block-replica
 
@@ -116,7 +115,56 @@ Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --
     make run-agent
 ```
 
-## Inspect
+### Docker
+
+The docker image for this service can be found [here](https://github.com/covalenthq/mq-store-agent/pkgs/container/mq-store-agent)
+
+Run only the mq-store-agent with the following.
+
+```bash
+    docker pull ghcr.io/covalenthq/mq-store-agent:latest
+    docker run ghcr.io/covalenthq/mq-store-agent:latest
+```
+
+Use `docker-compose` to get all the necessary services along with to also get running along with the mq-store-agent with the following from root. The other services are -
+
+1. redis-srv (Open source (BSD licensed), in-memory data structure store)
+1. redis-commander-web (Redis web management tool written in node.js)
+1. ganache-cli (Ethereum blockchain & client)
+1. proof-chain (Validation (proofing) smart-contracts)
+
+```bash
+    cd mq-store-agent
+    docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans
+```
+
+## Scripts
+
+![diagram](wow.jpeg)
+
+There are two lua scripts in `/scripts` for usage with the `redis-cli`.
+
+1. redis-count.lua - This allows for counting of total stream messages within bounds.
+
+    -- call with params [stream-key] , [first-stream-id] [last-stream-id] 
+    -- get to the ids with XINFO STREAM [stream-key]
+
+```bash
+> redis-cli --eval redis-count.lua replication , "1637349819851-0" "1637349831400-35"
+> (integer) 6280
+```
+
+2. redis-trim.lua - This allows for removing messages from the stream within bounds.
+
+    -- call with params [stream-key] , [number-of-elements-to-trim-from-start]
+    -- get to the ids with XINFO STREAM [stream-key]
+
+```bash
+> redis-cli --eval redis-trim.lua replication , 5 
+> (integer) 5
+```
+
+### Inspect
 
 To view pretty print the results from the creation of avro encoded block-replica files
 
@@ -128,8 +176,3 @@ go run extractor.go \
 ```
 
 Please make sure that the --binary-file-path and --codec-path matches the ones given while running the agent above. --indent-json (0,1,2) can be used to pretty print and inspect the AVRO json objects.
-
-
-## Docker
-
-Here lay details of how to use the docker version. 

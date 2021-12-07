@@ -80,11 +80,14 @@ allFiredEvents
 .coverage_cache
 .coverage_contracts
 
+bin/
 # hardhat
 cache
 artifacts
 
-bin/
+*.mqstoreagent
 
 ./internal/proof/proofchain.abi
 ./internal/proof/proofchain.go
+
+ganache_data
