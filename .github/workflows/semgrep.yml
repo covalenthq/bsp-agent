@@ -6,6 +6,7 @@ jobs:
   semgrep:
     name: scan
     runs-on: ubuntu-latest
+    if: (github.actor != 'dependabot[bot]')
     steps:
       - uses: actions/checkout@v1
       - uses: returntocorp/semgrep-action@v1
