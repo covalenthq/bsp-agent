@@ -18,29 +18,29 @@ var (
 	uploadTimeout int64 = 50
 )
 
-func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, binaryLocalPath, storageBucket, objectName string, object []byte) error {
+func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, binaryLocalPath, storageBucket, objectName, txHash string, object []byte) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
 	if binaryLocalPath == "" {
-		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
+		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName+"-"+txHash, object)
 	} else if storageClient == nil {
-		err := writeToBinFile(ctx, binaryLocalPath, objectName, object)
+		err := writeToBinFile(binaryLocalPath, objectName+"-"+txHash, object)
 		if err != nil {
 			panic(err)
 		}
 		return err
 	} else {
-		err := validatePath(binaryLocalPath, objectName)
+		err := validatePath(binaryLocalPath, objectName+"-"+txHash)
 		if err != nil {
 			panic(err)
 		} else {
-			err = writeToBinFile(ctx, binaryLocalPath, objectName, object)
+			err = writeToBinFile(binaryLocalPath, objectName+"-"+txHash, object)
 			if err != nil {
 				panic(err)
 			}
 		}
-		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName, object)
+		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName+"-"+txHash, object)
 	}
 }
 
@@ -60,7 +60,7 @@ func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, ob
 	return nil
 }
 
-func writeToBinFile(ctx context.Context, path, objectName string, object []byte) error {
+func writeToBinFile(path, objectName string, object []byte) error {
 	var _, err = os.Stat(filepath.Join(path, filepath.Base(objectName)))
 	if os.IsNotExist(err) {
 		fileSave, err := os.Create(filepath.Join(path, filepath.Base(objectName)))
