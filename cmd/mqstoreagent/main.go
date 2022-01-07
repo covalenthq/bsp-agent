@@ -34,12 +34,12 @@ var (
 	waitGrp sync.WaitGroup
 	//consts
 	consumerEvents            int64 = 1
-	consumerIdleTime          int64 = 15
-	consumerPendingTimeTicker int64 = 30
+	consumerPendingIdleTime   int64 = 30
+	consumerPendingTimeTicker int64 = 120
 
 	//env flags
-	ConsumerPendingTimeoutFlag int = 120 //defaults to 2 mins
-	SegmentLengthFlag          int = 5   //defaults to 5 blocks per segment
+	ConsumerPendingTimeoutFlag int = 60 //defaults to 1 mins
+	SegmentLengthFlag          int = 5  //defaults to 5 blocks per segment
 
 	CodecPathFlag      string
 	RedisUrlFlag       string
@@ -175,7 +175,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 	for {
 		select {
 		case <-timeout:
-			log.Warn("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), "after timeout: ", ConsumerPendingTimeoutFlag, " seconds")
+			log.Info("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), " after timeout: ", ConsumerPendingTimeoutFlag, " seconds")
 			os.Exit(0)
 		case <-ticker:
 			var streamsRetry []string
@@ -199,12 +199,11 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 					Group:    consumerGroup,
 					Consumer: consumerName,
 					Messages: streamsRetry,
-					MinIdle:  time.Duration(consumerIdleTime) * time.Second,
+					MinIdle:  time.Duration(consumerPendingIdleTime) * time.Second,
 				}).Result()
 				if err != nil {
 					log.Error("error on process pending: ", err.Error())
-					os.Exit(0)
-					//return
+					return
 				}
 				for _, stream := range streams {
 					waitGrp.Add(1)

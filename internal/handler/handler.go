@@ -57,7 +57,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-		err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, replicaSegmentAvro)
+		err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
 		if err != nil {
 			return "", err
 		}
