@@ -21,4 +21,6 @@ require (
 	google.golang.org/api v0.63.0
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	github.com/ElrondNetwork/covalent-indexer-go v0.0.0-20210901072744-62e2a3969b07
+	github.com/gorilla/websocket v1.4.2
 )
