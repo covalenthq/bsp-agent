@@ -126,7 +126,7 @@ func main() {
 	if WebsocketsURLsFlag != "" {
 		websocketsURLs := strings.Split(WebsocketsURLsFlag, " ")
 		for _, url := range websocketsURLs {
-			go websocket.ConsumeWebsocketsEvents(config, url)
+			go websocket.ConsumeWebsocketsEvents(config, url, replicaCodec)
 		}
 	}
 

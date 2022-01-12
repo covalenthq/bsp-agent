@@ -1,0 +1,210 @@
+{
+ "type": "record",
+ "namespace": "com.covalenthq.block.schema",
+ "name": "BlockResult",
+ "fields": [
+   {"name": "Block", "type": {
+     "name": "Block",
+     "type": "record",
+     "fields": [
+       {"name": "Nonce", "type": "long"},
+       {"name": "Round", "type": "long"},
+       {"name": "Epoch", "type": "int"},
+       {"name": "Hash", "type": {
+         "name": "hash", "type": "fixed", "size": 32}},
+       {"name": "MiniBlocks", "type": {"type":["null",
+         {"type":"array", "items": {
+          "name": "MiniBlock",
+          "type": "record",
+          "fields": [
+            {"name": "Hash", "type": "hash"},
+            {"name": "SenderShardID", "type": "int"},
+            {"name": "ReceiverShardID", "type": "int"},
+            {"name": "Type", "type": "int"},
+            {"name": "Timestamp", "type": "long"},
+            {"name": "TxHashes", "type": {"type": "array", "items": "bytes"}}]
+          }}]}},
+       {"name": "NotarizedBlocksHashes", "type": {"type": ["null", { "type" :
+       "array", "items": "hash"}]}},
+       {"name": "Proposer", "type": "long"},
+       {"name": "Validators", "type": {"type": "array", "items": "long"}},
+       {"name": "PubKeysBitmap", "type": "bytes"},
+       {"name": "Size", "type": "long"},
+       {"name": "Timestamp", "type": "long"},
+       {"name": "StateRootHash", "type": "hash"},
+       {"name": "PrevHash", "type": ["null", "hash"]},
+       {"name": "ShardID", "type": "int"},
+       {"name": "TxCount", "type": "int"},
+       {"name": "AccumulatedFees", "type": {
+         "type": "bytes",
+         "logicalType": "bignum",
+         "precision": 1000,
+         "scale": 0
+       }},
+       {"name": "DeveloperFees", "type": {
+         "type": "bytes",
+         "logicalType": "bignum",
+         "precision": 1000,
+         "scale": 0
+       }},
+       {"name": "EpochStartBlock", "type": "boolean"},
+       {"name": "EpochStartInfo", "type": ["null",
+       {"name": "EpochStartInfo",
+         "type": "record",
+         "fields": [
+           {"name": "TotalSupply", "type": {
+             "type": "bytes",
+             "logicalType": "bignum",
+             "precision": 1000,
+             "scale": 0
+           }},
+           {"name": "TotalToDistribute", "type": {
+             "type": "bytes",
+             "logicalType": "bignum",
+             "precision": 1000,
+             "scale": 0
+           }},
+           {"name": "TotalNewlyMinted", "type": {
+             "type": "bytes",
+             "logicalType": "bignum",
+             "precision": 1000,
+             "scale": 0
+           }},
+           {"name": "RewardsPerBlock", "type": {
+             "type": "bytes",
+             "logicalType": "bignum",
+             "precision": 1000,
+             "scale": 0
+           }},
+           {"name": "RewardsForProtocolSustainability", "type": {
+             "type": "bytes",
+             "logicalType": "bignum",
+             "precision": 1000,
+             "scale": 0
+           }},
+           {"name": "NodePrice", "type": {
+             "type": "bytes",
+             "logicalType": "bignum",
+             "precision": 1000,
+             "scale": 0
+           }},
+           {"name": "PrevEpochStartRound", "type": "int"},
+           {"name": "PrevEpochStartHash", "type": ["null","hash"]}
+         ]
+       }]}
+   ]}},
+
+   {"name": "Transactions", "type": {"type": "array", "items": {
+     "name": "Transaction",
+     "type": "record",
+     "fields": [
+       {"name": "Hash", "type": "hash"},
+       {"name": "MiniBlockHash", "type": "hash"},
+       {"name": "BlockHash", "type": "hash"},
+       {"name": "Nonce", "type": "long"},
+       {"name": "Round", "type": "long"},
+       {"name": "Value",  "type": {
+         "type": "bytes",
+         "logicalType": "bignum",
+         "precision": 1000,
+         "scale": 0
+       }},
+       {"name": "Receiver", "type": {
+         "name": "address", "type": "fixed", "size": 62}},
+       {"name": "Sender", "type": "address"},
+       {"name": "ReceiverShard", "type": "int"},
+       {"name": "SenderShard", "type": "int"},
+       {"name": "GasPrice", "type": "long"},
+       {"name": "GasLimit", "type": "long"},
+       {"name": "Data", "type": "bytes"},
+       {"name": "Signature", "type": ["null", {
+         "name": "signature", "type": "fixed", "size": 64}]},
+       {"name": "Timestamp", "type": "long"},
+       {"name": "SenderUserName", "type": "bytes"},
+       {"name": "ReceiverUserName", "type": "bytes"}
+     ]
+   }}},
+
+   {"name": "SCResults", "type": {"type": "array", "items": {
+     "name": "SCResult",
+     "type": "record",
+     "fields": [
+       {"name": "Hash", "type": "hash"},
+       {"name": "Nonce", "type": "long"},
+       {"name": "GasLimit", "type": "long"},
+       {"name": "GasPrice", "type": "long"},
+       {"name": "Value", "type": {
+         "type": "bytes",
+         "logicalType": "bignum",
+         "precision": 1000,
+         "scale": 0
+       }},
+       {"name": "Sender", "type": "address"},
+       {"name": "Receiver", "type": "address"},
+       {"name": "RelayerAddr", "type": ["null","address"]},
+       {"name": "RelayedValue", "type": "bytes"},
+       {"name": "Code", "type": "bytes"},
+       {"name": "Data", "type": "bytes"},
+       {"name": "PrevTxHash", "type": "hash"},
+       {"name": "OriginalTxHash", "type": "hash"},
+       {"name": "CallType", "type": "int"},
+       {"name": "CodeMetadata", "type": "bytes"},
+       {"name": "ReturnMessage", "type": "bytes"},
+       {"name": "Timestamp", "type": "long"}
+     ]
+   }}},
+
+   {"name": "Receipts", "type": {"type": "array", "items": {
+     "name": "Receipt",
+     "type": "record",
+     "fields": [
+       {"name": "Hash", "type": "hash"},
+       {"name": "Value", "type": {
+         "type": "bytes",
+         "logicalType": "bignum",
+         "precision": 1000,
+         "scale": 0
+       }},
+       {"name": "Sender", "type": "address"},
+       {"name": "Data", "type": "bytes"},
+       {"name": "TxHash", "type": "hash"},
+       {"name": "Timestamp", "type": "long"}
+     ]
+   }}},
+
+   {"name": "Logs", "type": {"type": "array", "items": {
+     "name": "Log",
+     "type": "record",
+     "fields": [
+       {"name": "ID", "type": "hash"},
+       {"name": "Address", "type": ["null","address"]},
+       {"name": "Events", "type": {"type":"array", "items": {
+         "name": "Event",
+         "type": "record",
+         "fields": [
+           {"name": "Address", "type": ["null","address"]},
+           {"name": "Identifier", "type": "bytes"},
+           {"name": "Topics", "type": {"type": "array", "items": "bytes"}},
+           {"name": "Data", "type": "bytes"}
+         ]
+       }}}
+     ]
+   }}},
+
+   {"name": "StateChanges", "type": {"type": "array", "items":{
+     "name": "AccountBalanceUpdate",
+     "type": "record",
+     "fields": [
+       {"name": "Address", "type": "address"},
+       {"name": "Balance", "type": {
+         "type": "bytes",
+         "logicalType": "bignum",
+         "precision": 1000,
+         "scale": 0
+       }},
+       {"name": "Nonce", "type": "long"}
+     ]
+     }}}
+
+ ]
+}

@@ -12,9 +12,10 @@ import (
 	"github.com/ElrondNetwork/covalent-indexer-go/schema"
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/gorilla/websocket"
+	"github.com/linkedin/goavro/v2"
 )
 
-func ConsumeWebsocketsEvents(config *config.Config, websocketURL string) {
+func ConsumeWebsocketsEvents(config *config.Config, websocketURL string, replicaCodec *goavro.Codec) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
@@ -57,6 +58,8 @@ func ConsumeWebsocketsEvents(config *config.Config, websocketURL string) {
 			if errAcknowledgeData != nil {
 				log.Println("could not send acknowledged hash :(", errAcknowledgeData)
 			}
+			// Need to call EncodeProveAndUploadReplicaSegment here but with the data inside with elrond format
+
 		}
 	}()
 
