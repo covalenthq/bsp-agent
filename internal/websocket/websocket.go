@@ -66,6 +66,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			if errAcknowledgeData != nil {
 				log.Println("could not send acknowledged hash :(", errAcknowledgeData)
 			}
+			log.Printf("len hash: %v", len(res.Block.Hash))
 			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
 			binary, _ := handler.EncodeReplicaSegmentToAvro(replicaCodec, res)
 			proofTxHash := make(chan string, 1)
