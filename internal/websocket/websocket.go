@@ -1,21 +1,29 @@
 package websocket
 
 import (
+	"context"
 	"encoding/hex"
-	"log"
+	"fmt"
 	"net/url"
 	"os"
 	"os/signal"
 	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/ElrondNetwork/covalent-indexer-go/process/utility"
 	"github.com/ElrondNetwork/covalent-indexer-go/schema"
 	"github.com/covalenthq/mq-store-agent/internal/config"
+	"github.com/covalenthq/mq-store-agent/internal/handler"
+	"github.com/covalenthq/mq-store-agent/internal/proof"
+	st "github.com/covalenthq/mq-store-agent/internal/storage"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gorilla/websocket"
 	"github.com/linkedin/goavro/v2"
+	log "github.com/sirupsen/logrus"
 )
 
-func ConsumeWebsocketsEvents(config *config.Config, websocketURL string, replicaCodec *goavro.Codec) {
+func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, storageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) (string, error) {
+	ctx := context.Background()
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
@@ -37,13 +45,13 @@ func ConsumeWebsocketsEvents(config *config.Config, websocketURL string, replica
 
 	done := make(chan struct{})
 
-	go func() {
+	go func() (string, error) {
 		defer close(done)
 		for {
 			_, message, err := connectionReceiveData.ReadMessage()
 			if err != nil {
 				log.Println("error read message:", err)
-				return
+				return "", err
 			}
 			res := &schema.BlockResult{}
 
@@ -58,8 +66,20 @@ func ConsumeWebsocketsEvents(config *config.Config, websocketURL string, replica
 			if errAcknowledgeData != nil {
 				log.Println("could not send acknowledged hash :(", errAcknowledgeData)
 			}
-			// Need to call EncodeProveAndUploadReplicaSegment here but with the data inside with elrond format
-
+			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
+			binary, _ := handler.EncodeReplicaSegmentToAvro(replicaCodec, res)
+			proofTxHash := make(chan string, 1)
+			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, binary, proofTxHash)
+			pTxHash := <-proofTxHash
+			if pTxHash != "" {
+				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
+				err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, binary)
+				if err != nil {
+					return "", err
+				}
+			} else {
+				return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
+			}
 		}
 	}()
 
@@ -69,7 +89,7 @@ func ConsumeWebsocketsEvents(config *config.Config, websocketURL string, replica
 	for {
 		select {
 		case <-done:
-			return
+			return "", nil
 		case <-ticker.C:
 		case <-interrupt:
 			log.Println("interrupt")
@@ -80,13 +100,13 @@ func ConsumeWebsocketsEvents(config *config.Config, websocketURL string, replica
 			_ = connectionAcknowledgeData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Println("write close:", err)
-				return
+				return "", nil
 			}
 			select {
 			case <-done:
 			case <-time.After(time.Second):
 			}
-			return
+			return "", nil
 		}
 	}
 }

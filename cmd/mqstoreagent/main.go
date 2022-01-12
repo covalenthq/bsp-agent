@@ -126,15 +126,15 @@ func main() {
 	if WebsocketsURLsFlag != "" {
 		websocketsURLs := strings.Split(WebsocketsURLsFlag, " ")
 		for _, url := range websocketsURLs {
-			go websocket.ConsumeWebsocketsEvents(config, url, replicaCodec)
+			go websocket.ConsumeWebsocketsEvents(&config.EthConfig, url, replicaCodec, ethClient, storageClient, BinaryFilePathFlag, ReplicaBucketFlag, ProofChainFlag)
 		}
+	} else {
+		var consumerName string = uuid.NewV4().String()
+		log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
+		createConsumerGroup(redisClient, streamKey, consumerGroup)
+		go consumeEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
+		go consumePendingEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
 	}
-
-	var consumerName string = uuid.NewV4().String()
-	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
-	createConsumerGroup(redisClient, streamKey, consumerGroup)
-	go consumeEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
-	go consumePendingEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
 
 	//Gracefully disconnect
 	chanOS := make(chan os.Signal, 1)
