@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func consumeWebsocketsEvents(config *config.Config, websocketURL string) {
+func ConsumeWebsocketsEvents(config *config.Config, websocketURL string) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 

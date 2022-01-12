@@ -28,6 +28,7 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/handler"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
+	"github.com/covalenthq/mq-store-agent/internal/websocket"
 )
 
 var (
@@ -125,7 +126,7 @@ func main() {
 	if WebsocketsURLsFlag != "" {
 		websocketsURLs := strings.Split(WebsocketsURLsFlag, " ")
 		for _, url := range websocketsURLs {
-			go websocket.consumeWebsocketsEvents(config, url)
+			go websocket.ConsumeWebsocketsEvents(config, url)
 		}
 	}
 
