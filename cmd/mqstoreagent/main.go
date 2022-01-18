@@ -23,12 +23,13 @@ import (
 	"gopkg.in/avro.v0"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
+
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/handler"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
-	"github.com/covalenthq/mq-store-agent/internal/websocket"
+	"github.com/covalenthq/mq-store-agent/internal/websockets"
 )
 
 var (
@@ -126,7 +127,7 @@ func main() {
 	if WebsocketsURLsFlag != "" {
 		websocketsURLs := strings.Split(WebsocketsURLsFlag, " ")
 		for _, url := range websocketsURLs {
-			go websocket.ConsumeWebsocketsEvents(&config.EthConfig, url, replicaCodec, ethClient, storageClient, BinaryFilePathFlag, ReplicaBucketFlag, ProofChainFlag)
+			go websockets.ConsumeWebsocketsEvents(&config.EthConfig, url, replicaCodec, ethClient, storageClient, BinaryFilePathFlag, ReplicaBucketFlag, ProofChainFlag)
 		}
 	} else {
 		var consumerName string = uuid.NewV4().String()
