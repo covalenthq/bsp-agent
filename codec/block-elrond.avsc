@@ -11,7 +11,7 @@
        {"name": "Round", "type": "long"},
        {"name": "Epoch", "type": "int"},
        {"name": "Hash", "type": {
-         "name": "hash", "type": "fixed", "size": 32}},
+         "name": "hash", "type": "fixed", "size": 44}},
        {"name": "MiniBlocks", "type": {"type":["null",
          {"type":"array", "items": {
           "name": "MiniBlock",
