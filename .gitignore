@@ -57,6 +57,7 @@ npm-debug.log
 # local env variables
 .env
 .envrc.local
+.env.dev
 
 # truffle build directory
 build/
