@@ -23,7 +23,8 @@
             {"name": "Type", "type": "int"},
             {"name": "Timestamp", "type": "long"},
             {"name": "TxHashes", "type": {"type": "array", "items": "bytes"}}]
-          }}]}},
+          }}]},
+          "default": null},
        {"name": "NotarizedBlocksHashes", "type": {"type": ["null", { "type" :
        "array", "items": "hash"}]}},
        {"name": "Proposer", "type": "long"},
@@ -32,7 +33,7 @@
        {"name": "Size", "type": "long"},
        {"name": "Timestamp", "type": "long"},
        {"name": "StateRootHash", "type": "hash"},
-       {"name": "PrevHash", "type": ["null", "hash"]},
+       {"name": "PrevHash", "type": "string"},
        {"name": "ShardID", "type": "int"},
        {"name": "TxCount", "type": "int"},
        {"name": "AccumulatedFees", "type": {

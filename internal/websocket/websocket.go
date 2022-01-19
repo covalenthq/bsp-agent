@@ -11,7 +11,6 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/mq-store-agent/internal/config"
-	"github.com/covalenthq/mq-store-agent/internal/handler"
 	"github.com/covalenthq/mq-store-agent/internal/proof"
 	st "github.com/covalenthq/mq-store-agent/internal/storage"
 	"github.com/covalenthq/mq-store-agent/internal/types"
@@ -66,15 +65,15 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			if errAcknowledgeData != nil {
 				log.Println("could not send acknowledged hash :(", errAcknowledgeData)
 			}
-			log.Printf("len hash: %v", len(res.Block.Hash))
+			// log.Printf("len hash: %v", len(res.Block.Hash))
 			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
-			binary, _ := handler.EncodeReplicaSegmentToAvro(replicaCodec, res)
+			// binary, _ := handler.EncodeReplicaSegmentToAvro(replicaCodec, res)
 			proofTxHash := make(chan string, 1)
-			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, binary, proofTxHash)
+			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, proofTxHash)
 			pTxHash := <-proofTxHash
 			if pTxHash != "" {
 				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-				err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, binary)
+				err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, message)
 				if err != nil {
 					return "", err
 				}
