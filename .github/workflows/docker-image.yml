@@ -24,7 +24,7 @@ jobs:
         docker push ghcr.io/covalenthq/mq-store-agent:latest
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans
+      run: docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans --abort-on-container-exit
 
     - name: Check running agent
       run: docker inspect mq-store-agent
@@ -36,7 +36,7 @@ jobs:
       if: always()
       run: docker-compose -f "docker-compose.yml" down
   
-  build-elrond:
+  test-elrond:
     runs-on: ubuntu-latest
     env:
       BLOCKCHAIN: elrond
@@ -50,12 +50,12 @@ jobs:
 
     - uses: actions/checkout@v2
     - name: Build & Publish the Docker image
-      run: | 
+      run: |
         docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:latest
         docker push ghcr.io/covalenthq/mq-store-agent:latest
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans
+      run: docker-compose -f "docker-compose.yml" up --build --force-recreate --remove-orphans --abort-on-container-exit
 
     - name: Check running agent
       run: docker inspect mq-store-agent
