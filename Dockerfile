@@ -12,7 +12,7 @@ FROM alpine:3.15.0
 RUN mkdir /app
 WORKDIR /app
 RUN apk update && apk add --no-cache bash=5.1.8-r0
-RUN mkdir -p bin/block-replica
+RUN mkdir -p bin/block-ethereum
 COPY --from=builder /build/main /app
 COPY --from=builder /build/entry.sh /app
 COPY --from=builder /build/data /app/data

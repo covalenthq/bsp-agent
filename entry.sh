@@ -1,7 +1,7 @@
 #!/bin/bash
 ./main --redis-url=redis://username:@redis:6379/0?topic=replication#replicate  \
- --codec-path=./codec/block-replica.avsc \
- --binary-file-path=./bin/block-replica/ \
+ --codec-path=./codec/block-ethereum.avsc \
+ --binary-file-path=./bin/block-ethereum/ \
  --gcp-svc-account=/Users/user/.config/gcloud/bsp.json \
  --replica-bucket=covalenthq-geth-block-specimen \
  --segment-length=10 \
