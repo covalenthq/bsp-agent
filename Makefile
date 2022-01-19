@@ -36,4 +36,4 @@ run-agent-elrond:
  	--eth-client=http://127.0.0.1:7545  \
  	--proof-chain-address=0x3D25EBCeFC7F1E5a5664C8D6AA63Dc3D513761D6 \
 	--consumer-timeout=80 \
-	--websocket-urls="34.66.210.112:20000 34.66.210.112:20001" 
+	--websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 
