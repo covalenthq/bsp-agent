@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"flag"
@@ -12,6 +13,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/mq-store-agent/internal/config"
+	"github.com/elodina/go-avro"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
@@ -123,4 +125,30 @@ func GetConfig(fs *flag.FlagSet) []string {
 	})
 
 	return cfg
+}
+
+// Encode returns a byte slice representing the binary encoding of the input avro record
+func EncodeAvro(record avro.AvroRecord) ([]byte, error) {
+	writer := avro.NewSpecificDatumWriter()
+	writer.SetSchema(record.Schema())
+
+	buffer := new(bytes.Buffer)
+	encoder := avro.NewBinaryEncoder(buffer)
+
+	err := writer.Write(record, encoder)
+	if err != nil {
+		return nil, err
+	}
+
+	return buffer.Bytes(), nil
+}
+
+// Decode tries to decode a data buffer, read it and store it on the input record.
+// If successfully, the record is filled with data from the buffer, otherwise an error might be returned
+func DecodeAvro(record avro.AvroRecord, buffer []byte) error {
+	reader := avro.NewSpecificDatumReader()
+	reader.SetSchema(record.Schema())
+
+	decoder := avro.NewBinaryDecoder(buffer)
+	return reader.Read(record, decoder)
 }

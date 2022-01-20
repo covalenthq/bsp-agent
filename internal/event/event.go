@@ -15,6 +15,7 @@ type ReplicationSegment struct {
 type BlockReplicaEvent struct {
 	Hash string           `json:"hash"`
 	Data *ty.BlockReplica `json:"data"`
+	// Need to add Elrond specifications here I guess
 }
 
 type Event interface {

@@ -23,11 +23,13 @@ import (
 	"gopkg.in/avro.v0"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
+
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/covalenthq/mq-store-agent/internal/event"
 	"github.com/covalenthq/mq-store-agent/internal/handler"
 	"github.com/covalenthq/mq-store-agent/internal/types"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
+	"github.com/covalenthq/mq-store-agent/internal/websocket"
 )
 
 var (
@@ -48,6 +50,7 @@ var (
 	EthClientFlag      string
 	ProofChainFlag     string
 	BinaryFilePathFlag string
+	WebsocketURLsFlag  string
 
 	start                 string = ">"
 	streamKey             string
@@ -78,6 +81,7 @@ func main() {
 	flag.StringVar(&ReplicaBucketFlag, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", ReplicaBucketFlag), "google cloud platform object store target for specimen")
 	flag.StringVar(&EthClientFlag, "eth-client", utils.LookupEnvOrString("EthClient", EthClientFlag), "connection string for ethereum node on which proof-chain contract is deployed")
 	flag.StringVar(&ProofChainFlag, "proof-chain-address", utils.LookupEnvOrString("ProofChain", ProofChainFlag), "hex string address for deployed proof-chain contract")
+	flag.StringVar(&WebsocketURLsFlag, "websocket-urls", utils.LookupEnvOrString("WebsocketURLs", WebsocketURLsFlag), "url to websockets clients separated by space")
 	flag.IntVar(&SegmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", SegmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
 	flag.IntVar(&ConsumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", ConsumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.Parse()
@@ -94,6 +98,7 @@ func main() {
 	GcpSvcAccountFlag = utils.LookupEnvOrString("GcpSvcAccount", GcpSvcAccountFlag)
 	EthClientFlag = utils.LookupEnvOrString("EthClient", EthClientFlag)
 	ProofChainFlag = utils.LookupEnvOrString("ProofChain", ProofChainFlag)
+	WebsocketURLsFlag = utils.LookupEnvOrString("WebsocketURLs", WebsocketURLsFlag)
 
 	if BinaryFilePathFlag == "" {
 		log.Warn("--binary-file-path flag not provided to write block-replica avro encoded binary files to local path", BinaryFilePathFlag)
@@ -120,11 +125,18 @@ func main() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
-	var consumerName string = uuid.NewV4().String()
-	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
-	createConsumerGroup(redisClient, streamKey, consumerGroup)
-	go consumeEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
-	go consumePendingEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
+	if WebsocketURLsFlag != "" {
+		websocketsURLs := strings.Split(WebsocketURLsFlag, " ")
+		for _, url := range websocketsURLs {
+			go websocket.ConsumeWebsocketsEvents(&config.EthConfig, url, replicaCodec, ethClient, storageClient, BinaryFilePathFlag, ReplicaBucketFlag, ProofChainFlag)
+		}
+	} else {
+		var consumerName string = uuid.NewV4().String()
+		log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
+		createConsumerGroup(redisClient, streamKey, consumerGroup)
+		go consumeEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
+		go consumePendingEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
+	}
 
 	//Gracefully disconnect
 	chanOS := make(chan os.Signal, 1)

@@ -17,7 +17,7 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
-func encodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment interface{}) ([]byte, error) {
+func EncodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment interface{}) ([]byte, error) {
 	replicaMap, err := utils.StructToMap(blockReplicaSegment)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockRe
 }
 
 func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
-	replicaSegmentAvro, err := encodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
+	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
 		return "", err
 	}
