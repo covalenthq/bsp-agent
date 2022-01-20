@@ -144,8 +144,15 @@ func main() {
 	<-chanOS
 
 	waitGrp.Wait()
-	redisClient.Close()
-	storageClient.Close()
+
+	err = redisClient.Close()
+	if err != nil {
+		log.Error("error in closing redis client:", err)
+	}
+	err = storageClient.Close()
+	if err != nil {
+		log.Error("error in closing storage client:", err)
+	}
 	ethClient.Close()
 }
 

@@ -21,7 +21,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, storageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) (string, error) {
+func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, storageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) {
 	ctx := context.Background()
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -32,7 +32,11 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	if err != nil {
 		log.Fatal("dial:", err)
 	}
-	defer connectionReceiveData.Close()
+	defer func() {
+		if cerr := connectionReceiveData.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	urlAcknowledgeData := url.URL{Scheme: "ws", Host: websocketURL, Path: "/acknowledge"}
 	log.Printf("connecting to %s", urlAcknowledgeData.String())
@@ -40,17 +44,21 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	if err != nil {
 		log.Fatal("dial:", err)
 	}
-	defer connectionAcknowledgeData.Close()
+	defer func() {
+		if cerr := connectionAcknowledgeData.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	done := make(chan struct{})
 
-	go func() (string, error) {
+	go func() {
 		defer close(done)
 		for {
 			_, message, err := connectionReceiveData.ReadMessage()
 			if err != nil {
 				log.Error("error in websocket message:", err)
-				return "", err
+
 			}
 			res := &types.ElrondBlockResult{}
 			errDecode := utils.DecodeAvro(res, message)
@@ -73,10 +81,10 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 				err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, message)
 				if err != nil {
-					return "", err
+					log.Error("error in handling object upload and storage", err)
 				}
 			} else {
-				return "", fmt.Errorf("failed to prove & upload block-replica segment from websocket event: %v", segmentName)
+				log.Error("failed to prove & upload block-replica segment from websocket event: %v", segmentName)
 			}
 		}
 	}()
@@ -87,7 +95,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	for {
 		select {
 		case <-done:
-			return "", nil
+			return
 		case <-ticker.C:
 		case <-interrupt:
 			log.Println("interrupt")
@@ -97,13 +105,13 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			_ = connectionAcknowledgeData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Error("write close:", err)
-				return "", nil
+				return
 			}
 			select {
 			case <-done:
 			case <-time.After(time.Second):
 			}
-			return "", nil
+			return
 		}
 	}
 }

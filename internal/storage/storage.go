@@ -67,7 +67,11 @@ func writeToBinFile(path, objectName string, object []byte) error {
 		if err != nil {
 			return err
 		}
-		defer fileSave.Close()
+		defer func() {
+			if cerr := fileSave.Close(); cerr != nil && err == nil {
+				err = cerr
+			}
+		}()
 		_, err = fileSave.Write(object)
 		if err != nil {
 			panic(err)

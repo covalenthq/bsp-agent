@@ -56,7 +56,10 @@ func main() {
 			log.Fatalf("unable to convert from native Go to textual avro: %v", err)
 		}
 		decodedAvro := string(textAvro)
-		json.Unmarshal([]byte(decodedAvro), &fileMap)
+		err = json.Unmarshal([]byte(decodedAvro), &fileMap)
+		if err != nil {
+			log.Fatalf("unable to unmarshal decoded AVRO binary: %v", err)
+		}
 		colorJsonMap, _ := colorJson.Marshal(fileMap)
 
 		fmt.Println("\nfile: ", filepath.Join(BinaryFilePathFlag, filepath.Base(filename)), "bytes: ", size, "\n", string(colorJsonMap))
@@ -90,7 +93,11 @@ func copyFileToMemory(BinaryFilePathFlag, filename string) ([]byte, int, error) 
 	if err != nil {
 		return nil, 0, fmt.Errorf("error opening file %s: %s", filename, err)
 	}
-	defer file.Close()
+	defer func() {
+		if ferr := file.Close(); ferr != nil && err == nil {
+			err = ferr
+		}
+	}()
 
 	stats, statsErr := file.Stat()
 	if statsErr != nil {

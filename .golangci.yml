@@ -8,9 +8,10 @@ run:
 linters:
   enable:
     - staticcheck
-  disable:
     - deadcode
     - errcheck
+
+  disable:
     - gosimple
     - govet
     - ineffassign
@@ -18,7 +19,7 @@ linters:
     - typecheck
     - unused
     - varcheck
-    
+
 issues:
   exclude-use-default: false
   max-issues-per-linter: 0

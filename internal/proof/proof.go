@@ -8,7 +8,6 @@ import (
 
 	"github.com/covalenthq/mq-store-agent/internal/config"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -78,53 +77,4 @@ func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient
 	}
 
 	return addr, opts, chainId.Uint64(), err
-}
-
-func getKeyStore(ctx context.Context, config *config.EthConfig, ethClient ethclient.Client) (*bind.TransactOpts, error) {
-	chainId, err := ethClient.ChainID(ctx)
-	if err != nil {
-		log.Error(err.Error())
-	}
-	ks := keystore.NewKeyStore(config.KeystorePath, keystore.StandardScryptN, keystore.StandardScryptP)
-	accs := ks.Accounts()
-	ks.Unlock(accs[0], config.KeyStorePwd)
-	ksOpts, err := bind.NewKeyStoreTransactorWithChainID(ks, accs[0], chainId)
-	if err != nil {
-		log.Error("error getting new key store transactor with chain id: ", err.Error())
-		return nil, err
-	}
-
-	return ksOpts, err
-}
-
-func watchContractResultPublicationProof(ctx context.Context, contract *ProofChain) {
-	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
-	channel := make(chan *ProofChainBlockReplicaPublicationProofAppended)
-
-	go func() {
-		sub, err := contract.WatchBlockReplicaPublicationProofAppended(watchOpts, channel)
-		if err != nil {
-			log.Error("error watching contract for result proof event: ", err.Error())
-		}
-		defer sub.Unsubscribe()
-	}()
-	event := <-channel
-
-	log.Info("New result event emitted from prover contract: ", event)
-
-}
-
-func watchContractSpecimenPublicationProof(ctx context.Context, contract *ProofChain) {
-	watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
-	channel := make(chan *ProofChainBlockReplicaPublicationProofAppended)
-	go func() {
-		sub, err := contract.WatchBlockReplicaPublicationProofAppended(watchOpts, channel)
-		if err != nil {
-			log.Error("error watching contract for specimen proof event: ", err.Error())
-		}
-		defer sub.Unsubscribe()
-	}()
-	event := <-channel
-
-	log.Info("New specimen event emitted from prover contract: ", event)
 }
