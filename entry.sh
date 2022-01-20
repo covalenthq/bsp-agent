@@ -9,7 +9,7 @@ then
     --segment-length=10 \
  	--eth-client=http://ganache-cli:8545  \
  	--proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 \
-	--consumer-timeout=60 \
+	--consumer-timeout=15 \
 	--websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 
 else
     ./main --redis-url=redis://username:@redis:6379/0?topic=replication#replicate  \
@@ -20,5 +20,5 @@ else
     --segment-length=10 \
     --eth-client=http://ganache-cli:8545  \
     --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 \
-    --consumer-timeout=60
+    --consumer-timeout=15
 fi
