@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "$BLOCKCHAIN" == "elrond" ]
 then
-    ./main --redis-url=redis://username:@redis:6379/0?topic=replication#replicate \
+    timeout 120s ./main --redis-url=redis://username:@redis:6379/0?topic=replication#replicate \
    	--codec-path=./codec/block-elrond.avsc \
     --binary-file-path=./bin/block-elrond/ \
     --gcp-svc-account=/Users/user/.config/gcloud/bsp.json \

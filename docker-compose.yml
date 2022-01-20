@@ -64,9 +64,9 @@ services:
       - 8008
     entrypoint: >
      /bin/bash -l -c "
-     truffle migrate --network development;
-     nc -v consumer 8008;
-     sleep 100000;"
+      truffle migrate --network development;
+      nc -v consumer 8008;
+      sleep 100000;"
     depends_on:
       - node
     networks:
@@ -89,14 +89,14 @@ services:
         condition: service_started
     entrypoint: >
       /bin/bash -l -c "
-      echo Waiting for proof-chain to be deployed...;
-      while ! nc -v -l -k -p 8008;
-      do
+        echo Waiting for proof-chain to be deployed...;
+        while ! nc -v -l -k -p 8008;
+        do
         sleep 1;
-      done;
-      echo proof-chain contracts deployed!;
-      ./entry.sh;
-      exit 0;"
+        done;
+        echo proof-chain contracts deployed!;
+        ./entry.sh;
+        exit 0;"
     environment:
       - ETH_PRIVATE_KEY=0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530
       - BLOCKCHAIN=${BLOCKCHAIN}

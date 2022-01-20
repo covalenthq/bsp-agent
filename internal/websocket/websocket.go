@@ -49,25 +49,23 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 		for {
 			_, message, err := connectionReceiveData.ReadMessage()
 			if err != nil {
-				log.Println("error read message:", err)
+				log.Error("error in websocket message:", err)
 				return "", err
 			}
 			res := &types.ElrondBlockResult{}
-
 			errDecode := utils.DecodeAvro(res, message)
 			if errDecode != nil {
-				log.Println("could not decode block", errDecode)
+				log.Error("could not decode block", errDecode)
 			}
-			log.Printf("received block hash: %v, nonce: %v", hex.EncodeToString(res.Block.Hash), res.Block.Nonce)
-			log.Println("sending back acknowledged hash...")
+			log.Info("Received block hash: %v, nonce: %v", hex.EncodeToString(res.Block.Hash), res.Block.Nonce)
+			log.Info("Sending back acknowledged hash...")
 
 			errAcknowledgeData := connectionAcknowledgeData.WriteMessage(websocket.BinaryMessage, res.Block.Hash)
 			if errAcknowledgeData != nil {
-				log.Println("could not send acknowledged hash :(", errAcknowledgeData)
+				log.Error("could not send acknowledged hash :(", errAcknowledgeData)
 			}
-			// log.Printf("len hash: %v", len(res.Block.Hash))
+
 			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
-			// binary, _ := handler.EncodeReplicaSegmentToAvro(replicaCodec, res)
 			proofTxHash := make(chan string, 1)
 			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, proofTxHash)
 			pTxHash := <-proofTxHash
@@ -78,7 +76,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 					return "", err
 				}
 			} else {
-				return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
+				return "", fmt.Errorf("failed to prove & upload block-replica segment from websocket event: %v", segmentName)
 			}
 		}
 	}()
@@ -93,13 +91,12 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 		case <-ticker.C:
 		case <-interrupt:
 			log.Println("interrupt")
-
 			// Cleanly close the connection by sending a close message and then
 			// waiting (with timeout) for the server to close the connection.
 			err := connectionReceiveData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			_ = connectionAcknowledgeData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
-				log.Println("write close:", err)
+				log.Error("write close:", err)
 				return "", nil
 			}
 			select {
