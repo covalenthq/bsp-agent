@@ -27,10 +27,10 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	signal.Notify(interrupt, os.Interrupt)
 
 	urlReceiveData := url.URL{Scheme: "ws", Host: websocketURL, Path: "/block"}
-	log.Printf("connecting to %s", urlReceiveData.String())
+	log.Info("Connecting to websocket /block: ", urlReceiveData.String())
 	connectionReceiveData, _, err := websocket.DefaultDialer.Dial(urlReceiveData.String(), nil)
 	if err != nil {
-		log.Fatal("dial:", err)
+		log.Fatal("dial: ", err)
 	}
 	defer func() {
 		if cerr := connectionReceiveData.Close(); cerr != nil && err == nil {
@@ -39,10 +39,10 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	}()
 
 	urlAcknowledgeData := url.URL{Scheme: "ws", Host: websocketURL, Path: "/acknowledge"}
-	log.Printf("connecting to %s", urlAcknowledgeData.String())
+	log.Info("Connecting to websocket /acknowledge: ", urlAcknowledgeData.String())
 	connectionAcknowledgeData, _, err := websocket.DefaultDialer.Dial(urlAcknowledgeData.String(), nil)
 	if err != nil {
-		log.Fatal("dial:", err)
+		log.Fatal("dial: ", err)
 	}
 	defer func() {
 		if cerr := connectionAcknowledgeData.Close(); cerr != nil && err == nil {
@@ -57,20 +57,19 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 		for {
 			_, message, err := connectionReceiveData.ReadMessage()
 			if err != nil {
-				log.Error("error in websocket message:", err)
+				log.Error("error in websocket message: ", err)
 
 			}
 			res := &types.ElrondBlockResult{}
 			errDecode := utils.DecodeAvro(res, message)
 			if errDecode != nil {
-				log.Error("could not decode block", errDecode)
+				log.Error("could not decode block: ", errDecode)
 			}
-			log.Info("Received block hash: %v, nonce: %v", hex.EncodeToString(res.Block.Hash), res.Block.Nonce)
-			log.Info("Sending back acknowledged hash...")
 
+			log.Info("Sending acknowledged hash: ", hex.EncodeToString(res.Block.Hash), "nonce: ", res.Block.Nonce)
 			errAcknowledgeData := connectionAcknowledgeData.WriteMessage(websocket.BinaryMessage, res.Block.Hash)
 			if errAcknowledgeData != nil {
-				log.Error("could not send acknowledged hash :(", errAcknowledgeData)
+				log.Error("could not send acknowledged hash: ", errAcknowledgeData)
 			}
 
 			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
@@ -81,10 +80,10 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 				err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, message)
 				if err != nil {
-					log.Error("error in handling object upload and storage", err)
+					log.Error("error in handling object upload and storage: ", err)
 				}
 			} else {
-				log.Error("failed to prove & upload block-replica segment from websocket event: %v", segmentName)
+				log.Error("failed to prove & upload block-replica segment from websocket event: ", segmentName)
 			}
 		}
 	}()
@@ -98,13 +97,13 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			return
 		case <-ticker.C:
 		case <-interrupt:
-			log.Println("interrupt")
+			log.Info("interrupt recevied")
 			// Cleanly close the connection by sending a close message and then
 			// waiting (with timeout) for the server to close the connection.
 			err := connectionReceiveData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			_ = connectionAcknowledgeData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
-				log.Error("write close:", err)
+				log.Error("write close: ", err)
 				return
 			}
 			select {
