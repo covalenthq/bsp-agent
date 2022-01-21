@@ -20,6 +20,7 @@ var (
 	proofTxTimeout uint64 = 60
 )
 
+// SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
 func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
@@ -37,10 +38,6 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 
 		return
 	}
-
-	// onlyOnce.Do(func() {
-	// 	WatchContractSpecimenPublicationProof(ctx, contract)
-	// })
 
 	jsonResult, err := json.Marshal(resultSegment)
 	if err != nil {

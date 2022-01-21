@@ -22,6 +22,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// ConsumeWebsocketsEvents is the primary consumer of websocket events from an websocket endpoint
 func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, storageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) {
 	ctx := context.Background()
 	interrupt := make(chan os.Signal, 1)

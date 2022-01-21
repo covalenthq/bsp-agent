@@ -23,18 +23,21 @@ type BlockReplicaEvent struct {
 
 // Event allows for accessing the hash of the object
 type Event interface {
-	GetHash() string
-	String() string
+	GetBlockReplicaHash() string
+	GetBlockReplicaString() string
 }
 
-func New() (Event, error) {
+// NewBlockReplicaEvent creates a new block replica event
+func NewBlockReplicaEvent() (Event, error) {
 	return &BlockReplicaEvent{}, nil
 }
 
-func (o *BlockReplicaEvent) String() string {
+// GetBlockReplicaString gets the block replica string
+func (o *BlockReplicaEvent) GetBlockReplicaString() string {
 	return fmt.Sprintf("hash: %s", o.Hash)
 }
 
-func (o *BlockReplicaEvent) GetHash() string {
+// GetBlockReplicaHash gets the block replica hash
+func (o *BlockReplicaEvent) GetBlockReplicaHash() string {
 	return o.Hash
 }
