@@ -147,11 +147,11 @@ func main() {
 
 	err = redisClient.Close()
 	if err != nil {
-		log.Error("error in closing redis client:", err)
+		log.Error("error in closing redis client: ", err)
 	}
 	err = storageClient.Close()
 	if err != nil {
-		log.Error("error in closing storage client:", err)
+		log.Error("error in closing storage client: ", err)
 	}
 	ethClient.Close()
 }
@@ -176,7 +176,7 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 			Block:    0,
 		}).Result()
 		if err != nil {
-			log.Error("err on consume events: ", err.Error())
+			log.Error("error on consume events: ", err.Error())
 
 			return
 		}
@@ -246,7 +246,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 
 	err = rlp.Decode(bytes.NewReader(decodedData), &blockReplica)
 	if err != nil {
-		log.Fatalf("error decoding RLP bytes to block-replica: %v", err)
+		log.Error("error decoding RLP bytes to block-replica: ", err)
 	}
 	defer waitGrp.Done()
 
@@ -254,7 +254,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	replica, err := handler.ParseStreamToEvent(newEvent, hash, &blockReplica)
 	objectType := blockReplica.Type[5:]
 	if err != nil {
-		log.Error("error on process event: %w", err)
+		log.Error("error on process event: ", err)
 	} else {
 		// collect stream ids and block replicas
 		replicaSegmentIDBatch = append(replicaSegmentIDBatch, stream.ID)

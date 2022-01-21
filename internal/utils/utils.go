@@ -1,4 +1,5 @@
 // Package utils contains all the utilites used across the repo
+//nolint:wrapcheck
 package utils
 
 import (
@@ -31,7 +32,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 
 	pass, _ := redisURL.User.Password()
 	if pass != "" {
-		log.Fatal("Please remove password from connection string cli flag and add it in .envrc as `REDIS_PWD`")
+		log.Fatal("remove password from connection string cli flag and add it in .envrc as `REDIS_PWD`")
 	} else {
 		pwd = redisConfig.Password
 	}
@@ -63,7 +64,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 func NewEthClient(address string) (*ethclient.Client, error) {
 	ethClient, err := ethclient.Dial(address)
 	if err != nil {
-		log.Error("error in getting eth client: ", err.Error())
+		log.Error("error in getting eth client: ", err)
 	}
 
 	return ethClient, nil
@@ -122,7 +123,7 @@ func LookupEnvOrInt(key string, defaultVal int) int {
 	if val, ok := os.LookupEnv(key); ok {
 		v, err := strconv.Atoi(val)
 		if err != nil {
-			log.Fatalf("LookupEnvOrInt[%s]: %v", key, err)
+			log.Fatalf("unable to lookupEnvOrInt[%s]: %v", key, err)
 		}
 
 		return v
@@ -163,5 +164,5 @@ func DecodeAvro(record avro.AvroRecord, buffer []byte) error {
 	reader.SetSchema(record.Schema())
 	decoder := avro.NewBinaryDecoder(buffer)
 
-	return fmt.Errorf("error in decoding AVRO: %w", reader.Read(record, decoder))
+	return reader.Read(record, decoder)
 }

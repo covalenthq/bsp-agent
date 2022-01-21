@@ -44,7 +44,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 
 	jsonResult, err := json.Marshal(resultSegment)
 	if err != nil {
-		log.Error(err.Error())
+		log.Error("error in JSON marshaling result segment: ", err.Error())
 
 		return
 	}
@@ -62,7 +62,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 		return
 	}
 	if err != nil {
-		log.Error(err.Error())
+		log.Error("error in waiting for tx to be mined on the blockchain: ", err.Error())
 
 		return
 	}
@@ -74,7 +74,7 @@ func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient
 	sKey := config.PrivateKey
 	chainID, err := ethClient.ChainID(ctx)
 	if err != nil {
-		log.Error(err.Error())
+		log.Error("error in getting transaction options: ", err.Error())
 	}
 	secretKey := crypto.ToECDSAUnsafe(common.FromHex(sKey))
 	addr := crypto.PubkeyToAddress(secretKey.PublicKey)

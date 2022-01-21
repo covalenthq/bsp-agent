@@ -28,10 +28,10 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	signal.Notify(interrupt, os.Interrupt)
 
 	urlReceiveData := url.URL{Scheme: "ws", Host: websocketURL, Path: "/block"}
-	log.Info("Connecting to websocket /block: ", urlReceiveData.String())
+	log.Info("Connecting to websocket: ", urlReceiveData.String())
 	connectionReceiveData, _, err := websocket.DefaultDialer.Dial(urlReceiveData.String(), nil)
 	if err != nil {
-		log.Error("dial: ", err)
+		log.Error("error in connecting to websocket /block dial: ", err)
 	}
 	defer func() {
 		if cerr := connectionReceiveData.Close(); cerr != nil && err == nil {
@@ -40,10 +40,10 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	}()
 
 	urlAcknowledgeData := url.URL{Scheme: "ws", Host: websocketURL, Path: "/acknowledge"}
-	log.Info("Connecting to websocket /acknowledge: ", urlAcknowledgeData.String())
+	log.Info("Connecting to websocket: ", urlAcknowledgeData.String())
 	connectionAcknowledgeData, _, err := websocket.DefaultDialer.Dial(urlAcknowledgeData.String(), nil)
 	if err != nil {
-		log.Error("dial: ", err)
+		log.Error("error in connecting to websocket /ack dial: ", err)
 	}
 	defer func() {
 		if cerr := connectionAcknowledgeData.Close(); cerr != nil && err == nil {
@@ -58,18 +58,18 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 		for {
 			_, message, err := connectionReceiveData.ReadMessage()
 			if err != nil {
-				log.Error("error in websocket message: ", err)
+				log.Error("error in websocket received message: ", err)
 			}
 			res := &types.ElrondBlockResult{}
 			errDecode := utils.DecodeAvro(res, message)
 			if errDecode != nil {
-				log.Error("could not decode block: ", errDecode)
+				log.Error("error in decoding block from avro: ", errDecode)
 			}
 
 			log.Info("Sending acknowledged hash: ", hex.EncodeToString(res.Block.Hash), " nonce: ", res.Block.Nonce)
 			errAcknowledgeData := connectionAcknowledgeData.WriteMessage(websocket.BinaryMessage, res.Block.Hash)
 			if errAcknowledgeData != nil {
-				log.Error("could not send acknowledged hash: ", errAcknowledgeData)
+				log.Error("error in sending acknowledged hash: ", errAcknowledgeData)
 			}
 
 			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
@@ -104,7 +104,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			err := connectionReceiveData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			_ = connectionAcknowledgeData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
-				log.Error("write close: ", err)
+				log.Error("error in closing websocket message: ", err)
 
 				return
 			}
