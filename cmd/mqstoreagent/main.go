@@ -145,13 +145,18 @@ func main() {
 
 	waitGrp.Wait()
 
-	err = redisClient.Close()
-	if err != nil {
-		log.Error("error in closing redis client: ", err)
+	if redisClient != nil {
+		err = redisClient.Close()
+		if err != nil {
+			log.Error("error in closing redis client: ", err)
+		}
 	}
-	err = storageClient.Close()
-	if err != nil {
-		log.Error("error in closing storage client: ", err)
+
+	if storageClient != nil {
+		err = storageClient.Close()
+		if err != nil {
+			log.Error("error in closing storage client: ", err)
+		}
 	}
 	ethClient.Close()
 }

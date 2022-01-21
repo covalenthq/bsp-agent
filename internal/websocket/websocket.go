@@ -66,13 +66,15 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 				log.Error("error in decoding block from avro: ", errDecode)
 			}
 
+			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
+			fmt.Printf("\n---> Processing %v <---\n", segmentName)
 			log.Info("Sending acknowledged hash: ", hex.EncodeToString(res.Block.Hash), " nonce: ", res.Block.Nonce)
+
 			errAcknowledgeData := connectionAcknowledgeData.WriteMessage(websocket.BinaryMessage, res.Block.Hash)
 			if errAcknowledgeData != nil {
 				log.Error("error in sending acknowledged hash: ", errAcknowledgeData)
 			}
 
-			segmentName := fmt.Sprint(res.Block.ShardID) + "-" + fmt.Sprint(res.Block.Nonce) + "-" + "segment"
 			proofTxHash := make(chan string, 1)
 			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, proofTxHash)
 			pTxHash := <-proofTxHash
@@ -107,10 +109,6 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 				log.Error("error in closing websocket message: ", err)
 
 				return
-			}
-			select {
-			case <-done:
-			case <-time.After(time.Second):
 			}
 
 			return
