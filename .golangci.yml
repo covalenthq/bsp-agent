@@ -13,12 +13,12 @@ linters:
     - gosimple
     - govet
     - ineffassign
-
-  disable:
     - structcheck
     - typecheck
     - unused
     - varcheck
+   
+#  disable:
 
 issues:
   exclude-use-default: false
