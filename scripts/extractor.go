@@ -108,5 +108,5 @@ func copyFileToMemory(binaryFilePathFlag, filename string) ([]byte, int, error) 
 	buffr := bufio.NewReader(file)
 	sizeBytes, err := buffr.Read(bytes)
 
-	return bytes, sizeBytes, fmt.Errorf("error in copying file to memory: %w", err)
+	return bytes, sizeBytes, err
 }
