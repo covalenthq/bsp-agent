@@ -10,11 +10,11 @@ linters:
     - staticcheck
     - deadcode
     - errcheck
-
-  disable:
     - gosimple
     - govet
     - ineffassign
+
+  disable:
     - structcheck
     - typecheck
     - unused

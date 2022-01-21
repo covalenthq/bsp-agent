@@ -73,7 +73,7 @@ func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient
 	addr := crypto.PubkeyToAddress(secretKey.PublicKey)
 	opts, err := bind.NewKeyedTransactorWithChainID(secretKey, chainId)
 	if err != nil {
-		log.Fatalf("error getting new keyed transactor with chain id: ", err.Error())
+		log.Fatalf("error getting new keyed transactor with chain id: %v", err.Error())
 	}
 
 	return addr, opts, chainId.Uint64(), err

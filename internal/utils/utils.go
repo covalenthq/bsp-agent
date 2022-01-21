@@ -24,7 +24,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 	var pwd string
 	redisUrl, err := url.Parse(redisConnection)
 	if err != nil {
-		log.Fatalf("unable to parse redis connection string", err)
+		log.Fatalf("unable to parse redis connection string: %v", err)
 	}
 
 	pass, _ := redisUrl.User.Password()
@@ -37,7 +37,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 	dbString := strings.Replace(redisUrl.Path, "/", "", -1)
 	m, err := url.ParseQuery(redisUrl.RawQuery)
 	if err != nil {
-		log.Fatalf("unable to parse redis connection string query string", err)
+		log.Fatalf("unable to parse redis connection string query string: %v", err)
 	}
 
 	dbInt, err := strconv.Atoi(dbString)
@@ -89,7 +89,7 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 	return mapData, nil
 }
 
-func AckStreamSegment(config *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) error {
+func AckStreamSegment(_ *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) error {
 	if len(streamIDs) == int(segmentLength) {
 		for _, streamID := range streamIDs {
 			redisClient.XAck(streamKey, consumerGroup, streamID)

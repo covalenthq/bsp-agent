@@ -110,7 +110,7 @@ func main() {
 	}
 	storageClient, err := utils.NewStorageClient(GcpSvcAccountFlag)
 	if err != nil {
-		log.Warn("unable to get gcp storage client from GCP Service account flag: %v", err)
+		log.Warn("unable to get gcp storage client from GCP Service account flag: ", err)
 	}
 	ethClient, err := utils.NewEthClient(EthClientFlag)
 	if err != nil {
@@ -246,14 +246,14 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 
 	err = rlp.Decode(bytes.NewReader(decodedData), &blockReplica)
 	if err != nil {
-		log.Fatalf("error decoding RLP bytes to block-replica: %w", err)
+		log.Fatalf("error decoding RLP bytes to block-replica: %v", err)
 	}
 
 	newEvent, _ := event.New()
 	replica, err := handler.Parse(newEvent, hash, &blockReplica)
 	objectType := blockReplica.Type[5:]
 	if err != nil {
-		log.Fatalf("error: ", err.Error(), " on process event: ", newEvent)
+		log.Fatalf("error on process event: %v", err)
 	} else {
 		// collect stream ids and block replicas
 		replicaSegmentIdBatch = append(replicaSegmentIdBatch, stream.ID)
