@@ -89,7 +89,7 @@ func getBinFiles(path string) []fs.FileInfo {
 }
 
 func copyFileToMemory(binaryFilePathFlag, filename string) ([]byte, int, error) {
-	file, err := os.Open(filepath.Join(binaryFilePathFlag, filepath.Base(filename)))
+	file, err := os.Open(filepath.Join(filepath.Clean(binaryFilePathFlag), filepath.Base(filepath.Clean(filename))))
 	if err != nil {
 		return nil, 0, fmt.Errorf("error opening file %s: %s", filename, err)
 	}

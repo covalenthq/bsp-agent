@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/elodina/go-avro"
@@ -54,7 +55,7 @@ func main() {
 
 	var schemas []string
 	for _, schema := range schema {
-		contents, err := ioutil.ReadFile(schema)
+		contents, err := ioutil.ReadFile(filepath.Clean(schema))
 		checkErr(err)
 		schemas = append(schemas, string(contents))
 	}
@@ -64,6 +65,7 @@ func main() {
 	checkErr(err)
 
 	createDirs()
+	/* #nosec */
 	err = ioutil.WriteFile(*output, []byte(code), 0664)
 	checkErr(err)
 }
@@ -87,6 +89,7 @@ func createDirs() {
 	index := strings.LastIndex(*output, "/")
 	if index != -1 {
 		path := (*output)[:index]
+		/* #nosec */
 		err := os.MkdirAll(path, 0777)
 		checkErr(err)
 	}

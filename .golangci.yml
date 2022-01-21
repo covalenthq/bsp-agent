@@ -7,51 +7,52 @@ run:
 
 linters:
   enable:
-  # main-list
-    - deadcode
-    - errcheck
-    - gosimple
-    - ineffassign
-    - staticcheck
-    - structcheck
-    - typecheck
-    - unused
-    - varcheck
-    - stylecheck
-  # extra-list
-    - asciicheck
-    - bodyclose
-    - depguard
-    - dogsled
-    - dupl
-    - exhaustive
-    - exportloopref
-    - goconst
-    - gocritic
-    - gocyclo
-    - godox
-    - gofmt
-    - goheader
-    - goimports
-    - gomnd
-    - gomodguard
-    - goprintffuncname
-    - misspell
-    - nakedret
-    - noctx
-    - nolintlint
-    - rowserrcheck
-    - exportloopref
-    - sqlclosecheck
-    - testpackage
-    - unconvert
-    - unparam
-    - whitespace
+  #-------------main-list--------------#
+    - deadcode # Finds unused code
+    - errcheck # Errcheck is a program for checking for unchecked errors in go programs. These unchecked errors can be critical bugs in some cases
+    - gosimple # Linter for Go source code that specializes in simplifying a code
+    - ineffassign # Detects when assignments to existing variables are not used
+    - staticcheck # Staticcheck is a go vet on steroids, applying a ton of static analysis checks
+    - structcheck # Finds unused struct fields
+    - typecheck # Like the front-end of a Go compiler, parses and type-checks Go code
+    - unused # Checks Go code for unused constants, variables, functions and types
+    - varcheck # Finds unused global variables and constants
+    - stylecheck # Stylecheck is a replacement for golint
+    - gocritic # Provides diagnostics that check for bugs, performance and style issues. Extensible without recompilation through dynamic rules. Dynamic rules are written declaratively with AST patterns, filters, report message and optional suggestion.
+    - gofmt # Gofmt checks whether code was gofmt-ed. By default this tool runs with -s option to check for code simplification
+    - gosec # Inspects source code for security problems
+  #------------extra-list-------------#
+    - asciicheck # Simple linter to check that your code does not contain non-ASCII identifiers
+    - bodyclose # Checks whether HTTP response body is closed successfully
+    - depguard # Go linter that checks if package imports are in a list of acceptable packages
+    - dogsled # Checks assignments with too many blank identifiers (e.g. x, , , _, := f())
+    - dupl # Tool for code clone detection
+    - exhaustive # Check exhaustiveness of enum switch statements
+    - exportloopref # Checks for pointers to enclosing loop variables
+    - goconst # Finds repeated strings that could be replaced by a constant
+    - gocyclo # Computes and checks the cyclomatic complexity of functions
+    - godox # Tool for detection of FIXME, TODO and other comment keywords
+    - goheader # Checks is file header matches to pattern
+    - goimports # In addition to fixing imports, goimports also formats your code in the same style as gofmt.
+    - gomnd # An analyzer to detect magic numbers.
+    - gomodguard # Allow and block list linter for direct Go module dependencies. This is different from depguard where there are different block types for example version constraints and module recommendations.
+    - goprintffuncname # Checks that printf-like functions are named with f at the end
+    - misspell # Finds commonly misspelled English words in comments
+    - nlreturn # Checks for a new line before return and branch statements to increase code clarity
+    - nakedret # Finds naked returns in functions greater than a specified function length
+    - noctx # Noctx finds sending http request without context Context
+    - nolintlint # Reports ill-formed or insufficient nolint directives
+    - rowserrcheck # Checks whether Err of rows is checked successfully
+    - sqlclosecheck # Checks that sql.Rows and sql.Stmt are closed.
+    - testpackage # Linter that makes you use a separate _test package
+    - unconvert # Remove unnecessary type conversions
+    - unparam # Reports unused function parameters
+    - whitespace # Tool for detection of leading and trailing whitespace
    
 disable:
   # main-list
-    - govet
-    - revive
+    - govet # Vet examines Go source code and reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
+    - revive # Fast, configurable, extensible, flexible, and beautiful linter for Go. Drop-in replacement of golint.
    
 
 issues:
