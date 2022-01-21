@@ -90,14 +90,6 @@ func main() {
 	}
 	log.Info("Agent command line config: ", utils.GetConfig(flag.CommandLine))
 
-	codecPathFlag = utils.LookupEnvOrString("CodecPath", codecPathFlag)
-	binaryFilePathFlag = utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag)
-	replicaBucketFlag = utils.LookupEnvOrString("ReplicaBucket", replicaBucketFlag)
-	gcpSvcAccountFlag = utils.LookupEnvOrString("GcpSvcAccount", gcpSvcAccountFlag)
-	ethClientFlag = utils.LookupEnvOrString("EthClient", ethClientFlag)
-	proofChainFlag = utils.LookupEnvOrString("ProofChain", proofChainFlag)
-	websocketURLsFlag = utils.LookupEnvOrString("WebsocketURLs", websocketURLsFlag)
-
 	if binaryFilePathFlag == "" {
 		log.Warn("--binary-file-path flag not provided to write block-replica avro encoded binary files to local path", binaryFilePathFlag)
 	}
