@@ -106,7 +106,7 @@ func main() {
 
 	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(utils.LookupEnvOrString("RedisURL", RedisURLFlag), &config.RedisConfig)
 	if err != nil {
-		log.Fatalf("unable to get redis client from redis URL flag : %v", err)
+		log.Fatalf("unable to get redis client from redis URL flag: %v", err)
 	}
 	storageClient, err := utils.NewStorageClient(GcpSvcAccountFlag)
 	if err != nil {

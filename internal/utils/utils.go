@@ -56,7 +56,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 	consumerGroup := redisURL.Fragment
 	_, err = redisClient.Ping().Result()
 
-	return redisClient, streamKey, consumerGroup, fmt.Errorf("error in connecting to redis: %w", err)
+	return redisClient, streamKey, consumerGroup, err
 }
 
 // initializes a new ethereum client using an address string
