@@ -7,18 +7,53 @@ run:
 
 linters:
   enable:
+  # main-list
     - staticcheck
     - deadcode
     - errcheck
     - gosimple
-    - govet
     - ineffassign
     - structcheck
     - typecheck
     - unused
     - varcheck
+  # extra-list
+    - asciicheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - exhaustive
+    - exportloopref
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - gofmt
+    - goheader
+    - goimports
+    - gomnd
+    - gomodguard
+    - goprintffuncname
+    - interfacer
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - rowserrcheck
+    - exportloopref
+    - sqlclosecheck
+    - testpackage
+    - unconvert
+    - unparam
+    - whitespace
    
-#  disable:
+disable:
+  # main-list
+    - govet
+    - revive
+    - stylecheck
+   
 
 issues:
   exclude-use-default: false

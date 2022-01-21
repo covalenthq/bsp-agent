@@ -1,3 +1,4 @@
+// Package proof contains all the functions to make a proof on the proofchain about a block replica
 package proof
 
 import (
@@ -23,15 +24,17 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
-	_, opts, chainId, err := getTransactionOpts(ctx, config, ethClient)
+	_, opts, chainID, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
+
 		return
 	}
 	contractAddress := common.HexToAddress(proofChain)
 	contract, err := NewProofChain(contractAddress, ethClient)
 	if err != nil {
 		log.Error("error binding to deployed contract: ", err.Error())
+
 		return
 	}
 
@@ -42,21 +45,25 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	jsonResult, err := json.Marshal(resultSegment)
 	if err != nil {
 		log.Error(err.Error())
+
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
-	tx, err := contract.ProveBlockReplicaProduced(opts, chainId, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
+	tx, err := contract.ProveBlockReplicaProduced(opts, chainID, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
+
 		return
 	}
 	receipt, err := bind.WaitMined(ctx, ethClient, tx)
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		log.Error("block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err.Error())
+
 		return
 	}
 	if err != nil {
 		log.Error(err.Error())
+
 		return
 	}
 
@@ -65,16 +72,16 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 
 func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
 	sKey := config.PrivateKey
-	chainId, err := ethClient.ChainID(ctx)
+	chainID, err := ethClient.ChainID(ctx)
 	if err != nil {
 		log.Error(err.Error())
 	}
 	secretKey := crypto.ToECDSAUnsafe(common.FromHex(sKey))
 	addr := crypto.PubkeyToAddress(secretKey.PublicKey)
-	opts, err := bind.NewKeyedTransactorWithChainID(secretKey, chainId)
+	opts, err := bind.NewKeyedTransactorWithChainID(secretKey, chainID)
 	if err != nil {
-		log.Fatalf("error getting new keyed transactor with chain id: %v", err.Error())
+		log.Fatalf("error getting new keyed transactor with chain id: %v", err)
 	}
 
-	return addr, opts, chainId.Uint64(), err
+	return addr, opts, chainID.Uint64(), err
 }

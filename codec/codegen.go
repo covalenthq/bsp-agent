@@ -42,6 +42,7 @@ func (i *schemas) String() string {
 
 func (i *schemas) Set(value string) error {
 	*i = append(*i, value)
+
 	return nil
 }
 

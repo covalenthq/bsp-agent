@@ -1,3 +1,4 @@
+// Package websocket provides a websocket interface as a data ingestion mechanism
 package websocket
 
 import (
@@ -30,7 +31,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	log.Info("Connecting to websocket /block: ", urlReceiveData.String())
 	connectionReceiveData, _, err := websocket.DefaultDialer.Dial(urlReceiveData.String(), nil)
 	if err != nil {
-		log.Fatal("dial: ", err)
+		log.Error("dial: ", err)
 	}
 	defer func() {
 		if cerr := connectionReceiveData.Close(); cerr != nil && err == nil {
@@ -42,7 +43,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	log.Info("Connecting to websocket /acknowledge: ", urlAcknowledgeData.String())
 	connectionAcknowledgeData, _, err := websocket.DefaultDialer.Dial(urlAcknowledgeData.String(), nil)
 	if err != nil {
-		log.Fatal("dial: ", err)
+		log.Error("dial: ", err)
 	}
 	defer func() {
 		if cerr := connectionAcknowledgeData.Close(); cerr != nil && err == nil {
@@ -58,7 +59,6 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			_, message, err := connectionReceiveData.ReadMessage()
 			if err != nil {
 				log.Error("error in websocket message: ", err)
-
 			}
 			res := &types.ElrondBlockResult{}
 			errDecode := utils.DecodeAvro(res, message)
@@ -66,7 +66,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 				log.Error("could not decode block: ", errDecode)
 			}
 
-			log.Info("Sending acknowledged hash: ", hex.EncodeToString(res.Block.Hash), "nonce: ", res.Block.Nonce)
+			log.Info("Sending acknowledged hash: ", hex.EncodeToString(res.Block.Hash), " nonce: ", res.Block.Nonce)
 			errAcknowledgeData := connectionAcknowledgeData.WriteMessage(websocket.BinaryMessage, res.Block.Hash)
 			if errAcknowledgeData != nil {
 				log.Error("could not send acknowledged hash: ", errAcknowledgeData)
@@ -94,6 +94,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 	for {
 		select {
 		case <-done:
+
 			return
 		case <-ticker.C:
 		case <-interrupt:
@@ -104,12 +105,14 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			_ = connectionAcknowledgeData.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Error("write close: ", err)
+
 				return
 			}
 			select {
 			case <-done:
 			case <-time.After(time.Second):
 			}
+
 			return
 		}
 	}
