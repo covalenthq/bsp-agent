@@ -1,3 +1,4 @@
+//nolint:wrapcheck
 package main
 
 import (
@@ -7,9 +8,10 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/TylerBrock/colorjson"
 	"github.com/covalenthq/mq-store-agent/internal/utils"
@@ -45,20 +47,20 @@ func main() {
 		filename := fileInf.Name()
 		fileBuff, size, err := copyFileToMemory(binaryFilePathFlag, filename)
 		if err != nil {
-			log.Fatalf("unable to read binary file to memory: %v", err)
+			log.Error("unable to read binary file to memory: ", err)
 		}
 		native, _, err := codec.NativeFromBinary(fileBuff) // convert binary avro data back to native Go form
 		if err != nil {
-			log.Fatalf("unable to convert avro binary file to native Go from avro codec: %v", err)
+			log.Error("unable to convert avro binary file to native Go from avro codec: ", err)
 		}
 		textAvro, err := codec.TextualFromNative(nil, native) // convert native Go form to textual avro data
 		if err != nil {
-			log.Fatalf("unable to convert from native Go to textual avro: %v", err)
+			log.Error("unable to convert from native Go to textual avro: ", err)
 		}
 		decodedAvro := string(textAvro)
 		err = json.Unmarshal([]byte(decodedAvro), &fileMap)
 		if err != nil {
-			log.Fatalf("unable to unmarshal decoded AVRO binary: %v", err)
+			log.Error("unable to unmarshal decoded AVRO binary: ", err)
 		}
 		colorJSONMap, _ := colorJSON.Marshal(fileMap)
 
@@ -69,11 +71,11 @@ func main() {
 func getAvroCodec(path string) *goavro.Codec {
 	replicaAvro, err := avro.ParseSchemaFile(path)
 	if err != nil {
-		log.Fatalf("unable to parse avro schema for specimen: %v", err)
+		log.Error("unable to parse avro schema for specimen: ", err)
 	}
 	replicaCodec, err := goavro.NewCodec(replicaAvro.String())
 	if err != nil {
-		log.Fatalf("unable to gen avro codec for specimen: %v", err)
+		log.Error("unable to gen avro codec for specimen: ", err)
 	}
 
 	return replicaCodec
@@ -82,7 +84,7 @@ func getAvroCodec(path string) *goavro.Codec {
 func getBinFiles(path string) []fs.FileInfo {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		log.Fatalf("unable to read files from directory: %v", err)
+		log.Error("unable to read files from directory: ", err)
 	}
 
 	return files
