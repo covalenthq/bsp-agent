@@ -48,6 +48,7 @@ linters:
     - unconvert # Remove unnecessary type conversions
     - unparam # Reports unused function parameters
     - whitespace # Tool for detection of leading and trailing whitespace
+    - wrapcheck # Checks that errors returned from external packages are wrapped
    
 disable:
   # main-list
