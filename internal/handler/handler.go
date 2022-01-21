@@ -18,7 +18,7 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
-// encodes replica segment into AVRO binary encoding
+// EncodeReplicaSegmentToAvro encodes replica segment into AVRO binary encoding
 func EncodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment interface{}) ([]byte, error) {
 	replicaMap, err := utils.StructToMap(blockReplicaSegment)
 	if err != nil {
@@ -33,7 +33,8 @@ func EncodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment i
 	return binaryReplicaSegment, nil
 }
 
-func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
+// ParseStreamToEvent takes the stream message and parses it to a block replica event
+func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
 	replEvent, ok := e.(*event.BlockReplicaEvent)
 	if !ok {
 		return nil, fmt.Errorf("incorrect event type: %v", replEvent)
@@ -46,6 +47,7 @@ func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockRe
 	return replicaEvent, nil
 }
 
+// EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
 func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {

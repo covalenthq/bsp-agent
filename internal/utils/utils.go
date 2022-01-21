@@ -21,7 +21,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-// provides a new redis client using a redis config
+// NewRedisClient provides a new redis client using a redis config
 func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*redis.Client, string, string, error) {
 	var pwd string
 	redisURL, err := url.Parse(redisConnection)
@@ -59,7 +59,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 	return redisClient, streamKey, consumerGroup, err
 }
 
-// initializes a new ethereum client using an address string
+// NewEthClient initializes a new ethereum client using an address string
 func NewEthClient(address string) (*ethclient.Client, error) {
 	ethClient, err := ethclient.Dial(address)
 	if err != nil {
@@ -69,7 +69,7 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 	return ethClient, nil
 }
 
-// initializes a new storage client using a service account string
+// NewStorageClient initializes a new storage client using a service account string
 func NewStorageClient(serviceAccount string) (*storage.Client, error) {
 	ctx := context.Background()
 	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(serviceAccount))
@@ -80,7 +80,7 @@ func NewStorageClient(serviceAccount string) (*storage.Client, error) {
 	return storageClient, nil
 }
 
-// converts a struct to go map
+// StructToMap converts a struct to go map
 func StructToMap(data interface{}) (map[string]interface{}, error) {
 	dataBytes, err := json.Marshal(data)
 	if err != nil {
@@ -95,7 +95,7 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 	return mapData, nil
 }
 
-// acknowledges a stream segment from the redis stream
+// AckStreamSegment acknowledges a stream segment from the redis stream
 func AckStreamSegment(_ *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) error {
 	if len(streamIDs) == segmentLength {
 		for _, streamID := range streamIDs {
@@ -108,7 +108,7 @@ func AckStreamSegment(_ *config.Config, redisClient *redis.Client, segmentLength
 	return fmt.Errorf("failed to match streamIDs length to segment length config")
 }
 
-// looks up flag env that is a string
+// LookupEnvOrString looks up flag env that is a string
 func LookupEnvOrString(key string, defaultVal string) string {
 	if val, ok := os.LookupEnv(key); ok {
 		return val
@@ -117,7 +117,7 @@ func LookupEnvOrString(key string, defaultVal string) string {
 	return defaultVal
 }
 
-// looks up flag env that is an integer
+// LookupEnvOrInt looks up flag env that is an integer
 func LookupEnvOrInt(key string, defaultVal int) int {
 	if val, ok := os.LookupEnv(key); ok {
 		v, err := strconv.Atoi(val)
@@ -131,7 +131,7 @@ func LookupEnvOrInt(key string, defaultVal int) int {
 	return defaultVal
 }
 
-// gets the config from the config packages
+// GetConfig retrieves the config from the config packages
 func GetConfig(fs *flag.FlagSet) []string {
 	cfg := make([]string, 0, 10)
 	fs.VisitAll(func(f *flag.Flag) {
@@ -141,7 +141,7 @@ func GetConfig(fs *flag.FlagSet) []string {
 	return cfg
 }
 
-// encode returns a byte slice representing the binary encoding of the input avro record
+// EncodeAvro returns a byte slice representing the binary encoding of the input avro record
 func EncodeAvro(record avro.AvroRecord) ([]byte, error) {
 	writer := avro.NewSpecificDatumWriter()
 	writer.SetSchema(record.Schema())
@@ -157,8 +157,7 @@ func EncodeAvro(record avro.AvroRecord) ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-// decode tries to decode a data buffer, read it and store it on the input record.
-// If successfully, the record is filled with data from the buffer, otherwise an error might be returned
+// DecodeAvro tries to decode a data buffer, read it and store it on the input record. If successfully, the record is filled with data from the buffer, otherwise an error might be returned
 func DecodeAvro(record avro.AvroRecord, buffer []byte) error {
 	reader := avro.NewSpecificDatumReader()
 	reader.SetSchema(record.Schema())

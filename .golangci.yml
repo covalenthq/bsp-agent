@@ -8,15 +8,16 @@ run:
 linters:
   enable:
   # main-list
-    - staticcheck
     - deadcode
     - errcheck
     - gosimple
     - ineffassign
+    - staticcheck
     - structcheck
     - typecheck
     - unused
     - varcheck
+    - stylecheck
   # extra-list
     - asciicheck
     - bodyclose
@@ -51,7 +52,6 @@ disable:
   # main-list
     - govet
     - revive
-    - stylecheck
    
 
 issues:

@@ -251,7 +251,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	defer waitGrp.Done()
 
 	newEvent, _ := event.New()
-	replica, err := handler.Parse(newEvent, hash, &blockReplica)
+	replica, err := handler.ParseStreamToEvent(newEvent, hash, &blockReplica)
 	objectType := blockReplica.Type[5:]
 	if err != nil {
 		log.Error("error on process event: %w", err)

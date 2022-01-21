@@ -1,5 +1,5 @@
 // Package types contains all the types used across the repo
-//revive:disable
+//nolint:stylecheck
 package types
 
 import "github.com/elodina/go-avro"
