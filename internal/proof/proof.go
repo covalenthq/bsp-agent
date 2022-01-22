@@ -46,15 +46,15 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
-	tx, err := contract.ProveBlockReplicaProduced(opts, chainID, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
+	transaction, err := contract.ProveBlockReplicaProduced(opts, chainID, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
 
 		return
 	}
-	receipt, err := bind.WaitMined(ctx, ethClient, tx)
+	receipt, err := bind.WaitMined(ctx, ethClient, transaction)
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("block-result proof tx call: ", tx.Hash(), " to proof contract failed: ", err.Error())
+		log.Error("block-result proof tx call: ", transaction.Hash(), " to proof contract failed: ", err.Error())
 
 		return
 	}

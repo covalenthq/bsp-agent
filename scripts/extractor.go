@@ -90,20 +90,21 @@ func getBinFiles(path string) []fs.FileInfo {
 	return files
 }
 
+//nolint:gosec
 func copyFileToMemory(binaryFilePathFlag, filename string) ([]byte, int, error) {
 	file, err := os.Open(filepath.Join(filepath.Clean(binaryFilePathFlag), filepath.Base(filepath.Clean(filename))))
 	if err != nil {
-		return nil, 0, fmt.Errorf("error opening file %s: %s", filename, err)
+		return nil, 0, fmt.Errorf("error opening file %s: %w", filename, err)
 	}
 	defer func() {
-		if ferr := file.Close(); ferr != nil && err == nil {
-			err = ferr
+		if err := file.Close(); err != nil {
+			log.Error("Error closing file: ", err)
 		}
 	}()
 
 	stats, statsErr := file.Stat()
 	if statsErr != nil {
-		return nil, 0, fmt.Errorf("error in file info structure: %s", err)
+		return nil, 0, fmt.Errorf("error in file info structure: %w", err)
 	}
 	size := stats.Size()
 	bytes := make([]byte, size)

@@ -65,6 +65,7 @@ func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, ob
 	return nil
 }
 
+//nolint:gosec
 func writeToBinFile(path, objectName string, object []byte) error {
 	var _, err = os.Stat(filepath.Join(path, filepath.Base(objectName)))
 	if os.IsNotExist(err) {
@@ -73,8 +74,8 @@ func writeToBinFile(path, objectName string, object []byte) error {
 			return fmt.Errorf("error in writing binary file: %w", err)
 		}
 		defer func() {
-			if cerr := fileSave.Close(); cerr != nil && err == nil {
-				err = cerr
+			if err := fileSave.Close(); err != nil {
+				log.Error("Error closing file: ", err)
 			}
 		}()
 		_, err = fileSave.Write(object)

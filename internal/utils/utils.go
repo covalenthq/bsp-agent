@@ -38,7 +38,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 	}
 
 	dbString := strings.ReplaceAll(redisURL.Path, "/", "")
-	m, err := url.ParseQuery(redisURL.RawQuery)
+	urlMap, err := url.ParseQuery(redisURL.RawQuery)
 	if err != nil {
 		log.Fatalf("unable to parse redis connection string query string: %v", err)
 	}
@@ -53,7 +53,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 		Password: pwd,
 		DB:       dbInt, // use default DB
 	})
-	streamKey := m["topic"][0]
+	streamKey := urlMap["topic"][0]
 	consumerGroup := redisURL.Fragment
 	_, err = redisClient.Ping().Result()
 
