@@ -1,3 +1,4 @@
+//nolint:stylecheck,revive
 package types
 
 import (

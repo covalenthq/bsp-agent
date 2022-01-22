@@ -1,3 +1,4 @@
+// Package handler contains all the encoding to avro handler functions
 package handler
 
 import (
@@ -17,21 +18,23 @@ import (
 	"github.com/covalenthq/mq-store-agent/internal/utils"
 )
 
+// EncodeReplicaSegmentToAvro encodes replica segment into AVRO binary encoding
 func EncodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment interface{}) ([]byte, error) {
 	replicaMap, err := utils.StructToMap(blockReplicaSegment)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in converting struct to map: %w", err)
 	}
 	// Convert native Go map[string]interface{} to binary Avro data
 	binaryReplicaSegment, err := replicaAvro.BinaryFromNative(nil, replicaMap)
 	if err != nil {
-		log.Fatalf("failed to convert Go map to Avro binary data: %v", err)
+		log.Error("failed to convert Go map to Avro binary data: ", err)
 	}
 
 	return binaryReplicaSegment, nil
 }
 
-func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
+// ParseStreamToEvent takes the stream message and parses it to a block replica event
+func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
 	replEvent, ok := e.(*event.BlockReplicaEvent)
 	if !ok {
 		return nil, fmt.Errorf("incorrect event type: %v", replEvent)
@@ -44,6 +47,7 @@ func Parse(e event.Event, hash string, data *types.BlockReplica) (*event.BlockRe
 	return replicaEvent, nil
 }
 
+// EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
 func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
@@ -59,7 +63,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 		err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("error in uploading object to bucket: %w", err)
 		}
 	} else {
 		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)

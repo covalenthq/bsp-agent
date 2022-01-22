@@ -1,3 +1,5 @@
+// Package types contains all the types used across the repo
+//nolint:stylecheck,revive
 package types
 
 import "github.com/elodina/go-avro"
@@ -26,6 +28,7 @@ func (o *ElrondBlockResult) Schema() avro.Schema {
 	if _BlockResult_schema_err != nil {
 		panic(_BlockResult_schema_err)
 	}
+
 	return _BlockResult_schema
 }
 
@@ -66,6 +69,7 @@ func (o *Block) Schema() avro.Schema {
 	if _Block_schema_err != nil {
 		panic(_Block_schema_err)
 	}
+
 	return _Block_schema
 }
 
@@ -89,6 +93,7 @@ func (o *MiniBlock) Schema() avro.Schema {
 	if _MiniBlock_schema_err != nil {
 		panic(_MiniBlock_schema_err)
 	}
+
 	return _MiniBlock_schema
 }
 
@@ -118,6 +123,7 @@ func (o *EpochStartInfo) Schema() avro.Schema {
 	if _EpochStartInfo_schema_err != nil {
 		panic(_EpochStartInfo_schema_err)
 	}
+
 	return _EpochStartInfo_schema
 }
 
@@ -159,6 +165,7 @@ func (o *ElrondTransaction) Schema() avro.Schema {
 	if _Transaction_schema_err != nil {
 		panic(_Transaction_schema_err)
 	}
+
 	return _Transaction_schema
 }
 
@@ -202,6 +209,7 @@ func (o *SCResult) Schema() avro.Schema {
 	if _SCResult_schema_err != nil {
 		panic(_SCResult_schema_err)
 	}
+
 	return _SCResult_schema
 }
 
@@ -228,6 +236,7 @@ func (o *ElrondReceipt) Schema() avro.Schema {
 	if _Receipt_schema_err != nil {
 		panic(_Receipt_schema_err)
 	}
+
 	return _Receipt_schema
 }
 
@@ -248,6 +257,7 @@ func (o *Log) Schema() avro.Schema {
 	if _Log_schema_err != nil {
 		panic(_Log_schema_err)
 	}
+
 	return _Log_schema
 }
 
@@ -270,6 +280,7 @@ func (o *Event) Schema() avro.Schema {
 	if _Event_schema_err != nil {
 		panic(_Event_schema_err)
 	}
+
 	return _Event_schema
 }
 
@@ -290,6 +301,7 @@ func (o *AccountBalanceUpdate) Schema() avro.Schema {
 	if _AccountBalanceUpdate_schema_err != nil {
 		panic(_AccountBalanceUpdate_schema_err)
 	}
+
 	return _AccountBalanceUpdate_schema
 }
 

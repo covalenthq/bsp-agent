@@ -15,7 +15,7 @@ run-agent-eth:
 	@echo "---- Running Agent from cmd/mqstoreagent ----"
 	@go run ./cmd/mqstoreagent/*.go \
 	--redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \
-	--codec-path="./codec/block-replica.avsc" \
+	--codec-path="./codec/block-ethereum.avsc" \
 	--binary-file-path="./bin/block-ethereum/" \
 	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
