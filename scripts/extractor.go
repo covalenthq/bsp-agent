@@ -21,26 +21,26 @@ import (
 
 var (
 	binaryFilePathFlag string
-	codecPathFlag      string
+	avroCodecPathFlag  string
 	indentJSONFlag     int
 )
 
 func main() {
 	flag.StringVar(&binaryFilePathFlag, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
-	flag.StringVar(&codecPathFlag, "codec-path", utils.LookupEnvOrString("CodecPath", codecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
+	flag.StringVar(&avroCodecPathFlag, "codec-path", utils.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
 	flag.IntVar(&indentJSONFlag, "indent-json", utils.LookupEnvOrInt("IndentJson", indentJSONFlag), "allows for an indented view of the AVRO decoded JSON object")
 
 	flag.Parse()
 	fmt.Println("Agent command line config: ", utils.GetConfig(flag.CommandLine))
 
-	codecPathFlag = utils.LookupEnvOrString("CodecPath", codecPathFlag)
+	avroCodecPathFlag = utils.LookupEnvOrString("CodecPath", avroCodecPathFlag)
 	binaryFilePathFlag = utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag)
 	indentJSONFlag = utils.LookupEnvOrInt("BinaryFilePath", indentJSONFlag)
 
 	colorJSON := colorjson.NewFormatter()
 	colorJSON.Indent = indentJSONFlag
 	files := getBinFiles(binaryFilePathFlag)
-	codec := getAvroCodec(codecPathFlag)
+	codec := getAvroCodec(avroCodecPathFlag)
 
 	for _, fileInf := range files {
 		var fileMap map[string]interface{}
