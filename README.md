@@ -12,9 +12,9 @@
   </a>
 </div>
 <div align="center">
-  <!-- <a href="https://discord.gg/evmos">
-    <img alt="Discord" src="https://img.shields.io/discord/809048090249134080.svg" />
-  </a> -->
+  <a href="http://covalenthq.com/discord">
+    <img alt="Discord" src="https://img.shields.io/badge/discord-join%20chat-blue.svg" />
+  </a>
   <a href="https://github.com/covalenthq/mq-store-agent/actions/workflows/golangci-lint.yml?query=branch%3Amain+workflow%3Agolangci-lint">
     <img alt="Lint Status" src="https://github.com/covalenthq/mq-store-agent/actions/workflows/golangci-lint.yml/badge.svg?branch=main" />
   </a>
