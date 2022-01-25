@@ -54,7 +54,7 @@ Contributing to this repo can mean many things such as participating in discussi
     6. When the code is complete it can be marked `Ready for Review`.
     7. Be sure to include a relevant change log entry in the `Unreleased` section of `CHANGELOG.md` (see file for log
        format).
-    8. Please make sure to run `make format` before every commit - the easiest way to do this is having your editor run it for you upon saving a file. Additionally, please ensure that your code is lint compliant by running `make lint` . There are CI tests built into the Evmos repository and all PR’s will require that these tests pass before they are able to be merged.
+    8. Please make sure to run `gofmt` before every commit - the easiest way to do this is having your editor run it for you upon saving a file. Additionally, please ensure that your code is lint compliant by running `make lint` . There are CI tests built into the Evmos repository and all PR’s will require that these tests pass before they are able to be merged.
 
 **Note**: for very small or blatantly obvious problems (such as typos), it is not required to open an issue to submit a
 PR, but be aware that for more complex problems/features, if a PR is opened before an adequate design discussion has
@@ -67,11 +67,11 @@ some [good first issues](https://github.com/covalenthq/mq-store-agent/issues).
 
 1. The latest state of development is on `main`.
 2. `main` must never
-   fail `make lint, make test, make test-race, make test-rpc, make test-import`
-3. No `--force` onto `development` (except when reverting a broken commit, which should seldom happen).
-4. Create your feature branch from `development` either on `github.com/covalenthq/mq-store-agent`, or your fork (
+   fail `make lint, make run-build, make run-agent-eth `
+3. No `--force` onto `main` (except when reverting a broken commit, which should seldom happen).
+4. Create your feature branch from `main` either on `github.com/covalenthq/mq-store-agent`, or your fork (
    using `git remote add origin`).
-5. Before submitting a pull request, begin `git rebase` on top of `development`.
+5. Before submitting a pull request, begin `git rebase` on top of `main`.
 
 
 ### <span id="dependencies">Dependencies</span>
@@ -86,7 +86,7 @@ on `go mod tidy -v`.
 
 ### <span id="testing">Testing</span>
 
-Covalent uses [GitHub Actions](https://github.com/features/actions) for automated testing.
+Covalent uses [GitHub Actions](https://github.com/features/actions) for automated [integration testing](https://github.com/covalenthq/mq-store-agent/actions).
 
 ### <span id="braching_model_and_release">Branching Model and Release</span>
 
@@ -98,9 +98,9 @@ Evmos utilizes [semantic versioning](https://semver.org/).
 
 ### <span id="pr_targeting">PR Targeting</span>
 
-Ensure that you base and target your PR on the `development` branch.
+Ensure that you base and target your PR on the `main` branch.
 
-All feature additions should be targeted against `development`. Bug fixes for an outstanding release candidate should be
+All feature additions should be targeted against `main`. Bug fixes for an outstanding release candidate should be
 targeted against the release candidate branch.
 
 ### <span id="pull_requests">Pull Requests</span>
@@ -127,6 +127,6 @@ All PRs require two Reviews before merge. When reviewing PRs, please use the fol
 
 ### <span id="pull_merge_procedure">Pull Merge Procedure</span>
 
-1. Ensure pull branch is rebased on `development`.
-2. Run `make test` to ensure that all tests pass.
+1. Ensure pull branch is rebased on `main`.
+2. Ensure that all CI tests pass.
 3. Squash merge pull request.
