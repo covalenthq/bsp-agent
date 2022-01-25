@@ -10,11 +10,11 @@
   <a href="https://goreportcard.com/report/github.com/covalenthq/mq-store-agent">
     <img alt="Go report card" src="https://goreportcard.com/badge/github.com/"/>
   </a>
-</div>
-<div align="center">
   <a href="http://covalenthq.com/discord">
     <img alt="Discord" src="https://img.shields.io/badge/discord-join%20chat-blue.svg" />
   </a>
+</div>
+<div align="center">
   <a href="http://covalenthq.com/discord">
     <img alt="Discord" src="https://img.shields.io/discord/715804406842392586.svg" />
   </a>
@@ -52,7 +52,15 @@ These block-replicas are produced by go-ethereum nodes / websocket block data so
 
 ## <span id="agent_resources">Resources</span>
 
-Please refer to these [instructions](https://docs.google.com/document/d/1BMC9-VXZfpB6mGczSu8ylUXJZ_CIx4ephepDtlruv_Q/edit?usp=sharing) for running the BSP with the mq-store-agent (BSP-agent).
+Production of Block Specimen Objects (BSOs) forms the core of the network’s data objects specification. These objects are created with the aid of three main pieces of open-source software provided by Covalent for the network’s decentralized stack.
+
+1. [Block Specimen Producer (BSP Geth)](https://github.com/covalenthq/go-ethereum) - Operator run & deployed
+
+1. [BSP Agent](https://github.com/covalenthq/mq-store-agent) - Operator run & deployed
+
+1. [BSP Proof-chain](https://github.com/covalenthq/cqt-virtnet) - Covalent operated & pre-deployed
+
+Please refer to these [instructions](https://docs.google.com/document/d/1BMC9-VXZfpB6mGczSu8ylUXJZ_CIx4ephepDtlruv_Q/edit?usp=sharing) for running the BSP with the mq-store-agent (BSP Agent).
 
 Please refer to this [whitepaper](https://docs.google.com/document/d/1J6RalVVfMSh2kSKNHM3Agb4GngzWVw9e1PqLSVb3-PU/edit#) to understand more about its function.
 
