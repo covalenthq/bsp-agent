@@ -1,3 +1,31 @@
+![banner](./docs/covalent.jpg)
+
+<div align="center">
+  <a href="https://github.com/covalenthq/mq-store-agent/releases/latest">
+    <img alt="Version" src="https://img.shields.io/badge/tag-v0.9.8-orange" />
+  </a>
+  <a href="https://github.com/covalenthq/mq-store-agent/blob/main/LICENSE">
+    <img alt="License: " src="https://img.shields.io/badge/license-MIT-green" />
+  </a>
+  <a href="https://goreportcard.com/report/github.com/covalenthq/mq-store-agent">
+    <img alt="Go report card" src="https://goreportcard.com/badge/github.com/"/>
+  </a>
+</div>
+<div align="center">
+  <!-- <a href="https://discord.gg/evmos">
+    <img alt="Discord" src="https://img.shields.io/discord/809048090249134080.svg" />
+  </a> -->
+  <a href="https://github.com/covalenthq/mq-store-agent/actions/workflows/golangci-lint.yml?query=branch%3Amain+workflow%3Agolangci-lint">
+    <img alt="Lint Status" src="https://github.com/covalenthq/mq-store-agent/actions/workflows/golangci-lint.yml/badge.svg?branch=main" />
+  </a>
+  <a href="https://github.com/covalenthq/mq-store-agent/actions/workflows/docker-image.yml?query=branch%3Amain+workflow%3Adocker-image-ci">
+    <img alt="CI Status" src="https://github.com/covalenthq/mq-store-agent/actions/workflows/docker-image.yml/badge.svg?branch=main" />
+  </a>
+  <a href="https://twitter.com/@Covalent_HQ">
+    <img alt="Twitter Follow Covalent" src="https://img.shields.io/twitter/follow/Covalent_HQ"/>
+  </a>
+</div>
+
 # BSP Agent (mq-store-agent)
 
 * [Introduction](#agent_intro)
@@ -11,7 +39,7 @@
 * [Docker](#docker)
 * [Scripts](#scripts)
   * [Inspect](#inspect)
-* [Contributing](CONTRIBUTING.md)
+* [Contributing](./docs/CONTRIBUTING.md)
 
 ## <span id="agent_intro">Introduction</span>
 
@@ -31,7 +59,7 @@ BSP workshop [deck](https://docs.google.com/presentation/d/1qInReJcMxvVywJ8onoFP
 
 ## <span id="agent_arch">Architecture</span>
 
-![diagram](arch.png)
+![diagram](./docs/arch.png)
 
 ## <span id="agent_block">Block-replica</span>
 
@@ -222,7 +250,7 @@ Run only the mq-store-agent with the following, though this will not work if the
 
 ## <span id="scripts">Scripts</span>
 
-![diagram](wow.jpeg)
+![diagram](./docs/wow.jpeg)
 
 There are two lua scripts in `/scripts` for usage with the `redis-cli`.
 

@@ -22,13 +22,11 @@ least the following:
  - What did you expect to happen instead of what *did* happen, if it's
    not crazy obvious
  - What operating system, operating system version and version of
-   Syncthing you are running
- - The same for other connected devices, where relevant
- - Screenshot if the issue concerns something visible in the GUI
+   mq-store-agent you are running
  - Console log entries, where possible and relevant
 
 If you're not sure whether something is relevant, erring on the side of
-too much information will never get you yelled at. :)
+too much information will never be a cause for concern.
 
 
 ## <span id="general_procedure">General Procedure</span>
@@ -41,10 +39,9 @@ Contributing to this repo can mean many things such as participating in discussi
 
 2. Participate in thoughtful discussion on that issue.
 
-3. If you would like to contribsute:
-    1. If the issue is a proposal, ensure that the proposal has been accepted by the Evmos team.
-    2. Ensure that nobody else has already begun working on the same issue. If someone already has, please make sure to
-       contact the individual to collaborate.
+3. If you would like to contribute:
+    1. If the issue is a proposal, ensure that the proposal has been accepted by the Covalent team.
+    2. Ensure that nobody else has already begun working on the same issue. If someone already has, please make sure to contact the individual to collaborate.
     3. If nobody has been assigned the issue and you would like to work on it, make a comment on the issue to inform the
        community of your intentions to begin work. Ideally, wait for confirmation that no one has started it. However,
        if you are eager and do not get a prompt response, feel free to dive on in!

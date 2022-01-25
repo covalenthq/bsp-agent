@@ -1,10 +1,12 @@
 docker:
 	@docker-compose down
-	@docker-compose build
-	@docker-compose up -d
+	@docker-compose -f "docker-compose.yml" up --build --remove-orphans --force-recreate --exit-code-from consumer
 
 dockerdown:
 	@docker-compose down
+
+lint:
+	@golangci-lint run
 
 run-build:
 	@echo "---- Building Agent from cmd/mqstoreagent ----"
