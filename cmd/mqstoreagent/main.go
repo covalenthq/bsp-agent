@@ -40,8 +40,8 @@ var (
 
 	// env flag vars
 	consumerPendingTimeoutFlag = 60 // defaults to 1 min
-	segmentLengthFlag          = 5  // defaults to 5 blocks per segment
-	codecPathFlag              string
+	segmentLengthFlag          = 1  // defaults to 1 block per segment
+	avroCodecPathFlag          string
 	redisURLFlag               string
 	replicaBucketFlag          string
 	gcpSvcAccountFlag          string
@@ -73,7 +73,7 @@ func init() {
 
 func main() {
 	flag.StringVar(&redisURLFlag, "redis-url", utils.LookupEnvOrString("RedisURL", redisURLFlag), "redis consumer stream url")
-	flag.StringVar(&codecPathFlag, "codec-path", utils.LookupEnvOrString("CodecPath", codecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
+	flag.StringVar(&avroCodecPathFlag, "avro-codec-path", utils.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
 	flag.StringVar(&binaryFilePathFlag, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
 	flag.StringVar(&gcpSvcAccountFlag, "gcp-svc-account", utils.LookupEnvOrString("GcpSvcAccount", gcpSvcAccountFlag), "local path to google cloud platform service account auth file")
 	flag.StringVar(&replicaBucketFlag, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", replicaBucketFlag), "google cloud platform object store target for specimen")
@@ -106,7 +106,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
 	}
-	replicaAvro, err := avro.ParseSchemaFile(codecPathFlag)
+	replicaAvro, err := avro.ParseSchemaFile(avroCodecPathFlag)
 	if err != nil {
 		log.Fatalf("unable to parse avro schema for specimen from codec path flag: %v", err)
 	}

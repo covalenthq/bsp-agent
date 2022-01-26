@@ -61,7 +61,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			if err != nil {
 				log.Error("error in websocket received message: ", err)
 			}
-			res := &types.ElrondBlockResult{}
+			res := &types.ElrondBlockReplica{}
 			errDecode := utils.DecodeAvro(res, message)
 			if errDecode != nil {
 				log.Error("error in decoding block from avro: ", errDecode)

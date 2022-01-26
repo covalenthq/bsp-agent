@@ -4,7 +4,7 @@ package types
 
 import "github.com/elodina/go-avro"
 
-type ElrondBlockResult struct {
+type ElrondBlockReplica struct {
 	Block        *Block
 	Transactions []*ElrondTransaction
 	SCResults    []*SCResult
@@ -13,8 +13,8 @@ type ElrondBlockResult struct {
 	StateChanges []*AccountBalanceUpdate
 }
 
-func NewBlockResult() *ElrondBlockResult {
-	return &ElrondBlockResult{
+func NewBlockResult() *ElrondBlockReplica {
+	return &ElrondBlockReplica{
 		Block:        NewBlock(),
 		Transactions: make([]*ElrondTransaction, 0),
 		SCResults:    make([]*SCResult, 0),
@@ -24,7 +24,7 @@ func NewBlockResult() *ElrondBlockResult {
 	}
 }
 
-func (o *ElrondBlockResult) Schema() avro.Schema {
+func (o *ElrondBlockReplica) Schema() avro.Schema {
 	if _BlockResult_schema_err != nil {
 		panic(_BlockResult_schema_err)
 	}
