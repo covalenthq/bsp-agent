@@ -2,7 +2,7 @@
 
 <div align="center">
   <a href="https://github.com/covalenthq/mq-store-agent/releases/latest">
-    <img alt="Version" src="https://img.shields.io/badge/tag-v0.9.8-orange" />
+    <img alt="Version" src="https://img.shields.io/badge/tag-v1.0.0-yellowgreen" />
   </a>
   <a href="https://github.com/covalenthq/mq-store-agent/blob/main/LICENSE">
     <img alt="License: " src="https://img.shields.io/badge/license-MIT-green" />
@@ -10,6 +10,9 @@
   <a href="https://goreportcard.com/report/github.com/covalenthq/mq-store-agent">
     <img alt="Go report card" src="https://goreportcard.com/badge/github.com/"/>
   </a>
+  <!-- <a href="https://bestpractices.coreinfrastructure.org/projects/0000">
+    <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/covalenthq/mq-store-agent">
+  </a> -->
   <a href="http://covalenthq.com/discord">
     <img alt="Discord" src="https://img.shields.io/badge/discord-join%20chat-blue.svg" />
   </a>
@@ -52,7 +55,7 @@ These block-replicas are produced by go-ethereum nodes / websocket block data so
 
 ## <span id="agent_resources">Resources</span>
 
-Production of Block Specimen Objects (BSOs) forms the core of the network’s data objects specification. These objects are created with the aid of three main pieces of open-source software provided by Covalent for the network’s decentralized stack.
+Production of Block Specimen forms the core of the network’s data objects specification. These objects are created with the aid of three main pieces of open-source software provided by Covalent for the network’s decentralized stack.
 
 1. [Block Specimen Producer (BSP Geth)](https://github.com/covalenthq/go-ethereum) - Operator run & deployed
 
@@ -60,13 +63,9 @@ Production of Block Specimen Objects (BSOs) forms the core of the network’s da
 
 1. [BSP Proof-chain](https://github.com/covalenthq/cqt-virtnet) - Covalent operated & pre-deployed
 
-Please refer to these [instructions](https://docs.google.com/document/d/1BMC9-VXZfpB6mGczSu8ylUXJZ_CIx4ephepDtlruv_Q/edit?usp=sharing) for running the BSP with the mq-store-agent (BSP Agent).
+Please refer to these [instructions](https://docs.google.com/document/d/1N_HxUi6ZEkub9EHANe49vkL9iQztVA_ACyfHcOZV5y0/edit?usp=sharing) for running the BSP with the mq-store-agent (BSP Agent).
 
-Please refer to this [whitepaper](https://docs.google.com/document/d/1J6RalVVfMSh2kSKNHM3Agb4GngzWVw9e1PqLSVb3-PU/edit#) to understand more about its function.
-
-Externally facing validator [documentation.](https://www.notion.so/covalenthq/Validator-Documentation-e9fdba94c9e149aeba798ece303dc5d4)
-
-BSP workshop [deck](https://docs.google.com/presentation/d/1qInReJcMxvVywJ8onoFPoKCwuorJ8LpOn3hwLJIl7bg/edit?usp=sharing) for BSP operators.
+Please refer to this [whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.1.pdf) to understand more about its function.
 
 ## <span id="agent_arch">Architecture</span>
 
