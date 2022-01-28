@@ -3,6 +3,7 @@ module github.com/covalenthq/mq-store-agent
 go 1.16
 
 require (
+	cloud.google.com/go/iam v0.1.1 // indirect
 	cloud.google.com/go/storage v1.18.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
@@ -20,7 +21,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/ubiq/go-ubiq v3.0.1+incompatible
-	google.golang.org/api v0.64.0
+	google.golang.org/api v0.66.0
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
