@@ -100,7 +100,7 @@ func main() {
 	}
 	storageClient, err := utils.NewStorageClient(gcpSvcAccountFlag)
 	if err != nil {
-		log.Warn("unable to get gcp storage client from GCP Service account flag: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
+		log.Printf("unable to get gcp storage client from GCP Service account flag: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
 	}
 	ethClient, err := utils.NewEthClient(ethClientFlag)
 	if err != nil {
