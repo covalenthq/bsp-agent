@@ -32,7 +32,7 @@ run-agent-elrond:
 	--redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \
 	--avro-codec-path="./codec/block-elrond.avsc" \
 	--binary-file-path="./bin/block-elrond/" \
-	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp.json" \
+	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
 	--segment-length=1 \
 	--eth-client=http://127.0.0.1:7545  \

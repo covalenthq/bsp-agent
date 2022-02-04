@@ -88,7 +88,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	log.Info("Agent command line config: ", utils.GetConfig(flag.CommandLine))
+	log.Info("bsp-agent command line config: ", utils.GetConfig(flag.CommandLine))
 
 	if binaryFilePathFlag == "" {
 		log.Warn("--binary-file-path flag not provided to write block-replica avro encoded binary files to local path", binaryFilePathFlag)
@@ -100,7 +100,7 @@ func main() {
 	}
 	storageClient, err := utils.NewStorageClient(gcpSvcAccountFlag)
 	if err != nil {
-		log.Printf("unable to get gcp storage client from GCP Service account flag: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
+		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
 	}
 	ethClient, err := utils.NewEthClient(ethClientFlag)
 	if err != nil {
