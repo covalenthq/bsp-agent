@@ -6,6 +6,7 @@ COPY . .
 RUN go mod download
 # Build the service
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o main ./cmd/mqstoreagent
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o extractor ./scripts/extractor.go
 
 # Runtime/test -  second phase.
 FROM alpine:3.15.0
@@ -17,7 +18,7 @@ COPY --from=builder /build/main /app
 COPY --from=builder /build/entry.sh /app
 COPY --from=builder /build/data /app/data
 COPY --from=builder /build/codec /app/codec
-COPY --from=builder /build/scripts /app/scripts
+COPY --from=builder /build/extractor /app/scripts
 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 CMD [ "./entry.sh" ]
