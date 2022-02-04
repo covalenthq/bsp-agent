@@ -31,7 +31,7 @@ func main() {
 	flag.IntVar(&indentJSONFlag, "indent-json", utils.LookupEnvOrInt("IndentJson", indentJSONFlag), "allows for an indented view of the AVRO decoded JSON object")
 
 	flag.Parse()
-	fmt.Println("Agent command line config: ", utils.GetConfig(flag.CommandLine))
+	fmt.Println("bsp-extractor command line config: ", utils.GetConfig(flag.CommandLine))
 
 	avroCodecPathFlag = utils.LookupEnvOrString("CodecPath", avroCodecPathFlag)
 	binaryFilePathFlag = utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag)
