@@ -106,16 +106,5 @@ services:
     ports:
       - "8080:8080"
 
-  # consumer-two:
-  #   container_name: replication-consumer-two
-  #   build: '.'
-  #   environment:
-  #     REDIS_HOST: redis
-  #     STREAM: replication
-  #     GROUP: replicate-2
-  #   depends_on:
-  #     - redis
-  #   restart: always
-
 networks:
   cqt-net:

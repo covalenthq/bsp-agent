@@ -100,7 +100,7 @@ func main() {
 	if err != nil {
 		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
 	}
-	ethClient, err := utils.NewEthClient(config.EthConfig.RpcURL)
+	ethClient, err := utils.NewEthClient(config.EthConfig.RPCURL)
 	if err != nil {
 		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
 	}
