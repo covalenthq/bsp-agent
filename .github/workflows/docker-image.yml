@@ -26,6 +26,7 @@ jobs:
         docker push ghcr.io/covalenthq/mq-store-agent:latest
 
     - name: Create env file
+      uses: HatsuneMiku3939/direnv-action@v1
       run: |
         touch .env
         echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
