@@ -18,21 +18,25 @@ jobs:
         username: ${{ secrets.CR_USER }}
         password: ${{ secrets.CR_PAT }}
 
-    - name: Create Env file
-      run: |
-        touch .env
-        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
-
     - uses: actions/checkout@v2
     - name: Build & Publish the Docker image
       if: ${{ !env.ACT }}
       run: | 
         docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:latest
         docker push ghcr.io/covalenthq/mq-store-agent:latest
+      with: 
+        clean: 'false'
+
+    - name: Create env file
+      run: |
+        touch .env
+        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
 
     - name: Start containers
       run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --force-recreate --exit-code-from agent
+      with:
+        file_name: .env
 
     - name: Check running agent
       run: docker inspect bsp-agent
@@ -67,6 +71,8 @@ jobs:
       run: |
         docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:latest
         docker push ghcr.io/covalenthq/mq-store-agent:latest
+      with: 
+        clean: 'false'
 
     - name: Create Env file
       run: |
@@ -76,6 +82,8 @@ jobs:
 
     - name: Start containers
       run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --force-recreate --exit-code-from agent
+      with:
+        file_name: .env
 
     - name: Check running agent
       run: docker inspect bsp-agent
