@@ -65,7 +65,7 @@ services:
     entrypoint: >
      /bin/bash -l -c "
       truffle migrate --network development;
-      nc -v consumer 8008;
+      nc -v agent 8008;
       sleep 100000;"
     depends_on:
       - node
@@ -76,8 +76,8 @@ services:
     ports:
       - "8008:8008"
 
-  consumer:
-    container_name: mq-store-agent
+  agent:
+    container_name: bsp-agent
     links:
       - "cqt-virtnet:proof-chain"
     build:
@@ -98,7 +98,8 @@ services:
         ./entry.sh;
         exit 0;"
     environment:
-      - ETH_PRIVATE_KEY=0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530
+      - ETH_PRIVATE_KEY=${PRIVATE_KEY}
+      - ETH_RPC_URL=${RPC_URL}
       - BLOCKCHAIN=${BLOCKCHAIN}
     networks:
       - cqt-net
