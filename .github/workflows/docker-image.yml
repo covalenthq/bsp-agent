@@ -26,17 +26,17 @@ jobs:
         docker push ghcr.io/covalenthq/mq-store-agent:latest
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up --build --remove-orphans --force-recreate --exit-code-from consumer
+      run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --force-recreate --exit-code-from agent
 
     - name: Check running agent
-      run: docker inspect mq-store-agent
+      run: docker inspect bsp-agent
 
     - name: Check running containers
       run: docker ps
 
     - name: Stop containers
       if: always()
-      run: docker-compose -f "docker-compose.yml" down
+      run: docker-compose -f "docker-compose-ci.yml" down
   
   build-elrond:
     runs-on: ubuntu-latest
@@ -59,15 +59,15 @@ jobs:
         docker push ghcr.io/covalenthq/mq-store-agent:latest
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up --build --remove-orphans --force-recreate --exit-code-from consumer
+      run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --force-recreate --exit-code-from agent
 
     - name: Check running agent
-      run: docker inspect mq-store-agent
+      run: docker inspect bsp-agent
 
     - name: Check running containers
       run: docker ps
 
     - name: Stop containers
       if: always()
-      run: docker-compose -f "docker-compose.yml" down
+      run: docker-compose -f "docker-compose-ci.yml" down
 
