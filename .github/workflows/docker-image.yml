@@ -18,6 +18,12 @@ jobs:
         username: ${{ secrets.CR_USER }}
         password: ${{ secrets.CR_PAT }}
 
+    - name: Create Env file
+      run: |
+        touch .env
+        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
+
     - uses: actions/checkout@v2
     - name: Build & Publish the Docker image
       if: ${{ !env.ACT }}
@@ -33,6 +39,10 @@ jobs:
 
     - name: Check running containers
       run: docker ps
+
+    - name: Delete Env file
+      run: |
+        rm -rf .env
 
     - name: Stop containers
       if: always()
@@ -61,7 +71,8 @@ jobs:
     - name: Create Env file
       run: |
         touch .env
-        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} && echo RPC_URL=${{ secrets.RPC_URL }} >> .env
+        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
 
     - name: Start containers
       run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --force-recreate --exit-code-from agent
