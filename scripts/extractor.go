@@ -95,11 +95,6 @@ func copyFileToMemory(binaryFilePathFlag, filename string) ([]byte, int, error) 
 	if err != nil {
 		return nil, 0, fmt.Errorf("error opening file %s: %w", filename, err)
 	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			log.Error("Error closing file: ", err)
-		}
-	}()
 
 	stats, statsErr := file.Stat()
 	if statsErr != nil {
@@ -109,6 +104,10 @@ func copyFileToMemory(binaryFilePathFlag, filename string) ([]byte, int, error) 
 	bytes := make([]byte, size)
 	buffr := bufio.NewReader(file)
 	sizeBytes, err := buffr.Read(bytes)
+
+	if err := file.Close(); err != nil {
+		log.Error("Error closing file: ", err)
+	}
 
 	return bytes, sizeBytes, err
 }
