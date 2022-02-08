@@ -6,7 +6,6 @@ then
     --binary-file-path=./bin/block-elrond/ \
     --replica-bucket=covalenthq-geth-block-specimen \
     --segment-length=10 \
-    --eth-client=http://ganache-cli:8545  \
     --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 \
     --consumer-timeout=60 \
     --websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 
@@ -16,7 +15,6 @@ else
     --binary-file-path=./bin/block-ethereum/ \
     --replica-bucket=covalenthq-geth-block-specimen \
     --segment-length=10 \
-    --eth-client=http://ganache-cli:8545  \
     --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 \
     --consumer-timeout=60
 fi

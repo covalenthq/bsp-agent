@@ -22,8 +22,7 @@ run-agent-eth:
 	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
 	--segment-length=1 \
- 	--eth-client=http://127.0.0.1:7545  \
- 	--proof-chain-address=0x3D25EBCeFC7F1E5a5664C8D6AA63Dc3D513761D6 \
+	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
 	--consumer-timeout=80
 
 run-agent-elrond:
@@ -35,7 +34,6 @@ run-agent-elrond:
 	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
 	--segment-length=1 \
-	--eth-client=http://127.0.0.1:7545  \
-	--proof-chain-address=0x3D25EBCeFC7F1E5a5664C8D6AA63Dc3D513761D6 \
+	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
 	--consumer-timeout=80 \
 	--websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 

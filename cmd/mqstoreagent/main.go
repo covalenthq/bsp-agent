@@ -45,7 +45,6 @@ var (
 	redisURLFlag               string
 	replicaBucketFlag          string
 	gcpSvcAccountFlag          string
-	ethClientFlag              string
 	proofChainFlag             string
 	binaryFilePathFlag         string
 	websocketURLsFlag          string
@@ -77,7 +76,6 @@ func main() {
 	flag.StringVar(&binaryFilePathFlag, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
 	flag.StringVar(&gcpSvcAccountFlag, "gcp-svc-account", utils.LookupEnvOrString("GcpSvcAccount", gcpSvcAccountFlag), "local path to google cloud platform service account auth file")
 	flag.StringVar(&replicaBucketFlag, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", replicaBucketFlag), "google cloud platform object store target for specimen")
-	flag.StringVar(&ethClientFlag, "eth-client", utils.LookupEnvOrString("EthClient", ethClientFlag), "connection string for ethereum node on which proof-chain contract is deployed")
 	flag.StringVar(&proofChainFlag, "proof-chain-address", utils.LookupEnvOrString("ProofChain", proofChainFlag), "hex string address for deployed proof-chain contract")
 	flag.StringVar(&websocketURLsFlag, "websocket-urls", utils.LookupEnvOrString("WebsocketURLs", websocketURLsFlag), "url to websockets clients separated by space")
 	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
@@ -102,7 +100,7 @@ func main() {
 	if err != nil {
 		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
 	}
-	ethClient, err := utils.NewEthClient(ethClientFlag)
+	ethClient, err := utils.NewEthClient(config.EthConfig.RpcURL)
 	if err != nil {
 		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
 	}
