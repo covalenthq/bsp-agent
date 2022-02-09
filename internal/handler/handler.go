@@ -49,6 +49,7 @@ func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*
 
 // EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
 func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
+	var replicaURL string
 	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
 		return "", err
@@ -57,7 +58,14 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	log.Info("Submitting block-replica segment proof for: ", segmentName)
 
 	proofTxHash := make(chan string, 1)
-	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, proofTxHash)
+	// Only google storage is supported for now
+	if storageClient != nil {
+		replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
+	} else {
+		replicaURL = "only local ./bin/"
+	}
+
+	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, proofTxHash)
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
