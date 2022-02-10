@@ -24,6 +24,7 @@ import (
 
 // ConsumeWebsocketsEvents is the primary consumer of websocket events from an websocket endpoint
 func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, storageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) {
+	var replicaURL string
 	ctx := context.Background()
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -77,7 +78,13 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			}
 
 			proofTxHash := make(chan string, 1)
-			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, proofTxHash)
+			// Only google storage is supported for now
+			if storageClient != nil {
+				replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
+			} else {
+				replicaURL = "only local ./bin/"
+			}
+			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, replicaURL, proofTxHash)
 			pTxHash := <-proofTxHash
 			if pTxHash != "" {
 				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)

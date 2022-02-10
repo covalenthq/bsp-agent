@@ -43,6 +43,12 @@
           "internalType": "bytes32",
           "name": "specimenHash",
           "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "specimenURL",
+          "type": "string"
         }
       ],
       "name": "BlockReplicaPublicationProofAppended",
@@ -173,6 +179,20 @@
           "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [],
+      "name": "specimenProofURL",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -465,6 +485,11 @@
           "internalType": "bytes32",
           "name": "specimenHash",
           "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "specimenURL",
+          "type": "string"
         }
       ],
       "name": "ProveBlockReplicaProduced",
@@ -473,4 +498,4 @@
       "type": "function",
       "payable": true
     }
-  ],
+  ]

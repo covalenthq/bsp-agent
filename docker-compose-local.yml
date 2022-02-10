@@ -77,16 +77,16 @@ services:
       - "8008:8008"
 
   agent:
+    image: "ghcr.io/covalenthq/mq-store-agent:latest"
     container_name: bsp-agent
+    restart:  on-failure
     links:
       - "cqt-virtnet:proof-chain"
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart:  on-failure
     depends_on:
       cqt-virtnet:
         condition: service_started
+    volumes:
+      - /Users/pranay/.config/gcloud:/app/gcloud
     entrypoint: >
       /bin/bash -l -c "
         echo Waiting for proof-chain to be deployed...;
@@ -95,7 +95,7 @@ services:
         sleep 1;
         done;
         echo proof-chain contracts deployed!;
-        ./entry.sh;
+        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication#replicate  --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/ --gcp-svc-account=./gcloud/bsp-2.json --replica-bucket=covalenthq-geth-block-specimen --segment-length=10 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=6000;
         exit 0;"
     environment:
       - ETH_PRIVATE_KEY=${PRIVATE_KEY}

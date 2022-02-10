@@ -21,7 +21,7 @@ var (
 )
 
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
-func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, txHash chan string) {
+func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, replicaURL string, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
@@ -46,7 +46,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
-	transaction, err := contract.ProveBlockReplicaProduced(opts, chainID, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result)
+	transaction, err := contract.ProveBlockReplicaProduced(opts, chainID, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result, replicaURL)
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
 

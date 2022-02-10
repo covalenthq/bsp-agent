@@ -30,7 +30,7 @@ var (
 
 // ProofChainMetaData contains all meta data concerning the ProofChain contract.
 var ProofChainMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"seq\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"extractWorker\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainHeightPos\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainHeightLen\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"specimenSize\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"}],\"name\":\"BlockReplicaPublicationProofAppended\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"STAKING_ORACLE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRequiredStakeForRole\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"setRequiredStakeForRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"getStakedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"setStakedBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isPreapprovedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"isPreapprovedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isSufficientlyStakedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"isSufficientlyStakedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRolePreapproval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRolePreapproval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"chainHeightPos\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"chainHeightLen\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"specimenSize\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"}],\"name\":\"ProveBlockReplicaProduced\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true}],",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"seq\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"extractWorker\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainHeightPos\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainHeightLen\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"specimenSize\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"specimenURL\",\"type\":\"string\"}],\"name\":\"BlockReplicaPublicationProofAppended\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"STAKING_ORACLE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"specimenProofURL\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRequiredStakeForRole\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"setRequiredStakeForRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"getStakedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"setStakedBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isPreapprovedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"isPreapprovedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isSufficientlyStakedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"isSufficientlyStakedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRolePreapproval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRolePreapproval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainID\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"chainHeightPos\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"chainHeightLen\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"specimenSize\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"specimenURL\",\"type\":\"string\"}],\"name\":\"ProveBlockReplicaProduced\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\",\"payable\":true}]",
 }
 
 // ProofChainABI is the input ABI used to generate the binding from.
@@ -551,25 +551,56 @@ func (_ProofChain *ProofChainCallerSession) IsSufficientlyStakedForRole0(role [3
 	return _ProofChain.Contract.IsSufficientlyStakedForRole0(&_ProofChain.CallOpts, role)
 }
 
-// ProveBlockReplicaProduced is a paid mutator transaction binding the contract method 0x5197d122.
+// SpecimenProofURL is a free data retrieval call binding the contract method 0xafb034c5.
 //
-// Solidity: function ProveBlockReplicaProduced(uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash) payable returns()
-func (_ProofChain *ProofChainTransactor) ProveBlockReplicaProduced(opts *bind.TransactOpts, chainID uint64, chainHeightPos uint64, chainHeightLen uint64, specimenSize uint64, specimenHash [32]byte) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "ProveBlockReplicaProduced", chainID, chainHeightPos, chainHeightLen, specimenSize, specimenHash)
+// Solidity: function specimenProofURL() view returns(string)
+func (_ProofChain *ProofChainCaller) SpecimenProofURL(opts *bind.CallOpts) (string, error) {
+	var out []interface{}
+	err := _ProofChain.contract.Call(opts, &out, "specimenProofURL")
+
+	if err != nil {
+		return *new(string), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(string)).(*string)
+
+	return out0, err
+
 }
 
-// ProveBlockReplicaProduced is a paid mutator transaction binding the contract method 0x5197d122.
+// SpecimenProofURL is a free data retrieval call binding the contract method 0xafb034c5.
 //
-// Solidity: function ProveBlockReplicaProduced(uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash) payable returns()
-func (_ProofChain *ProofChainSession) ProveBlockReplicaProduced(chainID uint64, chainHeightPos uint64, chainHeightLen uint64, specimenSize uint64, specimenHash [32]byte) (*types.Transaction, error) {
-	return _ProofChain.Contract.ProveBlockReplicaProduced(&_ProofChain.TransactOpts, chainID, chainHeightPos, chainHeightLen, specimenSize, specimenHash)
+// Solidity: function specimenProofURL() view returns(string)
+func (_ProofChain *ProofChainSession) SpecimenProofURL() (string, error) {
+	return _ProofChain.Contract.SpecimenProofURL(&_ProofChain.CallOpts)
 }
 
-// ProveBlockReplicaProduced is a paid mutator transaction binding the contract method 0x5197d122.
+// SpecimenProofURL is a free data retrieval call binding the contract method 0xafb034c5.
 //
-// Solidity: function ProveBlockReplicaProduced(uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash) payable returns()
-func (_ProofChain *ProofChainTransactorSession) ProveBlockReplicaProduced(chainID uint64, chainHeightPos uint64, chainHeightLen uint64, specimenSize uint64, specimenHash [32]byte) (*types.Transaction, error) {
-	return _ProofChain.Contract.ProveBlockReplicaProduced(&_ProofChain.TransactOpts, chainID, chainHeightPos, chainHeightLen, specimenSize, specimenHash)
+// Solidity: function specimenProofURL() view returns(string)
+func (_ProofChain *ProofChainCallerSession) SpecimenProofURL() (string, error) {
+	return _ProofChain.Contract.SpecimenProofURL(&_ProofChain.CallOpts)
+}
+
+// ProveBlockReplicaProduced is a paid mutator transaction binding the contract method 0x46d07cdf.
+//
+// Solidity: function ProveBlockReplicaProduced(uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash, string specimenURL) payable returns()
+func (_ProofChain *ProofChainTransactor) ProveBlockReplicaProduced(opts *bind.TransactOpts, chainID uint64, chainHeightPos uint64, chainHeightLen uint64, specimenSize uint64, specimenHash [32]byte, specimenURL string) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "ProveBlockReplicaProduced", chainID, chainHeightPos, chainHeightLen, specimenSize, specimenHash, specimenURL)
+}
+
+// ProveBlockReplicaProduced is a paid mutator transaction binding the contract method 0x46d07cdf.
+//
+// Solidity: function ProveBlockReplicaProduced(uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash, string specimenURL) payable returns()
+func (_ProofChain *ProofChainSession) ProveBlockReplicaProduced(chainID uint64, chainHeightPos uint64, chainHeightLen uint64, specimenSize uint64, specimenHash [32]byte, specimenURL string) (*types.Transaction, error) {
+	return _ProofChain.Contract.ProveBlockReplicaProduced(&_ProofChain.TransactOpts, chainID, chainHeightPos, chainHeightLen, specimenSize, specimenHash, specimenURL)
+}
+
+// ProveBlockReplicaProduced is a paid mutator transaction binding the contract method 0x46d07cdf.
+//
+// Solidity: function ProveBlockReplicaProduced(uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash, string specimenURL) payable returns()
+func (_ProofChain *ProofChainTransactorSession) ProveBlockReplicaProduced(chainID uint64, chainHeightPos uint64, chainHeightLen uint64, specimenSize uint64, specimenHash [32]byte, specimenURL string) (*types.Transaction, error) {
+	return _ProofChain.Contract.ProveBlockReplicaProduced(&_ProofChain.TransactOpts, chainID, chainHeightPos, chainHeightLen, specimenSize, specimenHash, specimenURL)
 }
 
 // GrantRolePreapproval is a paid mutator transaction binding the contract method 0x5ff2bfa0.
@@ -753,12 +784,13 @@ type ProofChainBlockReplicaPublicationProofAppended struct {
 	ChainHeightLen uint64
 	SpecimenSize   uint64
 	SpecimenHash   [32]byte
+	SpecimenURL    string
 	Raw            types.Log // Blockchain specific contextual infos
 }
 
-// FilterBlockReplicaPublicationProofAppended is a free log retrieval operation binding the contract event 0x908f0b3176a452cbef82ca8b04807a4bf5f77182ebedd9d62f2988ebcd724135.
+// FilterBlockReplicaPublicationProofAppended is a free log retrieval operation binding the contract event 0xc2b741fb7b0109c75444f941e1b5cb7e2df7ecec700022c1690703e0451f4698.
 //
-// Solidity: event BlockReplicaPublicationProofAppended(uint64 seq, address extractWorker, uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash)
+// Solidity: event BlockReplicaPublicationProofAppended(uint64 seq, address extractWorker, uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash, string specimenURL)
 func (_ProofChain *ProofChainFilterer) FilterBlockReplicaPublicationProofAppended(opts *bind.FilterOpts) (*ProofChainBlockReplicaPublicationProofAppendedIterator, error) {
 
 	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "BlockReplicaPublicationProofAppended")
@@ -768,9 +800,9 @@ func (_ProofChain *ProofChainFilterer) FilterBlockReplicaPublicationProofAppende
 	return &ProofChainBlockReplicaPublicationProofAppendedIterator{contract: _ProofChain.contract, event: "BlockReplicaPublicationProofAppended", logs: logs, sub: sub}, nil
 }
 
-// WatchBlockReplicaPublicationProofAppended is a free log subscription operation binding the contract event 0x908f0b3176a452cbef82ca8b04807a4bf5f77182ebedd9d62f2988ebcd724135.
+// WatchBlockReplicaPublicationProofAppended is a free log subscription operation binding the contract event 0xc2b741fb7b0109c75444f941e1b5cb7e2df7ecec700022c1690703e0451f4698.
 //
-// Solidity: event BlockReplicaPublicationProofAppended(uint64 seq, address extractWorker, uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash)
+// Solidity: event BlockReplicaPublicationProofAppended(uint64 seq, address extractWorker, uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash, string specimenURL)
 func (_ProofChain *ProofChainFilterer) WatchBlockReplicaPublicationProofAppended(opts *bind.WatchOpts, sink chan<- *ProofChainBlockReplicaPublicationProofAppended) (event.Subscription, error) {
 
 	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "BlockReplicaPublicationProofAppended")
@@ -805,9 +837,9 @@ func (_ProofChain *ProofChainFilterer) WatchBlockReplicaPublicationProofAppended
 	}), nil
 }
 
-// ParseBlockReplicaPublicationProofAppended is a log parse operation binding the contract event 0x908f0b3176a452cbef82ca8b04807a4bf5f77182ebedd9d62f2988ebcd724135.
+// ParseBlockReplicaPublicationProofAppended is a log parse operation binding the contract event 0xc2b741fb7b0109c75444f941e1b5cb7e2df7ecec700022c1690703e0451f4698.
 //
-// Solidity: event BlockReplicaPublicationProofAppended(uint64 seq, address extractWorker, uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash)
+// Solidity: event BlockReplicaPublicationProofAppended(uint64 seq, address extractWorker, uint64 chainID, uint64 chainHeightPos, uint64 chainHeightLen, uint64 specimenSize, bytes32 specimenHash, string specimenURL)
 func (_ProofChain *ProofChainFilterer) ParseBlockReplicaPublicationProofAppended(log types.Log) (*ProofChainBlockReplicaPublicationProofAppended, error) {
 	event := new(ProofChainBlockReplicaPublicationProofAppended)
 	if err := _ProofChain.contract.UnpackLog(event, "BlockReplicaPublicationProofAppended", log); err != nil {
