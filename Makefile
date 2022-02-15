@@ -9,13 +9,13 @@ lint:
 	@golangci-lint run
 
 run-build:
-	@echo "---- Building Agent from cmd/mqstoreagent ----"
-	@go build -o ./bin/mqstoreagent/agent ./cmd/mqstoreagent/*.go 
+	@echo "---- Building Agent from cmd/bspagent ----"
+	@go build -o ./bin/bspagent/agent ./cmd/bspagent/*.go 
 	@echo "---- Done Building to ./bin/agent ----"
 
 run-agent-eth:
-	@echo "---- Running Agent from cmd/mqstoreagent ----"
-	@go run ./cmd/mqstoreagent/*.go \
+	@echo "---- Running Agent from cmd/bspagent ----"
+	@go run ./cmd/bspagent/*.go \
 	--redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \
 	--avro-codec-path="./codec/block-ethereum.avsc" \
 	--binary-file-path="./bin/block-ethereum/" \
@@ -26,8 +26,8 @@ run-agent-eth:
 	--consumer-timeout=80
 
 run-agent-elrond:
-	@echo "---- Running Agent from cmd/mqstoreagent ----"
-	@go run ./cmd/mqstoreagent/*.go \
+	@echo "---- Running Agent from cmd/bspagent ----"
+	@go run ./cmd/bspagent/*.go \
 	--redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \
 	--avro-codec-path="./codec/block-elrond.avsc" \
 	--binary-file-path="./bin/block-elrond/" \

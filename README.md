@@ -188,7 +188,7 @@ git checkout main
 Run the agent for (ethereum block-specimens) locally directly using the following -
 
 ```bash
-go run ./cmd/mqstoreagent/*.go \
+go run ./cmd/bspagent/*.go \
     --redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \
     --avro-codec-path="./codec/block-ethereum.avsc" \
     --binary-file-path="./bin/block-ethereum/" \

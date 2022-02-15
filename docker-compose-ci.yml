@@ -76,7 +76,7 @@ services:
     ports:
       - "8008:8008"
 
-  agent:
+  bsp-agent:
     container_name: bsp-agent
     links:
       - "cqt-virtnet:proof-chain"

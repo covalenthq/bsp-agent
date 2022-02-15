@@ -87,7 +87,7 @@ bin/
 cache
 artifacts
 
-*.mqstoreagent
+*.bspagent
 
 ./internal/proof/proofchain.abi
 ./internal/proof/proofchain.go
