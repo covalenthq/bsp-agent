@@ -76,8 +76,8 @@ services:
     ports:
       - "8008:8008"
 
-  agent:
-    image: "ghcr.io/covalenthq/bsp-geth:latest"
+  bsp-agent:
+    image: "ghcr.io/covalenthq/bsp-agent:latest"
     container_name: bsp-agent
     restart:  on-failure
     links:
