@@ -83,7 +83,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart:  always
+    restart: on-failure
     depends_on:
       cqt-virtnet:
         condition: service_started
