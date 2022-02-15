@@ -65,7 +65,7 @@ services:
     entrypoint: >
      /bin/bash -l -c "
       truffle migrate --network docker;
-      nc -v agent 8008;
+      nc -v bsp-agent 8008;
       sleep 100000;"
     depends_on:
       - node
