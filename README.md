@@ -58,7 +58,7 @@ These block-replicas are produced by go-ethereum nodes / websocket block data so
 
 Production of Block Specimen forms the core of the network’s data objects specification. These objects are created with the aid of three main pieces of open-source software provided by Covalent for the network’s decentralized stack.
 
-1. [Block Specimen Producer (BSP Geth)](https://github.com/covalenthq/go-ethereum) - Operator run & deployed
+1. [Block Specimen Producer (BSP Geth)](https://github.com/covalenthq/bsp-geth) - Operator run & deployed
 
 1. [BSP Agent](https://github.com/covalenthq/bsp-agent) - Operator run & deployed
 
