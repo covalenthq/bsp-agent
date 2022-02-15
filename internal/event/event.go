@@ -4,7 +4,7 @@ package event
 import (
 	"fmt"
 
-	ty "github.com/covalenthq/mq-store-agent/internal/types"
+	ty "github.com/covalenthq/bsp-agent/internal/types"
 )
 
 // ReplicationSegment is block replication segment that is converted to AVRO encoding

@@ -1,17 +1,17 @@
 ![banner](./docs/covalent.jpg)
 
 <div align="center">
-  <a href="https://github.com/covalenthq/mq-store-agent/releases/latest">
+  <a href="https://github.com/covalenthq/bsp-agent/releases/latest">
     <img alt="Version" src="https://img.shields.io/badge/tag-v1.0.0-yellowgreen" />
   </a>
-  <a href="https://github.com/covalenthq/mq-store-agent/blob/main/LICENSE">
+  <a href="https://github.com/covalenthq/bsp-agent/blob/main/LICENSE">
     <img alt="License: " src="https://img.shields.io/badge/license-MIT-green" />
   </a>
-  <a href="https://goreportcard.com/report/github.com/covalenthq/mq-store-agent">
-    <img alt="Go report card" src="https://goreportcard.com/badge/github.com/covalenthq/mq-store-agent"/>
+  <a href="https://goreportcard.com/report/github.com/covalenthq/bsp-ageth">
+    <img alt="Go report card" src="https://goreportcard.com/badge/github.com/covalenthq/bsp-agent"/>
   </a>
   <a href="https://bestpractices.coreinfrastructure.org/projects/5570">
-    <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/covalenthq/mq-store-agent">
+    <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/covalenthq/bsp-agent">
   </a>
   <a href="https://bestpractices.coreinfrastructure.org/projects/5570"><img src="https://bestpractices.coreinfrastructure.org/projects/5570/badge"></a>
   <a href="http://covalenthq.com/discord">
@@ -22,18 +22,18 @@
   <a href="http://covalenthq.com/discord">
     <img alt="Discord" src="https://img.shields.io/discord/715804406842392586.svg" />
   </a>
-  <a href="https://github.com/covalenthq/mq-store-agent/actions/workflows/golangci-lint.yml?query=branch%3Amain+workflow%3Agolangci-lint">
-    <img alt="Lint Status" src="https://github.com/covalenthq/mq-store-agent/actions/workflows/golangci-lint.yml/badge.svg?branch=main" />
+  <a href="https://github.com/covalenthq/bsp-agent/actions/workflows/golangci-lint.yml?query=branch%3Amain+workflow%3Agolangci-lint">
+    <img alt="Lint Status" src="https://github.com/covalenthq/bsp-agent/actions/workflows/golangci-lint.yml/badge.svg?branch=main" />
   </a>
-  <a href="https://github.com/covalenthq/mq-store-agent/actions/workflows/docker-image.yml?query=branch%3Amain+workflow%3Adocker-image-ci">
-    <img alt="CI Status" src="https://github.com/covalenthq/mq-store-agent/actions/workflows/docker-image.yml/badge.svg?branch=main" />
+  <a href="https://github.com/covalenthq/bsp-agent/actions/workflows/docker-image.yml?query=branch%3Amain+workflow%3Adocker-image-ci">
+    <img alt="CI Status" src="https://github.com/covalenthq/bsp-agent/actions/workflows/docker-image.yml/badge.svg?branch=main" />
   </a>
   <a href="https://twitter.com/@Covalent_HQ">
     <img alt="Twitter Follow Covalent" src="https://img.shields.io/twitter/follow/Covalent_HQ"/>
   </a>
 </div>
 
-# BSP Agent (mq-store-agent)
+# BSP Agent
 
 * [Introduction](#agent_intro)
   * [Resources](#agent_resources)
@@ -60,11 +60,11 @@ Production of Block Specimen forms the core of the network’s data objects spec
 
 1. [Block Specimen Producer (BSP Geth)](https://github.com/covalenthq/go-ethereum) - Operator run & deployed
 
-1. [BSP Agent](https://github.com/covalenthq/mq-store-agent) - Operator run & deployed
+1. [BSP Agent](https://github.com/covalenthq/bsp-agent) - Operator run & deployed
 
 1. [BSP Proof-chain](https://github.com/covalenthq/cqt-virtnet) - Covalent operated & pre-deployed
 
-Please refer to these [instructions](https://docs.google.com/document/d/1N_HxUi6ZEkub9EHANe49vkL9iQztVA_ACyfHcOZV5y0/edit?usp=sharing) for running the BSP with the mq-store-agent (BSP Agent).
+Please refer to these [instructions](https://docs.google.com/document/d/1N_HxUi6ZEkub9EHANe49vkL9iQztVA_ACyfHcOZV5y0/edit?usp=sharing) for running the BSP with the bsp-agent (BSP Agent).
 
 Please refer to this [whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.1.pdf) to understand more about its function.
 
@@ -149,7 +149,7 @@ For Elrond -
 
 ## <span id="environment">Environment</span>
 
-An Ethereum private key (for a public address that is pre-whitelisted on the staking contract) allows block-specimen producers (operators) to make proof transactions to the proof-chain contract and is required by the mq-store-agent. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/mq-store-agent/.envrc`
+An Ethereum private key (for a public address that is pre-whitelisted on the staking contract) allows block-specimen producers (operators) to make proof transactions to the proof-chain contract and is required by the bsp-agent. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/bsp-agent/.envrc`
 
 ```bash
     export ETH_PRIVATE_KEY=private/key/senders #required
@@ -169,19 +169,19 @@ And enable the vars with `direnv allow .`
 For which you should see something like -
 
 ```bash
-    direnv: loading ~/Documents/covalent/mq-store-agent/.envrc
+    direnv: loading ~/Documents/covalent/bsp-agent/.envrc
     direnv: export +ETH_PRIVATE_KEY
 ```
 
-The remaining environment configuration is set up with flags provided to the mq-store-agent during runtime.
+The remaining environment configuration is set up with flags provided to the bsp-agent during runtime.
 
 ## <span id="build_run">Build & Run</span>
 
-Clone the `covalenthq/mq-store-agent` repo and checkout `main`
+Clone the `covalenthq/bsp-agent` repo and checkout `main`
 
 ```bash
-git clone git@github.com:covalenthq/mq-store-agent.git
-cd mq-store-agent
+git clone git@github.com:covalenthq/bsp-agent.git
+cd bsp-agent
 git checkout main
 ```
 
@@ -246,17 +246,17 @@ Employ `docker-compose` to get all the necessary services along with the BSP age
 1. proof-chain (Validation (proofing) smart-contracts)
 
 ```bash
-    cd mq-store-agent
+    cd bsp-agent
     docker-compose -f "docker-compose.yml" --env-file .env.dev up --build --remove-orphans --force-recreate --exit-code-from consumer
 ```
 
-The docker image for this service can be found [here](https://github.com/covalenthq/mq-store-agent/pkgs/container/mq-store-agent)
+The docker image for this service can be found [here](https://github.com/covalenthq/bsp-agent/pkgs/container/bsp-agent)
 
-Run only the mq-store-agent with the following, though this will not work if the other services in the docker-compose.yml file aren't also initialized.
+Run only the bsp-agent with the following, though this will not work if the other services in the docker-compose.yml file aren't also initialized.
 
 ```bash
-    docker pull ghcr.io/covalenthq/mq-store-agent:latest
-    docker run ghcr.io/covalenthq/mq-store-agent:latest --env-file .env.dev
+    docker pull ghcr.io/covalenthq/bsp-agent:latest
+    docker run ghcr.io/covalenthq/bsp-agent:latest --env-file .env.dev
 ```
 
 ## <span id="scripts">Scripts</span>

@@ -1,4 +1,4 @@
-module github.com/covalenthq/mq-store-agent
+module github.com/covalenthq/bsp-agent
 
 go 1.16
 

@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"cloud.google.com/go/storage"
-	"github.com/covalenthq/mq-store-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/elodina/go-avro"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"

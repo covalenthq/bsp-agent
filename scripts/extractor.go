@@ -14,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/TylerBrock/colorjson"
-	"github.com/covalenthq/mq-store-agent/internal/utils"
+	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/linkedin/goavro/v2"
 	"gopkg.in/avro.v0"
 )

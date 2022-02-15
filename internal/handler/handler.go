@@ -10,12 +10,12 @@ import (
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/covalenthq/mq-store-agent/internal/config"
-	"github.com/covalenthq/mq-store-agent/internal/event"
-	"github.com/covalenthq/mq-store-agent/internal/proof"
-	st "github.com/covalenthq/mq-store-agent/internal/storage"
-	"github.com/covalenthq/mq-store-agent/internal/types"
-	"github.com/covalenthq/mq-store-agent/internal/utils"
+	"github.com/covalenthq/bsp-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/event"
+	"github.com/covalenthq/bsp-agent/internal/proof"
+	st "github.com/covalenthq/bsp-agent/internal/storage"
+	"github.com/covalenthq/bsp-agent/internal/types"
+	"github.com/covalenthq/bsp-agent/internal/utils"
 )
 
 // EncodeReplicaSegmentToAvro encodes replica segment into AVRO binary encoding

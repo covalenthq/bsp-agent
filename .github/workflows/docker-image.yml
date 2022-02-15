@@ -22,8 +22,8 @@ jobs:
     - name: Build & Publish the Docker image
       if: ${{ !env.ACT }}
       run: | 
-        docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:latest
-        docker push ghcr.io/covalenthq/mq-store-agent:latest
+        docker build . --file Dockerfile --tag ghcr.io/covalenthq/bsp-agent:latest
+        docker push ghcr.io/covalenthq/bsp-agent:latest
 
     - name: Create env file
       run: |
@@ -66,8 +66,8 @@ jobs:
     - name: Build & Publish the Docker image
       if: ${{ !env.ACT }}
       run: |
-        docker build . --file Dockerfile --tag ghcr.io/covalenthq/mq-store-agent:latest
-        docker push ghcr.io/covalenthq/mq-store-agent:latest
+        docker build . --file Dockerfile --tag ghcr.io/covalenthq/bsp-agent:latest
+        docker push ghcr.io/covalenthq/bsp-agent:latest
 
     - name: Create env file
       run: |

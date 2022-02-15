@@ -23,12 +23,12 @@ import (
 	"github.com/ubiq/go-ubiq/rlp"
 	"gopkg.in/avro.v0"
 
-	"github.com/covalenthq/mq-store-agent/internal/config"
-	"github.com/covalenthq/mq-store-agent/internal/event"
-	"github.com/covalenthq/mq-store-agent/internal/handler"
-	"github.com/covalenthq/mq-store-agent/internal/types"
-	"github.com/covalenthq/mq-store-agent/internal/utils"
-	"github.com/covalenthq/mq-store-agent/internal/websocket"
+	"github.com/covalenthq/bsp-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/event"
+	"github.com/covalenthq/bsp-agent/internal/handler"
+	"github.com/covalenthq/bsp-agent/internal/types"
+	"github.com/covalenthq/bsp-agent/internal/utils"
+	"github.com/covalenthq/bsp-agent/internal/websocket"
 )
 
 var (
@@ -67,7 +67,7 @@ func init() {
 	log.SetFormatter(&formatter)
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.InfoLevel)
-	log.WithFields(log.Fields{"file": "main.go"}).Info("mq-store-agent is running...")
+	log.WithFields(log.Fields{"file": "main.go"}).Info("bsp-agent is running...")
 }
 
 func main() {

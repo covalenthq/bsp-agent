@@ -15,14 +15,14 @@
 ## <span id="bugs">Reporting Bugs</span>
 
 Please file bugs in the [GitHub Issue
-Tracker](https://github.com/covalenthq/mq-store-agent). Include at
+Tracker](https://github.com/covalenthq/bsp-agent). Include at
 least the following:
 
  - What happened
  - What did you expect to happen instead of what *did* happen, if it's
    not crazy obvious
  - What operating system, operating system version and version of
-   mq-store-agent you are running
+   bsp-agent you are running
  - Console log entries, where possible and relevant
 
 If you're not sure whether something is relevant, erring on the side of
@@ -33,8 +33,8 @@ too much information will never be a cause for concern.
 
 Contributing to this repo can mean many things such as participating in discussion or proposing code changes. To ensure a smooth workflow for all contributors, the following general procedure for contributing has been established:
 
-1. Either [open](https://github.com/covalenthq/mq-store-agent/issues/new/choose)
-   or [find](https://github.com/covalenthq/mq-store-agent/issues) an issue you have identified and would like to contribute to
+1. Either [open](https://github.com/covalenthq/bsp-agent/issues/new/choose)
+   or [find](https://github.com/covalenthq/bsp-agent/issues) an issue you have identified and would like to contribute to
    resolving.
 
 2. Participate in thoughtful discussion on that issue.
@@ -47,7 +47,7 @@ Contributing to this repo can mean many things such as participating in discussi
        if you are eager and do not get a prompt response, feel free to dive on in!
     4. Follow standard Github best practices:
         1. Fork the repo
-        2. Branch from the HEAD of `main`(For core developers working within the mq-store-agent repo, to ensure a clear ownership of branches, branches must be named with the convention `{moniker}/{issue#}-branch-name`).
+        2. Branch from the HEAD of `main`(For core developers working within the bsp-agent repo, to ensure a clear ownership of branches, branches must be named with the convention `{moniker}/{issue#}-branch-name`).
         3. Make commits
         4. Submit a PR to `main`
     5. Be sure to submit the PR in `Draft` mode. Submit your PR early, even if it's incomplete as this indicates to the community you're working on something and allows them to provide comments early in the development process.
@@ -61,7 +61,7 @@ PR, but be aware that for more complex problems/features, if a PR is opened befo
 taken place in a github issue, that PR runs a high likelihood of being rejected.
 
 Looking for a good place to start contributing? How about checking out
-some [good first issues](https://github.com/covalenthq/mq-store-agent/issues).
+some [good first issues](https://github.com/covalenthq/bsp-agent/issues).
 
 ### <span id="dev_procedure">Development Procedure</span>
 
@@ -69,7 +69,7 @@ some [good first issues](https://github.com/covalenthq/mq-store-agent/issues).
 2. `main` must never
    fail `make lint, make run-build, make run-agent-eth `
 3. No `--force` onto `main` (except when reverting a broken commit, which should seldom happen).
-4. Create your feature branch from `main` either on `github.com/covalenthq/mq-store-agent`, or your fork (
+4. Create your feature branch from `main` either on `github.com/covalenthq/bsp-agent`, or your fork (
    using `git remote add origin`).
 5. Before submitting a pull request, begin `git rebase` on top of `main`.
 
@@ -86,7 +86,7 @@ on `go mod tidy -v`.
 
 ### <span id="testing">Testing</span>
 
-Covalent uses [GitHub Actions](https://github.com/features/actions) for automated [integration testing](https://github.com/covalenthq/mq-store-agent/actions).
+Covalent uses [GitHub Actions](https://github.com/features/actions) for automated [integration testing](https://github.com/covalenthq/bsp-agent/actions).
 
 ### <span id="braching_model_and_release">Branching Model and Release</span>
 

@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/covalenthq/mq-store-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"

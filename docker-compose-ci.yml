@@ -59,7 +59,7 @@ services:
   cqt-virtnet:
     image: "ghcr.io/covalenthq/cqt-virtnet:latest"
     container_name: proof-chain
-    restart:  on-failure
+    restart:  always
     expose:
       - 8008
     entrypoint: >
@@ -83,7 +83,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart:  on-failure
+    restart:  always
     depends_on:
       cqt-virtnet:
         condition: service_started
