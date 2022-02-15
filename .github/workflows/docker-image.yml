@@ -33,7 +33,7 @@ jobs:
 
     - uses: HatsuneMiku3939/direnv-action@v1
     - name: Start containers
-      run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --force-recreate --exit-code-from bsp-agent bsp-agent
+      run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
 
     - name: Check running agent
       run: docker inspect bsp-agent
@@ -77,7 +77,7 @@ jobs:
 
     - uses: HatsuneMiku3939/direnv-action@v1
     - name: Start containers
-      run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --force-recreate --exit-code-from bsp-agent bsp-agent
+      run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
 
     - name: Check running agent
       run: docker inspect bsp-agent

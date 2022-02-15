@@ -65,7 +65,7 @@ services:
     entrypoint: >
      /bin/bash -l -c "
       truffle migrate --network docker;
-      nc -v bsp-agent 8008;
+      nc -v agent 8008;
       sleep 100000;"
     depends_on:
       - node
@@ -76,7 +76,7 @@ services:
     ports:
       - "8008:8008"
 
-  bsp-agent:
+  agent:
     container_name: bsp-agent
     links:
       - "cqt-virtnet:proof-chain"
