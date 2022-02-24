@@ -10,9 +10,9 @@
   <a href="https://goreportcard.com/report/github.com/covalenthq/bsp-agent">
     <img alt="Go report card" src="https://goreportcard.com/badge/github.com/covalenthq/bsp-agent"/>
   </a>
-  <a href="https://bestpractices.coreinfrastructure.org/projects/5570">
+<!--   <a href="https://bestpractices.coreinfrastructure.org/projects/5570">
     <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/covalenthq/bsp-agent">
-  </a>
+  </a> -->
   <a href="https://bestpractices.coreinfrastructure.org/projects/5570"><img src="https://bestpractices.coreinfrastructure.org/projects/5570/badge"></a>
   <a href="http://covalenthq.com/discord">
     <img alt="Discord" src="https://img.shields.io/badge/discord-join%20chat-blue.svg" />
