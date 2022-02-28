@@ -3,7 +3,7 @@ module github.com/covalenthq/bsp-agent
 go 1.16
 
 require (
-	cloud.google.com/go/storage v1.20.0
+	cloud.google.com/go/storage v1.21.0
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
