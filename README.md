@@ -149,9 +149,17 @@ For Elrond -
 
 ## <span id="environment">Environment</span>
 
-An Ethereum private key (for a public address that is pre-whitelisted on the staking contract) allows block-specimen producers (operators) to make proof transactions to the proof-chain contract and is required by the bsp-agent. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/bsp-agent/.envrc`
+An Ethereum private key (for a public address that is pre-whitelisted on the staking contract) allows block-specimen producers (operators) to make proof transactions to the proof-chain contract and is required by the bsp-agent. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/bsp-agent/.envrc`.
 
-```bash
+An Ethereum RPC URL specifies the ethereum client connection string used to make transactions to on proof-chain contract, the respective credentials to be able to write to the contract should be provided in the .envrc file as follows
+
+```env
+export ETH_RPC_URL=http://127.0.0.1:7545
+export ETH_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
+```
+
+```env
+    export RPC_URL=http://your/rpc/url
     export ETH_PRIVATE_KEY=private/key/senders #required
     export REDIS_PWD=your-redis-password #optional
     export ETH_KEYSTORE_PATH=path/to/keystore/file.json #optional
@@ -195,7 +203,6 @@ go run ./cmd/bspagent/*.go \
     --gcp-svc-account="/Users/<user>/.config/gcloud/<gcp-service-account.json>" \
     --replica-bucket="<covalenthq-geth-block-replica-bucket>" \
     --segment-length=1 \
-    --eth-client="http://127.0.0.1:7545" \
     --proof-chain-address="0xb5B12cbe8bABAF96677F60f65317b81709062C47" \
     --consumer-timeout=80
 ```
@@ -223,12 +230,6 @@ export REDIS_PWD=your-redis-pwd
 `--replica-bucket` - lets the BSP agent know the “bucket-name” for cloud storage of block replica specimens/results (currently only google cloud storege is supported)
 
 `--segment-length` - allows the BSP operator to configure the size of each uploaded object (AVRO compression containing as many as specified block specimens in a single uploaded object)
-
-`--eth-client` - specifies the ethereum client connection string used to make transactions to on proof-chain contract, the respective credentials to be able to write to the contract should be provided in the .envrc file as follows
-
-```env
-export ETH_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
-```
 
 `--proof-chain-address` - specifies the address of the proof-chain contract that has been deployed for the CQT network (local ethereum network for this workflow).
 
