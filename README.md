@@ -153,6 +153,7 @@ An Ethereum private key (for a public address that is pre-whitelisted on the sta
 
 ```bash
     export ETH_PRIVATE_KEY=private/key/senders #required
+    export ETH_RPC_URL=rpc-url #required
     export REDIS_PWD=your-redis-password #optional
     export ETH_KEYSTORE_PATH=path/to/keystore/file.json #optional
     export ETH_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
@@ -170,7 +171,7 @@ For which you should see something like -
 
 ```bash
     direnv: loading ~/Documents/covalent/bsp-agent/.envrc
-    direnv: export +ETH_PRIVATE_KEY
+    direnv: export +ETH_PRIVATE_KEY +ETH_RPC_URL
 ```
 
 The remaining environment configuration is set up with flags provided to the bsp-agent during runtime.
@@ -183,6 +184,7 @@ Clone the `covalenthq/bsp-agent` repo and checkout `main`
 git clone git@github.com:covalenthq/bsp-agent.git
 cd bsp-agent
 git checkout main
+mkdir -p bin/block-ethereum
 ```
 
 Run the agent for (ethereum block-specimens) locally directly using the following -
@@ -195,7 +197,6 @@ go run ./cmd/bspagent/*.go \
     --gcp-svc-account="/Users/<user>/.config/gcloud/<gcp-service-account.json>" \
     --replica-bucket="<covalenthq-geth-block-replica-bucket>" \
     --segment-length=1 \
-    --eth-client="http://127.0.0.1:7545" \
     --proof-chain-address="0xb5B12cbe8bABAF96677F60f65317b81709062C47" \
     --consumer-timeout=80
 ```
@@ -223,12 +224,6 @@ export REDIS_PWD=your-redis-pwd
 `--replica-bucket` - lets the BSP agent know the “bucket-name” for cloud storage of block replica specimens/results (currently only google cloud storege is supported)
 
 `--segment-length` - allows the BSP operator to configure the size of each uploaded object (AVRO compression containing as many as specified block specimens in a single uploaded object)
-
-`--eth-client` - specifies the ethereum client connection string used to make transactions to on proof-chain contract, the respective credentials to be able to write to the contract should be provided in the .envrc file as follows
-
-```env
-export ETH_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
-```
 
 `--proof-chain-address` - specifies the address of the proof-chain contract that has been deployed for the CQT network (local ethereum network for this workflow).
 
@@ -292,7 +287,7 @@ To view pretty print the results from the creation of avro encoded block-replica
 ```bash
 go run extractor.go \ 
     --binary-file-path="../bin/block-ethereum/" \
-    --avro-codec-path="../codec/block-ethereum.avsc" \
+    --codec-path="../codec/block-ethereum.avsc" \
     --indent-json=0
 ```
 
