@@ -161,6 +161,7 @@ export ETH_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd
 ```env
     export RPC_URL=http://your/rpc/url
     export ETH_PRIVATE_KEY=private/key/senders #required
+    export ETH_RPC_URL=rpc-url #required
     export REDIS_PWD=your-redis-password #optional
     export ETH_KEYSTORE_PATH=path/to/keystore/file.json #optional
     export ETH_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
@@ -178,7 +179,7 @@ For which you should see something like -
 
 ```bash
     direnv: loading ~/Documents/covalent/bsp-agent/.envrc
-    direnv: export +ETH_PRIVATE_KEY
+    direnv: export +ETH_PRIVATE_KEY +ETH_RPC_URL
 ```
 
 The remaining environment configuration is set up with flags provided to the bsp-agent during runtime.
@@ -191,6 +192,7 @@ Clone the `covalenthq/bsp-agent` repo and checkout `main`
 git clone git@github.com:covalenthq/bsp-agent.git
 cd bsp-agent
 git checkout main
+mkdir -p bin/block-ethereum
 ```
 
 Run the agent for (ethereum block-specimens) locally directly using the following -
@@ -293,7 +295,7 @@ To view pretty print the results from the creation of avro encoded block-replica
 ```bash
 go run extractor.go \ 
     --binary-file-path="../bin/block-ethereum/" \
-    --avro-codec-path="../codec/block-ethereum.avsc" \
+    --codec-path="../codec/block-ethereum.avsc" \
     --indent-json=0
 ```
 
