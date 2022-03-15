@@ -22,6 +22,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
 	"gopkg.in/avro.v0"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
@@ -65,7 +66,14 @@ func init() {
 	}}
 	formatter.Line = true
 	log.SetFormatter(&formatter)
-	log.SetOutput(os.Stdout)
+	bspLoggerOutput := utils.NewLoggerOut(os.Stdout, &lumberjack.Logger{
+		// logs folder created/searched in directory in which agent was started.
+		Filename:   "./logs/log.log",
+		MaxSize:    100, // megabytes
+		MaxBackups: 7,
+		MaxAge:     10, // days
+	})
+	log.SetOutput(&bspLoggerOutput)
 	log.SetLevel(log.InfoLevel)
 	log.WithFields(log.Fields{"file": "main.go"}).Info("bsp-agent is running...")
 }

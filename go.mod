@@ -22,5 +22,6 @@ require (
 	github.com/ubiq/go-ubiq v3.0.1+incompatible
 	google.golang.org/api v0.70.0
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
