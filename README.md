@@ -205,7 +205,7 @@ go run ./cmd/bspagent/*.go \
     --gcp-svc-account="/Users/<user>/.config/gcloud/<gcp-service-account.json>" \
     --replica-bucket="<covalenthq-geth-block-replica-bucket>" \
     --segment-length=1 \
-    --proof-chain-address="0xb5B12cbe8bABAF96677F60f65317b81709062C47" \
+    --proof-chain-address="0xe9048412727c96f1044c78CffA45BB2311aE1F1D" \
     --consumer-timeout=80
 ```
 

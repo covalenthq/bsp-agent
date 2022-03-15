@@ -46,7 +46,9 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
-	transaction, err := contract.ProveBlockReplicaProduced(opts, chainID, chainHeight, chainLen, uint64(len(jsonResult)), sha256Result, replicaURL)
+
+	transaction, err := contract.SubmitBlockSpecimenProof(opts, chainID, chainHeight, uint64(len(jsonResult)), chainLen, sha256Result, replicaURL)
+
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
 
