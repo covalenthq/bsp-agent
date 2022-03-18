@@ -5,8 +5,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
+	"net/url"
 	"os"
 	"os/signal"
+	"path"
 	"strings"
 	"sync"
 	"syscall"
@@ -21,6 +24,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
+	"golang.org/x/sys/unix"
 	"gopkg.in/avro.v0"
 	"gopkg.in/natefinch/lumberjack.v2"
 
@@ -49,6 +53,7 @@ var (
 	proofChainFlag             string
 	binaryFilePathFlag         string
 	websocketURLsFlag          string
+	logsFolderFlag             string = "./logs/"
 
 	// stream processing vars
 	start                 = ">"
@@ -60,25 +65,7 @@ var (
 	blockReplica          types.BlockReplica
 )
 
-func init() {
-	formatter := runtime.Formatter{ChildFormatter: &log.TextFormatter{
-		FullTimestamp: true,
-	}}
-	formatter.Line = true
-	log.SetFormatter(&formatter)
-	bspLoggerOutput := utils.NewLoggerOut(os.Stdout, &lumberjack.Logger{
-		// logs folder created/searched in directory in which agent was started.
-		Filename:   "./logs/log.log",
-		MaxSize:    100, // megabytes
-		MaxBackups: 7,
-		MaxAge:     10, // days
-	})
-	log.SetOutput(&bspLoggerOutput)
-	log.SetLevel(log.InfoLevel)
-	log.WithFields(log.Fields{"file": "main.go"}).Info("bsp-agent is running...")
-}
-
-func main() {
+func parseFlags() {
 	flag.StringVar(&redisURLFlag, "redis-url", utils.LookupEnvOrString("RedisURL", redisURLFlag), "redis consumer stream url")
 	flag.StringVar(&avroCodecPathFlag, "avro-codec-path", utils.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
 	flag.StringVar(&binaryFilePathFlag, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
@@ -88,8 +75,43 @@ func main() {
 	flag.StringVar(&websocketURLsFlag, "websocket-urls", utils.LookupEnvOrString("WebsocketURLs", websocketURLsFlag), "url to websockets clients separated by space")
 	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
+	flag.StringVar(&logsFolderFlag, "logs-folder", utils.LookupEnvOrString("LogsFolder", logsFolderFlag), "Location where the log files should be placed")
 	flag.Parse()
+}
 
+func init() {
+	parseFlags()
+
+	// setup logger
+	formatter := runtime.Formatter{ChildFormatter: &log.TextFormatter{
+		FullTimestamp: true,
+	}}
+	formatter.Line = true
+	log.SetFormatter(&formatter)
+
+	var outWriter io.Writer
+	logLocationURL, err := getLogLocationURL(logsFolderFlag)
+	if err != nil {
+		log.Warn("error while setting up file logging: ", err)
+		outWriter = os.Stdout
+	} else {
+		logFilePath := path.Join(logLocationURL.Path, "log.log")
+		bspLogger := utils.NewLoggerOut(os.Stdout, &lumberjack.Logger{
+			// logs folder created/searched in directory in which agent was started.
+			Filename:   logFilePath,
+			MaxSize:    100, // megabytes
+			MaxBackups: 7,
+			MaxAge:     10, // days
+		})
+		outWriter = &bspLogger
+	}
+
+	log.SetOutput(outWriter)
+	log.SetLevel(log.InfoLevel)
+	log.WithFields(log.Fields{"file": "main.go"}).Info("bsp-agent is running...")
+}
+
+func main() {
 	config, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
@@ -283,4 +305,28 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicaSegmentIDBatch = []string{}
 		}
 	}
+}
+
+func getLogLocationURL(logPath string) (*url.URL, error) {
+	logLocation := utils.ExpandPath(logPath)
+	locationURL, err := url.Parse(logLocation)
+	if err == nil {
+		if _, existErr := os.Stat(locationURL.Path); os.IsNotExist(existErr) {
+			// directory doesn't exist, create
+			createErr := os.Mkdir(locationURL.Path, os.ModePerm)
+			if createErr != nil {
+				return nil, fmt.Errorf("error creating the directory: %v", createErr)
+			}
+		}
+
+		if !writable(locationURL.Path) {
+			return nil, fmt.Errorf("write access not present for given log location")
+		}
+	}
+
+	return locationURL, err
+}
+
+func writable(path string) bool {
+	return unix.Access(path, unix.W_OK) == nil
 }
