@@ -11,7 +11,7 @@ require (
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/golang/snappy v0.0.4
-	github.com/gorilla/websocket v1.4.2
+	github.com/gorilla/websocket v1.5.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/linkedin/goavro/v2 v2.11.0
