@@ -5,6 +5,7 @@
   * [Development Procedure](#dev_procedure)
   * [Dependencies](#dependencies)
   * [Testing](#testing)
+  * [Linting](#linting)
   * [Branching Model and Release](#braching_model_and_release)
   * [PR Targeting](#pr_targeting)
   * [Pull Requests](#pull_requests)
@@ -87,6 +88,16 @@ on `go mod tidy -v`.
 ### <span id="testing">Testing</span>
 
 Covalent uses [GitHub Actions](https://github.com/features/actions) for automated [integration testing](https://github.com/covalenthq/bsp-agent/actions).
+
+### <spand id="linting">Linting</span>
+
+The repo uses `golangci-lint` to run linters and enforce coding standards. There are two ways to run this:
+- run `golangci-lint run` or `golangci-lint run <filename>`
+- or configure the git hooks path: 
+```bash
+git config core.hooksPath .githooks
+```  
+This will run `golanci-lint` automatically before committing. 
 
 ### <span id="braching_model_and_release">Branching Model and Release</span>
 
