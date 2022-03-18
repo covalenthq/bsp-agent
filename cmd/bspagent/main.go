@@ -53,7 +53,7 @@ var (
 	proofChainFlag             string
 	binaryFilePathFlag         string
 	websocketURLsFlag          string
-	logsFolderFlag             string = "./logs/"
+	logsFolderFlag             = "./logs/"
 
 	// stream processing vars
 	start                 = ">"
@@ -315,7 +315,7 @@ func getLogLocationURL(logPath string) (*url.URL, error) {
 			// directory doesn't exist, create
 			createErr := os.Mkdir(locationURL.Path, os.ModePerm)
 			if createErr != nil {
-				return nil, fmt.Errorf("error creating the directory: %v", createErr)
+				return nil, fmt.Errorf("error creating the directory: %w", createErr)
 			}
 		}
 
@@ -324,7 +324,7 @@ func getLogLocationURL(logPath string) (*url.URL, error) {
 		}
 	}
 
-	return locationURL, err
+	return locationURL, fmt.Errorf("log-location: %w", err)
 }
 
 func writable(path string) bool {

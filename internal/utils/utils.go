@@ -174,13 +174,14 @@ func DecodeAvro(record avro.AvroRecord, buffer []byte) error {
 // 2. expands embedded environment variables
 // 3. cleans the path, e.g. /a/b/../c -> /a/c
 // Note, it has limitations, e.g. ~someuser/tmp will not be expanded
-func ExpandPath(p string) string {
-	if strings.HasPrefix(p, "~/") || strings.HasPrefix(p, "~\\") {
+func ExpandPath(fsPath string) string {
+	if strings.HasPrefix(fsPath, "~/") || strings.HasPrefix(fsPath, "~\\") {
 		if home := HomeDir(); home != "" {
-			p = home + p[1:]
+			fsPath = home + fsPath[1:]
 		}
 	}
-	return path.Clean(os.ExpandEnv(p))
+
+	return path.Clean(os.ExpandEnv(fsPath))
 }
 
 // HomeDir returns full path of home directory for current user
@@ -191,5 +192,6 @@ func HomeDir() string {
 	if usr, err := user.Current(); err == nil {
 		return usr.HomeDir
 	}
+
 	return ""
 }
