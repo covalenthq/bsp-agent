@@ -35,18 +35,18 @@
 
 # BSP Agent
 
-* [Introduction](#agent_intro)
-  * [Resources](#agent_resources)
-* [Architecture](#agent_arch)
-* [Block-Replica](#agent_block)
-  * [State-Specimen](#state_specimen)
-* [Environment](#environment)
-* [Build & Run](#build_run)
-  * [Flag Definitions](#flag_definitions)
-* [Docker](#docker)
-* [Scripts](#scripts)
-  * [Inspect](#inspect)
-* [Contributing](./docs/CONTRIBUTING.md)
+- [BSP Agent](#bsp-agent)
+  - [<span id="agent_intro">Introduction</span>](#introduction)
+  - [<span id="agent_resources">Resources</span>](#resources)
+  - [<span id="agent_arch">Architecture</span>](#architecture)
+  - [<span id="agent_block">Block-replica</span>](#block-replica)
+    - [<span id="state_specimen">State-specimen</span>](#state-specimen)
+  - [<span id="environment">Environment</span>](#environment)
+  - [<span id="build_run">Build & Run</span>](#build--run)
+    - [<span id="flag_definitions">Flag definitions</span>](#flag-definitions)
+  - [<span id="docker">Docker</span>](#docker)
+  - [<span id="scripts">Scripts</span>](#scripts)
+    - [<span id="inspect">Inspect</span>](#inspect)
 
 ## <span id="agent_intro">Introduction</span>
 
@@ -206,7 +206,8 @@ go run ./cmd/bspagent/*.go \
     --replica-bucket="<covalenthq-geth-block-replica-bucket>" \
     --segment-length=1 \
     --proof-chain-address="0xe9048412727c96f1044c78CffA45BB2311aE1F1D" \
-    --consumer-timeout=80
+    --consumer-timeout=80 \
+    --logs-folder ./logs/
 ```
 
 Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --proof-chain-address and run with the following.
@@ -217,7 +218,7 @@ Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --
 
 ### <span id="flag_definitions">Flag definitions</span>
 
---redis-url - this flag tells the BSP agent where to find the BSP messages, the stream topic key `replication` and the consumer group name with the field after "#" that in this case is `replicate`, additionally one can provide a password to the redis instance here but we recommend that by adding the line below to the .envrc
+`--redis-url` - this flag tells the BSP agent where to find the BSP messages, the stream topic key `replication` and the consumer group name with the field after "#" that in this case is `replicate`, additionally one can provide a password to the redis instance here but we recommend that by adding the line below to the .envrc
 
 ```env
 export REDIS_PWD=your-redis-pwd
@@ -236,6 +237,8 @@ export REDIS_PWD=your-redis-pwd
 `--proof-chain-address` - specifies the address of the proof-chain contract that has been deployed for the CQT network (local ethereum network for this workflow).
 
 `--consumer-timeout` - specifies in how many seconds the BSP agent stops waiting for new messages from the redis pending queue for decode, pack, encode, proof, store and upload.
+
+`--logs-folder` - specifies the location (folder) where the log files have to be placed. In case of error (like permission errors), the logs are not recorded in files.
 
 ## <span id="docker">Docker</span>
 
