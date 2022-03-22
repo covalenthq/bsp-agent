@@ -115,6 +115,25 @@
         "type": "bytes32"
       },
       {
+        "indexed": false,
+        "internalType": "uint128",
+        "name": "newStakeRequirement",
+        "type": "uint128"
+      }
+    ],
+    "name": "MinimumRequiredStakeChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "operatorAddress",
@@ -257,6 +276,19 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newInterfaceAddress",
+        "type": "address"
+      }
+    ],
+    "name": "StakingInterfaceChanged",
+    "type": "event"
+  },
+  {
     "inputs": [],
     "name": "AUDITOR_ROLE",
     "outputs": [
@@ -318,7 +350,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "newRole",
+        "name": "newRoleName",
         "type": "bytes32"
       }
     ],
@@ -461,7 +493,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "role",
+        "name": "roleName",
         "type": "bytes32"
       },
       {
@@ -558,7 +590,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "role",
+        "name": "roleName",
         "type": "bytes32"
       },
       {
@@ -568,6 +600,45 @@
       }
     ],
     "name": "revokeRolePreapproval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint128",
+        "name": "newBlockSpecimenReward",
+        "type": "uint128"
+      }
+    ],
+    "name": "setBlockSpecimenReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "newSessionDuration",
+        "type": "uint64"
+      }
+    ],
+    "name": "setBlockSpecimenSessionDuration",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "quorumThresholdNumerator",
+        "type": "uint64"
+      }
+    ],
+    "name": "setQuorumThreshold",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -678,45 +749,6 @@
       }
     ],
     "name": "submitBlockSpecimenProof",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint128",
-        "name": "newBlockSpecimenReward",
-        "type": "uint128"
-      }
-    ],
-    "name": "updateBlockSpecimenReward",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "newSessionDuration",
-        "type": "uint64"
-      }
-    ],
-    "name": "updateBlockSpecimenSessionDuration",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "quorumThresholdNumerator",
-        "type": "uint64"
-      }
-    ],
-    "name": "updateQuorumThreshold",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
