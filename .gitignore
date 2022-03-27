@@ -58,6 +58,7 @@ npm-debug.log
 .env
 .envrc.local
 .env.dev
+.env.cqt
 .actrc
 
 # truffle build directory
@@ -93,4 +94,3 @@ artifacts
 ./internal/proof/proofchain.go
 
 ganache_data
-.env.cqt
