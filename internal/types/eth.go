@@ -50,7 +50,7 @@ type Header struct {
 	Extra       []byte         `json:"extraData"`
 	MixDigest   common.Hash    `json:"mixHash"`
 	Nonce       BlockNonce     `json:"nonce"`
-	BaseFee     *big.Int       `json:"baseFeePerGas" rlp:"-"`
+	BaseFee     *big.Int       `json:"baseFeePerGas"`
 }
 
 type Transaction struct {
