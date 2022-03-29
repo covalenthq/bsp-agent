@@ -53,7 +53,7 @@ var (
 	proofChainFlag             string
 	binaryFilePathFlag         string
 	websocketURLsFlag          string
-	logsFolderFlag             = "./logs/"
+	logFolderFlag              = "./logs/"
 
 	// stream processing vars
 	start                 = ">"
@@ -75,7 +75,7 @@ func parseFlags() {
 	flag.StringVar(&websocketURLsFlag, "websocket-urls", utils.LookupEnvOrString("WebsocketURLs", websocketURLsFlag), "url to websockets clients separated by space")
 	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
-	flag.StringVar(&logsFolderFlag, "logs-folder", utils.LookupEnvOrString("LogsFolder", logsFolderFlag), "Location where the log files should be placed")
+	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
 	flag.Parse()
 }
 
@@ -90,7 +90,7 @@ func init() {
 	log.SetFormatter(&formatter)
 
 	var outWriter io.Writer
-	logLocationURL, err := getLogLocationURL(logsFolderFlag)
+	logLocationURL, err := getLogLocationURL(logFolderFlag)
 	if err != nil {
 		log.Warn("error while setting up file logging: ", err)
 		outWriter = os.Stdout
@@ -322,9 +322,11 @@ func getLogLocationURL(logPath string) (*url.URL, error) {
 		if !writable(locationURL.Path) {
 			return nil, fmt.Errorf("write access not present for given log location")
 		}
+
+		return locationURL, nil
 	}
 
-	return locationURL, fmt.Errorf("log-location: %w", err)
+	return locationURL, fmt.Errorf("log-folder: %w", err)
 }
 
 func writable(path string) bool {

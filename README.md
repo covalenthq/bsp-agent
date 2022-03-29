@@ -207,7 +207,7 @@ go run ./cmd/bspagent/*.go \
     --segment-length=1 \
     --proof-chain-address="0xe9048412727c96f1044c78CffA45BB2311aE1F1D" \
     --consumer-timeout=80 \
-    --logs-folder ./logs/
+    --log-folder=./logs/
 ```
 
 Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --proof-chain-address and run with the following.
@@ -238,7 +238,7 @@ export REDIS_PWD=your-redis-pwd
 
 `--consumer-timeout` - specifies in how many seconds the BSP agent stops waiting for new messages from the redis pending queue for decode, pack, encode, proof, store and upload.
 
-`--logs-folder` - specifies the location (folder) where the log files have to be placed. In case of error (like permission errors), the logs are not recorded in files.
+`--log-folder` - specifies the location (folder) where the log files have to be placed. In case of error (like permission errors), the logs are not recorded in files.
 
 ## <span id="docker">Docker</span>
 
