@@ -25,11 +25,11 @@ jobs:
         docker build . --file Dockerfile --tag ghcr.io/covalenthq/bsp-agent:latest
         docker push ghcr.io/covalenthq/bsp-agent:latest
 
-    - name: Create env file
+    - name: Create .envrc file
       run: |
-        touch .env
-        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
+        touch .envrc
+        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .envrc
+        echo RPC_URL=${{ secrets.RPC_URL }} >> .envrc
 
     - uses: HatsuneMiku3939/direnv-action@v1
     - name: Start containers
@@ -41,9 +41,9 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete env file
+    - name: Delete .envrc file
       run: |
-        rm -rf .env
+        rm -rf .envrc
 
     - name: Stop containers
       if: always()
@@ -69,11 +69,11 @@ jobs:
         docker build . --file Dockerfile --tag ghcr.io/covalenthq/bsp-agent:latest
         docker push ghcr.io/covalenthq/bsp-agent:latest
 
-    - name: Create env file
+    - name: Create .envrc file
       run: |
-        touch .env
-        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
+        touch .envrc
+        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .envrc
+        echo RPC_URL=${{ secrets.RPC_URL }} >> .envrc
 
     - uses: HatsuneMiku3939/direnv-action@v1
     - name: Start containers
@@ -85,9 +85,9 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete Env file
+    - name: Delete .envrc file
       run: |
-        rm -rf .env
+        rm -rf .envrc
 
     - name: Stop containers
       if: always()
