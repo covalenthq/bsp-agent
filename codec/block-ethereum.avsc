@@ -111,11 +111,7 @@
                                     },
                                     {
                                        "name":"baseFeePerGas",
-                                       "type":[
-                                          "null",
-                                          "int"
-                                       ],
-                                       "default":null
+                                       "type":"double"
                                     }
                                  ]
                               }
