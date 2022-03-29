@@ -161,7 +161,9 @@ func main() {
 	signal.Notify(chanOS, syscall.SIGINT, syscall.SIGTERM)
 	<-chanOS
 
+	log.Warn("Received interrupt. Flushing in-memory blocks...")
 	waitGrp.Wait()
+	log.Warn("waitgrp ended. Closing agent...")
 
 	if redisClient != nil {
 		err = redisClient.Close()

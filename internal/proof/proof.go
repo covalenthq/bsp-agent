@@ -28,6 +28,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	_, opts, chainID, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
+		txHash <- ""
 
 		return
 	}
@@ -35,6 +36,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	contract, err := NewProofChain(contractAddress, ethClient)
 	if err != nil {
 		log.Error("error binding to deployed contract: ", err.Error())
+		txHash <- ""
 
 		return
 	}
@@ -42,6 +44,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	jsonResult, err := json.Marshal(resultSegment)
 	if err != nil {
 		log.Error("error in JSON marshaling result segment: ", err.Error())
+		txHash <- ""
 
 		return
 	}
@@ -51,17 +54,20 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
+		txHash <- ""
 
 		return
 	}
 	receipt, err := bind.WaitMined(ctx, ethClient, transaction)
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		log.Error("block-result proof tx call: ", transaction.Hash(), " to proof contract failed: ", err.Error())
+		txHash <- ""
 
 		return
 	}
 	if err != nil {
 		log.Error("error in waiting for tx to be mined on the blockchain: ", err.Error())
+		txHash <- ""
 
 		return
 	}
