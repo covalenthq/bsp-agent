@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
+	"github.com/ubiq/go-ubiq/common"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
@@ -48,7 +49,7 @@ func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*
 }
 
 // EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
+func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockHash common.Hash, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	var replicaURL string
 	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
@@ -65,7 +66,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		replicaURL = "only local ./bin/"
 	}
 
-	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, proofTxHash)
+	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, blockHash, proofTxHash)
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)

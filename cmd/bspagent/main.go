@@ -276,6 +276,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	newEvent, _ := event.NewBlockReplicaEvent()
 	replica, err := handler.ParseStreamToEvent(newEvent, hash, &blockReplica)
 	objectType := blockReplica.Type[5:]
+	objectHash := blockReplica.Hash
 	if err != nil {
 		log.Error("error on process event: ", err)
 	} else {
@@ -290,7 +291,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicationSegment.Elements = uint64(segmentLengthFlag)
 			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock) + objectType + "-" + "segment"
 			// avro encode, prove and upload
-			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
+			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, objectHash, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 			}

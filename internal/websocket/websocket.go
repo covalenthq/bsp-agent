@@ -20,6 +20,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
+	"github.com/ubiq/go-ubiq/common"
 )
 
 // ConsumeWebsocketsEvents is the primary consumer of websocket events from an websocket endpoint
@@ -84,7 +85,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			} else {
 				replicaURL = "only local ./bin/"
 			}
-			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, replicaURL, proofTxHash)
+			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, replicaURL, common.Hash{}, proofTxHash)
 			pTxHash := <-proofTxHash
 			if pTxHash != "" {
 				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)

@@ -3,43 +3,32 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint64",
         "name": "chainId",
         "type": "uint64"
       },
       {
-        "indexed": true,
-        "internalType": "uint64",
-        "name": "blockHeight",
-        "type": "uint64"
-      },
-      {
         "indexed": false,
         "internalType": "uint64",
-        "name": "specimenSize",
+        "name": "newMaxNumberOfHashesPer24H",
         "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint64",
-        "name": "specimenLength",
-        "type": "uint64"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "specimenHash",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "storageURL",
-        "type": "string"
       }
     ],
-    "name": "BlockSpecimenProductionProofSubmitted",
+    "name": "BlockSpecimenMaxNumberOfHashesPer24HChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint128",
+        "name": "newBlockSpecimenMinSubmissionsRequired",
+        "type": "uint128"
+      }
+    ],
+    "name": "BlockSpecimenMinSubmissionRequiredChanged",
     "type": "event"
   },
   {
@@ -58,16 +47,59 @@
         "type": "uint64"
       },
       {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "reward",
-        "type": "uint128"
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "blockHash",
+        "type": "bytes32"
       },
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "operatorAddress",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "specimenHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "storageURL",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint128",
+        "name": "submittedStake",
+        "type": "uint128"
+      }
+    ],
+    "name": "BlockSpecimenProductionProofSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint64",
+        "name": "blockHeight",
+        "type": "uint64"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "blockhash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "specimenhash",
+        "type": "bytes32"
       }
     ],
     "name": "BlockSpecimenRewardAwarded",
@@ -103,6 +135,38 @@
       }
     ],
     "name": "BlockSpecimenSessionFinalized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint128",
+        "name": "newStakeRequirement",
+        "type": "uint128"
+      }
+    ],
+    "name": "MinimumRequiredStakeChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "numberOfBlocks",
+        "type": "uint64"
+      }
+    ],
+    "name": "NumberOfBlocksPer24HChanged",
     "type": "event"
   },
   {
@@ -153,6 +217,25 @@
       }
     ],
     "name": "OperatorStoppedRole",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "blockHeight",
+        "type": "uint64"
+      }
+    ],
+    "name": "QuorumNotReached",
     "type": "event"
   },
   {
@@ -249,11 +332,37 @@
       {
         "indexed": false,
         "internalType": "uint64",
+        "name": "minSubmissions",
+        "type": "uint64"
+      }
+    ],
+    "name": "SpecimenSessionMinSubmissionChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint64",
         "name": "newQuorumThreshold",
         "type": "uint64"
       }
     ],
     "name": "SpecimenSessionQuorumChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newInterfaceAddress",
+        "type": "address"
+      }
+    ],
+    "name": "StakingInterfaceChanged",
     "type": "event"
   },
   {
@@ -318,7 +427,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "newRole",
+        "name": "newRoleName",
         "type": "bytes32"
       }
     ],
@@ -359,6 +468,11 @@
       },
       {
         "internalType": "bytes32",
+        "name": "blockHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
         "name": "definitiveSpecimenHash",
         "type": "bytes32"
       }
@@ -370,7 +484,7 @@
   },
   {
     "inputs": [],
-    "name": "blockSpecimenQuorumThresholdNumerator",
+    "name": "blockSpecimenQuorum",
     "outputs": [
       {
         "internalType": "uint64",
@@ -445,6 +559,24 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "blockHeight",
+        "type": "uint64"
+      }
+    ],
+    "name": "finalizeAndRewardSpecimenSession",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getRoleTypes",
     "outputs": [
@@ -461,7 +593,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "role",
+        "name": "roleName",
         "type": "bytes32"
       },
       {
@@ -542,6 +674,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "minSubmissionsRequired",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint128",
@@ -558,7 +703,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "role",
+        "name": "roleName",
         "type": "bytes32"
       },
       {
@@ -568,6 +713,102 @@
       }
     ],
     "name": "revokeRolePreapproval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "minSubmissions",
+        "type": "uint64"
+      }
+    ],
+    "name": "setBlockSpecimenMinSubmissionRequired",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint128",
+        "name": "newBlockSpecimenReward",
+        "type": "uint128"
+      }
+    ],
+    "name": "setBlockSpecimenReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "newSessionDuration",
+        "type": "uint64"
+      }
+    ],
+    "name": "setBlockSpecimenSessionDuration",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "maxSubmissions",
+        "type": "uint64"
+      }
+    ],
+    "name": "setMaxNumberOfHashesPer24H",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "minSubmissions",
+        "type": "uint64"
+      }
+    ],
+    "name": "setMinSubmissionsRequired",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "numberOfBlocks",
+        "type": "uint64"
+      }
+    ],
+    "name": "setNumberOfBlocksPer24H",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "quorum",
+        "type": "uint64"
+      }
+    ],
+    "name": "setQuorumThreshold",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -657,14 +898,9 @@
         "type": "uint64"
       },
       {
-        "internalType": "uint64",
-        "name": "specimenSize",
-        "type": "uint64"
-      },
-      {
-        "internalType": "uint64",
-        "name": "specimenLength",
-        "type": "uint64"
+        "internalType": "bytes32",
+        "name": "blockHash",
+        "type": "bytes32"
       },
       {
         "internalType": "bytes32",
@@ -678,45 +914,6 @@
       }
     ],
     "name": "submitBlockSpecimenProof",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint128",
-        "name": "newBlockSpecimenReward",
-        "type": "uint128"
-      }
-    ],
-    "name": "updateBlockSpecimenReward",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "newSessionDuration",
-        "type": "uint64"
-      }
-    ],
-    "name": "updateBlockSpecimenSessionDuration",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "quorumThresholdNumerator",
-        "type": "uint64"
-      }
-    ],
-    "name": "updateQuorumThreshold",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
