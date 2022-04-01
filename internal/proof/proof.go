@@ -32,6 +32,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 
 		return
 	}
+
 	contractAddress := common.HexToAddress(proofChain)
 	contract, err := NewProofChain(contractAddress, ethClient)
 	if err != nil {
@@ -47,8 +48,6 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
-
-	// transaction, err := contract.SubmitBlockSpecimenProof(opts, chainID, chainHeight, uint64(len(jsonResult)), chainLen, sha256Result, replicaURL)
 
 	transaction, err := contract.SubmitBlockSpecimenProof(opts, chainID, chainHeight, blockHash, sha256Result, replicaURL)
 

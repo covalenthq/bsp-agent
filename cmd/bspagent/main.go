@@ -289,7 +289,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 		if len(replicationSegment.BlockReplicaEvent) == segmentLengthFlag {
 			replicationSegment.EndBlock = replica.Data.Header.Number.Uint64()
 			replicationSegment.Elements = uint64(segmentLengthFlag)
-			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + "-" + fmt.Sprint(replicationSegment.EndBlock) + objectType + "-" + "segment"
+			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + objectType
 			// avro encode, prove and upload
 			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, objectHash, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
 			if err != nil {
