@@ -8,13 +8,13 @@ import (
 	"time"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
+	ty "github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
-	ubiq "github.com/ubiq/go-ubiq/common"
 )
 
 var (
@@ -22,11 +22,11 @@ var (
 )
 
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
-func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, replicaURL string, blockHash ubiq.Hash, txHash chan string) {
+func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, replicaURL string, blockReplica *ty.BlockReplica, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
-	_, opts, chainID, err := getTransactionOpts(ctx, config, ethClient)
+	_, opts, _, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
 
@@ -49,7 +49,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	transaction, err := contract.SubmitBlockSpecimenProof(opts, chainID, chainHeight, blockHash, sha256Result, replicaURL)
+	transaction, err := contract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
