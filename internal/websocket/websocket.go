@@ -84,7 +84,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			} else {
 				replicaURL = "only local ./bin/"
 			}
-			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, replicaURL, proofTxHash)
+			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, replicaURL, &types.BlockReplica{}, proofTxHash)
 			pTxHash := <-proofTxHash
 			if pTxHash != "" {
 				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
