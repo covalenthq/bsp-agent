@@ -95,7 +95,7 @@ services:
         sleep 1;
         done;
         echo proof-chain contracts deployed!;
-        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication#replicate  --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/ --gcp-svc-account=./gcloud/bsp-2.json --replica-bucket=covalenthq-geth-block-specimen --segment-length=10 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=15;
+        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication#replicate  --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/ --gcp-svc-account=./gcloud/bsp-2.json --replica-bucket=covalenthq-geth-block-specimen --segment-length=1 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=15;
         exit 0;"
     environment:
       - ETH_PRIVATE_KEY=${PRIVATE_KEY}
