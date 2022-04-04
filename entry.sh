@@ -5,7 +5,7 @@ then
     --avro-codec-path=./codec/block-elrond.avsc \
     --binary-file-path=./bin/block-elrond/ \
     --segment-length=10 \
-    --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 \
+    --proof-chain-address=0xea2ff902dbeeeccc828757b881b343f9316752e5 \
     --consumer-timeout=15 \
     --websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 
 else
@@ -13,6 +13,6 @@ else
     --avro-codec-path=./codec/block-ethereum.avsc \
     --binary-file-path=./bin/block-ethereum/ \
     --segment-length=10 \
-    --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 \
+    --proof-chain-address=0xea2ff902dbeeeccc828757b881b343f9316752e5 \
     --consumer-timeout=15
 fi
