@@ -72,13 +72,16 @@ jobs:
         docker build . --file Dockerfile --tag ghcr.io/covalenthq/bsp-agent:latest
         docker push ghcr.io/covalenthq/bsp-agent:latest
 
-    - name: Create .envrc file
+    - name: Create .env file
       run: |
-        touch .envrc
-        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .envrc
-        echo RPC_URL=${{ secrets.RPC_URL }} >> .envrc
+        touch .env
+        echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
+        cat .env
 
-    - uses: HatsuneMiku3939/direnv-action@v1
+    - name: Load .env file
+      uses: xom9ikk/dotenv@v1.0.2
+
     - name: Start containers
       run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
 
