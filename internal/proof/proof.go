@@ -1,10 +1,13 @@
 // Package proof contains all the functions to make a proof on the proofchain about a block replica
+//nolint:wrapcheck
 package proof
 
 import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
@@ -77,7 +80,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	txHash <- receipt.TxHash.String()
 }
 
-func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
+func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, *big.Int, error) {
 	sKey := config.PrivateKey
 	chainID, err := ethClient.ChainID(ctx)
 	if err != nil {
@@ -90,5 +93,59 @@ func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient
 		log.Fatalf("error getting new keyed transactor with chain id: %v", err)
 	}
 
-	return addr, opts, chainID.Uint64(), err
+	return addr, opts, chainID, err
+}
+
+// SendPackerProofTx sends a batched tx proof to Ext network
+func SendPackerProofTx(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client, packerTxBatch []string) (string, error) {
+	packerTxAddress := common.HexToAddress("0xABEFF04FC17983135Ad91b9f8B03da7d7Ba9C83e")
+
+	var data []byte
+	data = append(data, ':')
+	for _, tx := range packerTxBatch {
+		data = append(data, tx...)
+		data = append(data, ',')
+	}
+	txs := string(data)
+
+	address, _, chainID, err := getTransactionOpts(ctx, config, ethClient)
+	if err != nil {
+		log.Error("error getting transaction ops: ", err.Error())
+	}
+
+	nonce, err := ethClient.PendingNonceAt(context.Background(), packerTxAddress)
+	if err != nil {
+		log.Error("error in getting transaction nonce: ", err.Error())
+	}
+
+	senderPrivKey, _ := crypto.HexToECDSA(config.PrivateKey)
+
+	// Construct the tx
+	packTx := types.NewTransaction(
+		nonce,           // nonce
+		packerTxAddress, // to
+		new(big.Int),    // amount
+		uint64(21000),   // gas limit
+		new(big.Int),    // gas price
+		[]byte(txs),     // data
+	)
+
+	// Sign the tx
+	signer := types.NewEIP155Signer(chainID)
+	signedTx, _ := types.SignTx(packTx, signer, senderPrivKey)
+	fmt.Println("tx payload:", packTx, "from address", address)
+
+	// var buff bytes.Buffer
+	// signedTx.EncodeRLP(&buff)
+	// fmt.Printf("0x%x\n", buff.Bytes())
+
+	// Send the transaction to the network
+	txErr := ethClient.SendTransaction(context.Background(), signedTx)
+	if txErr != nil {
+		log.Error("send tx error:", txErr)
+	}
+
+	fmt.Printf("send success tx.hash=%s\n", signedTx.Hash().String())
+
+	return signedTx.Hash().String(), txErr
 }
