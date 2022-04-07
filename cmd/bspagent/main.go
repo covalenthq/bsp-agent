@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"net/url"
 	"os"
 	"os/signal"
 	"path"
@@ -24,7 +23,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
-	"golang.org/x/sys/unix"
 	"gopkg.in/avro.v0"
 	"gopkg.in/natefinch/lumberjack.v2"
 
@@ -90,7 +88,7 @@ func init() {
 	log.SetFormatter(&formatter)
 
 	var outWriter io.Writer
-	logLocationURL, err := getLogLocationURL(logFolderFlag)
+	logLocationURL, err := utils.GetLogLocationURL(logFolderFlag)
 	if err != nil {
 		log.Warn("error while setting up file logging: ", err)
 		outWriter = os.Stdout
@@ -308,30 +306,4 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicaSegmentIDBatch = []string{}
 		}
 	}
-}
-
-func getLogLocationURL(logPath string) (*url.URL, error) {
-	logLocation := utils.ExpandPath(logPath)
-	locationURL, err := url.Parse(logLocation)
-	if err == nil {
-		if _, existErr := os.Stat(locationURL.Path); os.IsNotExist(existErr) {
-			// directory doesn't exist, create
-			createErr := os.Mkdir(locationURL.Path, os.ModePerm)
-			if createErr != nil {
-				return nil, fmt.Errorf("error creating the directory: %w", createErr)
-			}
-		}
-
-		if !writable(locationURL.Path) {
-			return nil, fmt.Errorf("write access not present for given log location")
-		}
-
-		return locationURL, nil
-	}
-
-	return locationURL, fmt.Errorf("log-folder: %w", err)
-}
-
-func writable(path string) bool {
-	return unix.Access(path, unix.W_OK) == nil
 }
