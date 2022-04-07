@@ -63,7 +63,7 @@ func HandleObjectUploadToIPFS(ctx context.Context, client *pinner.Client, binary
 	filename := objectFileName(objectName, txHash)
 	objectpath := filepath.Join(binaryLocalPath, filename)
 	if _, err := os.Stat(objectpath); os.IsNotExist(err) {
-		log.Debugf("%s doesn't exist in local. Cannot upload to IFPS", objectpath)
+		log.Infof("%s doesn't exist in local. Cannot upload to IFPS", objectpath)
 
 		return cid.Undef
 	}
@@ -78,6 +78,8 @@ func HandleObjectUploadToIPFS(ctx context.Context, client *pinner.Client, binary
 	if err != nil {
 		log.Error("failure to object to IPFS: ", err)
 	}
+
+	log.Infof("uploaded %s to ipfs with pin: %s", filename, cid.String())
 
 	return cid
 }

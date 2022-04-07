@@ -57,8 +57,8 @@ var (
 	logFolderFlag              = "./logs/"
 	ipfsService                string
 	ipfsToken                  string
-	ipfsBaseUrl                string
-	ipfsFilePinBaseUrl         string
+	ipfsBaseURL                string
+	ipfsFilePinBaseURL         string
 
 	// stream processing vars
 	start                 = ">"
@@ -83,8 +83,8 @@ func parseFlags() {
 	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
 	flag.StringVar(&ipfsService, "ipfs.service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'pinata' and 'others'")
 	flag.StringVar(&ipfsToken, "ipfs.jwt-token", utils.LookupEnvOrString("IpfsJwtToken", ipfsToken), "JWT token as required by IPFS file pinning service api")
-	flag.StringVar(&ipfsBaseUrl, "ipfs.baseurl", utils.LookupEnvOrString("IpfsBaseUrl", ipfsBaseUrl), "IPFS pinning service api url (default provided for pinata)")
-	flag.StringVar(&ipfsFilePinBaseUrl, "ipfs.filepin.baseurl", utils.LookupEnvOrString("IpfsFilepinBaseUrl", ipfsFilePinBaseUrl), "Services' file pin url (default value provided for pinata")
+	flag.StringVar(&ipfsBaseURL, "ipfs.baseurl", utils.LookupEnvOrString("IpfsBaseURL", ipfsBaseURL), "IPFS pinning service api url (default provided for pinata)")
+	flag.StringVar(&ipfsFilePinBaseURL, "ipfs.filepin.baseurl", utils.LookupEnvOrString("IpfsFilepinBaseURL", ipfsFilePinBaseURL), "Services' file pin url (default value provided for pinata")
 
 	flag.Parse()
 }
@@ -153,7 +153,7 @@ func main() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
-	var pinclient *pinner.Client = nil
+	var pinclient *pinner.Client
 	if ipfsService == pinner.Pinata.String() {
 		req := pinner.NewClientRequest(pinner.Pinata).BearerToken(ipfsToken)
 		pinclient = pinner.NewClient(req)
