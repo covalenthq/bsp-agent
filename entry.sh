@@ -13,6 +13,7 @@ else
     --avro-codec-path=./codec/block-ethereum.avsc \
     --binary-file-path=./bin/block-ethereum/ \
     --segment-length=1 \
+    --packer-length=10 \
     --proof-chain-address=0xea2ff902dbeeeccc828757b881b343f9316752e5 \
     --consumer-timeout=15
 fi
