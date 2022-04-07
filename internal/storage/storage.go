@@ -12,6 +12,8 @@ import (
 
 	"cloud.google.com/go/storage"
 
+	pinner "github.com/covalenthq/ipfs-pinner"
+	"github.com/ipfs/go-cid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,29 +26,60 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
+	filename := objectFileName(objectName, txHash)
+
 	switch {
 	case binaryLocalPath == "":
-		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName+"-"+txHash, object)
+		return writeToCloudStorage(ctx, storageClient, storageBucket, filename, object)
 	case storageClient == nil:
-		err := writeToBinFile(binaryLocalPath, objectName+"-"+txHash, object)
+		err := writeToBinFile(binaryLocalPath, filename, object)
 		if err != nil {
 			panic(err)
 		}
 
 		return err
 	default:
-		err := validatePath(binaryLocalPath, objectName+"-"+txHash)
+		err := validatePath(binaryLocalPath, filename)
 		if err != nil {
 			panic(err)
 		} else {
-			err = writeToBinFile(binaryLocalPath, objectName+"-"+txHash, object)
+			err = writeToBinFile(binaryLocalPath, filename, object)
 			if err != nil {
 				panic(err)
 			}
 		}
 
-		return writeToCloudStorage(ctx, storageClient, storageBucket, objectName+"-"+txHash, object)
+		return writeToCloudStorage(ctx, storageClient, storageBucket, filename, object)
 	}
+}
+
+// HandleObjectUploadToIPFS uploads the binary file to ipfs via the pinner client
+func HandleObjectUploadToIPFS(ctx context.Context, client *pinner.Client, binaryLocalPath string, objectName string, txHash string) cid.Cid {
+	// assuming that bin files are written (rather than cloud only storage)
+	// need to explore strategy to directly upload in memory byte array via pinner
+	if client == nil {
+		return cid.Undef
+	}
+	filename := objectFileName(objectName, txHash)
+	objectpath := filepath.Join(binaryLocalPath, filename)
+	if _, err := os.Stat(objectpath); os.IsNotExist(err) {
+		log.Debugf("%s doesn't exist in local. Cannot upload to IFPS", objectpath)
+
+		return cid.Undef
+	}
+
+	objf, err := os.Open(filepath.Clean(objectpath))
+	if err != nil {
+		log.Error("error opening objectfile for upload: ", err)
+
+		return cid.Undef
+	}
+	cid, err := client.UploadFile(ctx, objf)
+	if err != nil {
+		log.Error("failure to object to IPFS: ", err)
+	}
+
+	return cid
 }
 
 func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, objectName string, object []byte) error {
@@ -101,4 +134,8 @@ func validatePath(path, objectName string) error {
 	}
 
 	return nil
+}
+
+func objectFileName(objectName, txHash string) string {
+	return objectName + "-" + txHash
 }

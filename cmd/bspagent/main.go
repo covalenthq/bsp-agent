@@ -34,6 +34,7 @@ import (
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/covalenthq/bsp-agent/internal/websocket"
+	pinner "github.com/covalenthq/ipfs-pinner"
 )
 
 var (
@@ -54,6 +55,10 @@ var (
 	binaryFilePathFlag         string
 	websocketURLsFlag          string
 	logFolderFlag              = "./logs/"
+	ipfsService                string
+	ipfsToken                  string
+	ipfsBaseUrl                string
+	ipfsFilePinBaseUrl         string
 
 	// stream processing vars
 	start                 = ">"
@@ -76,6 +81,11 @@ func parseFlags() {
 	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
+	flag.StringVar(&ipfsService, "ipfs.service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'pinata' and 'others'")
+	flag.StringVar(&ipfsToken, "ipfs.jwt-token", utils.LookupEnvOrString("IpfsJwtToken", ipfsToken), "JWT token as required by IPFS file pinning service api")
+	flag.StringVar(&ipfsBaseUrl, "ipfs.baseurl", utils.LookupEnvOrString("IpfsBaseUrl", ipfsBaseUrl), "IPFS pinning service api url (default provided for pinata)")
+	flag.StringVar(&ipfsFilePinBaseUrl, "ipfs.filepin.baseurl", utils.LookupEnvOrString("IpfsFilepinBaseUrl", ipfsFilePinBaseUrl), "Services' file pin url (default value provided for pinata")
+
 	flag.Parse()
 }
 
@@ -143,6 +153,14 @@ func main() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
+	var pinclient *pinner.Client = nil
+	if ipfsService == pinner.Pinata.String() {
+		req := pinner.NewClientRequest(pinner.Pinata).BearerToken(ipfsToken)
+		pinclient = pinner.NewClient(req)
+	} else if ipfsService != "" {
+		log.Fatalf("Only pinata IPFS service supported for now")
+	}
+
 	if websocketURLsFlag != "" {
 		websocketsURLs := strings.Split(websocketURLsFlag, " ")
 		for _, url := range websocketsURLs {
@@ -152,8 +170,8 @@ func main() {
 		var consumerName string = uuid.NewV4().String()
 		log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
 		createConsumerGroup(redisClient, streamKey, consumerGroup)
-		go consumeEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
-		go consumePendingEvents(config, replicaCodec, redisClient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
+		go consumeEvents(config, replicaCodec, redisClient, pinclient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
+		go consumePendingEvents(config, replicaCodec, redisClient, pinclient, storageClient, ethClient, consumerName, streamKey, consumerGroup)
 	}
 
 	// Gracefully disconnect
@@ -190,7 +208,7 @@ func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup str
 	}
 }
 
-func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethProof *ethclient.Client, consumerName, streamKey, consumerGroup string) {
+func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, pinClient *pinner.Client, storageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
 	for {
 		log.Debug("New sequential stream unit: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
@@ -208,13 +226,14 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, avroCodecs, redisClient, storageClient, ethProof, stream)
+			go processStream(config, avroCodecs, redisClient, pinClient, storageClient, ethClient, stream)
 		}
 		waitGrp.Wait()
 	}
 }
 
-func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
+// consume pending messages from redis
+func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, pinClient *pinner.Client, storageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
 	timeout := time.After(time.Second * time.Duration(consumerPendingTimeoutFlag))
 	ticker := time.Tick(time.Second * time.Duration(consumerPendingTimeTicker))
 	for {
@@ -253,7 +272,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 				}
 				for _, stream := range streams {
 					waitGrp.Add(1)
-					go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream)
+					go processStream(config, avroCodecs, redisClient, pinClient, storageClient, ethClient, stream)
 				}
 				waitGrp.Wait()
 			}
@@ -261,7 +280,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 		}
 	}
 }
-func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage) {
+func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, pinClient *pinner.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage) {
 	ctx := context.Background()
 	hash := stream.Values["hash"].(string)
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
@@ -293,7 +312,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicationSegment.Elements = uint64(segmentLengthFlag)
 			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + objectType
 			// avro encode, prove and upload
-			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
+			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, pinClient, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 			}

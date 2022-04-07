@@ -16,6 +16,7 @@ import (
 	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
+	pinner "github.com/covalenthq/ipfs-pinner"
 )
 
 // EncodeReplicaSegmentToAvro encodes replica segment into AVRO binary encoding
@@ -48,7 +49,7 @@ func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*
 }
 
 // EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockReplica *types.BlockReplica, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
+func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, pinClient *pinner.Client, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockReplica *types.BlockReplica, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	var replicaURL string
 	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
@@ -70,6 +71,8 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	if pTxHash != "" {
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 		err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
+		_ = st.HandleObjectUploadToIPFS(ctx, pinClient, binaryLocalPath, segmentName, pTxHash)
+
 		if err != nil {
 			return "", fmt.Errorf("error in uploading object to bucket: %w", err)
 		}

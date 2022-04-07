@@ -11,6 +11,7 @@ require (
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
 	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.1.3 // indirect
+	github.com/covalenthq/ipfs-pinner v0.0.0-20220407025027-bfda2ed1827b // indirect
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/fatih/color v1.13.0 // indirect
@@ -18,6 +19,7 @@ require (
 	github.com/golang/snappy v0.0.4
 	github.com/gorilla/websocket v1.5.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
+	github.com/ipfs/go-cid v0.1.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/linkedin/goavro/v2 v2.11.0
 	github.com/mattn/go-colorable v0.1.11 // indirect
