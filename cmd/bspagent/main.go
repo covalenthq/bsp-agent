@@ -54,7 +54,7 @@ var (
 	logFolderFlag              = "./logs/"
 
 	// stream processing vars
-	start                 = "0"
+	start                 = ">"
 	streamKey             string
 	consumerGroup         string
 	replicaSegmentName    string
