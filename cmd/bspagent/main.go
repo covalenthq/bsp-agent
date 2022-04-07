@@ -17,6 +17,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
+	"github.com/covalenthq/lumberjack/v3"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
 	"github.com/golang/snappy"
@@ -26,7 +27,6 @@ import (
 	"github.com/ubiq/go-ubiq/rlp"
 	"golang.org/x/sys/unix"
 	"gopkg.in/avro.v0"
-	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
@@ -98,10 +98,12 @@ func init() {
 		logFilePath := path.Join(logLocationURL.Path, "log.log")
 		bspLogger := utils.NewLoggerOut(os.Stdout, &lumberjack.Logger{
 			// logs folder created/searched in directory in which agent was started.
-			Filename:   logFilePath,
-			MaxSize:    100, // megabytes
-			MaxBackups: 7,
-			MaxAge:     10, // days
+			Filename:        logFilePath,
+			MaxSize:         100,          // for a log file (in megabytes)
+			MaxBackups:      10,           // maximum number of backup files to be created
+			MaxAge:          60,           // days
+			RollingInterval: 24 * 60 * 60, // 1 day (in seconds) -- one log file for each day
+			Compress:        true,         // gzip rolled over files
 		})
 		outWriter = &bspLogger
 	}
