@@ -80,7 +80,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	txHash <- receipt.TxHash.String()
 }
 
-func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, *big.Int, error) {
+func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
 	sKey := config.PrivateKey
 	chainID, err := ethClient.ChainID(ctx)
 	if err != nil {
@@ -93,7 +93,7 @@ func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient
 		log.Fatalf("error getting new keyed transactor with chain id: %v", err)
 	}
 
-	return addr, opts, chainID, err
+	return addr, opts, chainID.Uint64(), err
 }
 
 // SendPackerProofTx sends a batched tx proof to Ext network
@@ -131,7 +131,7 @@ func SendPackerProofTx(ctx context.Context, config *config.EthConfig, ethClient 
 	)
 
 	// Sign the tx
-	signer := types.NewEIP155Signer(chainID)
+	signer := types.NewEIP155Signer(big.NewInt(int64(chainID)))
 	signedTx, _ := types.SignTx(packTx, signer, senderPrivKey)
 	fmt.Println("tx payload:", packTx, "from address", address)
 

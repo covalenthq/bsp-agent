@@ -99,7 +99,7 @@ services:
         exit 0;"
     environment:
       - ETH_PRIVATE_KEY=${PRIVATE_KEY}
-      - ETH_RPC_URL=${CQT_RPC_URL}
+      - CQT_RPC_URL=${CQT_RPC_URL}
       - BLOCKCHAIN=${BLOCKCHAIN}
     networks:
       - cqt-net

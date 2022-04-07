@@ -29,7 +29,7 @@ jobs:
       run: |
         touch .env
         echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
+        echo CQT_RPC_URL=${{ secrets.CQT_RPC_URL }} >> .env
         cat .env
 
     - name: Load .env file
@@ -76,7 +76,7 @@ jobs:
       run: |
         touch .env
         echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-        echo RPC_URL=${{ secrets.RPC_URL }} >> .env
+        echo CQT_RPC_URL=${{ secrets.CQT_RPC_URL }} >> .env
         cat .env
 
     - name: Load .env file
