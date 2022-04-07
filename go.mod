@@ -11,7 +11,7 @@ require (
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
 	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.1.3 // indirect
-	github.com/covalenthq/ipfs-pinner v0.0.0-20220407025027-bfda2ed1827b // indirect
+	github.com/covalenthq/ipfs-pinner v0.0.0-20220407230624-bfae29173cf5 // indirect
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/fatih/color v1.13.0 // indirect
