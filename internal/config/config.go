@@ -14,8 +14,9 @@ type RedisConfig struct {
 
 // EthConfig is set of all config that relates to ethereum
 type EthConfig struct {
-	RPCURL       string `envconfig:"ETH_RPC_URL"`
-	PrivateKey   string `envconfig:"ETH_PRIVATE_KEY"`
+	CqtRPCURL    string `envconfig:"CQT_RPC_URL"`
+	ExtRPCURL    string `envconfig:"EXT_RPC_URL"`
+	PrivateKey   string `envconfig:"PRIVATE_KEY"`
 	KeystorePath string `envconfig:"ETH_KEYSTORE_PATH"`
 	KeyStorePwd  string `envconfig:"ETH_KEYSTORE_PWD"`
 }
