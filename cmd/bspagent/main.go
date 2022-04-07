@@ -29,6 +29,7 @@ import (
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/handler"
+	"github.com/covalenthq/bsp-agent/internal/proof"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/covalenthq/bsp-agent/internal/websocket"
@@ -44,6 +45,7 @@ var (
 	// env flag vars
 	consumerPendingTimeoutFlag = 60 // defaults to 1 min
 	segmentLengthFlag          = 1  // defaults to 1 block per segment
+	packerLengthFlag           = 10 // defaults to 10 block per pack tx
 	avroCodecPathFlag          string
 	redisURLFlag               string
 	replicaBucketFlag          string
@@ -60,6 +62,7 @@ var (
 	replicaSegmentName    string
 	replicaSegmentIDBatch []string
 	replicationSegment    event.ReplicationSegment
+	packerTxBatch         []string
 	blockReplica          types.BlockReplica
 )
 
@@ -72,6 +75,7 @@ func parseFlags() {
 	flag.StringVar(&proofChainFlag, "proof-chain-address", utils.LookupEnvOrString("ProofChain", proofChainFlag), "hex string address for deployed proof-chain contract")
 	flag.StringVar(&websocketURLsFlag, "websocket-urls", utils.LookupEnvOrString("WebsocketURLs", websocketURLsFlag), "url to websockets clients separated by space")
 	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
+	flag.IntVar(&packerLengthFlag, "packer-length", utils.LookupEnvOrInt("PackerLength", packerLengthFlag), "number of block specimen within a packer tx object")
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
 	flag.Parse()
@@ -128,7 +132,7 @@ func main() {
 	if err != nil {
 		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
 	}
-	ethClient, err := utils.NewEthClient(config.EthConfig.RPCURL)
+	ethClient, err := utils.NewEthClient(config.EthConfig.CqtRPCURL)
 	if err != nil {
 		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
 	}
@@ -291,7 +295,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicationSegment.Elements = uint64(segmentLengthFlag)
 			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + objectType
 			// avro encode, prove and upload
-			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
+			specimenTxHash, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 			}
@@ -299,6 +303,18 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			err = utils.AckStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
 			if err != nil {
 				log.Error("failed to match streamIDs length to segment length config: ", err)
+			}
+			packerTxBatch = append(packerTxBatch, specimenTxHash)
+
+			if len(packerTxBatch) == packerLengthFlag {
+				fmt.Printf("\n---> Sending Tx to Moonbeam for %v Proof Txs %v <---\n", packerLengthFlag, packerTxBatch)
+
+				_, err := proof.SendPackerProofTx(ctx, &config.EthConfig, ethClient, packerTxBatch)
+				if err != nil {
+					log.Error("failed to sent Packer Tx: ", err)
+					panic(err)
+				}
+				packerTxBatch = []string{}
 			}
 			// reset segment, name, id batch stores
 			replicationSegment = event.ReplicationSegment{}
