@@ -21,6 +21,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/sys/unix"
 	"google.golang.org/api/option"
 )
 
@@ -194,4 +195,32 @@ func HomeDir() string {
 	}
 
 	return ""
+}
+
+// GetLogLocationURL gets full path of log directory for current user or creates it
+func GetLogLocationURL(logPath string) (*url.URL, error) {
+	logLocation := ExpandPath(logPath)
+	locationURL, err := url.Parse(logLocation)
+	if err == nil {
+		if _, existErr := os.Stat(locationURL.Path); os.IsNotExist(existErr) {
+			// directory doesn't exist, create
+			createErr := os.Mkdir(locationURL.Path, os.ModePerm)
+			if createErr != nil {
+				return nil, fmt.Errorf("error creating the directory: %w", createErr)
+			}
+		}
+
+		if !Writable(locationURL.Path) {
+			return nil, fmt.Errorf("write access not present for given log location")
+		}
+
+		return locationURL, nil
+	}
+
+	return locationURL, fmt.Errorf("log-folder: %w", err)
+}
+
+// Writable informs if path is writable to or not
+func Writable(path string) bool {
+	return unix.Access(path, unix.W_OK) == nil
 }
