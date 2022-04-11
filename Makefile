@@ -16,13 +16,13 @@ run-build:
 run-agent-eth:
 	@echo "---- Running Agent from cmd/bspagent ----"
 	@go run ./cmd/bspagent/*.go \
-	--redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \
+	--redis-url="redis://username:@localhost:6379/0?topic=replication-2#replicate-1" \
 	--avro-codec-path="./codec/block-ethereum.avsc" \
 	--binary-file-path="./bin/block-ethereum/" \
 	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
 	--segment-length=1 \
-	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
+	--proof-chain-address=0x6507eD89D2AAafbC3664fb3943d725171fe88B0D \
 	--consumer-timeout=80
 
 run-agent-elrond:
