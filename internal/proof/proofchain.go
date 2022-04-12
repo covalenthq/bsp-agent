@@ -30,7 +30,7 @@ var (
 
 // ProofChainMetaData contains all meta data concerning the ProofChain contract.
 var ProofChainMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newMaxNumberOfHashesPer24H\",\"type\":\"uint64\"}],\"name\":\"BlockSpecimenMaxNumberOfHashesPer24HChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenMinSubmissionsRequired\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenMinSubmissionRequiredChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"submittedStake\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenProductionProofSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockhash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenhash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenRewardAwarded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenRewardAllocation\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenRewardChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint128\",\"name\":\"blockHeight\",\"type\":\"uint128\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"proofHash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenSessionFinalized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newStakeRequirement\",\"type\":\"uint128\"}],\"name\":\"MinimumRequiredStakeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"numberOfBlocks\",\"type\":\"uint64\"}],\"name\":\"NumberOfBlocksPer24HChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operatorAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"OperatorStartedRole\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operatorAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"OperatorStoppedRole\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"QuorumNotReached\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionDurationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionMinSubmissionChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newQuorumThreshold\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionQuorumChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newInterfaceAddress\",\"type\":\"address\"}],\"name\":\"StakingInterfaceChanged\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"AUDITOR_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"name\":\"activeIDs\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"newRoleName\",\"type\":\"bytes32\"}],\"name\":\"addRoleType\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"validator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"commissionRate\",\"type\":\"uint128\"}],\"name\":\"addValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"definitiveSpecimenHash\",\"type\":\"bytes32\"}],\"name\":\"arbitrateBlockSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenQuorum\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenRewardAllocation\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenSessionDuration\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operatorAddress\",\"type\":\"address\"}],\"name\":\"countOperatorsRoles\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"roleCount\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"disableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"finalizeAndRewardSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRoleTypes\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"roleTypes\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRolePreapproval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakingContract\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isPreapprovedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"isSufficientlyStakedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"minSubmissionsRequired\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"removeOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRolePreapproval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenMinSubmissionRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenReward\",\"type\":\"uint128\"}],\"name\":\"setBlockSpecimenReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenSessionDuration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"maxSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMaxNumberOfHashesPer24H\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMinSubmissionsRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"numberOfBlocks\",\"type\":\"uint64\"}],\"name\":\"setNumberOfBlocksPer24H\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"quorum\",\"type\":\"uint64\"}],\"name\":\"setQuorumThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"newStakeAmount\",\"type\":\"uint128\"}],\"name\":\"setRequiredStakeForRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stakingContractAddress\",\"type\":\"address\"}],\"name\":\"setStakingInterface\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"internalType\":\"address\",\"name\":\"operatorAddress\",\"type\":\"address\"}],\"name\":\"startOperatorRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"stopOperatorRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"submitBlockSpecimenProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"validatorIDs\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newMaxNumberOfHashesPer24H\",\"type\":\"uint64\"}],\"name\":\"BlockSpecimenMaxNumberOfHashesPer24HChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenMinSubmissionsRequired\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenMinSubmissionRequiredChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"submittedStake\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenProductionProofSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockhash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenhash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenRewardAwarded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenRewardAllocation\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenRewardChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint128\",\"name\":\"blockHeight\",\"type\":\"uint128\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"proofHash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenSessionFinalized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newStakeRequirement\",\"type\":\"uint128\"}],\"name\":\"MinimumRequiredStakeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"name\":\"NthBlockChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"numberOfBlocks\",\"type\":\"uint64\"}],\"name\":\"NumberOfBlocksPer24HChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"OperatorAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorDisabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorEnabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"QuorumNotReached\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionDurationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionMinSubmissionChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newQuorumThreshold\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionQuorumChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newInterfaceAddress\",\"type\":\"address\"}],\"name\":\"StakingInterfaceChanged\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"AUDITOR_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"addOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"validator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"commissionRate\",\"type\":\"uint128\"}],\"name\":\"addValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"definitiveSpecimenHash\",\"type\":\"bytes32\"}],\"name\":\"arbitrateBlockSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenQuorum\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenRewardAllocation\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenSessionDuration\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"disableOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"disableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"enableOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"finalizeAndRewardSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"getOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRoleTypes\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"roleTypes\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakingContract\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"isSufficientlyStakedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"maxNumberOfHashesPer24H\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"minSubmissionsRequired\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"nthBlock\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"operatorRoles\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"removeOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenMinSubmissionRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenReward\",\"type\":\"uint128\"}],\"name\":\"setBlockSpecimenReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenSessionDuration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"maxSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMaxNumberOfHashesPer24H\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMinSubmissionsRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"n\",\"type\":\"uint64\"}],\"name\":\"setNthBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"numberOfBlocks\",\"type\":\"uint64\"}],\"name\":\"setNumberOfBlocksPer24H\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"quorum\",\"type\":\"uint64\"}],\"name\":\"setQuorumThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"newStakeAmount\",\"type\":\"uint128\"}],\"name\":\"setRequiredStakeForRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stakingContractAddress\",\"type\":\"address\"}],\"name\":\"setStakingInterface\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"submitBlockSpecimenProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"validatorIDs\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // ProofChainABI is the input ABI used to generate the binding from.
@@ -272,37 +272,6 @@ func (_ProofChain *ProofChainCallerSession) GOVERNANCEROLE() ([32]byte, error) {
 	return _ProofChain.Contract.GOVERNANCEROLE(&_ProofChain.CallOpts)
 }
 
-// ActiveIDs is a free data retrieval call binding the contract method 0x67476118.
-//
-// Solidity: function activeIDs(uint128 ) view returns(bool)
-func (_ProofChain *ProofChainCaller) ActiveIDs(opts *bind.CallOpts, arg0 *big.Int) (bool, error) {
-	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "activeIDs", arg0)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// ActiveIDs is a free data retrieval call binding the contract method 0x67476118.
-//
-// Solidity: function activeIDs(uint128 ) view returns(bool)
-func (_ProofChain *ProofChainSession) ActiveIDs(arg0 *big.Int) (bool, error) {
-	return _ProofChain.Contract.ActiveIDs(&_ProofChain.CallOpts, arg0)
-}
-
-// ActiveIDs is a free data retrieval call binding the contract method 0x67476118.
-//
-// Solidity: function activeIDs(uint128 ) view returns(bool)
-func (_ProofChain *ProofChainCallerSession) ActiveIDs(arg0 *big.Int) (bool, error) {
-	return _ProofChain.Contract.ActiveIDs(&_ProofChain.CallOpts, arg0)
-}
-
 // BlockSpecimenQuorum is a free data retrieval call binding the contract method 0x96df32b5.
 //
 // Solidity: function blockSpecimenQuorum() view returns(uint64)
@@ -396,35 +365,35 @@ func (_ProofChain *ProofChainCallerSession) BlockSpecimenSessionDuration() (uint
 	return _ProofChain.Contract.BlockSpecimenSessionDuration(&_ProofChain.CallOpts)
 }
 
-// CountOperatorsRoles is a free data retrieval call binding the contract method 0x14ec4a00.
+// GetOperators is a free data retrieval call binding the contract method 0xd3a8b2a8.
 //
-// Solidity: function countOperatorsRoles(address operatorAddress) view returns(uint256 roleCount)
-func (_ProofChain *ProofChainCaller) CountOperatorsRoles(opts *bind.CallOpts, operatorAddress common.Address) (*big.Int, error) {
+// Solidity: function getOperators(uint128 validatorId) view returns(address[])
+func (_ProofChain *ProofChainCaller) GetOperators(opts *bind.CallOpts, validatorId *big.Int) ([]common.Address, error) {
 	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "countOperatorsRoles", operatorAddress)
+	err := _ProofChain.contract.Call(opts, &out, "getOperators", validatorId)
 
 	if err != nil {
-		return *new(*big.Int), err
+		return *new([]common.Address), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out0 := *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
 
 	return out0, err
 
 }
 
-// CountOperatorsRoles is a free data retrieval call binding the contract method 0x14ec4a00.
+// GetOperators is a free data retrieval call binding the contract method 0xd3a8b2a8.
 //
-// Solidity: function countOperatorsRoles(address operatorAddress) view returns(uint256 roleCount)
-func (_ProofChain *ProofChainSession) CountOperatorsRoles(operatorAddress common.Address) (*big.Int, error) {
-	return _ProofChain.Contract.CountOperatorsRoles(&_ProofChain.CallOpts, operatorAddress)
+// Solidity: function getOperators(uint128 validatorId) view returns(address[])
+func (_ProofChain *ProofChainSession) GetOperators(validatorId *big.Int) ([]common.Address, error) {
+	return _ProofChain.Contract.GetOperators(&_ProofChain.CallOpts, validatorId)
 }
 
-// CountOperatorsRoles is a free data retrieval call binding the contract method 0x14ec4a00.
+// GetOperators is a free data retrieval call binding the contract method 0xd3a8b2a8.
 //
-// Solidity: function countOperatorsRoles(address operatorAddress) view returns(uint256 roleCount)
-func (_ProofChain *ProofChainCallerSession) CountOperatorsRoles(operatorAddress common.Address) (*big.Int, error) {
-	return _ProofChain.Contract.CountOperatorsRoles(&_ProofChain.CallOpts, operatorAddress)
+// Solidity: function getOperators(uint128 validatorId) view returns(address[])
+func (_ProofChain *ProofChainCallerSession) GetOperators(validatorId *big.Int) ([]common.Address, error) {
+	return _ProofChain.Contract.GetOperators(&_ProofChain.CallOpts, validatorId)
 }
 
 // GetRoleTypes is a free data retrieval call binding the contract method 0x96c61cb2.
@@ -458,12 +427,12 @@ func (_ProofChain *ProofChainCallerSession) GetRoleTypes() ([][32]byte, error) {
 	return _ProofChain.Contract.GetRoleTypes(&_ProofChain.CallOpts)
 }
 
-// IsPreapprovedForRole is a free data retrieval call binding the contract method 0x6133dbf4.
+// IsEnabled is a free data retrieval call binding the contract method 0x9015d371.
 //
-// Solidity: function isPreapprovedForRole(bytes32 roleName, address account) view returns(bool)
-func (_ProofChain *ProofChainCaller) IsPreapprovedForRole(opts *bind.CallOpts, roleName [32]byte, account common.Address) (bool, error) {
+// Solidity: function isEnabled(address operator) view returns(bool)
+func (_ProofChain *ProofChainCaller) IsEnabled(opts *bind.CallOpts, operator common.Address) (bool, error) {
 	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "isPreapprovedForRole", roleName, account)
+	err := _ProofChain.contract.Call(opts, &out, "isEnabled", operator)
 
 	if err != nil {
 		return *new(bool), err
@@ -475,18 +444,18 @@ func (_ProofChain *ProofChainCaller) IsPreapprovedForRole(opts *bind.CallOpts, r
 
 }
 
-// IsPreapprovedForRole is a free data retrieval call binding the contract method 0x6133dbf4.
+// IsEnabled is a free data retrieval call binding the contract method 0x9015d371.
 //
-// Solidity: function isPreapprovedForRole(bytes32 roleName, address account) view returns(bool)
-func (_ProofChain *ProofChainSession) IsPreapprovedForRole(roleName [32]byte, account common.Address) (bool, error) {
-	return _ProofChain.Contract.IsPreapprovedForRole(&_ProofChain.CallOpts, roleName, account)
+// Solidity: function isEnabled(address operator) view returns(bool)
+func (_ProofChain *ProofChainSession) IsEnabled(operator common.Address) (bool, error) {
+	return _ProofChain.Contract.IsEnabled(&_ProofChain.CallOpts, operator)
 }
 
-// IsPreapprovedForRole is a free data retrieval call binding the contract method 0x6133dbf4.
+// IsEnabled is a free data retrieval call binding the contract method 0x9015d371.
 //
-// Solidity: function isPreapprovedForRole(bytes32 roleName, address account) view returns(bool)
-func (_ProofChain *ProofChainCallerSession) IsPreapprovedForRole(roleName [32]byte, account common.Address) (bool, error) {
-	return _ProofChain.Contract.IsPreapprovedForRole(&_ProofChain.CallOpts, roleName, account)
+// Solidity: function isEnabled(address operator) view returns(bool)
+func (_ProofChain *ProofChainCallerSession) IsEnabled(operator common.Address) (bool, error) {
+	return _ProofChain.Contract.IsEnabled(&_ProofChain.CallOpts, operator)
 }
 
 // IsSufficientlyStakedForRole is a free data retrieval call binding the contract method 0x74c595ed.
@@ -520,6 +489,37 @@ func (_ProofChain *ProofChainCallerSession) IsSufficientlyStakedForRole(roleName
 	return _ProofChain.Contract.IsSufficientlyStakedForRole(&_ProofChain.CallOpts, roleName, validatorId)
 }
 
+// MaxNumberOfHashesPer24H is a free data retrieval call binding the contract method 0xf271f4dd.
+//
+// Solidity: function maxNumberOfHashesPer24H(uint64 ) view returns(uint64)
+func (_ProofChain *ProofChainCaller) MaxNumberOfHashesPer24H(opts *bind.CallOpts, arg0 uint64) (uint64, error) {
+	var out []interface{}
+	err := _ProofChain.contract.Call(opts, &out, "maxNumberOfHashesPer24H", arg0)
+
+	if err != nil {
+		return *new(uint64), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
+
+	return out0, err
+
+}
+
+// MaxNumberOfHashesPer24H is a free data retrieval call binding the contract method 0xf271f4dd.
+//
+// Solidity: function maxNumberOfHashesPer24H(uint64 ) view returns(uint64)
+func (_ProofChain *ProofChainSession) MaxNumberOfHashesPer24H(arg0 uint64) (uint64, error) {
+	return _ProofChain.Contract.MaxNumberOfHashesPer24H(&_ProofChain.CallOpts, arg0)
+}
+
+// MaxNumberOfHashesPer24H is a free data retrieval call binding the contract method 0xf271f4dd.
+//
+// Solidity: function maxNumberOfHashesPer24H(uint64 ) view returns(uint64)
+func (_ProofChain *ProofChainCallerSession) MaxNumberOfHashesPer24H(arg0 uint64) (uint64, error) {
+	return _ProofChain.Contract.MaxNumberOfHashesPer24H(&_ProofChain.CallOpts, arg0)
+}
+
 // MinSubmissionsRequired is a free data retrieval call binding the contract method 0x6d261e00.
 //
 // Solidity: function minSubmissionsRequired() view returns(uint64)
@@ -549,6 +549,99 @@ func (_ProofChain *ProofChainSession) MinSubmissionsRequired() (uint64, error) {
 // Solidity: function minSubmissionsRequired() view returns(uint64)
 func (_ProofChain *ProofChainCallerSession) MinSubmissionsRequired() (uint64, error) {
 	return _ProofChain.Contract.MinSubmissionsRequired(&_ProofChain.CallOpts)
+}
+
+// NthBlock is a free data retrieval call binding the contract method 0xc7f99302.
+//
+// Solidity: function nthBlock(uint64 ) view returns(uint64)
+func (_ProofChain *ProofChainCaller) NthBlock(opts *bind.CallOpts, arg0 uint64) (uint64, error) {
+	var out []interface{}
+	err := _ProofChain.contract.Call(opts, &out, "nthBlock", arg0)
+
+	if err != nil {
+		return *new(uint64), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
+
+	return out0, err
+
+}
+
+// NthBlock is a free data retrieval call binding the contract method 0xc7f99302.
+//
+// Solidity: function nthBlock(uint64 ) view returns(uint64)
+func (_ProofChain *ProofChainSession) NthBlock(arg0 uint64) (uint64, error) {
+	return _ProofChain.Contract.NthBlock(&_ProofChain.CallOpts, arg0)
+}
+
+// NthBlock is a free data retrieval call binding the contract method 0xc7f99302.
+//
+// Solidity: function nthBlock(uint64 ) view returns(uint64)
+func (_ProofChain *ProofChainCallerSession) NthBlock(arg0 uint64) (uint64, error) {
+	return _ProofChain.Contract.NthBlock(&_ProofChain.CallOpts, arg0)
+}
+
+// OperatorRoles is a free data retrieval call binding the contract method 0x6ab9d8e8.
+//
+// Solidity: function operatorRoles(address ) view returns(bytes32)
+func (_ProofChain *ProofChainCaller) OperatorRoles(opts *bind.CallOpts, arg0 common.Address) ([32]byte, error) {
+	var out []interface{}
+	err := _ProofChain.contract.Call(opts, &out, "operatorRoles", arg0)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
+}
+
+// OperatorRoles is a free data retrieval call binding the contract method 0x6ab9d8e8.
+//
+// Solidity: function operatorRoles(address ) view returns(bytes32)
+func (_ProofChain *ProofChainSession) OperatorRoles(arg0 common.Address) ([32]byte, error) {
+	return _ProofChain.Contract.OperatorRoles(&_ProofChain.CallOpts, arg0)
+}
+
+// OperatorRoles is a free data retrieval call binding the contract method 0x6ab9d8e8.
+//
+// Solidity: function operatorRoles(address ) view returns(bytes32)
+func (_ProofChain *ProofChainCallerSession) OperatorRoles(arg0 common.Address) ([32]byte, error) {
+	return _ProofChain.Contract.OperatorRoles(&_ProofChain.CallOpts, arg0)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() view returns(address)
+func (_ProofChain *ProofChainCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _ProofChain.contract.Call(opts, &out, "owner")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() view returns(address)
+func (_ProofChain *ProofChainSession) Owner() (common.Address, error) {
+	return _ProofChain.Contract.Owner(&_ProofChain.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() view returns(address)
+func (_ProofChain *ProofChainCallerSession) Owner() (common.Address, error) {
+	return _ProofChain.Contract.Owner(&_ProofChain.CallOpts)
 }
 
 // ValidatorIDs is a free data retrieval call binding the contract method 0x0d92f4ed.
@@ -582,25 +675,25 @@ func (_ProofChain *ProofChainCallerSession) ValidatorIDs(arg0 common.Address) (*
 	return _ProofChain.Contract.ValidatorIDs(&_ProofChain.CallOpts, arg0)
 }
 
-// AddRoleType is a paid mutator transaction binding the contract method 0xcdb1c112.
+// AddOperator is a paid mutator transaction binding the contract method 0xd43e451d.
 //
-// Solidity: function addRoleType(bytes32 newRoleName) returns()
-func (_ProofChain *ProofChainTransactor) AddRoleType(opts *bind.TransactOpts, newRoleName [32]byte) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "addRoleType", newRoleName)
+// Solidity: function addOperator(address operator, uint128 validatorId, bytes32 role) returns()
+func (_ProofChain *ProofChainTransactor) AddOperator(opts *bind.TransactOpts, operator common.Address, validatorId *big.Int, role [32]byte) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "addOperator", operator, validatorId, role)
 }
 
-// AddRoleType is a paid mutator transaction binding the contract method 0xcdb1c112.
+// AddOperator is a paid mutator transaction binding the contract method 0xd43e451d.
 //
-// Solidity: function addRoleType(bytes32 newRoleName) returns()
-func (_ProofChain *ProofChainSession) AddRoleType(newRoleName [32]byte) (*types.Transaction, error) {
-	return _ProofChain.Contract.AddRoleType(&_ProofChain.TransactOpts, newRoleName)
+// Solidity: function addOperator(address operator, uint128 validatorId, bytes32 role) returns()
+func (_ProofChain *ProofChainSession) AddOperator(operator common.Address, validatorId *big.Int, role [32]byte) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddOperator(&_ProofChain.TransactOpts, operator, validatorId, role)
 }
 
-// AddRoleType is a paid mutator transaction binding the contract method 0xcdb1c112.
+// AddOperator is a paid mutator transaction binding the contract method 0xd43e451d.
 //
-// Solidity: function addRoleType(bytes32 newRoleName) returns()
-func (_ProofChain *ProofChainTransactorSession) AddRoleType(newRoleName [32]byte) (*types.Transaction, error) {
-	return _ProofChain.Contract.AddRoleType(&_ProofChain.TransactOpts, newRoleName)
+// Solidity: function addOperator(address operator, uint128 validatorId, bytes32 role) returns()
+func (_ProofChain *ProofChainTransactorSession) AddOperator(operator common.Address, validatorId *big.Int, role [32]byte) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddOperator(&_ProofChain.TransactOpts, operator, validatorId, role)
 }
 
 // AddValidator is a paid mutator transaction binding the contract method 0xa2e7e441.
@@ -645,6 +738,27 @@ func (_ProofChain *ProofChainTransactorSession) ArbitrateBlockSpecimenSession(ch
 	return _ProofChain.Contract.ArbitrateBlockSpecimenSession(&_ProofChain.TransactOpts, chainId, blockHeight, blockHash, definitiveSpecimenHash)
 }
 
+// DisableOperator is a paid mutator transaction binding the contract method 0xf56408ed.
+//
+// Solidity: function disableOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactor) DisableOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "disableOperator", operator)
+}
+
+// DisableOperator is a paid mutator transaction binding the contract method 0xf56408ed.
+//
+// Solidity: function disableOperator(address operator) returns()
+func (_ProofChain *ProofChainSession) DisableOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.DisableOperator(&_ProofChain.TransactOpts, operator)
+}
+
+// DisableOperator is a paid mutator transaction binding the contract method 0xf56408ed.
+//
+// Solidity: function disableOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactorSession) DisableOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.DisableOperator(&_ProofChain.TransactOpts, operator)
+}
+
 // DisableValidator is a paid mutator transaction binding the contract method 0xad9e91ee.
 //
 // Solidity: function disableValidator(uint128 validatorId, uint256 blockNumber) returns()
@@ -664,6 +778,27 @@ func (_ProofChain *ProofChainSession) DisableValidator(validatorId *big.Int, blo
 // Solidity: function disableValidator(uint128 validatorId, uint256 blockNumber) returns()
 func (_ProofChain *ProofChainTransactorSession) DisableValidator(validatorId *big.Int, blockNumber *big.Int) (*types.Transaction, error) {
 	return _ProofChain.Contract.DisableValidator(&_ProofChain.TransactOpts, validatorId, blockNumber)
+}
+
+// EnableOperator is a paid mutator transaction binding the contract method 0xdd307b99.
+//
+// Solidity: function enableOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactor) EnableOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "enableOperator", operator)
+}
+
+// EnableOperator is a paid mutator transaction binding the contract method 0xdd307b99.
+//
+// Solidity: function enableOperator(address operator) returns()
+func (_ProofChain *ProofChainSession) EnableOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.EnableOperator(&_ProofChain.TransactOpts, operator)
+}
+
+// EnableOperator is a paid mutator transaction binding the contract method 0xdd307b99.
+//
+// Solidity: function enableOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactorSession) EnableOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.EnableOperator(&_ProofChain.TransactOpts, operator)
 }
 
 // FinalizeAndRewardSpecimenSession is a paid mutator transaction binding the contract method 0x8ecd30bc.
@@ -687,27 +822,6 @@ func (_ProofChain *ProofChainTransactorSession) FinalizeAndRewardSpecimenSession
 	return _ProofChain.Contract.FinalizeAndRewardSpecimenSession(&_ProofChain.TransactOpts, chainId, blockHeight)
 }
 
-// GrantRolePreapproval is a paid mutator transaction binding the contract method 0x5ff2bfa0.
-//
-// Solidity: function grantRolePreapproval(bytes32 roleName, address account) returns()
-func (_ProofChain *ProofChainTransactor) GrantRolePreapproval(opts *bind.TransactOpts, roleName [32]byte, account common.Address) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "grantRolePreapproval", roleName, account)
-}
-
-// GrantRolePreapproval is a paid mutator transaction binding the contract method 0x5ff2bfa0.
-//
-// Solidity: function grantRolePreapproval(bytes32 roleName, address account) returns()
-func (_ProofChain *ProofChainSession) GrantRolePreapproval(roleName [32]byte, account common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.GrantRolePreapproval(&_ProofChain.TransactOpts, roleName, account)
-}
-
-// GrantRolePreapproval is a paid mutator transaction binding the contract method 0x5ff2bfa0.
-//
-// Solidity: function grantRolePreapproval(bytes32 roleName, address account) returns()
-func (_ProofChain *ProofChainTransactorSession) GrantRolePreapproval(roleName [32]byte, account common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.GrantRolePreapproval(&_ProofChain.TransactOpts, roleName, account)
-}
-
 // Initialize is a paid mutator transaction binding the contract method 0x485cc955.
 //
 // Solidity: function initialize(address initialOwner, address stakingContract) returns()
@@ -729,46 +843,46 @@ func (_ProofChain *ProofChainTransactorSession) Initialize(initialOwner common.A
 	return _ProofChain.Contract.Initialize(&_ProofChain.TransactOpts, initialOwner, stakingContract)
 }
 
-// RemoveOperator is a paid mutator transaction binding the contract method 0x97d35676.
+// RemoveOperator is a paid mutator transaction binding the contract method 0xac8a584a.
 //
-// Solidity: function removeOperator(uint128 validatorId) returns()
-func (_ProofChain *ProofChainTransactor) RemoveOperator(opts *bind.TransactOpts, validatorId *big.Int) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "removeOperator", validatorId)
+// Solidity: function removeOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactor) RemoveOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "removeOperator", operator)
 }
 
-// RemoveOperator is a paid mutator transaction binding the contract method 0x97d35676.
+// RemoveOperator is a paid mutator transaction binding the contract method 0xac8a584a.
 //
-// Solidity: function removeOperator(uint128 validatorId) returns()
-func (_ProofChain *ProofChainSession) RemoveOperator(validatorId *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.RemoveOperator(&_ProofChain.TransactOpts, validatorId)
+// Solidity: function removeOperator(address operator) returns()
+func (_ProofChain *ProofChainSession) RemoveOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveOperator(&_ProofChain.TransactOpts, operator)
 }
 
-// RemoveOperator is a paid mutator transaction binding the contract method 0x97d35676.
+// RemoveOperator is a paid mutator transaction binding the contract method 0xac8a584a.
 //
-// Solidity: function removeOperator(uint128 validatorId) returns()
-func (_ProofChain *ProofChainTransactorSession) RemoveOperator(validatorId *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.RemoveOperator(&_ProofChain.TransactOpts, validatorId)
+// Solidity: function removeOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactorSession) RemoveOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveOperator(&_ProofChain.TransactOpts, operator)
 }
 
-// RevokeRolePreapproval is a paid mutator transaction binding the contract method 0x75d37c73.
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function revokeRolePreapproval(bytes32 roleName, address account) returns()
-func (_ProofChain *ProofChainTransactor) RevokeRolePreapproval(opts *bind.TransactOpts, roleName [32]byte, account common.Address) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "revokeRolePreapproval", roleName, account)
+// Solidity: function renounceOwnership() returns()
+func (_ProofChain *ProofChainTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "renounceOwnership")
 }
 
-// RevokeRolePreapproval is a paid mutator transaction binding the contract method 0x75d37c73.
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function revokeRolePreapproval(bytes32 roleName, address account) returns()
-func (_ProofChain *ProofChainSession) RevokeRolePreapproval(roleName [32]byte, account common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.RevokeRolePreapproval(&_ProofChain.TransactOpts, roleName, account)
+// Solidity: function renounceOwnership() returns()
+func (_ProofChain *ProofChainSession) RenounceOwnership() (*types.Transaction, error) {
+	return _ProofChain.Contract.RenounceOwnership(&_ProofChain.TransactOpts)
 }
 
-// RevokeRolePreapproval is a paid mutator transaction binding the contract method 0x75d37c73.
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function revokeRolePreapproval(bytes32 roleName, address account) returns()
-func (_ProofChain *ProofChainTransactorSession) RevokeRolePreapproval(roleName [32]byte, account common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.RevokeRolePreapproval(&_ProofChain.TransactOpts, roleName, account)
+// Solidity: function renounceOwnership() returns()
+func (_ProofChain *ProofChainTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _ProofChain.Contract.RenounceOwnership(&_ProofChain.TransactOpts)
 }
 
 // SetBlockSpecimenMinSubmissionRequired is a paid mutator transaction binding the contract method 0x7432d8dd.
@@ -876,6 +990,27 @@ func (_ProofChain *ProofChainTransactorSession) SetMinSubmissionsRequired(minSub
 	return _ProofChain.Contract.SetMinSubmissionsRequired(&_ProofChain.TransactOpts, minSubmissions)
 }
 
+// SetNthBlock is a paid mutator transaction binding the contract method 0xe3201409.
+//
+// Solidity: function setNthBlock(uint64 chainId, uint64 n) returns()
+func (_ProofChain *ProofChainTransactor) SetNthBlock(opts *bind.TransactOpts, chainId uint64, n uint64) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setNthBlock", chainId, n)
+}
+
+// SetNthBlock is a paid mutator transaction binding the contract method 0xe3201409.
+//
+// Solidity: function setNthBlock(uint64 chainId, uint64 n) returns()
+func (_ProofChain *ProofChainSession) SetNthBlock(chainId uint64, n uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetNthBlock(&_ProofChain.TransactOpts, chainId, n)
+}
+
+// SetNthBlock is a paid mutator transaction binding the contract method 0xe3201409.
+//
+// Solidity: function setNthBlock(uint64 chainId, uint64 n) returns()
+func (_ProofChain *ProofChainTransactorSession) SetNthBlock(chainId uint64, n uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetNthBlock(&_ProofChain.TransactOpts, chainId, n)
+}
+
 // SetNumberOfBlocksPer24H is a paid mutator transaction binding the contract method 0xf883465a.
 //
 // Solidity: function setNumberOfBlocksPer24H(uint64 numberOfBlocks) returns()
@@ -960,48 +1095,6 @@ func (_ProofChain *ProofChainTransactorSession) SetStakingInterface(stakingContr
 	return _ProofChain.Contract.SetStakingInterface(&_ProofChain.TransactOpts, stakingContractAddress)
 }
 
-// StartOperatorRole is a paid mutator transaction binding the contract method 0x79589ee6.
-//
-// Solidity: function startOperatorRole(bytes32 roleName, uint128 validatorId, address operatorAddress) returns()
-func (_ProofChain *ProofChainTransactor) StartOperatorRole(opts *bind.TransactOpts, roleName [32]byte, validatorId *big.Int, operatorAddress common.Address) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "startOperatorRole", roleName, validatorId, operatorAddress)
-}
-
-// StartOperatorRole is a paid mutator transaction binding the contract method 0x79589ee6.
-//
-// Solidity: function startOperatorRole(bytes32 roleName, uint128 validatorId, address operatorAddress) returns()
-func (_ProofChain *ProofChainSession) StartOperatorRole(roleName [32]byte, validatorId *big.Int, operatorAddress common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.StartOperatorRole(&_ProofChain.TransactOpts, roleName, validatorId, operatorAddress)
-}
-
-// StartOperatorRole is a paid mutator transaction binding the contract method 0x79589ee6.
-//
-// Solidity: function startOperatorRole(bytes32 roleName, uint128 validatorId, address operatorAddress) returns()
-func (_ProofChain *ProofChainTransactorSession) StartOperatorRole(roleName [32]byte, validatorId *big.Int, operatorAddress common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.StartOperatorRole(&_ProofChain.TransactOpts, roleName, validatorId, operatorAddress)
-}
-
-// StopOperatorRole is a paid mutator transaction binding the contract method 0x7e283822.
-//
-// Solidity: function stopOperatorRole(bytes32 roleName, uint128 validatorId) returns()
-func (_ProofChain *ProofChainTransactor) StopOperatorRole(opts *bind.TransactOpts, roleName [32]byte, validatorId *big.Int) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "stopOperatorRole", roleName, validatorId)
-}
-
-// StopOperatorRole is a paid mutator transaction binding the contract method 0x7e283822.
-//
-// Solidity: function stopOperatorRole(bytes32 roleName, uint128 validatorId) returns()
-func (_ProofChain *ProofChainSession) StopOperatorRole(roleName [32]byte, validatorId *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.StopOperatorRole(&_ProofChain.TransactOpts, roleName, validatorId)
-}
-
-// StopOperatorRole is a paid mutator transaction binding the contract method 0x7e283822.
-//
-// Solidity: function stopOperatorRole(bytes32 roleName, uint128 validatorId) returns()
-func (_ProofChain *ProofChainTransactorSession) StopOperatorRole(roleName [32]byte, validatorId *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.StopOperatorRole(&_ProofChain.TransactOpts, roleName, validatorId)
-}
-
 // SubmitBlockSpecimenProof is a paid mutator transaction binding the contract method 0x151fd8f3.
 //
 // Solidity: function submitBlockSpecimenProof(uint64 chainId, uint64 blockHeight, bytes32 blockHash, bytes32 specimenHash, string storageURL) returns()
@@ -1021,6 +1114,27 @@ func (_ProofChain *ProofChainSession) SubmitBlockSpecimenProof(chainId uint64, b
 // Solidity: function submitBlockSpecimenProof(uint64 chainId, uint64 blockHeight, bytes32 blockHash, bytes32 specimenHash, string storageURL) returns()
 func (_ProofChain *ProofChainTransactorSession) SubmitBlockSpecimenProof(chainId uint64, blockHeight uint64, blockHash [32]byte, specimenHash [32]byte, storageURL string) (*types.Transaction, error) {
 	return _ProofChain.Contract.SubmitBlockSpecimenProof(&_ProofChain.TransactOpts, chainId, blockHeight, blockHash, specimenHash, storageURL)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_ProofChain *ProofChainTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "transferOwnership", newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_ProofChain *ProofChainSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.TransferOwnership(&_ProofChain.TransactOpts, newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_ProofChain *ProofChainTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.TransferOwnership(&_ProofChain.TransactOpts, newOwner)
 }
 
 // ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator is returned from FilterBlockSpecimenMaxNumberOfHashesPer24HChanged and is used to iterate over the raw logs and unpacked data for BlockSpecimenMaxNumberOfHashesPer24HChanged events raised by the ProofChain contract.
@@ -2062,6 +2176,159 @@ func (_ProofChain *ProofChainFilterer) ParseMinimumRequiredStakeChanged(log type
 	return event, nil
 }
 
+// ProofChainNthBlockChangedIterator is returned from FilterNthBlockChanged and is used to iterate over the raw logs and unpacked data for NthBlockChanged events raised by the ProofChain contract.
+type ProofChainNthBlockChangedIterator struct {
+	Event *ProofChainNthBlockChanged // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ProofChainNthBlockChangedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ProofChainNthBlockChanged)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ProofChainNthBlockChanged)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ProofChainNthBlockChangedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ProofChainNthBlockChangedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ProofChainNthBlockChanged represents a NthBlockChanged event raised by the ProofChain contract.
+type ProofChainNthBlockChanged struct {
+	ChainId  uint64
+	NthBlock uint64
+	Raw      types.Log // Blockchain specific contextual infos
+}
+
+// FilterNthBlockChanged is a free log retrieval operation binding the contract event 0xbbfa9310306e8a8485d109f8be6b0a808473ce55d2e94b8ca3447c9ddb2854b4.
+//
+// Solidity: event NthBlockChanged(uint64 indexed chainId, uint64 indexed nthBlock)
+func (_ProofChain *ProofChainFilterer) FilterNthBlockChanged(opts *bind.FilterOpts, chainId []uint64, nthBlock []uint64) (*ProofChainNthBlockChangedIterator, error) {
+
+	var chainIdRule []interface{}
+	for _, chainIdItem := range chainId {
+		chainIdRule = append(chainIdRule, chainIdItem)
+	}
+	var nthBlockRule []interface{}
+	for _, nthBlockItem := range nthBlock {
+		nthBlockRule = append(nthBlockRule, nthBlockItem)
+	}
+
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "NthBlockChanged", chainIdRule, nthBlockRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ProofChainNthBlockChangedIterator{contract: _ProofChain.contract, event: "NthBlockChanged", logs: logs, sub: sub}, nil
+}
+
+// WatchNthBlockChanged is a free log subscription operation binding the contract event 0xbbfa9310306e8a8485d109f8be6b0a808473ce55d2e94b8ca3447c9ddb2854b4.
+//
+// Solidity: event NthBlockChanged(uint64 indexed chainId, uint64 indexed nthBlock)
+func (_ProofChain *ProofChainFilterer) WatchNthBlockChanged(opts *bind.WatchOpts, sink chan<- *ProofChainNthBlockChanged, chainId []uint64, nthBlock []uint64) (event.Subscription, error) {
+
+	var chainIdRule []interface{}
+	for _, chainIdItem := range chainId {
+		chainIdRule = append(chainIdRule, chainIdItem)
+	}
+	var nthBlockRule []interface{}
+	for _, nthBlockItem := range nthBlock {
+		nthBlockRule = append(nthBlockRule, nthBlockItem)
+	}
+
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "NthBlockChanged", chainIdRule, nthBlockRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ProofChainNthBlockChanged)
+				if err := _ProofChain.contract.UnpackLog(event, "NthBlockChanged", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseNthBlockChanged is a log parse operation binding the contract event 0xbbfa9310306e8a8485d109f8be6b0a808473ce55d2e94b8ca3447c9ddb2854b4.
+//
+// Solidity: event NthBlockChanged(uint64 indexed chainId, uint64 indexed nthBlock)
+func (_ProofChain *ProofChainFilterer) ParseNthBlockChanged(log types.Log) (*ProofChainNthBlockChanged, error) {
+	event := new(ProofChainNthBlockChanged)
+	if err := _ProofChain.contract.UnpackLog(event, "NthBlockChanged", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
 // ProofChainNumberOfBlocksPer24HChangedIterator is returned from FilterNumberOfBlocksPer24HChanged and is used to iterate over the raw logs and unpacked data for NumberOfBlocksPer24HChanged events raised by the ProofChain contract.
 type ProofChainNumberOfBlocksPer24HChangedIterator struct {
 	Event *ProofChainNumberOfBlocksPer24HChanged // Event containing the contract specifics and raw log
@@ -2196,9 +2463,9 @@ func (_ProofChain *ProofChainFilterer) ParseNumberOfBlocksPer24HChanged(log type
 	return event, nil
 }
 
-// ProofChainOperatorStartedRoleIterator is returned from FilterOperatorStartedRole and is used to iterate over the raw logs and unpacked data for OperatorStartedRole events raised by the ProofChain contract.
-type ProofChainOperatorStartedRoleIterator struct {
-	Event *ProofChainOperatorStartedRole // Event containing the contract specifics and raw log
+// ProofChainOperatorAddedIterator is returned from FilterOperatorAdded and is used to iterate over the raw logs and unpacked data for OperatorAdded events raised by the ProofChain contract.
+type ProofChainOperatorAddedIterator struct {
+	Event *ProofChainOperatorAdded // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2212,7 +2479,7 @@ type ProofChainOperatorStartedRoleIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProofChainOperatorStartedRoleIterator) Next() bool {
+func (it *ProofChainOperatorAddedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2221,7 +2488,7 @@ func (it *ProofChainOperatorStartedRoleIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProofChainOperatorStartedRole)
+			it.Event = new(ProofChainOperatorAdded)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2236,7 +2503,7 @@ func (it *ProofChainOperatorStartedRoleIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProofChainOperatorStartedRole)
+		it.Event = new(ProofChainOperatorAdded)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2252,69 +2519,43 @@ func (it *ProofChainOperatorStartedRoleIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainOperatorStartedRoleIterator) Error() error {
+func (it *ProofChainOperatorAddedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProofChainOperatorStartedRoleIterator) Close() error {
+func (it *ProofChainOperatorAddedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProofChainOperatorStartedRole represents a OperatorStartedRole event raised by the ProofChain contract.
-type ProofChainOperatorStartedRole struct {
-	Role            [32]byte
-	OperatorAddress common.Address
-	ValidatorId     *big.Int
-	Raw             types.Log // Blockchain specific contextual infos
+// ProofChainOperatorAdded represents a OperatorAdded event raised by the ProofChain contract.
+type ProofChainOperatorAdded struct {
+	Operator    common.Address
+	ValidatorId *big.Int
+	Role        [32]byte
+	Raw         types.Log // Blockchain specific contextual infos
 }
 
-// FilterOperatorStartedRole is a free log retrieval operation binding the contract event 0x77bc260bf2591a08387f4fb053a665992d20fb87bd485d6210d285ec7706527b.
+// FilterOperatorAdded is a free log retrieval operation binding the contract event 0x797ca55fc7be0f65c71f10996f7a16f801094f8ae3811874afc5a39730772a42.
 //
-// Solidity: event OperatorStartedRole(bytes32 indexed role, address indexed operatorAddress, uint128 indexed validatorId)
-func (_ProofChain *ProofChainFilterer) FilterOperatorStartedRole(opts *bind.FilterOpts, role [][32]byte, operatorAddress []common.Address, validatorId []*big.Int) (*ProofChainOperatorStartedRoleIterator, error) {
+// Solidity: event OperatorAdded(address operator, uint128 validatorId, bytes32 role)
+func (_ProofChain *ProofChainFilterer) FilterOperatorAdded(opts *bind.FilterOpts) (*ProofChainOperatorAddedIterator, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var operatorAddressRule []interface{}
-	for _, operatorAddressItem := range operatorAddress {
-		operatorAddressRule = append(operatorAddressRule, operatorAddressItem)
-	}
-	var validatorIdRule []interface{}
-	for _, validatorIdItem := range validatorId {
-		validatorIdRule = append(validatorIdRule, validatorIdItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "OperatorStartedRole", roleRule, operatorAddressRule, validatorIdRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "OperatorAdded")
 	if err != nil {
 		return nil, err
 	}
-	return &ProofChainOperatorStartedRoleIterator{contract: _ProofChain.contract, event: "OperatorStartedRole", logs: logs, sub: sub}, nil
+	return &ProofChainOperatorAddedIterator{contract: _ProofChain.contract, event: "OperatorAdded", logs: logs, sub: sub}, nil
 }
 
-// WatchOperatorStartedRole is a free log subscription operation binding the contract event 0x77bc260bf2591a08387f4fb053a665992d20fb87bd485d6210d285ec7706527b.
+// WatchOperatorAdded is a free log subscription operation binding the contract event 0x797ca55fc7be0f65c71f10996f7a16f801094f8ae3811874afc5a39730772a42.
 //
-// Solidity: event OperatorStartedRole(bytes32 indexed role, address indexed operatorAddress, uint128 indexed validatorId)
-func (_ProofChain *ProofChainFilterer) WatchOperatorStartedRole(opts *bind.WatchOpts, sink chan<- *ProofChainOperatorStartedRole, role [][32]byte, operatorAddress []common.Address, validatorId []*big.Int) (event.Subscription, error) {
+// Solidity: event OperatorAdded(address operator, uint128 validatorId, bytes32 role)
+func (_ProofChain *ProofChainFilterer) WatchOperatorAdded(opts *bind.WatchOpts, sink chan<- *ProofChainOperatorAdded) (event.Subscription, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var operatorAddressRule []interface{}
-	for _, operatorAddressItem := range operatorAddress {
-		operatorAddressRule = append(operatorAddressRule, operatorAddressItem)
-	}
-	var validatorIdRule []interface{}
-	for _, validatorIdItem := range validatorId {
-		validatorIdRule = append(validatorIdRule, validatorIdItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "OperatorStartedRole", roleRule, operatorAddressRule, validatorIdRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "OperatorAdded")
 	if err != nil {
 		return nil, err
 	}
@@ -2324,8 +2565,8 @@ func (_ProofChain *ProofChainFilterer) WatchOperatorStartedRole(opts *bind.Watch
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainOperatorStartedRole)
-				if err := _ProofChain.contract.UnpackLog(event, "OperatorStartedRole", log); err != nil {
+				event := new(ProofChainOperatorAdded)
+				if err := _ProofChain.contract.UnpackLog(event, "OperatorAdded", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2346,21 +2587,21 @@ func (_ProofChain *ProofChainFilterer) WatchOperatorStartedRole(opts *bind.Watch
 	}), nil
 }
 
-// ParseOperatorStartedRole is a log parse operation binding the contract event 0x77bc260bf2591a08387f4fb053a665992d20fb87bd485d6210d285ec7706527b.
+// ParseOperatorAdded is a log parse operation binding the contract event 0x797ca55fc7be0f65c71f10996f7a16f801094f8ae3811874afc5a39730772a42.
 //
-// Solidity: event OperatorStartedRole(bytes32 indexed role, address indexed operatorAddress, uint128 indexed validatorId)
-func (_ProofChain *ProofChainFilterer) ParseOperatorStartedRole(log types.Log) (*ProofChainOperatorStartedRole, error) {
-	event := new(ProofChainOperatorStartedRole)
-	if err := _ProofChain.contract.UnpackLog(event, "OperatorStartedRole", log); err != nil {
+// Solidity: event OperatorAdded(address operator, uint128 validatorId, bytes32 role)
+func (_ProofChain *ProofChainFilterer) ParseOperatorAdded(log types.Log) (*ProofChainOperatorAdded, error) {
+	event := new(ProofChainOperatorAdded)
+	if err := _ProofChain.contract.UnpackLog(event, "OperatorAdded", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ProofChainOperatorStoppedRoleIterator is returned from FilterOperatorStoppedRole and is used to iterate over the raw logs and unpacked data for OperatorStoppedRole events raised by the ProofChain contract.
-type ProofChainOperatorStoppedRoleIterator struct {
-	Event *ProofChainOperatorStoppedRole // Event containing the contract specifics and raw log
+// ProofChainOperatorDisabledIterator is returned from FilterOperatorDisabled and is used to iterate over the raw logs and unpacked data for OperatorDisabled events raised by the ProofChain contract.
+type ProofChainOperatorDisabledIterator struct {
+	Event *ProofChainOperatorDisabled // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2374,7 +2615,7 @@ type ProofChainOperatorStoppedRoleIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProofChainOperatorStoppedRoleIterator) Next() bool {
+func (it *ProofChainOperatorDisabledIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2383,7 +2624,7 @@ func (it *ProofChainOperatorStoppedRoleIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProofChainOperatorStoppedRole)
+			it.Event = new(ProofChainOperatorDisabled)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2398,7 +2639,7 @@ func (it *ProofChainOperatorStoppedRoleIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProofChainOperatorStoppedRole)
+		it.Event = new(ProofChainOperatorDisabled)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2414,69 +2655,41 @@ func (it *ProofChainOperatorStoppedRoleIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainOperatorStoppedRoleIterator) Error() error {
+func (it *ProofChainOperatorDisabledIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProofChainOperatorStoppedRoleIterator) Close() error {
+func (it *ProofChainOperatorDisabledIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProofChainOperatorStoppedRole represents a OperatorStoppedRole event raised by the ProofChain contract.
-type ProofChainOperatorStoppedRole struct {
-	Role            [32]byte
-	OperatorAddress common.Address
-	ValidatorId     *big.Int
-	Raw             types.Log // Blockchain specific contextual infos
+// ProofChainOperatorDisabled represents a OperatorDisabled event raised by the ProofChain contract.
+type ProofChainOperatorDisabled struct {
+	Operator common.Address
+	Raw      types.Log // Blockchain specific contextual infos
 }
 
-// FilterOperatorStoppedRole is a free log retrieval operation binding the contract event 0xfcf71fe4ab3a430dbd2e89438168cf16c179f2ed54e627d026157b3582761042.
+// FilterOperatorDisabled is a free log retrieval operation binding the contract event 0x23cd406c7cafe6d88c3f1c1cc16e438745a4236aec25906be2046ca16c36bd1e.
 //
-// Solidity: event OperatorStoppedRole(bytes32 indexed role, address indexed operatorAddress, uint128 indexed validatorId)
-func (_ProofChain *ProofChainFilterer) FilterOperatorStoppedRole(opts *bind.FilterOpts, role [][32]byte, operatorAddress []common.Address, validatorId []*big.Int) (*ProofChainOperatorStoppedRoleIterator, error) {
+// Solidity: event OperatorDisabled(address operator)
+func (_ProofChain *ProofChainFilterer) FilterOperatorDisabled(opts *bind.FilterOpts) (*ProofChainOperatorDisabledIterator, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var operatorAddressRule []interface{}
-	for _, operatorAddressItem := range operatorAddress {
-		operatorAddressRule = append(operatorAddressRule, operatorAddressItem)
-	}
-	var validatorIdRule []interface{}
-	for _, validatorIdItem := range validatorId {
-		validatorIdRule = append(validatorIdRule, validatorIdItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "OperatorStoppedRole", roleRule, operatorAddressRule, validatorIdRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "OperatorDisabled")
 	if err != nil {
 		return nil, err
 	}
-	return &ProofChainOperatorStoppedRoleIterator{contract: _ProofChain.contract, event: "OperatorStoppedRole", logs: logs, sub: sub}, nil
+	return &ProofChainOperatorDisabledIterator{contract: _ProofChain.contract, event: "OperatorDisabled", logs: logs, sub: sub}, nil
 }
 
-// WatchOperatorStoppedRole is a free log subscription operation binding the contract event 0xfcf71fe4ab3a430dbd2e89438168cf16c179f2ed54e627d026157b3582761042.
+// WatchOperatorDisabled is a free log subscription operation binding the contract event 0x23cd406c7cafe6d88c3f1c1cc16e438745a4236aec25906be2046ca16c36bd1e.
 //
-// Solidity: event OperatorStoppedRole(bytes32 indexed role, address indexed operatorAddress, uint128 indexed validatorId)
-func (_ProofChain *ProofChainFilterer) WatchOperatorStoppedRole(opts *bind.WatchOpts, sink chan<- *ProofChainOperatorStoppedRole, role [][32]byte, operatorAddress []common.Address, validatorId []*big.Int) (event.Subscription, error) {
+// Solidity: event OperatorDisabled(address operator)
+func (_ProofChain *ProofChainFilterer) WatchOperatorDisabled(opts *bind.WatchOpts, sink chan<- *ProofChainOperatorDisabled) (event.Subscription, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var operatorAddressRule []interface{}
-	for _, operatorAddressItem := range operatorAddress {
-		operatorAddressRule = append(operatorAddressRule, operatorAddressItem)
-	}
-	var validatorIdRule []interface{}
-	for _, validatorIdItem := range validatorId {
-		validatorIdRule = append(validatorIdRule, validatorIdItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "OperatorStoppedRole", roleRule, operatorAddressRule, validatorIdRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "OperatorDisabled")
 	if err != nil {
 		return nil, err
 	}
@@ -2486,8 +2699,8 @@ func (_ProofChain *ProofChainFilterer) WatchOperatorStoppedRole(opts *bind.Watch
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainOperatorStoppedRole)
-				if err := _ProofChain.contract.UnpackLog(event, "OperatorStoppedRole", log); err != nil {
+				event := new(ProofChainOperatorDisabled)
+				if err := _ProofChain.contract.UnpackLog(event, "OperatorDisabled", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2508,12 +2721,433 @@ func (_ProofChain *ProofChainFilterer) WatchOperatorStoppedRole(opts *bind.Watch
 	}), nil
 }
 
-// ParseOperatorStoppedRole is a log parse operation binding the contract event 0xfcf71fe4ab3a430dbd2e89438168cf16c179f2ed54e627d026157b3582761042.
+// ParseOperatorDisabled is a log parse operation binding the contract event 0x23cd406c7cafe6d88c3f1c1cc16e438745a4236aec25906be2046ca16c36bd1e.
 //
-// Solidity: event OperatorStoppedRole(bytes32 indexed role, address indexed operatorAddress, uint128 indexed validatorId)
-func (_ProofChain *ProofChainFilterer) ParseOperatorStoppedRole(log types.Log) (*ProofChainOperatorStoppedRole, error) {
-	event := new(ProofChainOperatorStoppedRole)
-	if err := _ProofChain.contract.UnpackLog(event, "OperatorStoppedRole", log); err != nil {
+// Solidity: event OperatorDisabled(address operator)
+func (_ProofChain *ProofChainFilterer) ParseOperatorDisabled(log types.Log) (*ProofChainOperatorDisabled, error) {
+	event := new(ProofChainOperatorDisabled)
+	if err := _ProofChain.contract.UnpackLog(event, "OperatorDisabled", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ProofChainOperatorEnabledIterator is returned from FilterOperatorEnabled and is used to iterate over the raw logs and unpacked data for OperatorEnabled events raised by the ProofChain contract.
+type ProofChainOperatorEnabledIterator struct {
+	Event *ProofChainOperatorEnabled // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ProofChainOperatorEnabledIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ProofChainOperatorEnabled)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ProofChainOperatorEnabled)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ProofChainOperatorEnabledIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ProofChainOperatorEnabledIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ProofChainOperatorEnabled represents a OperatorEnabled event raised by the ProofChain contract.
+type ProofChainOperatorEnabled struct {
+	Operator common.Address
+	Raw      types.Log // Blockchain specific contextual infos
+}
+
+// FilterOperatorEnabled is a free log retrieval operation binding the contract event 0x9e532d260bd7dde07708a6b1f7c64042546243d79bac23514cd74fcfc1a01fe4.
+//
+// Solidity: event OperatorEnabled(address operator)
+func (_ProofChain *ProofChainFilterer) FilterOperatorEnabled(opts *bind.FilterOpts) (*ProofChainOperatorEnabledIterator, error) {
+
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "OperatorEnabled")
+	if err != nil {
+		return nil, err
+	}
+	return &ProofChainOperatorEnabledIterator{contract: _ProofChain.contract, event: "OperatorEnabled", logs: logs, sub: sub}, nil
+}
+
+// WatchOperatorEnabled is a free log subscription operation binding the contract event 0x9e532d260bd7dde07708a6b1f7c64042546243d79bac23514cd74fcfc1a01fe4.
+//
+// Solidity: event OperatorEnabled(address operator)
+func (_ProofChain *ProofChainFilterer) WatchOperatorEnabled(opts *bind.WatchOpts, sink chan<- *ProofChainOperatorEnabled) (event.Subscription, error) {
+
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "OperatorEnabled")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ProofChainOperatorEnabled)
+				if err := _ProofChain.contract.UnpackLog(event, "OperatorEnabled", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseOperatorEnabled is a log parse operation binding the contract event 0x9e532d260bd7dde07708a6b1f7c64042546243d79bac23514cd74fcfc1a01fe4.
+//
+// Solidity: event OperatorEnabled(address operator)
+func (_ProofChain *ProofChainFilterer) ParseOperatorEnabled(log types.Log) (*ProofChainOperatorEnabled, error) {
+	event := new(ProofChainOperatorEnabled)
+	if err := _ProofChain.contract.UnpackLog(event, "OperatorEnabled", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ProofChainOperatorRemovedIterator is returned from FilterOperatorRemoved and is used to iterate over the raw logs and unpacked data for OperatorRemoved events raised by the ProofChain contract.
+type ProofChainOperatorRemovedIterator struct {
+	Event *ProofChainOperatorRemoved // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ProofChainOperatorRemovedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ProofChainOperatorRemoved)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ProofChainOperatorRemoved)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ProofChainOperatorRemovedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ProofChainOperatorRemovedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ProofChainOperatorRemoved represents a OperatorRemoved event raised by the ProofChain contract.
+type ProofChainOperatorRemoved struct {
+	Operator common.Address
+	Raw      types.Log // Blockchain specific contextual infos
+}
+
+// FilterOperatorRemoved is a free log retrieval operation binding the contract event 0x80c0b871b97b595b16a7741c1b06fed0c6f6f558639f18ccbce50724325dc40d.
+//
+// Solidity: event OperatorRemoved(address operator)
+func (_ProofChain *ProofChainFilterer) FilterOperatorRemoved(opts *bind.FilterOpts) (*ProofChainOperatorRemovedIterator, error) {
+
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "OperatorRemoved")
+	if err != nil {
+		return nil, err
+	}
+	return &ProofChainOperatorRemovedIterator{contract: _ProofChain.contract, event: "OperatorRemoved", logs: logs, sub: sub}, nil
+}
+
+// WatchOperatorRemoved is a free log subscription operation binding the contract event 0x80c0b871b97b595b16a7741c1b06fed0c6f6f558639f18ccbce50724325dc40d.
+//
+// Solidity: event OperatorRemoved(address operator)
+func (_ProofChain *ProofChainFilterer) WatchOperatorRemoved(opts *bind.WatchOpts, sink chan<- *ProofChainOperatorRemoved) (event.Subscription, error) {
+
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "OperatorRemoved")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ProofChainOperatorRemoved)
+				if err := _ProofChain.contract.UnpackLog(event, "OperatorRemoved", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseOperatorRemoved is a log parse operation binding the contract event 0x80c0b871b97b595b16a7741c1b06fed0c6f6f558639f18ccbce50724325dc40d.
+//
+// Solidity: event OperatorRemoved(address operator)
+func (_ProofChain *ProofChainFilterer) ParseOperatorRemoved(log types.Log) (*ProofChainOperatorRemoved, error) {
+	event := new(ProofChainOperatorRemoved)
+	if err := _ProofChain.contract.UnpackLog(event, "OperatorRemoved", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ProofChainOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the ProofChain contract.
+type ProofChainOwnershipTransferredIterator struct {
+	Event *ProofChainOwnershipTransferred // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ProofChainOwnershipTransferredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ProofChainOwnershipTransferred)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ProofChainOwnershipTransferred)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ProofChainOwnershipTransferredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ProofChainOwnershipTransferredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ProofChainOwnershipTransferred represents a OwnershipTransferred event raised by the ProofChain contract.
+type ProofChainOwnershipTransferred struct {
+	PreviousOwner common.Address
+	NewOwner      common.Address
+	Raw           types.Log // Blockchain specific contextual infos
+}
+
+// FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_ProofChain *ProofChainFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ProofChainOwnershipTransferredIterator, error) {
+
+	var previousOwnerRule []interface{}
+	for _, previousOwnerItem := range previousOwner {
+		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	}
+	var newOwnerRule []interface{}
+	for _, newOwnerItem := range newOwner {
+		newOwnerRule = append(newOwnerRule, newOwnerItem)
+	}
+
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ProofChainOwnershipTransferredIterator{contract: _ProofChain.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+}
+
+// WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_ProofChain *ProofChainFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ProofChainOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
+
+	var previousOwnerRule []interface{}
+	for _, previousOwnerItem := range previousOwner {
+		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	}
+	var newOwnerRule []interface{}
+	for _, newOwnerItem := range newOwner {
+		newOwnerRule = append(newOwnerRule, newOwnerItem)
+	}
+
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ProofChainOwnershipTransferred)
+				if err := _ProofChain.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_ProofChain *ProofChainFilterer) ParseOwnershipTransferred(log types.Log) (*ProofChainOwnershipTransferred, error) {
+	event := new(ProofChainOwnershipTransferred)
+	if err := _ProofChain.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -2821,330 +3455,6 @@ func (_ProofChain *ProofChainFilterer) WatchRoleAdminChanged(opts *bind.WatchOpt
 func (_ProofChain *ProofChainFilterer) ParseRoleAdminChanged(log types.Log) (*ProofChainRoleAdminChanged, error) {
 	event := new(ProofChainRoleAdminChanged)
 	if err := _ProofChain.contract.UnpackLog(event, "RoleAdminChanged", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// ProofChainRoleGrantedIterator is returned from FilterRoleGranted and is used to iterate over the raw logs and unpacked data for RoleGranted events raised by the ProofChain contract.
-type ProofChainRoleGrantedIterator struct {
-	Event *ProofChainRoleGranted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ProofChainRoleGrantedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ProofChainRoleGranted)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ProofChainRoleGranted)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainRoleGrantedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ProofChainRoleGrantedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ProofChainRoleGranted represents a RoleGranted event raised by the ProofChain contract.
-type ProofChainRoleGranted struct {
-	Role    [32]byte
-	Account common.Address
-	Sender  common.Address
-	Raw     types.Log // Blockchain specific contextual infos
-}
-
-// FilterRoleGranted is a free log retrieval operation binding the contract event 0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d.
-//
-// Solidity: event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)
-func (_ProofChain *ProofChainFilterer) FilterRoleGranted(opts *bind.FilterOpts, role [][32]byte, account []common.Address, sender []common.Address) (*ProofChainRoleGrantedIterator, error) {
-
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var accountRule []interface{}
-	for _, accountItem := range account {
-		accountRule = append(accountRule, accountItem)
-	}
-	var senderRule []interface{}
-	for _, senderItem := range sender {
-		senderRule = append(senderRule, senderItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "RoleGranted", roleRule, accountRule, senderRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ProofChainRoleGrantedIterator{contract: _ProofChain.contract, event: "RoleGranted", logs: logs, sub: sub}, nil
-}
-
-// WatchRoleGranted is a free log subscription operation binding the contract event 0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d.
-//
-// Solidity: event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)
-func (_ProofChain *ProofChainFilterer) WatchRoleGranted(opts *bind.WatchOpts, sink chan<- *ProofChainRoleGranted, role [][32]byte, account []common.Address, sender []common.Address) (event.Subscription, error) {
-
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var accountRule []interface{}
-	for _, accountItem := range account {
-		accountRule = append(accountRule, accountItem)
-	}
-	var senderRule []interface{}
-	for _, senderItem := range sender {
-		senderRule = append(senderRule, senderItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "RoleGranted", roleRule, accountRule, senderRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainRoleGranted)
-				if err := _ProofChain.contract.UnpackLog(event, "RoleGranted", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseRoleGranted is a log parse operation binding the contract event 0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d.
-//
-// Solidity: event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)
-func (_ProofChain *ProofChainFilterer) ParseRoleGranted(log types.Log) (*ProofChainRoleGranted, error) {
-	event := new(ProofChainRoleGranted)
-	if err := _ProofChain.contract.UnpackLog(event, "RoleGranted", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// ProofChainRoleRevokedIterator is returned from FilterRoleRevoked and is used to iterate over the raw logs and unpacked data for RoleRevoked events raised by the ProofChain contract.
-type ProofChainRoleRevokedIterator struct {
-	Event *ProofChainRoleRevoked // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ProofChainRoleRevokedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ProofChainRoleRevoked)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ProofChainRoleRevoked)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainRoleRevokedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ProofChainRoleRevokedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ProofChainRoleRevoked represents a RoleRevoked event raised by the ProofChain contract.
-type ProofChainRoleRevoked struct {
-	Role    [32]byte
-	Account common.Address
-	Sender  common.Address
-	Raw     types.Log // Blockchain specific contextual infos
-}
-
-// FilterRoleRevoked is a free log retrieval operation binding the contract event 0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b.
-//
-// Solidity: event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)
-func (_ProofChain *ProofChainFilterer) FilterRoleRevoked(opts *bind.FilterOpts, role [][32]byte, account []common.Address, sender []common.Address) (*ProofChainRoleRevokedIterator, error) {
-
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var accountRule []interface{}
-	for _, accountItem := range account {
-		accountRule = append(accountRule, accountItem)
-	}
-	var senderRule []interface{}
-	for _, senderItem := range sender {
-		senderRule = append(senderRule, senderItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "RoleRevoked", roleRule, accountRule, senderRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ProofChainRoleRevokedIterator{contract: _ProofChain.contract, event: "RoleRevoked", logs: logs, sub: sub}, nil
-}
-
-// WatchRoleRevoked is a free log subscription operation binding the contract event 0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b.
-//
-// Solidity: event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)
-func (_ProofChain *ProofChainFilterer) WatchRoleRevoked(opts *bind.WatchOpts, sink chan<- *ProofChainRoleRevoked, role [][32]byte, account []common.Address, sender []common.Address) (event.Subscription, error) {
-
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var accountRule []interface{}
-	for _, accountItem := range account {
-		accountRule = append(accountRule, accountItem)
-	}
-	var senderRule []interface{}
-	for _, senderItem := range sender {
-		senderRule = append(senderRule, senderItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "RoleRevoked", roleRule, accountRule, senderRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainRoleRevoked)
-				if err := _ProofChain.contract.UnpackLog(event, "RoleRevoked", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseRoleRevoked is a log parse operation binding the contract event 0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b.
-//
-// Solidity: event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)
-func (_ProofChain *ProofChainFilterer) ParseRoleRevoked(log types.Log) (*ProofChainRoleRevoked, error) {
-	event := new(ProofChainRoleRevoked)
-	if err := _ProofChain.contract.UnpackLog(event, "RoleRevoked", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

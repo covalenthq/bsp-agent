@@ -6,7 +6,9 @@ require (
 	cloud.google.com/go/storage v1.21.0
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
-	github.com/covalenthq/ipfs-pinner v0.0.0-20220407230624-bfae29173cf5
+	github.com/btcsuite/btcd v0.20.1-beta // indirect
+	github.com/btcsuite/btcd/btcec/v2 v2.1.3 // indirect
+	github.com/covalenthq/lumberjack/v3 v3.0.1 // indirect
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/go-redis/redis/v7 v7.4.1
