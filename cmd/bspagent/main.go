@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"net/url"
 	"os"
 	"os/signal"
 	"path"
@@ -24,7 +23,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubiq/go-ubiq/rlp"
-	"golang.org/x/sys/unix"
 	"gopkg.in/avro.v0"
 	"gopkg.in/natefinch/lumberjack.v2"
 
@@ -56,9 +54,9 @@ var (
 	websocketURLsFlag          string
 	logFolderFlag              = "./logs/"
 	ipfsService                string
-	ipfsToken                  string
-	ipfsBaseURL                string
-	ipfsFilePinBaseURL         string
+	// ipfsToken                  string
+	// ipfsBaseURL                string
+	ipfsFilePinBaseURL string
 
 	// stream processing vars
 	start                 = ">"
@@ -82,8 +80,8 @@ func parseFlags() {
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
 	flag.StringVar(&ipfsService, "ipfs.service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'pinata' and 'others'")
-	flag.StringVar(&ipfsToken, "ipfs.jwt-token", utils.LookupEnvOrString("IpfsJwtToken", ipfsToken), "JWT token as required by IPFS file pinning service api")
-	flag.StringVar(&ipfsBaseURL, "ipfs.baseurl", utils.LookupEnvOrString("IpfsBaseURL", ipfsBaseURL), "IPFS pinning service api url (default provided for pinata)")
+	// flag.StringVar(&ipfsToken, "ipfs.jwt-token", utils.LookupEnvOrString("IpfsJwtToken", ipfsToken), "JWT token as required by IPFS file pinning service api")
+	// flag.StringVar(&ipfsBaseURL, "ipfs.baseurl", utils.LookupEnvOrString("IpfsBaseURL", ipfsBaseURL), "IPFS pinning service api url (default provided for pinata)")
 	flag.StringVar(&ipfsFilePinBaseURL, "ipfs.filepin.baseurl", utils.LookupEnvOrString("IpfsFilepinBaseURL", ipfsFilePinBaseURL), "Services' file pin url (default value provided for pinata")
 
 	flag.Parse()
@@ -100,7 +98,7 @@ func init() {
 	log.SetFormatter(&formatter)
 
 	var outWriter io.Writer
-	logLocationURL, err := getLogLocationURL(logFolderFlag)
+	logLocationURL, err := utils.GetLogLocationURL(logFolderFlag)
 	if err != nil {
 		log.Warn("error while setting up file logging: ", err)
 		outWriter = os.Stdout
@@ -155,7 +153,7 @@ func main() {
 
 	var pinclient *pinner.Client
 	if ipfsService == pinner.Pinata.String() {
-		req := pinner.NewClientRequest(pinner.Pinata).BearerToken(ipfsToken)
+		req := pinner.NewClientRequest(pinner.Pinata).BearerToken(config.IPFSConfig.JWTToken)
 		pinclient = pinner.NewClient(req)
 	} else if ipfsService != "" {
 		log.Fatalf("Only pinata IPFS service supported for now")
@@ -327,30 +325,4 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicaSegmentIDBatch = []string{}
 		}
 	}
-}
-
-func getLogLocationURL(logPath string) (*url.URL, error) {
-	logLocation := utils.ExpandPath(logPath)
-	locationURL, err := url.Parse(logLocation)
-	if err == nil {
-		if _, existErr := os.Stat(locationURL.Path); os.IsNotExist(existErr) {
-			// directory doesn't exist, create
-			createErr := os.Mkdir(locationURL.Path, os.ModePerm)
-			if createErr != nil {
-				return nil, fmt.Errorf("error creating the directory: %w", createErr)
-			}
-		}
-
-		if !writable(locationURL.Path) {
-			return nil, fmt.Errorf("write access not present for given log location")
-		}
-
-		return locationURL, nil
-	}
-
-	return locationURL, fmt.Errorf("log-folder: %w", err)
-}
-
-func writable(path string) bool {
-	return unix.Access(path, unix.W_OK) == nil
 }
