@@ -280,9 +280,10 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	replica, err := handler.ParseStreamToEvent(newEvent, hash, &blockReplica)
 	objectType := blockReplica.Type[5:]
 	objectReplica := &blockReplica
-	if err != nil {
+	switch {
+	case err != nil:
 		log.Error("error on process event: ", err)
-	} else if objectReplica.Header.Number.Uint64()%blockNumberDivisor == 0 {
+	case objectReplica.Header.Number.Uint64()%blockNumberDivisor == 0:
 		// collect stream ids and block replicas
 		replicaSegmentIDBatch = append(replicaSegmentIDBatch, stream.ID)
 		replicationSegment.BlockReplicaEvent = append(replicationSegment.BlockReplicaEvent, replica)
@@ -309,7 +310,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicaSegmentName = ""
 			replicaSegmentIDBatch = []string{}
 		}
-	} else {
+	default:
 		log.Info("block-specimens created only for: ", blockNumberDivisor, ", as base block number divisor")
 	}
 }
