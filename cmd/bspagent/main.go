@@ -56,8 +56,6 @@ var (
 
 	// stream processing vars
 	start                 = ">"
-	streamKey             string
-	consumerGroup         string
 	replicaSegmentName    string
 	replicaSegmentIDBatch []string
 	replicationSegment    event.ReplicationSegment
@@ -209,7 +207,7 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, avroCodecs, redisClient, storageClient, ethProof, stream)
+			go processStream(config, avroCodecs, redisClient, storageClient, ethProof, stream, streamKey, consumerGroup)
 		}
 		waitGrp.Wait()
 	}
@@ -254,7 +252,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 				}
 				for _, stream := range streams {
 					waitGrp.Add(1)
-					go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream)
+					go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream, streamKey, consumerGroup)
 				}
 				waitGrp.Wait()
 			}
@@ -262,7 +260,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 		}
 	}
 }
-func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage) {
+func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage, streamKey, consumerGroup string) {
 	ctx := context.Background()
 	hash := stream.Values["hash"].(string)
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
