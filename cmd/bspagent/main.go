@@ -82,7 +82,7 @@ func parseFlags() {
 	flag.StringVar(&ipfsService, "ipfs.service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'pinata' and 'others'")
 	// flag.StringVar(&ipfsToken, "ipfs.jwt-token", utils.LookupEnvOrString("IpfsJwtToken", ipfsToken), "JWT token as required by IPFS file pinning service api")
 	// flag.StringVar(&ipfsBaseURL, "ipfs.baseurl", utils.LookupEnvOrString("IpfsBaseURL", ipfsBaseURL), "IPFS pinning service api url (default provided for pinata)")
-	flag.StringVar(&ipfsFilePinBaseURL, "ipfs.filepin.baseurl", utils.LookupEnvOrString("IpfsFilepinBaseURL", ipfsFilePinBaseURL), "Services' file pin url (default value provided for pinata")
+	// flag.StringVar(&ipfsFilePinBaseURL, "ipfs.filepin.baseurl", utils.LookupEnvOrString("IpfsFilepinBaseURL", ipfsFilePinBaseURL), "Services' file pin url (default value provided for pinata")
 
 	flag.Parse()
 }
