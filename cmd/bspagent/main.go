@@ -58,6 +58,7 @@ var (
 	start                 = ">"
 	replicaSegmentName    string
 	replicaSegmentIDBatch []string
+	replicaSkipIDBatch    []string
 	replicationSegment    event.ReplicationSegment
 	blockReplica          types.BlockReplica
 )
@@ -260,6 +261,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 		}
 	}
 }
+
 func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage, streamKey, consumerGroup string) {
 	ctx := context.Background()
 	hash := stream.Values["hash"].(string)
@@ -298,7 +300,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 				panic(err)
 			}
-			// ack stream segment batch id
+			// ack amd trim stream segment batch id
 			xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
 			if err != nil {
 				log.Error("failed to match streamIDs length to segment length config: ", err)
@@ -310,6 +312,14 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicaSegmentIDBatch = []string{}
 		}
 	default:
-		log.Info("block-specimens created only for: ", blockNumberDivisor, ", as base block number divisor")
+		// collect block replicas and stream ids to skip
+		replicaSkipIDBatch = append(replicaSkipIDBatch, stream.ID)
+		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", blockNumberDivisor)
+		// ack amd trim stream segment batch id
+		xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSkipIDBatch)
+		if err != nil {
+			log.Error("failed to match streamIDs length to segment length config: ", err)
+		}
+		log.Info("stream ids acked and trimmed: ", replicaSkipIDBatch, ", for stream key: ", streamKey, ", with current length: ", xlen)
 	}
 }
