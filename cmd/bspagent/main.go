@@ -301,10 +301,11 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 				panic(err)
 			}
 			// ack stream segment batch id
-			err = utils.AckStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
+			xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
 			if err != nil {
 				log.Error("failed to match streamIDs length to segment length config: ", err)
 			}
+			log.Info("stream ids acked and trimmed: ", replicaSegmentIDBatch, ", for stream key: ", streamKey, ", with current length: ", xlen)
 			// reset segment, name, id batch stores
 			replicationSegment = event.ReplicationSegment{}
 			replicaSegmentName = ""
