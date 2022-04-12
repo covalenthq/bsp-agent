@@ -283,7 +283,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	switch {
 	case err != nil:
 		log.Error("error on process event: ", err)
-	case objectReplica.Header.Number.Uint64()%blockNumberDivisor == 0:
+	case err == nil && objectReplica.Header.Number.Uint64()%blockNumberDivisor == 0:
 		// collect stream ids and block replicas
 		replicaSegmentIDBatch = append(replicaSegmentIDBatch, stream.ID)
 		replicationSegment.BlockReplicaEvent = append(replicationSegment.BlockReplicaEvent, replica)
