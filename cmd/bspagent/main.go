@@ -37,9 +37,10 @@ import (
 var (
 	waitGrp sync.WaitGroup
 	// consts
-	consumerEvents            int64 = 1
-	consumerPendingIdleTime   int64 = 30
-	consumerPendingTimeTicker int64 = 120
+	consumerEvents            int64  = 1
+	consumerPendingIdleTime   int64  = 30
+	consumerPendingTimeTicker int64  = 120
+	blockNumberDivisor        uint64 = 3 // can be set to any divisor (decrease specimen production throughput)
 
 	// env flag vars
 	consumerPendingTimeoutFlag = 60 // defaults to 1 min
@@ -281,7 +282,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	objectReplica := &blockReplica
 	if err != nil {
 		log.Error("error on process event: ", err)
-	} else {
+	} else if objectReplica.Header.Number.Uint64()%blockNumberDivisor == 0 {
 		// collect stream ids and block replicas
 		replicaSegmentIDBatch = append(replicaSegmentIDBatch, stream.ID)
 		replicationSegment.BlockReplicaEvent = append(replicationSegment.BlockReplicaEvent, replica)
@@ -308,5 +309,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicaSegmentName = ""
 			replicaSegmentIDBatch = []string{}
 		}
+	} else {
+		log.Info("block-specimens created only for: ", blockNumberDivisor, ", as base block number divisor")
 	}
 }
