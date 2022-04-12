@@ -315,11 +315,14 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 		// collect block replicas and stream ids to skip
 		replicaSkipIDBatch = append(replicaSkipIDBatch, stream.ID)
 		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", blockNumberDivisor)
-		// ack amd trim stream segment batch id
+		// ack amd trim stream skip batch ids
 		xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSkipIDBatch)
 		if err != nil {
 			log.Error("failed to match streamIDs length to segment length config: ", err)
+			panic(err)
 		}
 		log.Info("stream ids acked and trimmed: ", replicaSkipIDBatch, ", for stream key: ", streamKey, ", with current length: ", xlen)
+		// reset skip id batch stores
+		replicaSkipIDBatch = []string{}
 	}
 }
