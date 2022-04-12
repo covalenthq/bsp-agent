@@ -296,6 +296,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
+				panic(err)
 			}
 			// ack stream segment batch id
 			err = utils.AckStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
