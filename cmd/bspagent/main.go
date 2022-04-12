@@ -37,9 +37,10 @@ import (
 var (
 	waitGrp sync.WaitGroup
 	// consts
-	consumerEvents            int64 = 1
-	consumerPendingIdleTime   int64 = 30
-	consumerPendingTimeTicker int64 = 120
+	consumerEvents            int64  = 1
+	consumerPendingIdleTime   int64  = 30
+	consumerPendingTimeTicker int64  = 120
+	blockNumberDivisor        uint64 = 3 // can be set to any divisor (decrease specimen production throughput)
 
 	// env flag vars
 	consumerPendingTimeoutFlag = 60 // defaults to 1 min
@@ -55,10 +56,9 @@ var (
 
 	// stream processing vars
 	start                 = ">"
-	streamKey             string
-	consumerGroup         string
 	replicaSegmentName    string
 	replicaSegmentIDBatch []string
+	replicaSkipIDBatch    []string
 	replicationSegment    event.ReplicationSegment
 	blockReplica          types.BlockReplica
 )
@@ -208,7 +208,7 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, avroCodecs, redisClient, storageClient, ethProof, stream)
+			go processStream(config, avroCodecs, redisClient, storageClient, ethProof, stream, streamKey, consumerGroup)
 		}
 		waitGrp.Wait()
 	}
@@ -253,7 +253,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 				}
 				for _, stream := range streams {
 					waitGrp.Add(1)
-					go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream)
+					go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream, streamKey, consumerGroup)
 				}
 				waitGrp.Wait()
 			}
@@ -261,7 +261,8 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 		}
 	}
 }
-func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage) {
+
+func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage, streamKey, consumerGroup string) {
 	ctx := context.Background()
 	hash := stream.Values["hash"].(string)
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
@@ -279,9 +280,10 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	replica, err := handler.ParseStreamToEvent(newEvent, hash, &blockReplica)
 	objectType := blockReplica.Type[5:]
 	objectReplica := &blockReplica
-	if err != nil {
+	switch {
+	case err != nil:
 		log.Error("error on process event: ", err)
-	} else {
+	case err == nil && objectReplica.Header.Number.Uint64()%blockNumberDivisor == 0:
 		// collect stream ids and block replicas
 		replicaSegmentIDBatch = append(replicaSegmentIDBatch, stream.ID)
 		replicationSegment.BlockReplicaEvent = append(replicationSegment.BlockReplicaEvent, replica)
@@ -296,16 +298,31 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
+				panic(err)
 			}
-			// ack stream segment batch id
-			err = utils.AckStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
+			// ack amd trim stream segment batch id
+			xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
 			if err != nil {
 				log.Error("failed to match streamIDs length to segment length config: ", err)
 			}
+			log.Info("stream ids acked and trimmed: ", replicaSegmentIDBatch, ", for stream key: ", streamKey, ", with current length: ", xlen)
 			// reset segment, name, id batch stores
 			replicationSegment = event.ReplicationSegment{}
 			replicaSegmentName = ""
 			replicaSegmentIDBatch = []string{}
 		}
+	default:
+		// collect block replicas and stream ids to skip
+		replicaSkipIDBatch = append(replicaSkipIDBatch, stream.ID)
+		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", blockNumberDivisor)
+		// ack amd trim stream skip batch ids
+		xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSkipIDBatch)
+		if err != nil {
+			log.Error("failed to match streamIDs length to segment length config: ", err)
+			panic(err)
+		}
+		log.Info("stream ids acked and trimmed: ", replicaSkipIDBatch, ", for stream key: ", streamKey, ", with current length: ", xlen)
+		// reset skip id batch stores
+		replicaSkipIDBatch = []string{}
 	}
 }

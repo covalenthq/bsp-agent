@@ -94,3 +94,4 @@ artifacts
 ./internal/proof/proofchain.go
 
 ganache_data
+temp
