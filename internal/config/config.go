@@ -20,8 +20,15 @@ type EthConfig struct {
 	KeyStorePwd  string `envconfig:"ETH_KEYSTORE_PWD"`
 }
 
+// IPFSConfig is set of all configs that relates to IPFS pinning
+type IPFSConfig struct {
+	IPFSURL  string `envconfig:"IPFS_SERVICE_URL"`
+	JWTToken string `envconfig:"IPFS_JWT_TOKEN"`
+}
+
 // Config is set of all config that relates to .envrc
 type Config struct {
+	IPFSConfig  IPFSConfig
 	RedisConfig RedisConfig
 	EthConfig   EthConfig
 }

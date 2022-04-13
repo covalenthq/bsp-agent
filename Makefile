@@ -23,7 +23,8 @@ run-agent-eth:
 	--replica-bucket="covalenthq-geth-block-specimen" \
 	--segment-length=1 \
 	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
-	--consumer-timeout=80
+	--consumer-timeout=80 \
+	--ipfs-service=pinata
 
 run-agent-elrond:
 	@echo "---- Running Agent from cmd/bspagent ----"
