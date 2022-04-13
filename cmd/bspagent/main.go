@@ -79,10 +79,7 @@ func parseFlags() {
 	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
-	flag.StringVar(&ipfsService, "ipfs.service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'pinata' and 'others'")
-	// flag.StringVar(&ipfsToken, "ipfs.jwt-token", utils.LookupEnvOrString("IpfsJwtToken", ipfsToken), "JWT token as required by IPFS file pinning service api")
-	// flag.StringVar(&ipfsBaseURL, "ipfs.baseurl", utils.LookupEnvOrString("IpfsBaseURL", ipfsBaseURL), "IPFS pinning service api url (default provided for pinata)")
-	// flag.StringVar(&ipfsFilePinBaseURL, "ipfs.filepin.baseurl", utils.LookupEnvOrString("IpfsFilepinBaseURL", ipfsFilePinBaseURL), "Services' file pin url (default value provided for pinata")
+	flag.StringVar(&ipfsService, "ipfs-service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'pinata' and 'others'")
 
 	flag.Parse()
 }
@@ -226,7 +223,7 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, avroCodecs, redisClient, storageClient, ethProof, stream, streamKey, consumerGroup)
+			go processStream(config, avroCodecs, redisClient, storageClient, pinClient, ethClient, stream, streamKey, consumerGroup)
 		}
 		waitGrp.Wait()
 	}
@@ -272,7 +269,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 				}
 				for _, stream := range streams {
 					waitGrp.Add(1)
-					go processStream(config, avroCodecs, redisClient, storageClient, ethClient, stream, streamKey, consumerGroup)
+					go processStream(config, avroCodecs, redisClient, storageClient, pinClient, ethClient, stream, streamKey, consumerGroup)
 				}
 				waitGrp.Wait()
 			}
@@ -281,7 +278,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 	}
 }
 
-func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, ethClient *ethclient.Client, stream redis.XMessage, streamKey, consumerGroup string) {
+func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, pinClient *pinner.Client, ethClient *ethclient.Client, stream redis.XMessage, streamKey, consumerGroup string) {
 	ctx := context.Background()
 	hash := stream.Values["hash"].(string)
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
