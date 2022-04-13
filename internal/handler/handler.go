@@ -60,15 +60,16 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 
 	proofTxHash := make(chan string, 1)
 	// Only google storage is supported for now
-	if storageClient != nil {
+	switch {
+	case storageClient != nil:
 		replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
-	} else if pinnode != nil {
+	case pinnode != nil:
 		cid, err := st.GenerateCidFor(ctx, pinnode, replicaSegmentAvro)
 		if err != nil {
-			log.Errorf("error generating cid for %s. Error: %w", binaryLocalPath, err)
+			log.Errorf("error generating cid for %s. Error: %s", binaryLocalPath, err)
 		}
 		replicaURL = "ipfs://" + cid.String()
-	} else {
+	default:
 		replicaURL = "only local ./bin/"
 	}
 

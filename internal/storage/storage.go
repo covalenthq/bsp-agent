@@ -53,12 +53,18 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 	}
 }
 
-func GenerateCidFor(ctx context.Context, pinnode pinapi.PinnerNode, data []byte) (cid.Cid, error) {
+// GenerateCidFor generates ipfs cid given some content
+func GenerateCidFor(ctx context.Context, pinnode pinapi.PinnerNode, content []byte) (cid.Cid, error) {
 	if pinnode == nil {
 		return cid.Undef, fmt.Errorf("no pinner node")
 	}
 
-	return pinnode.UnixfsService().GenerateDag(ctx, bytes.NewReader(data))
+	rcid, err := pinnode.UnixfsService().GenerateDag(ctx, bytes.NewReader(content))
+	if err != nil {
+		return cid.Undef, fmt.Errorf("error generating dag: %w", err)
+	}
+
+	return rcid, nil
 }
 
 // HandleObjectUploadToIPFS uploads the binary file to ipfs via the pinner client
