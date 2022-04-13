@@ -70,16 +70,16 @@ func HandleObjectUploadToIPFS(ctx context.Context, client *pinner.Client, binary
 
 	objf, err := os.Open(filepath.Clean(objectpath))
 	if err != nil {
-		log.Error("error opening objectfile for upload: ", err)
+		log.Error("error opening specimen object file for upload: ", err)
 
 		return cid.Undef
 	}
 	cid, err := client.UploadFile(ctx, objf)
 	if err != nil {
-		log.Error("failure to object to IPFS: ", err)
+		log.Error("failure in uploading specimen object to IPFS: ", err)
 	}
 
-	log.Infof("uploaded %s to ipfs with pin: %s", filename, cid.String())
+	log.Infof("File %s successfully uploaded to IPFS with pin: %s", filename, cid.String())
 
 	return cid
 }
