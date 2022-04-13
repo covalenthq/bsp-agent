@@ -12,7 +12,7 @@ import (
 
 	"cloud.google.com/go/storage"
 
-	pinner "github.com/covalenthq/ipfs-pinner"
+	pinapi "github.com/covalenthq/ipfs-pinner/coreapi"
 	"github.com/ipfs/go-cid"
 	log "github.com/sirupsen/logrus"
 )
@@ -53,11 +53,19 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 	}
 }
 
+func GenerateCidFor(ctx context.Context, pinnode pinapi.PinnerNode, data []byte) (cid.Cid, error) {
+	if pinnode == nil {
+		return cid.Undef, fmt.Errorf("no pinner node")
+	}
+
+	return pinnode.UnixfsService().GenerateDag(ctx, bytes.NewReader(data))
+}
+
 // HandleObjectUploadToIPFS uploads the binary file to ipfs via the pinner client
-func HandleObjectUploadToIPFS(ctx context.Context, client *pinner.Client, binaryLocalPath string, objectName string, txHash string) cid.Cid {
+func HandleObjectUploadToIPFS(ctx context.Context, pinnode pinapi.PinnerNode, binaryLocalPath string, objectName string, txHash string) cid.Cid {
 	// assuming that bin files are written (rather than cloud only storage)
 	// need to explore strategy to directly upload in memory byte array via pinner
-	if client == nil {
+	if pinnode == nil {
 		return cid.Undef
 	}
 	filename := objectFileName(objectName, txHash)
@@ -74,14 +82,16 @@ func HandleObjectUploadToIPFS(ctx context.Context, client *pinner.Client, binary
 
 		return cid.Undef
 	}
-	cid, err := client.UploadFile(ctx, objf)
+	fcid, err := pinnode.PinService().UploadFile(ctx, objf)
 	if err != nil {
 		log.Error("failure in uploading specimen object to IPFS: ", err)
+
+		return cid.Undef
 	}
 
-	log.Infof("File %s successfully uploaded to IPFS with pin: %s", filename, cid.String())
+	log.Infof("File %s successfully uploaded to IPFS with pin: %s", filename, fcid.String())
 
-	return cid
+	return fcid
 }
 
 func writeToCloudStorage(ctx context.Context, client *storage.Client, bucket, objectName string, object []byte) error {

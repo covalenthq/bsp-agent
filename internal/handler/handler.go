@@ -16,7 +16,7 @@ import (
 	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
-	pinner "github.com/covalenthq/ipfs-pinner"
+	pinapi "github.com/covalenthq/ipfs-pinner/coreapi"
 )
 
 // EncodeReplicaSegmentToAvro encodes replica segment into AVRO binary encoding
@@ -49,7 +49,7 @@ func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*
 }
 
 // EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, pinClient *pinner.Client, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockReplica *types.BlockReplica, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
+func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, pinnode pinapi.PinnerNode, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockReplica *types.BlockReplica, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	var replicaURL string
 	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
@@ -62,16 +62,24 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	// Only google storage is supported for now
 	if storageClient != nil {
 		replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
+	} else if pinnode != nil {
+		cid, err := st.GenerateCidFor(ctx, pinnode, replicaSegmentAvro)
+		if err != nil {
+			log.Errorf("error generating cid for %s. Error: %w", binaryLocalPath, err)
+		}
+		replicaURL = "ipfs://" + cid.String()
 	} else {
 		replicaURL = "only local ./bin/"
 	}
+
+	log.Info("binary file should be available: ", replicaURL)
 
 	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, blockReplica, proofTxHash)
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 		err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
-		_ = st.HandleObjectUploadToIPFS(ctx, pinClient, binaryLocalPath, segmentName, pTxHash)
+		_ = st.HandleObjectUploadToIPFS(ctx, pinnode, binaryLocalPath, segmentName, pTxHash)
 
 		if err != nil {
 			return "", fmt.Errorf("error in uploading object to bucket: %w", err)
