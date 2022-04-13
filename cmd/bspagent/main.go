@@ -55,10 +55,6 @@ var (
 	websocketURLsFlag          string
 	logFolderFlag              = "./logs/"
 	ipfsService                string
-	// ipfsToken                  string
-	// ipfsBaseURL                string
-	ipfsFilePinBaseURL string
-
 	// stream processing vars
 	start                 = ">"
 	replicaSegmentName    string
