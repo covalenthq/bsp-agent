@@ -6,7 +6,10 @@ require (
 	cloud.google.com/go/storage v1.21.0
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
+	github.com/btcsuite/btcd v0.20.1-beta // indirect
+	github.com/btcsuite/btcd/btcec/v2 v2.1.3 // indirect
 	github.com/covalenthq/ipfs-pinner v0.0.0-20220407230624-bfae29173cf5
+	github.com/covalenthq/lumberjack/v3 v3.0.1
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/go-redis/redis/v7 v7.4.1
@@ -21,7 +24,6 @@ require (
 	golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f
 	google.golang.org/api v0.73.0
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require (
@@ -29,10 +31,9 @@ require (
 	cloud.google.com/go/compute v1.5.0 // indirect
 	cloud.google.com/go/iam v0.1.1 // indirect
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
-	github.com/btcsuite/btcd v0.20.1-beta // indirect
-	github.com/btcsuite/btcd/btcec/v2 v2.1.3 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
+	github.com/djherbis/times v1.5.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect

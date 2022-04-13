@@ -99,17 +99,21 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 	return mapData, nil
 }
 
-// AckStreamSegment acknowledges a stream segment from the redis stream
-func AckStreamSegment(_ *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) error {
+// AckTrimStreamSegment acknowledges a stream segment from the redis stream
+func AckTrimStreamSegment(_ *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) (int64, error) {
 	if len(streamIDs) == segmentLength {
-		for _, streamID := range streamIDs {
-			redisClient.XAck(streamKey, consumerGroup, streamID)
+		redisClient.XAck(streamKey, consumerGroup, streamIDs...)
+		redisClient.XDel(streamKey, streamIDs...)
+		xlen := redisClient.XLen(streamKey)
+		len, err := xlen.Result()
+		if err != nil {
+			log.Error("failed to extract length of stream key: ", streamKey, "with error: ", err)
 		}
 
-		return nil
+		return len, nil
 	}
 
-	return fmt.Errorf("failed to match streamIDs length to segment length config")
+	return 0, fmt.Errorf("failed to match streamIDs length to segment length config")
 }
 
 // LookupEnvOrString looks up flag env that is a string
