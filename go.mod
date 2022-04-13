@@ -8,7 +8,7 @@ require (
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
 	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.1.3 // indirect
-	github.com/covalenthq/lumberjack/v3 v3.0.1 // indirect
+	github.com/covalenthq/lumberjack/v3 v3.0.1
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/go-redis/redis/v7 v7.4.1
@@ -23,7 +23,6 @@ require (
 	golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f
 	google.golang.org/api v0.73.0
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require github.com/covalenthq/ipfs-pinner v0.0.0-20220407230624-bfae29173cf5
