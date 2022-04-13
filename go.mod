@@ -25,7 +25,7 @@ require (
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 )
 
-require github.com/covalenthq/ipfs-pinner v0.0.0-20220413221302-f537b19664fa
+require github.com/covalenthq/ipfs-pinner v0.1.0
 
 require (
 	bazil.org/fuse v0.0.0-20200117225306-7b5117fecadc // indirect

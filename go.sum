@@ -236,6 +236,8 @@ github.com/covalenthq/ipfs-pinner v0.0.0-20220413213053-a5f29499d217 h1:slkt38DH
 github.com/covalenthq/ipfs-pinner v0.0.0-20220413213053-a5f29499d217/go.mod h1:vYR+kFOX5FHH/gezwG/C4p0LjFKZSUj/eO5eH5pV5Fw=
 github.com/covalenthq/ipfs-pinner v0.0.0-20220413221302-f537b19664fa h1:Cfun9LfVMLKV6jeVBRBpADJeaYrVy41nEO4CAG9YRYI=
 github.com/covalenthq/ipfs-pinner v0.0.0-20220413221302-f537b19664fa/go.mod h1:vYR+kFOX5FHH/gezwG/C4p0LjFKZSUj/eO5eH5pV5Fw=
+github.com/covalenthq/ipfs-pinner v0.1.0 h1:trhJy369eJ0Cntw3fbpJB9Wn7xQ+I83Z7Gn5DGHsLF0=
+github.com/covalenthq/ipfs-pinner v0.1.0/go.mod h1:vYR+kFOX5FHH/gezwG/C4p0LjFKZSUj/eO5eH5pV5Fw=
 github.com/covalenthq/lumberjack/v3 v3.0.1 h1:WDfNlLMTcMWiLaMEUcku9Jfcb5d8mOq4n5cIPA5l2Tg=
 github.com/covalenthq/lumberjack/v3 v3.0.1/go.mod h1:cpmebtW0NtC50USEqIlBtuoTZuxWIZGMT1cXfPKduII=
 github.com/cpuguy83/go-md2man v1.0.10/go.mod h1:SmD6nW6nTyfqj6ABTjUi3V3JVMnlJmwcJI5acqYI6dE=
