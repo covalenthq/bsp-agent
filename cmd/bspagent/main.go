@@ -29,7 +29,7 @@ import (
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/handler"
-	istore "github.com/covalenthq/bsp-agent/internal/storage"
+	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/covalenthq/bsp-agent/internal/websocket"
@@ -148,7 +148,7 @@ func main() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
-	pinnode, err := istore.GetPinnerNode(core.PinningService(ipfsService), config.IPFSConfig.JWTToken)
+	pinnode, err := st.GetPinnerNode(core.PinningService(ipfsService), config.IPFSConfig.JWTToken)
 	if err != nil {
 		log.Fatalf("error creating pinner node: %v", err)
 	}
