@@ -115,6 +115,8 @@ func GetPinnerNode(pst pincore.PinningService, token string) (pinapi.PinnerNode,
 		pinnode = pinapi.NewPinnerNode(*nodeCreateReq)
 
 		return pinnode, nil
+	case "":
+		return nil, nil
 	case pincore.Other:
 		fallthrough
 	default:
