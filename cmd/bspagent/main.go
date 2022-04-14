@@ -29,12 +29,12 @@ import (
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/handler"
+	istore "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/covalenthq/bsp-agent/internal/websocket"
-	pincore "github.com/covalenthq/ipfs-pinner/core"
+	"github.com/covalenthq/ipfs-pinner/core"
 	pinapi "github.com/covalenthq/ipfs-pinner/coreapi"
-	pinclient "github.com/covalenthq/ipfs-pinner/pinclient"
 )
 
 var (
@@ -77,7 +77,7 @@ func parseFlags() {
 	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
-	flag.StringVar(&ipfsService, "ipfs.service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'pinata' and 'others'")
+	flag.StringVar(&ipfsService, "ipfs-service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'web3.storage', 'pinata' and 'others'")
 
 	flag.Parse()
 }
@@ -148,13 +148,9 @@ func main() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
-	var pinnode pinapi.PinnerNode
-	if ipfsService == pincore.Pinata.String() {
-		clientCreateReq := pinclient.NewClientRequest(pincore.Pinata).BearerToken(config.IPFSConfig.JWTToken)
-		nodeCreateReq := pinapi.NewNodeRequest().PinClientRequest(clientCreateReq).Context(context.Background()).CidVersion(0).CidComputeOnly(true)
-		pinnode = pinapi.NewPinnerNode(*nodeCreateReq)
-	} else if ipfsService != "" {
-		log.Fatalf("Only pinata IPFS service supported for now")
+	pinnode, err := istore.GetPinnerNode(core.PinningService(ipfsService), config.IPFSConfig.JWTToken)
+	if err != nil {
+		log.Fatalf("error creating pinner node: %v", err)
 	}
 
 	if websocketURLsFlag != "" {
