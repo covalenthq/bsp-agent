@@ -12,8 +12,8 @@ import (
 
 	"cloud.google.com/go/storage"
 
+	pinapi "github.com/covalenthq/ipfs-pinner"
 	pincore "github.com/covalenthq/ipfs-pinner/core"
-	pinapi "github.com/covalenthq/ipfs-pinner/coreapi"
 	"github.com/covalenthq/ipfs-pinner/pinclient"
 	"github.com/ipfs/go-cid"
 	log "github.com/sirupsen/logrus"

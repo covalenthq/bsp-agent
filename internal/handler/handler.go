@@ -17,7 +17,7 @@ import (
 	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
-	pinapi "github.com/covalenthq/ipfs-pinner/coreapi"
+	pinapi "github.com/covalenthq/ipfs-pinner"
 )
 
 // EncodeReplicaSegmentToAvro encodes replica segment into AVRO binary encoding
