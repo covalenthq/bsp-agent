@@ -84,6 +84,7 @@ func NewGCPStorageClient(serviceAccount string) (*storage.Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error in connecting to google storage: %w", err)
 	}
+
 	return gcpStorageClient, nil
 }
 

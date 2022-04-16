@@ -68,13 +68,13 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		ccid, err = st.GenerateCidFor(ctx, pinnode, replicaSegmentAvro)
 		if err != nil {
 			log.Errorf("error generating cid for %s. Error: %s", binaryLocalPath, err)
-			replicaURL = "only local ./bin/"
+			replicaURL = "only local: " + binaryLocalPath
 		} else {
 			replicaURL = "ipfs://" + ccid.String()
 		}
 
 	default:
-		replicaURL = "only local ./bin/"
+		replicaURL = "only local: " + binaryLocalPath
 	}
 
 	log.Info("binary file should be available: ", replicaURL)
@@ -82,8 +82,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, blockReplica, proofTxHash)
 	pTxHash := <-proofTxHash
 	if pTxHash != "" {
-		// clean this up. From the earlier switch, only one replicaURL is allowed.
-		// But the object can actually be written to gcloud, local bin and ipfs.
+		// Support GCP file upload (with local binary save) or IPFS upload (with local bin) but not both
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 		err := st.HandleObjectUploadToBucket(ctx, gcpStorageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
 		_ = st.HandleObjectUploadToIPFS(ctx, pinnode, ccid, binaryLocalPath, segmentName, pTxHash)
