@@ -17,7 +17,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var (
+const (
 	proofTxTimeout uint64 = 60
 )
 
