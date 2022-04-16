@@ -76,11 +76,14 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 // NewGCPStorageClient initializes a new gcp storage client using a service account string
 func NewGCPStorageClient(serviceAccount string) (*storage.Client, error) {
 	ctx := context.Background()
+	if serviceAccount == "" {
+		return nil, fmt.Errorf("gcp-svc-account not provided: %v", serviceAccount)
+	}
+
 	gcpStorageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(serviceAccount))
 	if err != nil {
 		return nil, fmt.Errorf("error in connecting to google storage: %w", err)
 	}
-
 	return gcpStorageClient, nil
 }
 
