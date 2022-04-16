@@ -152,7 +152,7 @@ func main() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
-	pinnode, err := st.GetPinnerNode(pincore.PinningService(ipfsServiceFlag), config.IPFSConfig.JWTToken)
+	pinnode, err := st.GetPinnerNode(pincore.PinningService(ipfsServiceFlag), config.IPFSConfig.ServiceToken)
 	if err != nil {
 		log.Fatalf("error creating pinner node: %v", err)
 	}

@@ -22,8 +22,8 @@ type EthConfig struct {
 
 // IPFSConfig is set of all configs that relates to IPFS pinning
 type IPFSConfig struct {
-	IPFSURL  string `envconfig:"IPFS_SERVICE_URL"`
-	JWTToken string `envconfig:"IPFS_JWT_TOKEN"`
+	IPFSURL      string `envconfig:"IPFS_SERVICE_URL"`
+	ServiceToken string `envconfig:"IPFS_SERVICE_TOKEN"`
 }
 
 // Config is set of all config that relates to .envrc
