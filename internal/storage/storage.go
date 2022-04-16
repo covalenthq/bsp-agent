@@ -19,7 +19,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var (
+const (
 	uploadTimeout int64 = 50
 )
 

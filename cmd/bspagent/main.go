@@ -37,17 +37,21 @@ import (
 	pincore "github.com/covalenthq/ipfs-pinner/core"
 )
 
+const (
+	consumerEvents            int64 = 1
+	consumerPendingIdleTime   int64 = 30
+	consumerPendingTimeTicker int64 = 120
+	// number of block specimen/results within a single uploaded avro encoded object
+	segmentLength int    = 1 // defaults to 1 block per segment in bsp-agent live mode
+	start         string = ">"
+)
+
 var (
 	waitGrp sync.WaitGroup
-	// consts
-	consumerEvents            int64  = 1
-	consumerPendingIdleTime   int64  = 30
-	consumerPendingTimeTicker int64  = 120
-	blockNumberDivisor        uint64 = 3 // can be set to any divisor (decrease specimen production throughput)
 
 	// env flag vars
+	blockDivisorFlag           = 3  // can be set to any divisor (decrease specimen production throughput)
 	consumerPendingTimeoutFlag = 60 // defaults to 1 min
-	segmentLengthFlag          = 1  // defaults to 1 block per segment
 	avroCodecPathFlag          string
 	redisURLFlag               string
 	replicaBucketFlag          string
@@ -55,10 +59,10 @@ var (
 	proofChainFlag             string
 	binaryFilePathFlag         string
 	websocketURLsFlag          string
+	ipfsServiceFlag            string
 	logFolderFlag              = "./logs/"
-	ipfsService                string
+
 	// stream processing vars
-	start                 = ">"
 	replicaSegmentName    string
 	replicaSegmentIDBatch []string
 	replicaSkipIDBatch    []string
@@ -74,10 +78,10 @@ func parseFlags() {
 	flag.StringVar(&replicaBucketFlag, "replica-bucket", utils.LookupEnvOrString("ReplicaBucket", replicaBucketFlag), "google cloud platform object store target for specimen")
 	flag.StringVar(&proofChainFlag, "proof-chain-address", utils.LookupEnvOrString("ProofChain", proofChainFlag), "hex string address for deployed proof-chain contract")
 	flag.StringVar(&websocketURLsFlag, "websocket-urls", utils.LookupEnvOrString("WebsocketURLs", websocketURLsFlag), "url to websockets clients separated by space")
-	flag.IntVar(&segmentLengthFlag, "segment-length", utils.LookupEnvOrInt("SegmentLength", segmentLengthFlag), "number of block specimen/results within a single uploaded avro encoded object")
+	flag.IntVar(&blockDivisorFlag, "block-divisor", utils.LookupEnvOrInt("BlockDivisor", blockDivisorFlag), "integer divisor that allows for selecting only block numbers divisible by this number")
 	flag.IntVar(&consumerPendingTimeoutFlag, "consumer-timeout", utils.LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutFlag), "number of seconds to wait before pending messages consumer timeout")
 	flag.StringVar(&logFolderFlag, "log-folder", utils.LookupEnvOrString("LogFolder", logFolderFlag), "Location where the log files should be placed")
-	flag.StringVar(&ipfsService, "ipfs-service", utils.LookupEnvOrString("IpfsService", ipfsService), "Allowed values are 'web3.storage', 'pinata' and 'others'")
+	flag.StringVar(&ipfsServiceFlag, "ipfs-service", utils.LookupEnvOrString("IpfsService", ipfsServiceFlag), "Allowed values are 'web3.storage', 'pinata' and 'others'")
 
 	flag.Parse()
 }
@@ -148,7 +152,7 @@ func main() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
-	pinnode, err := st.GetPinnerNode(pincore.PinningService(ipfsService), config.IPFSConfig.JWTToken)
+	pinnode, err := st.GetPinnerNode(pincore.PinningService(ipfsServiceFlag), config.IPFSConfig.JWTToken)
 	if err != nil {
 		log.Fatalf("error creating pinner node: %v", err)
 	}
@@ -294,16 +298,16 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	switch {
 	case err != nil:
 		log.Error("error on process event: ", err)
-	case err == nil && objectReplica.Header.Number.Uint64()%blockNumberDivisor == 0:
+	case err == nil && objectReplica.Header.Number.Uint64()%uint64(blockDivisorFlag) == 0:
 		// collect stream ids and block replicas
 		replicaSegmentIDBatch = append(replicaSegmentIDBatch, stream.ID)
 		replicationSegment.BlockReplicaEvent = append(replicationSegment.BlockReplicaEvent, replica)
 		if len(replicationSegment.BlockReplicaEvent) == 1 {
 			replicationSegment.StartBlock = replica.Data.Header.Number.Uint64()
 		}
-		if len(replicationSegment.BlockReplicaEvent) == segmentLengthFlag {
+		if len(replicationSegment.BlockReplicaEvent) == segmentLength {
 			replicationSegment.EndBlock = replica.Data.Header.Number.Uint64()
-			replicationSegment.Elements = uint64(segmentLengthFlag)
+			replicationSegment.Elements = uint64(segmentLength)
 			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + objectType
 			// avro encode, prove and upload
 			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, pinnode, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
@@ -312,7 +316,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 				panic(err)
 			}
 			// ack amd trim stream segment batch id
-			xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSegmentIDBatch)
+			xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLength, streamKey, consumerGroup, replicaSegmentIDBatch)
 			if err != nil {
 				log.Error("failed to match streamIDs length to segment length config: ", err)
 			}
@@ -325,9 +329,9 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 	default:
 		// collect block replicas and stream ids to skip
 		replicaSkipIDBatch = append(replicaSkipIDBatch, stream.ID)
-		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", blockNumberDivisor)
+		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", blockDivisorFlag)
 		// ack amd trim stream skip batch ids
-		xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLengthFlag, streamKey, consumerGroup, replicaSkipIDBatch)
+		xlen, err := utils.AckTrimStreamSegment(config, redisClient, segmentLength, streamKey, consumerGroup, replicaSkipIDBatch)
 		if err != nil {
 			log.Error("failed to match streamIDs length to segment length config: ", err)
 			panic(err)
