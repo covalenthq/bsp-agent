@@ -35,14 +35,17 @@ import (
 	pinner "github.com/covalenthq/ipfs-pinner"
 )
 
-var (
-	waitGrp sync.WaitGroup
-	// consts
+const (
 	consumerEvents            int64 = 1
 	consumerPendingIdleTime   int64 = 30
 	consumerPendingTimeTicker int64 = 120
 	// number of block specimen/results within a single uploaded avro encoded object
-	segmentLength = 1 // defaults to 1 block per segment in bsp-agent live mode
+	segmentLength int    = 1 // defaults to 1 block per segment in bsp-agent live mode
+	start         string = ">"
+)
+
+var (
+	waitGrp sync.WaitGroup
 
 	// env flag vars
 	blockDivisorFlag           int = 3  // can be set to any divisor (decrease specimen production throughput)
@@ -56,8 +59,8 @@ var (
 	websocketURLsFlag          string
 	ipfsServiceFlag            string
 	logFolderFlag              = "./logs/"
+
 	// stream processing vars
-	start                 = ">"
 	replicaSegmentName    string
 	replicaSegmentIDBatch []string
 	replicaSkipIDBatch    []string
