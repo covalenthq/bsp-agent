@@ -73,15 +73,19 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 	return ethClient, nil
 }
 
-// NewStorageClient initializes a new storage client using a service account string
-func NewStorageClient(serviceAccount string) (*storage.Client, error) {
+// NewGCPStorageClient initializes a new gcp storage client using a service account string
+func NewGCPStorageClient(serviceAccount string) (*storage.Client, error) {
 	ctx := context.Background()
-	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(serviceAccount))
+	if serviceAccount == "" {
+		return nil, fmt.Errorf("gcp-svc-account not provided: %v", serviceAccount)
+	}
+
+	gcpStorageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(serviceAccount))
 	if err != nil {
 		return nil, fmt.Errorf("error in connecting to google storage: %w", err)
 	}
 
-	return storageClient, nil
+	return gcpStorageClient, nil
 }
 
 // StructToMap converts a struct to go map
