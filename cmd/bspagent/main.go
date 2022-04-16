@@ -48,8 +48,8 @@ var (
 	waitGrp sync.WaitGroup
 
 	// env flag vars
-	blockDivisorFlag           int = 3  // can be set to any divisor (decrease specimen production throughput)
-	consumerPendingTimeoutFlag int = 60 // defaults to 1 min
+	blockDivisorFlag           = 3  // can be set to any divisor (decrease specimen production throughput)
+	consumerPendingTimeoutFlag = 60 // defaults to 1 min
 	avroCodecPathFlag          string
 	redisURLFlag               string
 	replicaBucketFlag          string
