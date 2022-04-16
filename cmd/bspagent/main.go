@@ -135,7 +135,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to get redis client from redis URL flag: %v", err)
 	}
-	storageClient, err := utils.NewStorageClient(gcpSvcAccountFlag)
+	gcpStorageClient, err := utils.NewGCPStorageClient(gcpSvcAccountFlag)
 	if err != nil {
 		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag))
 	}
@@ -160,14 +160,14 @@ func main() {
 	if websocketURLsFlag != "" {
 		websocketsURLs := strings.Split(websocketURLsFlag, " ")
 		for _, url := range websocketsURLs {
-			go websocket.ConsumeWebsocketsEvents(&config.EthConfig, url, replicaCodec, ethClient, storageClient, binaryFilePathFlag, replicaBucketFlag, proofChainFlag)
+			go websocket.ConsumeWebsocketsEvents(&config.EthConfig, url, replicaCodec, ethClient, gcpStorageClient, binaryFilePathFlag, replicaBucketFlag, proofChainFlag)
 		}
 	} else {
 		var consumerName string = uuid.NewV4().String()
 		log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, streamKey, consumerGroup)
 		createConsumerGroup(redisClient, streamKey, consumerGroup)
-		go consumeEvents(config, replicaCodec, redisClient, pinnode, storageClient, ethClient, consumerName, streamKey, consumerGroup)
-		go consumePendingEvents(config, replicaCodec, redisClient, pinnode, storageClient, ethClient, consumerName, streamKey, consumerGroup)
+		go consumeEvents(config, replicaCodec, redisClient, pinnode, gcpStorageClient, ethClient, consumerName, streamKey, consumerGroup)
+		go consumePendingEvents(config, replicaCodec, redisClient, pinnode, gcpStorageClient, ethClient, consumerName, streamKey, consumerGroup)
 	}
 
 	// Gracefully disconnect
@@ -186,8 +186,8 @@ func main() {
 		}
 	}
 
-	if storageClient != nil {
-		err = storageClient.Close()
+	if gcpStorageClient != nil {
+		err = gcpStorageClient.Close()
 		if err != nil {
 			log.Error("error in closing storage client: ", err)
 		}
@@ -204,7 +204,7 @@ func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup str
 	}
 }
 
-func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, pinnode pinapi.PinnerNode, storageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
+func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, pinnode pinapi.PinnerNode, gcpStorageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
 	for {
 		log.Debug("New sequential stream unit: ", time.Now().Format(time.RFC3339))
 		streams, err := redisClient.XReadGroup(&redis.XReadGroupArgs{
@@ -222,14 +222,14 @@ func consumeEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient 
 
 		for _, stream := range streams[0].Messages {
 			waitGrp.Add(1)
-			go processStream(config, avroCodecs, redisClient, storageClient, pinnode, ethClient, stream, streamKey, consumerGroup)
+			go processStream(config, avroCodecs, redisClient, gcpStorageClient, pinnode, ethClient, stream, streamKey, consumerGroup)
 		}
 		waitGrp.Wait()
 	}
 }
 
 // consume pending messages from redis
-func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, pinnode pinapi.PinnerNode, storageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
+func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redisClient *redis.Client, pinnode pinapi.PinnerNode, gcpStorageClient *storage.Client, ethClient *ethclient.Client, consumerName, streamKey, consumerGroup string) {
 	timeout := time.After(time.Second * time.Duration(consumerPendingTimeoutFlag))
 	ticker := time.Tick(time.Second * time.Duration(consumerPendingTimeTicker))
 	for {
@@ -268,7 +268,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 				}
 				for _, stream := range streams {
 					waitGrp.Add(1)
-					go processStream(config, avroCodecs, redisClient, storageClient, pinnode, ethClient, stream, streamKey, consumerGroup)
+					go processStream(config, avroCodecs, redisClient, gcpStorageClient, pinnode, ethClient, stream, streamKey, consumerGroup)
 				}
 				waitGrp.Wait()
 			}
@@ -277,7 +277,7 @@ func consumePendingEvents(config *config.Config, avroCodecs *goavro.Codec, redis
 	}
 }
 
-func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, storageClient *storage.Client, pinnode pinapi.PinnerNode, ethClient *ethclient.Client, stream redis.XMessage, streamKey, consumerGroup string) {
+func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClient *redis.Client, gcpStorageClient *storage.Client, pinnode pinapi.PinnerNode, ethClient *ethclient.Client, stream redis.XMessage, streamKey, consumerGroup string) {
 	ctx := context.Background()
 	hash := stream.Values["hash"].(string)
 	decodedData, err := snappy.Decode(nil, []byte(stream.Values["data"].(string)))
@@ -310,7 +310,7 @@ func processStream(config *config.Config, replicaCodec *goavro.Codec, redisClien
 			replicationSegment.Elements = uint64(segmentLength)
 			replicaSegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(replicationSegment.StartBlock) + objectType
 			// avro encode, prove and upload
-			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, pinnode, replicaCodec, &replicationSegment, objectReplica, storageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
+			_, err := handler.EncodeProveAndUploadReplicaSegment(ctx, &config.EthConfig, pinnode, replicaCodec, &replicationSegment, objectReplica, gcpStorageClient, ethClient, binaryFilePathFlag, replicaBucketFlag, replicaSegmentName, proofChainFlag)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 				panic(err)

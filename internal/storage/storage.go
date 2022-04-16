@@ -24,7 +24,7 @@ const (
 )
 
 // HandleObjectUploadToBucket handles AVRO binary object upload to cloud bucket
-func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Client, binaryLocalPath, storageBucket, objectName, txHash string, object []byte) error {
+func HandleObjectUploadToBucket(ctx context.Context, gcpStorageClient *storage.Client, binaryLocalPath, storageBucket, objectName, txHash string, object []byte) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 
@@ -32,8 +32,8 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 
 	switch {
 	case binaryLocalPath == "":
-		return writeToCloudStorage(ctx, storageClient, storageBucket, filename, object)
-	case storageClient == nil:
+		return writeToCloudStorage(ctx, gcpStorageClient, storageBucket, filename, object)
+	case gcpStorageClient == nil:
 		err := writeToBinFile(binaryLocalPath, filename, object)
 		if err != nil {
 			panic(err)
@@ -51,7 +51,7 @@ func HandleObjectUploadToBucket(ctx context.Context, storageClient *storage.Clie
 			}
 		}
 
-		return writeToCloudStorage(ctx, storageClient, storageBucket, filename, object)
+		return writeToCloudStorage(ctx, gcpStorageClient, storageBucket, filename, object)
 	}
 }
 

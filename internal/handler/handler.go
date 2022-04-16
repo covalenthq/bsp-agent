@@ -50,7 +50,7 @@ func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*
 }
 
 // EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, pinnode pinapi.PinnerNode, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockReplica *types.BlockReplica, storageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
+func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, pinnode pinapi.PinnerNode, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockReplica *types.BlockReplica, gcpStorageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
 	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
 	if err != nil {
 		return "", err
@@ -62,7 +62,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 	var replicaURL string
 	var ccid cid.Cid
 	switch {
-	case storageClient != nil:
+	case gcpStorageClient != nil:
 		replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
 	case pinnode != nil:
 		ccid, err = st.GenerateCidFor(ctx, pinnode, replicaSegmentAvro)
@@ -85,7 +85,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		// clean this up. From the earlier switch, only one replicaURL is allowed.
 		// But the object can actually be written to gcloud, local bin and ipfs.
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-		err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
+		err := st.HandleObjectUploadToBucket(ctx, gcpStorageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
 		_ = st.HandleObjectUploadToIPFS(ctx, pinnode, ccid, binaryLocalPath, segmentName, pTxHash)
 
 		if err != nil {

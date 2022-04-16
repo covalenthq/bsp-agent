@@ -23,7 +23,7 @@ import (
 )
 
 // ConsumeWebsocketsEvents is the primary consumer of websocket events from an websocket endpoint
-func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, storageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) {
+func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, gcpStorageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) {
 	var replicaURL string
 	ctx := context.Background()
 	interrupt := make(chan os.Signal, 1)
@@ -79,7 +79,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 
 			proofTxHash := make(chan string, 1)
 			// Only google storage is supported for now
-			if storageClient != nil {
+			if gcpStorageClient != nil {
 				replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
 			} else {
 				replicaURL = "only local ./bin/"
@@ -88,7 +88,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			pTxHash := <-proofTxHash
 			if pTxHash != "" {
 				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-				err := st.HandleObjectUploadToBucket(ctx, storageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, message)
+				err := st.HandleObjectUploadToBucket(ctx, gcpStorageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, message)
 				if err != nil {
 					log.Error("error in handling object upload and storage: ", err)
 				}
