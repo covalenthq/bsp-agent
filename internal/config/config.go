@@ -12,12 +12,12 @@ type RedisConfig struct {
 	Password string `envconfig:"REDIS_PWD" default:""`
 }
 
-// EthConfig is set of all config that relates to ethereum
+// EthConfig is set of all config that relates to ethereum / ethereum like (EVM) networks
 type EthConfig struct {
-	RPCURL       string `envconfig:"ETH_RPC_URL"`
-	PrivateKey   string `envconfig:"ETH_PRIVATE_KEY"`
-	KeystorePath string `envconfig:"ETH_KEYSTORE_PATH"`
-	KeyStorePwd  string `envconfig:"ETH_KEYSTORE_PWD"`
+	RPCURL       string `envconfig:"MB_RPC_URL"`
+	PrivateKey   string `envconfig:"MB_PRIVATE_KEY"`
+	KeystorePath string `envconfig:"MB_KEYSTORE_PATH"`
+	KeyStorePwd  string `envconfig:"MB_KEYSTORE_PWD"`
 }
 
 // IPFSConfig is set of all configs that relates to IPFS pinning
