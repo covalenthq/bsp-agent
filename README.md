@@ -2,7 +2,7 @@
 
 <div align="center">
   <a href="https://github.com/covalenthq/bsp-agent/releases/latest">
-    <img alt="Version" src="https://img.shields.io/badge/tag-v1.0.0-yellowgreen" />
+    <img alt="Version" src="https://img.shields.io/github/tag/covalenthq/bsp-agent.svg" />
   </a>
   <a href="https://github.com/covalenthq/bsp-agent/blob/main/LICENSE">
     <img alt="License: " src="https://img.shields.io/badge/license-MIT-green" />
@@ -62,9 +62,9 @@ Production of Block Specimen forms the core of the network’s data objects spec
 
 1. [BSP Agent](https://github.com/covalenthq/bsp-agent) - Operator run & deployed
 
-1. [BSP Proof-chain](https://github.com/covalenthq/cqt-virtnet) - Covalent operated & pre-deployed
+1. [BSP Proof-chain](https://github.com/covalenthq/operational-staking) - Covalent operated & pre-deployed
 
-Please refer to these [instructions](https://docs.google.com/document/d/1N_HxUi6ZEkub9EHANe49vkL9iQztVA_ACyfHcOZV5y0/edit?usp=sharing) for running the BSP with the bsp-agent (BSP Agent).
+Please refer to these [instructions](https://docs.google.com/document/d/1eXv3YETJEU_UPhDYlWwe-7ogiQQLUv9YpHh6WzHLAOY/edit?usp=sharing) for running the BSP with the bsp-agent (BSP Agent).
 
 Please refer to this [whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.1.pdf) to understand more about its function.
 
@@ -149,19 +149,14 @@ For Elrond -
 
 ## <span id="environment">Environment</span>
 
-An Ethereum private key (for a public address that is pre-whitelisted on the staking contract) allows block-specimen producers (operators) to make proof transactions to the proof-chain contract and is required by the bsp-agent. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/bsp-agent/.envrc`.
+An Ethereum (moonbeam) private key (for a public address that is pre-whitelisted and added as an operator on the covalent network staking contract) allows block-specimen producers (operators) to make proof transactions to the proof-chain contract and is required by the bsp-agent. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/bsp-agent/.envrc`.
 
-An Ethereum RPC URL specifies the ethereum client connection string used to make transactions to on proof-chain contract, the respective credentials to be able to write to the contract should be provided in the .envrc file as follows
-
-```env
-export MB_RPC_URL=http://127.0.0.1:7545
-export MB_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
-```
+An Ethereum (moonbeam) RPC URL specifies the ethereum client connection string used to make transactions to on proof-chain contract, the respective credentials to be able to write to the contract should be provided in the .envrc file as follows. An IPFS Service token should be provided which relates to the JWT token for accessing file uploads on IPFS as a node service - [Pinata](http://pinata.cloud) & account service token for [Web3.Storage](http://web3.storage). These two services are supported for file uploads.
 
 ```env
-    export RPC_URL=http://your/rpc/url
-    export MB_PRIVATE_KEY=private/key/senders #required
-    export MB_RPC_URL=rpc-url #required
+    export MB_RPC_URL=http://127.0.0.1:7545
+    export MB_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
+    export IPFS_SERVICE_TOKEN=*****
     export REDIS_PWD=your-redis-password #optional
     export MB_KEYSTORE_PATH=path/to/keystore/file.json #optional
     export MB_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
@@ -179,7 +174,7 @@ For which you should see something like -
 
 ```bash
     direnv: loading ~/Documents/covalent/bsp-agent/.envrc
-    direnv: export +MB_PRIVATE_KEY +MB_RPC_URL
+    direnv: export +MB_PRIVATE_KEY +MB_RPC_URL +IPFS_SERVICE_TOKEN
 ```
 
 The remaining environment configuration is set up with flags provided to the bsp-agent during runtime.
@@ -188,26 +183,27 @@ The remaining environment configuration is set up with flags provided to the bsp
 
 Clone the `covalenthq/bsp-agent` repo and checkout `main`
 
+In order to store the block-specimen binary files please create a directory with sufficient storage (each specimen file is 0.5 to 1 MBs) depending on your block-specimen creation throughput.
+
 ```bash
 git clone git@github.com:covalenthq/bsp-agent.git
 cd bsp-agent
 git checkout main
-mkdir -p bin/block-ethereum
+mkdir -p /scratch/node/block-ethereum/
 ```
 
-Run the agent for (ethereum block-specimens) locally directly using the following -
+Run the agent for (ethereum mainnet block-specimens) directly using the following -
 
 ```bash
 go run ./cmd/bspagent/*.go \
-    --redis-url="redis://username:@localhost:6379/0?topic=replication#replicate" \
-    --avro-codec-path="./codec/block-ethereum.avsc" \
-    --binary-file-path="./bin/block-ethereum/" \
-    --gcp-svc-account="/Users/<user>/.config/gcloud/<gcp-service-account.json>" \
-    --replica-bucket="<covalenthq-geth-block-replica-bucket>" \
-    --segment-length=1 \
-    --proof-chain-address="0xe9048412727c96f1044c78CffA45BB2311aE1F1D" \
-    --consumer-timeout=80 \
-    --log-folder=./logs/
+  --redis-url="redis://username:@localhost:6379/0?topic=replication-1#replicate-1" \
+  --avro-codec-path="./codec/block-ethereum.avsc"  \
+  --binary-file-path="/scratch/node/block-ethereum/" \
+  --block-divisor=3   \
+  --proof-chain-address="0x8243AF52B91649547DC80814670Dd1683F360E4c" \
+  --consumer-timeout=10000000  \
+  --log-folder ./logs/  \
+  --ipfs-service=web3.storage
 ```
 
 Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --proof-chain-address and run with the following.
@@ -217,6 +213,8 @@ Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --
 ```
 
 ### <span id="flag_definitions">Flag definitions</span>
+
+the size of each uploaded object (AVRO compression containing as many as specified block specimens in a single uploaded object)
 
 `--redis-url` - this flag tells the BSP agent where to find the BSP messages, the stream topic key `replication` and the consumer group name with the field after "#" that in this case is `replicate`, additionally one can provide a password to the redis instance here but we recommend that by adding the line below to the .envrc
 
@@ -232,13 +230,15 @@ export REDIS_PWD=your-redis-pwd
 
 `--replica-bucket` - lets the BSP agent know the “bucket-name” for cloud storage of block replica specimens/results (currently only google cloud storege is supported)
 
-`--segment-length` - allows the BSP operator to configure the size of each uploaded object (AVRO compression containing as many as specified block specimens in a single uploaded object)
+`--block-divisor` - allows the operator to configure the number of block specimens being created, the block number divisible only by this number will be extracted, packed, encoded, uploaded and proofed.
 
 `--proof-chain-address` - specifies the address of the proof-chain contract that has been deployed for the CQT network (local ethereum network for this workflow).
 
 `--consumer-timeout` - specifies in how many seconds the BSP agent stops waiting for new messages from the redis pending queue for decode, pack, encode, proof, store and upload.
 
 `--log-folder` - specifies the location (folder) where the log files have to be placed. In case of error (like permission errors), the logs are not recorded in files.
+
+`--ipfs-service` - specifies the IPFS node as service to be used for block specimen uploads, supported options are `pinata` and `web3.storage`. 
 
 ## <span id="docker">Docker</span>
 
