@@ -154,17 +154,17 @@ An Ethereum private key (for a public address that is pre-whitelisted on the sta
 An Ethereum RPC URL specifies the ethereum client connection string used to make transactions to on proof-chain contract, the respective credentials to be able to write to the contract should be provided in the .envrc file as follows
 
 ```env
-export ETH_RPC_URL=http://127.0.0.1:7545
-export ETH_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
+export MB_RPC_URL=http://127.0.0.1:7545
+export MB_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
 ```
 
 ```env
     export RPC_URL=http://your/rpc/url
-    export ETH_PRIVATE_KEY=private/key/senders #required
-    export ETH_RPC_URL=rpc-url #required
+    export MB_PRIVATE_KEY=private/key/senders #required
+    export MB_RPC_URL=rpc-url #required
     export REDIS_PWD=your-redis-password #optional
-    export ETH_KEYSTORE_PATH=path/to/keystore/file.json #optional
-    export ETH_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
+    export MB_KEYSTORE_PATH=path/to/keystore/file.json #optional
+    export MB_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
 ```
 
 Please `brew install direnv` add the following to you bash -
@@ -179,7 +179,7 @@ For which you should see something like -
 
 ```bash
     direnv: loading ~/Documents/covalent/bsp-agent/.envrc
-    direnv: export +ETH_PRIVATE_KEY +ETH_RPC_URL
+    direnv: export +MB_PRIVATE_KEY +MB_RPC_URL
 ```
 
 The remaining environment configuration is set up with flags provided to the bsp-agent during runtime.
