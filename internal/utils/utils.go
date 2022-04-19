@@ -67,7 +67,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 func NewEthClient(address string) (*ethclient.Client, error) {
 	ethClient, err := ethclient.Dial(address)
 	if err != nil {
-		log.Error("error in getting eth client: ", err)
+		log.Fatalf("error in getting eth client: ", err)
 	}
 
 	return ethClient, nil
