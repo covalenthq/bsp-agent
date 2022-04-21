@@ -26,7 +26,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
-	_, opts, _, err := getTransactionOpts(ctx, config, ethClient)
+	_, opts, chainId, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
 		txHash <- ""
@@ -35,7 +35,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	}
 
 	contractAddress := common.HexToAddress(proofChain)
-	contract, err := NewProofChain(contractAddress, ethClient)
+	proofChainContract, err := NewProofChain(contractAddress, ethClient)
 	if err != nil {
 		log.Error("error binding to deployed contract: ", err.Error())
 		txHash <- ""
@@ -51,8 +51,21 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
+	//var callResult *[]interface{}
 
-	transaction, err := contract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+	//var params
+	NthSetting, err := proofChainContract.ProofChainCaller.NthBlock(&bind.CallOpts{}, 1131378225)
+	if err != nil {
+		log.Error("error with base block divisor call: ", err)
+		txHash <- ""
+
+		return
+	}
+	log.Info("Base Block divisor set to: ", NthSetting, "for chainId: ", chainId)
+
+	// checkTxExcept, err := proofChainContract.ProofChainCaller.contract.Call(&bind.CallOpts{}, callResult, proofChainContract.SubmitBlockSpecimenProof(),  )
+
+	transaction, err := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
@@ -92,3 +105,7 @@ func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient
 
 	return addr, opts, chainID.Uint64(), err
 }
+
+// func getCallOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.CallOpts, uint64, error) {
+
+// }
