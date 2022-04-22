@@ -23,7 +23,7 @@ import (
 )
 
 // ConsumeWebsocketsEvents is the primary consumer of websocket events from an websocket endpoint
-func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, gcpStorageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) {
+func ConsumeWebsocketsEvents(agconfig *config.AgentConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, gcpStorageClient *storage.Client) {
 	var replicaURL string
 	ctx := context.Background()
 	interrupt := make(chan os.Signal, 1)
@@ -80,7 +80,7 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 			proofTxHash := make(chan string, 1)
 			// Only google storage is supported for now
 			if gcpStorageClient != nil {
-				replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
+				replicaURL = "https://storage.cloud.google.com/" + agconfig.StorageConfig.ReplicaBucketLoc + "/" + segmentName
 			} else {
 				replicaURL = "only local ./bin/"
 			}

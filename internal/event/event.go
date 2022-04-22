@@ -41,3 +41,7 @@ func (o *BlockReplicaEvent) GetBlockReplicaString() string {
 func (o *BlockReplicaEvent) GetBlockReplicaHash() string {
 	return o.Hash
 }
+
+func (o *BlockReplicaEvent) Type() string {
+	return o.Data.Type[5:]
+}

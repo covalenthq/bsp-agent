@@ -22,9 +22,13 @@ const (
 )
 
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
-func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, replicaURL string, blockReplica *ty.BlockReplica, txHash chan string) {
+func SendBlockReplicaProofTx(ctx context.Context, config *config.ChainConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, replicaURL string, blockReplica *ty.BlockReplica, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
+
+	// txHash <- "dfd"
+
+	// return
 
 	_, opts, _, err := getTransactionOpts(ctx, config, ethClient)
 	if err != nil {
