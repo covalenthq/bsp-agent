@@ -4,6 +4,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -56,7 +57,7 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		return "", err
 	}
 	fmt.Printf("\n---> Processing %v <---\n", segmentName)
-	log.Info("Submitting block-replica segment proof for: ", segmentName)
+	log.Info("submitting block-replica segment proof for: ", segmentName)
 
 	proofTxHash := make(chan string, 1)
 	var replicaURL string
@@ -68,20 +69,28 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		ccid, err = st.GenerateCidFor(ctx, pinnode, replicaSegmentAvro)
 		if err != nil {
 			log.Errorf("error generating cid for %s. Error: %s", binaryLocalPath, err)
-			replicaURL = "only local: " + binaryLocalPath
+			replicaURL = "local: " + binaryLocalPath + segmentName
 		} else {
 			replicaURL = "ipfs://" + ccid.String()
 		}
 
 	default:
-		replicaURL = "only local: " + binaryLocalPath
+		replicaURL = "local: " + binaryLocalPath + segmentName
 	}
 
 	log.Info("binary file should be available: ", replicaURL)
 
 	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, blockReplica, proofTxHash)
 	pTxHash := <-proofTxHash
-	if pTxHash != "" {
+
+	switch {
+	case strings.Contains(pTxHash, "session closed"):
+		return pTxHash, nil
+	case strings.Contains(pTxHash, "presubmitted hash"):
+		return pTxHash, nil
+	case pTxHash == "":
+		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
+	default:
 		// Support GCP file upload (with local binary save) or IPFS upload (with local bin) but not both
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 		err := st.HandleObjectUploadToBucket(ctx, gcpStorageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
@@ -90,8 +99,6 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		if err != nil {
 			return "", fmt.Errorf("error in uploading object to bucket: %w", err)
 		}
-	} else {
-		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
 	}
 
 	return pTxHash, nil
