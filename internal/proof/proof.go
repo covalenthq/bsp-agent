@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
@@ -35,7 +36,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	}
 
 	contractAddress := common.HexToAddress(proofChain)
-	contract, err := NewProofChain(contractAddress, ethClient)
+	proofChainContract, err := NewProofChain(contractAddress, ethClient)
 	if err != nil {
 		log.Error("error binding to deployed contract: ", err.Error())
 		txHash <- ""
@@ -52,9 +53,21 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	transaction, err := contract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+	transaction, err := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "Session submissions have closed") {
+			log.Error("skip creating proof-chain session: ", err)
+			txHash <- "session closed"
+
+			return
+		}
+		if strings.Contains(err.Error(), "Operator already submitted for the provided block hash") {
+			log.Error("skip creating proof-chain session: ", err)
+			txHash <- "presubmitted hash"
+
+			return
+		}
 		log.Error("error calling deployed contract: ", err)
 		txHash <- ""
 
@@ -73,7 +86,6 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 
 		return
 	}
-
 	txHash <- receipt.TxHash.String()
 }
 
