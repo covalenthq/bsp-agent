@@ -29,9 +29,10 @@ type agentNode struct {
 	RedisClient *redis.Client
 
 	// storage
-	GcpStore   *gcp.Client
-	LocalStore *storage.LocalStoreClient
-	IpfsStore  *pinner.PinnerNode
+	StorageManager *storage.StorageManager
+	GcpStore       *gcp.Client
+	LocalStore     *storage.LocalStoreClient
+	IpfsStore      *pinner.PinnerNode
 
 	// codec
 	ReplicaCodec *goavro.Codec
@@ -45,14 +46,7 @@ type agentNode struct {
 
 	// stream processing
 	// TODO: need to evaluate if all or some of these can be local
-	segment ReplicaSegmentWrapped
-}
-
-type ReplicaSegmentWrapped struct {
-	event.ReplicationSegment
-	idBatch     []string
-	skipIDBatch []string
-	segmentName string
+	segment event.ReplicaSegmentWrapped
 }
 
 func InitAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {

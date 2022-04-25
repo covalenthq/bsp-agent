@@ -6,16 +6,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ipfs/go-cid"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/handler"
 	"github.com/covalenthq/bsp-agent/internal/proof"
 	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/utils"
-	pincore "github.com/covalenthq/ipfs-pinner/core"
 	"github.com/go-redis/redis/v7"
 	"github.com/linkedin/goavro/v2"
 	"gopkg.in/avro.v0"
@@ -37,11 +36,9 @@ func newEthAgentNode(agconfig *config.AgentConfig) *ethAgentNode {
 	enode.AgentConfig = agconfig
 
 	enode.setupRedis()
-	enode.setupGcpStore()
 	enode.setupEthClient()
 	enode.setupReplicaCodec()
-	enode.setupIpfsPinner()
-	enode.setupLocalFs()
+	enode.setupStorageManager()
 
 	return &enode
 }
@@ -102,7 +99,7 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 		log.Error("error on process event: ", err)
 	case err == nil && objectReplica.Header.Number.Uint64()%uint64(node.AgentConfig.RedisConfig.BlockDivisor) == 0:
 		// collect stream ids and block replicas
-		segment.idBatch = append(segment.idBatch, message.ID)
+		segment.IdBatch = append(segment.IdBatch, message.ID)
 		segment.BlockReplicaEvent = append(segment.BlockReplicaEvent, replica)
 		segmentLength := node.AgentConfig.SegmentLength()
 		if len(segment.BlockReplicaEvent) == 1 {
@@ -111,28 +108,28 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 		if len(segment.BlockReplicaEvent) == segmentLength {
 			segment.EndBlock = replica.Data.Header.Number.Uint64()
 			segment.Elements = uint64(segmentLength)
-			segment.segmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(segment.StartBlock) + objectType
+			segment.SegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(segment.StartBlock) + objectType
 			// avro encode, prove and upload
 
-			_, err := EncodeProveAndUploadReplicaSegment(ctx, segment)
+			_, err := node.EncodeProveAndUploadReplicaSegment(ctx, segment)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 				panic(err)
 			}
 			// ack amd trim stream segment batch id
-			xlen, err := utils.AckTrimStreamSegment(node.RedisClient, segmentLength, node.streamKey, node.consumerGroup, segment.idBatch)
+			xlen, err := utils.AckTrimStreamSegment(node.RedisClient, segmentLength, node.streamKey, node.consumerGroup, segment.IdBatch)
 			if err != nil {
 				log.Error("failed to match streamIDs length to segment length config: ", err)
 			}
-			log.Info("stream ids acked and trimmed: ", segment.idBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
+			log.Info("stream ids acked and trimmed: ", segment.IdBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
 			// reset segment, name, id batch stores
-			node.segment = ReplicaSegmentWrapped{}
-			node.segment.segmentName = ""
-			node.segment.idBatch = []string{}
+			node.segment = event.ReplicaSegmentWrapped{}
+			node.segment.SegmentName = ""
+			node.segment.IdBatch = []string{}
 		}
 	default:
 		// collect block replicas and stream ids to skip
-		segment.skipIDBatch = append(segment.skipIDBatch, message.ID)
+		segment.SkipIDBatch = append(segment.SkipIDBatch, message.ID)
 		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", node.AgentConfig.RedisConfig.BlockDivisor)
 		if len(segment.BlockReplicaEvent) != 0 {
 			// we only proceed with ack'ing/trimming the skipped ids once a segment is flushed.
@@ -140,14 +137,14 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 		}
 		// once segment is processed, trim the skipped ids too
 		// ack amd trim stream skip batch ids
-		xlen, err := utils.AckTrimStreamSegment(node.RedisClient, len(segment.skipIDBatch), node.streamKey, node.consumerGroup, segment.skipIDBatch)
+		xlen, err := utils.AckTrimStreamSegment(node.RedisClient, len(segment.SkipIDBatch), node.streamKey, node.consumerGroup, segment.SkipIDBatch)
 		if err != nil {
 			log.Error("failed to match streamIDs length to segment length config: ", err)
 			panic(err)
 		}
-		log.Info("stream ids acked and trimmed: ", segment.skipIDBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
+		log.Info("stream ids acked and trimmed: ", segment.SkipIDBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
 		// reset skip id batch stores
-		segment.skipIDBatch = []string{}
+		segment.SkipIDBatch = []string{}
 	}
 }
 
@@ -161,17 +158,6 @@ func (enode *ethAgentNode) setupRedis() {
 	enode.RedisClient = redisClient
 	enode.streamKey = streamKey
 	enode.consumerGroup = consumerGroup
-}
-
-func (enode *ethAgentNode) setupGcpStore() {
-	// setup gcp storage
-	storageConfig := enode.AgentConfig.StorageConfig
-	gcpStorageClient, err := utils.NewGCPStorageClient(storageConfig.GcpSvcAccountAuthFile)
-	if err != nil {
-		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, storageConfig.GcpSvcAccountAuthFile)
-	}
-
-	enode.GcpStore = gcpStorageClient
 }
 
 func (enode *ethAgentNode) setupEthClient() {
@@ -196,20 +182,13 @@ func (enode *ethAgentNode) setupReplicaCodec() {
 	enode.ReplicaCodec = replicaCodec
 }
 
-func (enode *ethAgentNode) setupIpfsPinner() {
-	storageConfig := enode.AgentConfig.StorageConfig
-	pinnode, err := st.GetPinnerNode(pincore.PinningService(storageConfig.IpfsServiceType), storageConfig.IpfsServiceToken)
+func (enode *ethAgentNode) setupStorageManager() {
+	storageManager, err := st.NewStorageManager(&enode.AgentConfig.StorageConfig)
 	if err != nil {
-		log.Fatalf("error creating pinner node: %v", err)
+		log.Fatalf("unable to setup storage manager: %v", err)
 	}
 
-	enode.IpfsStore = &pinnode
-}
-
-func (enode *ethAgentNode) setupLocalFs() {
-	if enode.AgentConfig.StorageConfig.BinaryFilePath == "" {
-		log.Warn("--binary-file-path flag not provided to write block-replica avro encoded binary files to local path")
-	}
+	enode.StorageManager = storageManager
 }
 
 func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup string) {
@@ -222,50 +201,37 @@ func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup str
 }
 
 // EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
-func (node *ethAgentNode) EncodeProveAndUploadReplicaSegment(ctx context.Context, currentSegment ReplicaSegmentWrapped) (string, error) {
+func (node *ethAgentNode) EncodeProveAndUploadReplicaSegment(ctx context.Context, currentSegment *event.ReplicaSegmentWrapped) (string, error) {
 	replicaSegmentAvro, err := handler.EncodeReplicaSegmentToAvro(node.ReplicaCodec, currentSegment.ReplicationSegment)
 	if err != nil {
 		return "", err
 	}
-	fmt.Printf("\n---> Processing %v <---\n", currentSegment.segmentName)
-	log.Info("Submitting block-replica segment proof for: ", currentSegment.segmentName)
+	fmt.Printf("\n---> Processing %v <---\n", currentSegment.SegmentName)
 
-	proofTxHash := make(chan string, 1)
-	var replicaURL string
-	var ccid cid.Cid
-	storageConfig := node.AgentConfig.StorageConfig
-	switch {
-	case node.GcpStore != nil:
-		replicaURL = "https://storage.cloud.google.com/" + storageConfig.ReplicaBucketLoc + "/" + currentSegment.segmentName
-	case node.IpfsStore != nil:
-		ccid, err = st.GenerateCidFor(ctx, *node.IpfsStore, replicaSegmentAvro)
-		if err != nil {
-			log.Errorf("error generating cid for %s. Error: %s", storageConfig.BinaryFilePath, err)
-			replicaURL = "only local: " + storageConfig.BinaryFilePath
-		} else {
-			replicaURL = "ipfs://" + ccid.String()
-		}
-
-	default:
-		replicaURL = "only local: " + storageConfig.BinaryFilePath
-	}
-
+	replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, currentSegment, replicaSegmentAvro)
 	log.Info("binary file should be available: ", replicaURL)
 
-	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, blockReplica, proofTxHash)
+	log.Info("Submitting block-replica segment proof for: ", currentSegment.SegmentName)
+	proofTxHash := make(chan string, 1)
+	config := node.AgentConfig
+	go proof.SendBlockReplicaProofTx(ctx, config, node.EthClient, currentSegment, replicaSegmentAvro, replicaURL, proofTxHash)
 	pTxHash := <-proofTxHash
-	if pTxHash != "" {
-		// Support GCP file upload (with local binary save) or IPFS upload (with local bin) but not both
-		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-		err := st.HandleObjectUploadToBucket(ctx, gcpStorageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
-		_ = st.HandleObjectUploadToIPFS(ctx, pinnode, ccid, binaryLocalPath, segmentName, pTxHash)
 
-		if err != nil {
-			return "", fmt.Errorf("error in uploading object to bucket: %w", err)
-		}
-	} else {
-		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
+	if pTxHash == "" {
+		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", currentSegment.SegmentName)
+	}
+
+	log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", currentSegment.SegmentName)
+	filename := objectFileName(currentSegment.SegmentName, pTxHash)
+	err = node.StorageManager.Store(ctx, ccid, filename, replicaSegmentAvro)
+
+	if err != nil {
+		return "", fmt.Errorf("error in storing object: %w", err)
 	}
 
 	return pTxHash, nil
+}
+
+func objectFileName(objectName, txHash string) string {
+	return objectName + "-" + txHash
 }

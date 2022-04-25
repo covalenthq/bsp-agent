@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
-	ty "github.com/covalenthq/bsp-agent/internal/types"
+	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -22,15 +22,19 @@ const (
 )
 
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
-func SendBlockReplicaProofTx(ctx context.Context, config *config.ChainConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, replicaURL string, blockReplica *ty.BlockReplica, txHash chan string) {
+func SendBlockReplicaProofTx(ctx context.Context, config *config.AgentConfig, ethClient *ethclient.Client, currentSegment *event.ReplicaSegmentWrapped, resultSegment []byte, replicaURL string, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
+
+	proofChain := config.ProofchainConfig.ProofChainAddr
+	lastBlockReplica := currentSegment.BlockReplicaEvent[len(currentSegment.BlockReplicaEvent)-1].Data
+	chainHeight := currentSegment.EndBlock
 
 	// txHash <- "dfd"
 
 	// return
 
-	_, opts, _, err := getTransactionOpts(ctx, config, ethClient)
+	_, opts, _, err := getTransactionOpts(ctx, &config.ChainConfig, ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
 		txHash <- ""
@@ -56,7 +60,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.ChainConfig, pr
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	transaction, err := contract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+	transaction, err := contract.SubmitBlockSpecimenProof(opts, lastBlockReplica.NetworkId, chainHeight, lastBlockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
@@ -81,8 +85,8 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.ChainConfig, pr
 	txHash <- receipt.TxHash.String()
 }
 
-func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
-	sKey := config.PrivateKey
+func getTransactionOpts(ctx context.Context, cfg *config.ChainConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
+	sKey := cfg.PrivateKey
 	chainID, err := ethClient.ChainID(ctx)
 	if err != nil {
 		log.Error("error in getting transaction options: ", err.Error())
