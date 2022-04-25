@@ -104,7 +104,3 @@ func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient
 
 	return addr, opts, chainID.Uint64(), err
 }
-
-// func getCallOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.CallOpts, uint64, error) {
-
-// }
