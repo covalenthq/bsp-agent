@@ -71,7 +71,7 @@ func NewAgentConfig() *AgentConfig {
 
 // LoadConfig populates the config from env flags and cli arguments
 func (ac *AgentConfig) LoadConfig() {
-	envConfig, err := loadConfig()
+	envConfig, err := loadEnvConfig()
 	if err != nil {
 		panic(err)
 	}
@@ -87,15 +87,15 @@ func (ac *AgentConfig) SegmentLength() int {
 	return 1
 }
 
-func (ac *AgentConfig) populateFromEnvConfig(config *config) {
-	ac.StorageConfig.IpfsServiceToken = config.ipfsConfig.ServiceToken
+func (ac *AgentConfig) populateFromEnvConfig(config *EnvConfig) {
+	ac.StorageConfig.IpfsServiceToken = config.IpfsConfig.ServiceToken
 
-	ac.RedisConfig.Password = config.redisConfig.Password
+	ac.RedisConfig.Password = config.RedisConfig.Password
 
-	ac.ChainConfig.RPCURL = config.ethConfig.RPCURL
-	ac.ChainConfig.PrivateKey = config.ethConfig.PrivateKey
-	ac.ChainConfig.KeystorePath = config.ethConfig.KeystorePath
-	ac.ChainConfig.KeyStorePwd = config.ethConfig.KeyStorePwd
+	ac.ChainConfig.RPCURL = config.EthConfig.RPCURL
+	ac.ChainConfig.PrivateKey = config.EthConfig.PrivateKey
+	ac.ChainConfig.KeystorePath = config.EthConfig.KeystorePath
+	ac.ChainConfig.KeyStorePwd = config.EthConfig.KeyStorePwd
 }
 
 func (ac *AgentConfig) populateFromCliFlags() {

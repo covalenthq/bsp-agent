@@ -48,10 +48,6 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
-	// txHash <- "dfd"
-
-	// return
-
 	_, opts, _, err := getTransactionOpts(ctx, &interactor.config.ChainConfig, interactor.ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())

@@ -80,7 +80,7 @@ func (manager *Manager) Store(ctx context.Context, ccid cid.Cid, filename string
 		if err != nil {
 			return err
 		}
-		err = manager.writeToLocalStore(manager.StorageConfig.BinaryFilePath, filename, data)
+		err = manager.LocalStore.WriteToBinFile(manager.StorageConfig.BinaryFilePath, filename, data)
 		if err != nil {
 			return err
 		}
@@ -116,7 +116,7 @@ func (manager *Manager) setupGcpStore() {
 	storageConfig := manager.StorageConfig
 	gcpStorageClient, err := utils.NewGCPStorageClient(storageConfig.GcpSvcAccountAuthFile)
 	if err != nil {
-		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, storageConfig.GcpSvcAccountAuthFile)
+		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v", err)
 
 		return
 	}
@@ -166,31 +166,6 @@ func (manager *Manager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.C
 	log.Infof("File %s successfully uploaded to IPFS with pin: %s", file.Name(), fcid.String())
 
 	return fcid, nil
-}
-
-//nolint:gosec
-func (manager *Manager) writeToLocalStore(path, objectName string, object []byte) error {
-	var _, err = os.Stat(filepath.Join(path, filepath.Base(objectName)))
-	if os.IsNotExist(err) {
-		fileSave, err := os.Create(filepath.Join(path, filepath.Base(objectName)))
-		if err != nil {
-			return fmt.Errorf("error in writing binary file: %w", err)
-		}
-		defer func() {
-			if err := fileSave.Close(); err != nil {
-				log.Error("Error closing file: ", err)
-			}
-		}()
-		_, err = fileSave.Write(object)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		log.Info("File already exists at: ", path, objectName)
-	}
-	log.Info("File written successfully to: ", path, objectName)
-
-	return nil
 }
 
 func (manager *Manager) writeToCloudStorage(ctx context.Context, filename string, object []byte) error {
