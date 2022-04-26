@@ -205,22 +205,27 @@ func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context
 	replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, currentSegment.SegmentName, replicaSegmentAvro)
 	log.Info("eth binary file should be available: ", replicaURL)
 
-	log.Info("Submitting block-replica segment proof for: ", currentSegment.SegmentName)
+	log.Info("submitting block-replica segment proof for: ", currentSegment.SegmentName)
 	proofTxHash := make(chan string, 1)
 	lastBlockReplica := currentSegment.BlockReplicaEvent[len(currentSegment.BlockReplicaEvent)-1]
 	go node.proofchi.SendBlockReplicaProofTx(ctx, currentSegment.EndBlock, lastBlockReplica.Data, replicaSegmentAvro, replicaURL, proofTxHash)
 	pTxHash := <-proofTxHash
 
-	if pTxHash == "" {
+	switch {
+	case strings.Contains(pTxHash, "session closed"):
+		return pTxHash, nil
+	case strings.Contains(pTxHash, "presubmitted hash"):
+		return pTxHash, nil
+	case pTxHash == "":
 		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", currentSegment.SegmentName)
-	}
+	default:
+		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", currentSegment.SegmentName)
+		filename := objectFileName(currentSegment.SegmentName, pTxHash)
+		err = node.StorageManager.Store(ctx, ccid, filename, replicaSegmentAvro)
 
-	log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", currentSegment.SegmentName)
-	filename := objectFileName(currentSegment.SegmentName, pTxHash)
-	err = node.StorageManager.Store(ctx, ccid, filename, replicaSegmentAvro)
-
-	if err != nil {
-		return "", fmt.Errorf("error in storing object: %w", err)
+		if err != nil {
+			return "", fmt.Errorf("error in storing object: %w", err)
+		}
 	}
 
 	return pTxHash, nil

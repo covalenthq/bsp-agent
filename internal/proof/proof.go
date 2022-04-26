@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
@@ -23,9 +24,9 @@ const (
 
 // ProofchainInteractor a wrapper over proofchain contract to help clients interact with it
 type ProofchainInteractor struct {
-	config    *config.AgentConfig
-	ethClient *ethclient.Client
-	contract  *ProofChain
+	config             *config.AgentConfig
+	ethClient          *ethclient.Client
+	proofChainContract *ProofChain
 }
 
 // NewProofchainInteractor creates a new `ProofchainInteractor` and does the setup
@@ -37,7 +38,7 @@ func NewProofchainInteractor(config *config.AgentConfig, ethClient *ethclient.Cl
 		log.Fatalf("error binding to deployed contract: %v", err.Error())
 	}
 
-	interactor.contract = contract
+	interactor.proofChainContract = contract
 
 	return interactor
 }
@@ -68,9 +69,21 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	transaction, err := interactor.contract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+	transaction, err := interactor.proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "Session submissions have closed") {
+			log.Error("skip creating proof-chain session: ", err)
+			txHash <- "session closed"
+
+			return
+		}
+		if strings.Contains(err.Error(), "Operator already submitted for the provided block hash") {
+			log.Error("skip creating proof-chain session: ", err)
+			txHash <- "presubmitted hash"
+
+			return
+		}
 		log.Error("error calling deployed contract: ", err)
 		txHash <- ""
 

@@ -57,13 +57,13 @@ func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string
 		ccid, err = generateCidFor(ctx, *manager.IpfsStore, replicaSegmentAvro)
 		if err != nil {
 			log.Errorf("error generating cid for %s. Error: %s", config.BinaryFilePath, err)
-			replicaURL = "only local: " + config.BinaryFilePath
+			replicaURL = "only local: " + config.BinaryFilePath + segmentName
 		} else {
 			replicaURL = "ipfs://" + ccid.String()
 		}
 
 	default:
-		replicaURL = "only local: " + config.BinaryFilePath
+		replicaURL = "only local: " + config.BinaryFilePath + segmentName
 	}
 
 	return replicaURL, ccid
