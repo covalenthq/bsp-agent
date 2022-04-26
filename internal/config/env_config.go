@@ -33,7 +33,7 @@ type config struct {
 }
 
 // LoadConfig loads the config from .envrc file
-func LoadConfig() (*config, error) {
+func loadConfig() (*config, error) {
 	cfg := &config{}
 	err := envconfig.Process("", cfg)
 	if err != nil {

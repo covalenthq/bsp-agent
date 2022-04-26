@@ -8,12 +8,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// LocalStoreClient stores file on the local filesystem
 type LocalStoreClient struct{}
 
+// WriteToBinFile writes to binary file in given path
 func (client *LocalStoreClient) WriteToBinFile(path, objectName string, object []byte) error {
 	var _, err = os.Stat(filepath.Join(path, filepath.Base(objectName)))
 	if os.IsNotExist(err) {
-		fileSave, err := os.Create(filepath.Join(path, filepath.Base(objectName)))
+		fullPath := filepath.Join(path, filepath.Base(objectName))
+		fileSave, err := os.Create(filepath.Clean(fullPath))
 		if err != nil {
 			return fmt.Errorf("error in writing binary file: %w", err)
 		}

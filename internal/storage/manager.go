@@ -18,7 +18,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type StorageManager struct {
+// Manager composes of all the different storage types supported by the agent
+type Manager struct {
 	StorageConfig *config.StorageConfig
 
 	GcpStore   *gcp.Client
@@ -26,8 +27,9 @@ type StorageManager struct {
 	IpfsStore  *pinner.PinnerNode
 }
 
-func NewStorageManager(conf *config.StorageConfig) (*StorageManager, error) {
-	manager := &StorageManager{}
+// NewStorageManager create and setup a new storage manager with given config
+func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
+	manager := &Manager{}
 	manager.StorageConfig = conf
 
 	manager.setupGcpStore()
@@ -41,10 +43,12 @@ func NewStorageManager(conf *config.StorageConfig) (*StorageManager, error) {
 	return manager, nil
 }
 
-func (manager *StorageManager) GenerateLocation(ctx context.Context, segmentName string, replicaSegmentAvro []byte) (string, cid.Cid) {
+// GenerateLocation calculate the non-local location (gcp or ipfs) for the given segment and data
+// cid is returned in case of ipfs
+func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string, replicaSegmentAvro []byte) (string, cid.Cid) {
 	config := manager.StorageConfig
 	var replicaURL string
-	var ccid cid.Cid = cid.Undef
+	var ccid = cid.Undef
 	var err error
 	switch {
 	case manager.GcpStore != nil:
@@ -65,7 +69,9 @@ func (manager *StorageManager) GenerateLocation(ctx context.Context, segmentName
 	return replicaURL, ccid
 }
 
-func (manager *StorageManager) Store(ctx context.Context, ccid cid.Cid, filename string, data []byte) error {
+// Store the given data in the stores supported by the agent.
+// cid is needed for IFPS based stores, and cid.Undef can be passed in case IPFS is not needed.
+func (manager *Manager) Store(ctx context.Context, ccid cid.Cid, filename string, data []byte) error {
 	// write to local store
 	var err error
 
@@ -87,7 +93,7 @@ func (manager *StorageManager) Store(ctx context.Context, ccid cid.Cid, filename
 		}
 		var ucid cid.Cid
 		ucid, err = manager.handleObjectUploadToIPFS(ctx, ccid, filename)
-		log.Info("client side cid is: %s, while uploaded is: %s", ccid, ucid)
+		log.Infof("client side cid is: %s, while uploaded is: %s", ccid.String(), ucid.String())
 	} else if manager.GcpStore != nil {
 		err = manager.writeToCloudStorage(ctx, filename, data)
 	}
@@ -95,7 +101,8 @@ func (manager *StorageManager) Store(ctx context.Context, ccid cid.Cid, filename
 	return err
 }
 
-func (manager *StorageManager) Close() {
+// Close the stores which compose the manager
+func (manager *Manager) Close() {
 	if manager.GcpStore != nil {
 		err := manager.GcpStore.Close()
 		if err != nil {
@@ -104,35 +111,37 @@ func (manager *StorageManager) Close() {
 	}
 }
 
-func (manager *StorageManager) setupGcpStore() {
+func (manager *Manager) setupGcpStore() {
 	// setup gcp storage
 	storageConfig := manager.StorageConfig
 	gcpStorageClient, err := utils.NewGCPStorageClient(storageConfig.GcpSvcAccountAuthFile)
 	if err != nil {
 		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v, storing BSP files locally: %v", err, storageConfig.GcpSvcAccountAuthFile)
+
 		return
 	}
 
 	manager.GcpStore = gcpStorageClient
 }
 
-func (manager *StorageManager) setupIpfsPinner() {
+func (manager *Manager) setupIpfsPinner() {
 	pinnode, err := getPinnerNode(pincore.PinningService(manager.StorageConfig.IpfsServiceType), manager.StorageConfig.IpfsServiceToken)
 	if err != nil {
 		log.Fatalf("error creating pinner node: %v", err)
+
 		return
 	}
 
 	manager.IpfsStore = &pinnode
 }
 
-func (manager *StorageManager) setupLocalFs() {
+func (manager *Manager) setupLocalFs() {
 	if manager.StorageConfig.BinaryFilePath == "" {
 		log.Warn("--binary-file-path flag not provided to write block-replica avro encoded binary files to local path")
 	}
 }
 
-func (manager *StorageManager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.Cid, binaryFileName string) (cid.Cid, error) {
+func (manager *Manager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.Cid, binaryFileName string) (cid.Cid, error) {
 	// assuming that bin files are written (rather than cloud only storage)
 	// need to explore strategy to directly upload in memory byte array via pinner
 	var file *os.File
@@ -146,12 +155,12 @@ func (manager *StorageManager) handleObjectUploadToIPFS(ctx context.Context, cci
 	}
 
 	if err != nil {
-		return cid.Undef, fmt.Errorf("failure in opening/generating file for upload: %v", err)
+		return cid.Undef, fmt.Errorf("failure in opening/generating file for upload: %w", err)
 	}
 
 	fcid, err := pinnode.PinService().UploadFile(ctx, file)
 	if err != nil {
-		return cid.Undef, fmt.Errorf("failure in uploading specimen object to IPFS: %v", err)
+		return cid.Undef, fmt.Errorf("failure in uploading specimen object to IPFS: %w", err)
 	}
 
 	log.Infof("File %s successfully uploaded to IPFS with pin: %s", file.Name(), fcid.String())
@@ -160,7 +169,7 @@ func (manager *StorageManager) handleObjectUploadToIPFS(ctx context.Context, cci
 }
 
 //nolint:gosec
-func (manager *StorageManager) writeToLocalStore(path, objectName string, object []byte) error {
+func (manager *Manager) writeToLocalStore(path, objectName string, object []byte) error {
 	var _, err = os.Stat(filepath.Join(path, filepath.Base(objectName)))
 	if os.IsNotExist(err) {
 		fileSave, err := os.Create(filepath.Join(path, filepath.Base(objectName)))
@@ -184,7 +193,7 @@ func (manager *StorageManager) writeToLocalStore(path, objectName string, object
 	return nil
 }
 
-func (manager *StorageManager) writeToCloudStorage(ctx context.Context, filename string, object []byte) error {
+func (manager *Manager) writeToCloudStorage(ctx context.Context, filename string, object []byte) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
 	defer cancel()
 

@@ -21,12 +21,14 @@ const (
 	proofTxTimeout uint64 = 60
 )
 
+// ProofchainInteractor a wrapper over proofchain contract to help clients interact with it
 type ProofchainInteractor struct {
 	config    *config.AgentConfig
 	ethClient *ethclient.Client
 	contract  *ProofChain
 }
 
+// NewProofchainInteractor creates a new `ProofchainInteractor` and does the setup
 func NewProofchainInteractor(config *config.AgentConfig, ethClient *ethclient.Client) *ProofchainInteractor {
 	interactor := &ProofchainInteractor{config: config, ethClient: ethClient}
 	contractAddress := common.HexToAddress(config.ProofchainConfig.ProofChainAddr)
@@ -36,6 +38,7 @@ func NewProofchainInteractor(config *config.AgentConfig, ethClient *ethclient.Cl
 	}
 
 	interactor.contract = contract
+
 	return interactor
 }
 

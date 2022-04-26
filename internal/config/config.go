@@ -10,6 +10,7 @@ var (
 	logFolderDefault              = "./logs/"
 )
 
+// RedisConfig all redis related config
 type RedisConfig struct {
 	RedisURL               string
 	Password               string
@@ -17,22 +18,31 @@ type RedisConfig struct {
 	ConsumerPendingTimeout int // defaults to 1 min
 }
 
+// CodecConfig all codec related config
 type CodecConfig struct {
 	AvroCodecPath string
 }
 
+// StorageConfig composes of configs needed by differtn stores
 type StorageConfig struct {
-	BinaryFilePath        string
+	// local
+	BinaryFilePath string
+
+	// gcp
 	GcpSvcAccountAuthFile string
 	ReplicaBucketLoc      string
-	IpfsServiceType       string
-	IpfsServiceToken      string
+
+	// ipfs
+	IpfsServiceType  string
+	IpfsServiceToken string
 }
 
+// ProofchainConfig all proof chain related configurations
 type ProofchainConfig struct {
 	ProofChainAddr string
 }
 
+// ChainConfig config around the supported blockchains
 type ChainConfig struct {
 	RPCURL       string
 	PrivateKey   string
@@ -43,6 +53,7 @@ type ChainConfig struct {
 	WebsocketURLs string
 }
 
+// AgentConfig composes all the different configs into a single config for agent node
 type AgentConfig struct {
 	RedisConfig      RedisConfig
 	CodecConfig      CodecConfig
@@ -53,12 +64,14 @@ type AgentConfig struct {
 	LogFolder string
 }
 
+// NewAgentConfig create a new empty config
 func NewAgentConfig() *AgentConfig {
 	return &AgentConfig{}
 }
 
+// LoadConfig populates the config from env flags and cli arguments
 func (ac *AgentConfig) LoadConfig() {
-	envConfig, err := LoadConfig()
+	envConfig, err := loadConfig()
 	if err != nil {
 		panic(err)
 	}
@@ -67,6 +80,7 @@ func (ac *AgentConfig) LoadConfig() {
 	ac.populateFromCliFlags()
 }
 
+// SegmentLength #block-specimen within a single proofchain tx
 func (ac *AgentConfig) SegmentLength() int {
 	// number of block specimen/results within a single uploaded avro encoded object
 	// defaults to 1 block per segment in bsp-agent live mode

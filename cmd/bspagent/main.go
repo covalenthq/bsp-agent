@@ -78,7 +78,7 @@ func determineChainType(agconfig *config.AgentConfig) node.ChainType {
 	webSockUrls := agconfig.ChainConfig.WebsocketURLs
 	if webSockUrls != "" {
 		return node.Elrond
-	} else {
-		return node.Ethereum
 	}
+
+	return node.Ethereum
 }

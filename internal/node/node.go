@@ -17,11 +17,15 @@ import (
 	"github.com/linkedin/goavro/v2"
 )
 
+// ChainType ChainType is the blockchain on which the agent is configured to run.
+// Current allowed values are "ethereum" and "elrond"
 type ChainType string
 
 const (
+	// Ethereum ChainType
 	Ethereum ChainType = "ethereum"
-	Elrond   ChainType = "elrond"
+	// Elrond ChainType
+	Elrond ChainType = "elrond"
 )
 
 type agentNode struct {
@@ -30,7 +34,7 @@ type agentNode struct {
 	RedisClient *redis.Client
 
 	// storage
-	StorageManager *storage.StorageManager
+	StorageManager *storage.Manager
 
 	// codec
 	ReplicaCodec *goavro.Codec
@@ -46,11 +50,15 @@ type agentNode struct {
 	consumerGroup string
 
 	// stream processing
+	//nolint // false positive in structcheck linter causes it to incorrectly identify `segment` as unused
 	segment event.ReplicaSegmentWrapped
 }
 
+// NewAgentNode creates a new agent node of given ChainType, and config.
+// This also sets up the internal services in order for the node to operate.
+// Typically one can `Start()` processing after creating node via this method.
 func NewAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {
-	anode := agentNode{}
+	anode := &agentNode{}
 	anode.AgentConfig = aconfig
 	anode.setupRedis()
 	anode.setupEthClient()
@@ -71,57 +79,57 @@ func NewAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {
 	return nil
 }
 
-func (node *agentNode) NodeChainType() ChainType {
+func (anode *agentNode) NodeChainType() ChainType {
 	log.Fatal("NodeChainType() shouldn't be called directly for AgentNode")
 	// unreachable
 	return ""
 }
 
-func (node *agentNode) Start(ctx context.Context) {
+func (anode *agentNode) Start(ctx context.Context) {
 	log.Fatal("Start() shouldn't be called directly for AgentNode")
 }
 
-func (node *agentNode) StopProcessing() {
+func (anode *agentNode) StopProcessing() {
 	log.Warn("Received interrupt. Flushing in-memory blocks...")
-	node.redisWaitGrp.Wait()
+	anode.redisWaitGrp.Wait()
 	log.Warn("waitgrp ended. Closing node...")
 }
 
-func (node *agentNode) Close() {
-	if node.RedisClient != nil {
-		err := node.RedisClient.Close()
+func (anode *agentNode) Close() {
+	if anode.RedisClient != nil {
+		err := anode.RedisClient.Close()
 		if err != nil {
 			log.Error("error in closing redis client: ", err)
 		}
 	}
 
-	node.StorageManager.Close()
-	node.EthClient.Close()
+	anode.StorageManager.Close()
+	anode.EthClient.Close()
 }
 
-func (enode *agentNode) setupRedis() {
-	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(&enode.AgentConfig.RedisConfig)
+func (anode *agentNode) setupRedis() {
+	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(&anode.AgentConfig.RedisConfig)
 	if err != nil {
 		log.Fatalf("unable to get redis client from redis URL flag: %v", err)
 	}
 
 	// setup redis client
-	enode.RedisClient = redisClient
-	enode.streamKey = streamKey
-	enode.consumerGroup = consumerGroup
+	anode.RedisClient = redisClient
+	anode.streamKey = streamKey
+	anode.consumerGroup = consumerGroup
 }
 
-func (enode *agentNode) setupEthClient() {
-	ethClient, err := utils.NewEthClient(enode.AgentConfig.ChainConfig.RPCURL)
+func (anode *agentNode) setupEthClient() {
+	ethClient, err := utils.NewEthClient(anode.AgentConfig.ChainConfig.RPCURL)
 	if err != nil {
 		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
 	}
 
-	enode.EthClient = ethClient
+	anode.EthClient = ethClient
 }
 
-func (enode *agentNode) setupReplicaCodec() {
-	replicaAvro, err := avro.ParseSchemaFile(enode.AgentConfig.CodecConfig.AvroCodecPath)
+func (anode *agentNode) setupReplicaCodec() {
+	replicaAvro, err := avro.ParseSchemaFile(anode.AgentConfig.CodecConfig.AvroCodecPath)
 	if err != nil {
 		log.Fatalf("unable to parse avro schema for specimen from codec path flag: %v", err)
 	}
@@ -130,16 +138,16 @@ func (enode *agentNode) setupReplicaCodec() {
 		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
 	}
 
-	enode.ReplicaCodec = replicaCodec
+	anode.ReplicaCodec = replicaCodec
 }
 
-func (enode *agentNode) setupStorageManager() {
-	storageManager, err := storage.NewStorageManager(&enode.AgentConfig.StorageConfig)
+func (anode *agentNode) setupStorageManager() {
+	storageManager, err := storage.NewStorageManager(&anode.AgentConfig.StorageConfig)
 	if err != nil {
 		log.Fatalf("unable to setup storage manager: %v", err)
 	}
 
-	enode.StorageManager = storageManager
+	anode.StorageManager = storageManager
 }
 
 func (anode *agentNode) setupProofchainInteractor() {

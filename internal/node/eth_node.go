@@ -25,10 +25,10 @@ const (
 )
 
 type ethAgentNode struct {
-	agentNode
+	*agentNode
 }
 
-func newEthAgentNode(anode agentNode) *ethAgentNode {
+func newEthAgentNode(anode *agentNode) *ethAgentNode {
 	return &ethAgentNode{anode}
 }
 
@@ -37,7 +37,7 @@ func (node *ethAgentNode) NodeChainType() ChainType {
 }
 
 func (node *ethAgentNode) Start(ctx context.Context) {
-	var consumerName string = uuid.NewV4().String()
+	var consumerName = uuid.NewV4().String()
 	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, node.streamKey, node.consumerGroup)
 	createConsumerGroup(node.RedisClient, node.streamKey, node.consumerGroup)
 	go node.consumeEvents(consumerName)
@@ -71,14 +71,14 @@ func (node *ethAgentNode) consumeEvents(consumerName string) {
 // consume pending messages from redis
 func (node *ethAgentNode) consumePendingEvents(consumerName string) {
 	timeout := time.After(time.Second * time.Duration(consumerPendingTimeoutFlag))
-	ticker := time.Tick(time.Second * time.Duration(consumerPendingTimeTicker))
+	ticker := time.NewTicker(time.Second * time.Duration(consumerPendingTimeTicker))
 	for {
 		select {
 		case <-timeout:
 			// this would always timeout and exit. What's the point of this then?
 			log.Info("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), " after timeout: ", consumerPendingTimeoutFlag, " seconds")
 			os.Exit(0)
-		case <-ticker:
+		case <-ticker.C:
 			var streamsRetry []string
 			pendingStreams, err := node.RedisClient.XPendingExt(&redis.XPendingExtArgs{
 				Stream: node.streamKey,
@@ -119,9 +119,14 @@ func (node *ethAgentNode) consumePendingEvents(consumerName string) {
 }
 
 func (node *ethAgentNode) processStream(message redis.XMessage) {
-	defer node.redisWaitGrp.Done()
 	ctx := context.Background()
-	replica, objectType, err := ReplicaFromRedisMessage(message)
+	replica, err := ReplicaFromRedisMessage(message)
+
+	if err != nil {
+		log.Fatalf("error decoding from redis message: %v", err)
+	}
+	defer node.redisWaitGrp.Done()
+	objectType := replica.Type()
 	objectReplica := replica.Data
 
 	segment := &node.segment
@@ -131,7 +136,7 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 		log.Error("error on process event: ", err)
 	case err == nil && objectReplica.Header.Number.Uint64()%uint64(node.AgentConfig.RedisConfig.BlockDivisor) == 0:
 		// collect stream ids and block replicas
-		segment.IdBatch = append(segment.IdBatch, message.ID)
+		segment.IDBatch = append(segment.IDBatch, message.ID)
 		segment.BlockReplicaEvent = append(segment.BlockReplicaEvent, replica)
 		segmentLength := node.AgentConfig.SegmentLength()
 		if len(segment.BlockReplicaEvent) == 1 {
@@ -149,15 +154,15 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 				panic(err)
 			}
 			// ack amd trim stream segment batch id
-			xlen, err := utils.AckTrimStreamSegment(node.RedisClient, segmentLength, node.streamKey, node.consumerGroup, segment.IdBatch)
+			xlen, err := utils.AckTrimStreamSegment(node.RedisClient, segmentLength, node.streamKey, node.consumerGroup, segment.IDBatch)
 			if err != nil {
 				log.Error("failed to match streamIDs length to segment length config: ", err)
 			}
-			log.Info("stream ids acked and trimmed: ", segment.IdBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
+			log.Info("stream ids acked and trimmed: ", segment.IDBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
 			// reset segment, name, id batch stores
 			node.segment = event.ReplicaSegmentWrapped{}
 			node.segment.SegmentName = ""
-			node.segment.IdBatch = []string{}
+			node.segment.IDBatch = []string{}
 		}
 	default:
 		// collect block replicas and stream ids to skip
@@ -193,7 +198,7 @@ func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup str
 func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context, currentSegment *event.ReplicaSegmentWrapped) (string, error) {
 	replicaSegmentAvro, err := handler.EncodeReplicaSegmentToAvro(node.ReplicaCodec, currentSegment.ReplicationSegment)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error encoding to avro: %w", err)
 	}
 	fmt.Printf("\n---> Processing %v <---\n", currentSegment.SegmentName)
 

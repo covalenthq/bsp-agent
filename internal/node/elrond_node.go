@@ -17,10 +17,10 @@ import (
 )
 
 type elrondAgentNode struct {
-	agentNode
+	*agentNode
 }
 
-func newElrondAgentNode(anode agentNode) *elrondAgentNode {
+func newElrondAgentNode(anode *agentNode) *elrondAgentNode {
 	return &elrondAgentNode{anode}
 }
 
