@@ -53,8 +53,8 @@ type AgentConfig struct {
 	LogFolder string
 }
 
-func NewAgentConfig() AgentConfig {
-	return AgentConfig{}
+func NewAgentConfig() *AgentConfig {
+	return &AgentConfig{}
 }
 
 func (ac *AgentConfig) LoadConfig() {

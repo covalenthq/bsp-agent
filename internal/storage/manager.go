@@ -11,7 +11,6 @@ import (
 
 	gcp "cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
-	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	pinner "github.com/covalenthq/ipfs-pinner"
 	pincore "github.com/covalenthq/ipfs-pinner/core"
@@ -42,14 +41,14 @@ func NewStorageManager(conf *config.StorageConfig) (*StorageManager, error) {
 	return manager, nil
 }
 
-func (manager *StorageManager) GenerateLocation(ctx context.Context, currentSegment *event.ReplicaSegmentWrapped, replicaSegmentAvro []byte) (string, cid.Cid) {
+func (manager *StorageManager) GenerateLocation(ctx context.Context, segmentName string, replicaSegmentAvro []byte) (string, cid.Cid) {
 	config := manager.StorageConfig
 	var replicaURL string
 	var ccid cid.Cid = cid.Undef
 	var err error
 	switch {
 	case manager.GcpStore != nil:
-		replicaURL = "https://storage.cloud.google.com/" + config.ReplicaBucketLoc + "/" + currentSegment.SegmentName
+		replicaURL = "https://storage.cloud.google.com/" + config.ReplicaBucketLoc + "/" + segmentName
 	case manager.IpfsStore != nil:
 		ccid, err = generateCidFor(ctx, *manager.IpfsStore, replicaSegmentAvro)
 		if err != nil {
@@ -69,6 +68,7 @@ func (manager *StorageManager) GenerateLocation(ctx context.Context, currentSegm
 func (manager *StorageManager) Store(ctx context.Context, ccid cid.Cid, filename string, data []byte) error {
 	// write to local store
 	var err error
+
 	if manager.StorageConfig.BinaryFilePath != "" {
 		err = validatePath(manager.StorageConfig.BinaryFilePath, filename)
 		if err != nil {
@@ -85,14 +85,23 @@ func (manager *StorageManager) Store(ctx context.Context, ccid cid.Cid, filename
 		if ccid == cid.Undef {
 			return fmt.Errorf("cid is Undefined")
 		}
-
-		ccid, err = manager.handleObjectUploadToIPFS(ctx, ccid, filename)
-
+		var ucid cid.Cid
+		ucid, err = manager.handleObjectUploadToIPFS(ctx, ccid, filename)
+		log.Info("client side cid is: %s, while uploaded is: %s", ccid, ucid)
 	} else if manager.GcpStore != nil {
 		err = manager.writeToCloudStorage(ctx, filename, data)
 	}
 
 	return err
+}
+
+func (manager *StorageManager) Close() {
+	if manager.GcpStore != nil {
+		err := manager.GcpStore.Close()
+		if err != nil {
+			log.Error("error in closing storage client: ", err)
+		}
+	}
 }
 
 func (manager *StorageManager) setupGcpStore() {
@@ -137,12 +146,12 @@ func (manager *StorageManager) handleObjectUploadToIPFS(ctx context.Context, cci
 	}
 
 	if err != nil {
-		return cid.Undef, fmt.Errorf("failure in opening/generating file for upload: ", err)
+		return cid.Undef, fmt.Errorf("failure in opening/generating file for upload: %v", err)
 	}
 
 	fcid, err := pinnode.PinService().UploadFile(ctx, file)
 	if err != nil {
-		return cid.Undef, fmt.Errorf("failure in uploading specimen object to IPFS: ", err)
+		return cid.Undef, fmt.Errorf("failure in uploading specimen object to IPFS: %v", err)
 	}
 
 	log.Infof("File %s successfully uploaded to IPFS with pin: %s", file.Name(), fcid.String())

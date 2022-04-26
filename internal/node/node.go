@@ -5,12 +5,13 @@ import (
 	"sync"
 
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/avro.v0"
 
-	gcp "cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
+	"github.com/covalenthq/bsp-agent/internal/proof"
 	"github.com/covalenthq/bsp-agent/internal/storage"
-	pinner "github.com/covalenthq/ipfs-pinner"
+	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
 	"github.com/linkedin/goavro/v2"
@@ -30,9 +31,6 @@ type agentNode struct {
 
 	// storage
 	StorageManager *storage.StorageManager
-	GcpStore       *gcp.Client
-	LocalStore     *storage.LocalStoreClient
-	IpfsStore      *pinner.PinnerNode
 
 	// codec
 	ReplicaCodec *goavro.Codec
@@ -40,21 +38,31 @@ type agentNode struct {
 
 	redisWaitGrp sync.WaitGroup
 
+	// proochain
+	proofchi *proof.ProofchainInteractor
+
 	// redis derived settings
 	streamKey     string
 	consumerGroup string
 
 	// stream processing
-	// TODO: need to evaluate if all or some of these can be local
 	segment event.ReplicaSegmentWrapped
 }
 
-func InitAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {
+func NewAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {
+	anode := agentNode{}
+	anode.AgentConfig = aconfig
+	anode.setupRedis()
+	anode.setupEthClient()
+	anode.setupReplicaCodec()
+	anode.setupStorageManager()
+	anode.setupProofchainInteractor()
+
 	switch chainType {
 	case Ethereum:
-		return newEthAgentNode(aconfig)
+		return newEthAgentNode(anode)
 	case Elrond:
-		return newElrondAgentNode(aconfig)
+		return newElrondAgentNode(anode)
 	default:
 		log.Fatalf("unknown chainType requested: %s", chainType)
 	}
@@ -87,11 +95,53 @@ func (node *agentNode) Close() {
 		}
 	}
 
-	if node.GcpStore != nil {
-		err := node.GcpStore.Close()
-		if err != nil {
-			log.Error("error in closing storage client: ", err)
-		}
-	}
+	node.StorageManager.Close()
 	node.EthClient.Close()
+}
+
+func (enode *agentNode) setupRedis() {
+	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(&enode.AgentConfig.RedisConfig)
+	if err != nil {
+		log.Fatalf("unable to get redis client from redis URL flag: %v", err)
+	}
+
+	// setup redis client
+	enode.RedisClient = redisClient
+	enode.streamKey = streamKey
+	enode.consumerGroup = consumerGroup
+}
+
+func (enode *agentNode) setupEthClient() {
+	ethClient, err := utils.NewEthClient(enode.AgentConfig.ChainConfig.RPCURL)
+	if err != nil {
+		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
+	}
+
+	enode.EthClient = ethClient
+}
+
+func (enode *agentNode) setupReplicaCodec() {
+	replicaAvro, err := avro.ParseSchemaFile(enode.AgentConfig.CodecConfig.AvroCodecPath)
+	if err != nil {
+		log.Fatalf("unable to parse avro schema for specimen from codec path flag: %v", err)
+	}
+	replicaCodec, err := goavro.NewCodec(replicaAvro.String())
+	if err != nil {
+		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
+	}
+
+	enode.ReplicaCodec = replicaCodec
+}
+
+func (enode *agentNode) setupStorageManager() {
+	storageManager, err := storage.NewStorageManager(&enode.AgentConfig.StorageConfig)
+	if err != nil {
+		log.Fatalf("unable to setup storage manager: %v", err)
+	}
+
+	enode.StorageManager = storageManager
+}
+
+func (anode *agentNode) setupProofchainInteractor() {
+	anode.proofchi = proof.NewProofchainInteractor(anode.AgentConfig, anode.EthClient)
 }

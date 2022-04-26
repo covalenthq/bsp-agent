@@ -3,44 +3,33 @@ package node
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/handler"
-	"github.com/covalenthq/bsp-agent/internal/proof"
-	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/go-redis/redis/v7"
-	"github.com/linkedin/goavro/v2"
-	"gopkg.in/avro.v0"
 )
 
 const (
-	consumerEvents            int64  = 1
-	consumerPendingIdleTime   int64  = 30
-	consumerPendingTimeTicker int64  = 10
-	start                     string = ">"
+	consumerEvents             int64  = 1
+	consumerPendingIdleTime    int64  = 30
+	consumerPendingTimeTicker  int64  = 10
+	consumerPendingTimeoutFlag int64  = 60
+	start                      string = ">"
 )
 
 type ethAgentNode struct {
 	agentNode
 }
 
-func newEthAgentNode(agconfig *config.AgentConfig) *ethAgentNode {
-	enode := ethAgentNode{}
-	enode.AgentConfig = agconfig
-
-	enode.setupRedis()
-	enode.setupEthClient()
-	enode.setupReplicaCodec()
-	enode.setupStorageManager()
-
-	return &enode
+func newEthAgentNode(anode agentNode) *ethAgentNode {
+	return &ethAgentNode{anode}
 }
 
 func (node *ethAgentNode) NodeChainType() ChainType {
@@ -52,14 +41,7 @@ func (node *ethAgentNode) Start(ctx context.Context) {
 	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, node.streamKey, node.consumerGroup)
 	createConsumerGroup(node.RedisClient, node.streamKey, node.consumerGroup)
 	go node.consumeEvents(consumerName)
-}
-
-func (node *ethAgentNode) StopProcessing() {
-
-}
-
-func (node *ethAgentNode) Close() {
-
+	go node.consumePendingEvents(consumerName)
 }
 
 func (node *ethAgentNode) consumeEvents(consumerName string) {
@@ -83,6 +65,56 @@ func (node *ethAgentNode) consumeEvents(consumerName string) {
 			go node.processStream(stream)
 		}
 		node.redisWaitGrp.Wait()
+	}
+}
+
+// consume pending messages from redis
+func (node *ethAgentNode) consumePendingEvents(consumerName string) {
+	timeout := time.After(time.Second * time.Duration(consumerPendingTimeoutFlag))
+	ticker := time.Tick(time.Second * time.Duration(consumerPendingTimeTicker))
+	for {
+		select {
+		case <-timeout:
+			// this would always timeout and exit. What's the point of this then?
+			log.Info("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), " after timeout: ", consumerPendingTimeoutFlag, " seconds")
+			os.Exit(0)
+		case <-ticker:
+			var streamsRetry []string
+			pendingStreams, err := node.RedisClient.XPendingExt(&redis.XPendingExtArgs{
+				Stream: node.streamKey,
+				Group:  node.consumerGroup,
+				Start:  "0",
+				End:    "+",
+				Count:  consumerEvents,
+			}).Result()
+			if err != nil {
+				panic(err)
+			}
+
+			for _, stream := range pendingStreams {
+				streamsRetry = append(streamsRetry, stream.ID)
+			}
+			if len(streamsRetry) > 0 {
+				streams, err := node.RedisClient.XClaim(&redis.XClaimArgs{
+					Stream:   node.streamKey,
+					Group:    node.consumerGroup,
+					Consumer: consumerName,
+					Messages: streamsRetry,
+					MinIdle:  time.Duration(consumerPendingIdleTime) * time.Second,
+				}).Result()
+				if err != nil {
+					log.Error("error on process pending: ", err.Error())
+
+					return
+				}
+				for _, stream := range streams {
+					node.redisWaitGrp.Add(1)
+					go node.processStream(stream)
+				}
+				node.redisWaitGrp.Wait()
+			}
+			log.Info("Process pending streams at: ", time.Now().Format(time.RFC3339))
+		}
 	}
 }
 
@@ -111,7 +143,7 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 			segment.SegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(segment.StartBlock) + objectType
 			// avro encode, prove and upload
 
-			_, err := node.EncodeProveAndUploadReplicaSegment(ctx, segment)
+			_, err := node.encodeProveAndUploadReplicaSegment(ctx, segment)
 			if err != nil {
 				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 				panic(err)
@@ -148,49 +180,6 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 	}
 }
 
-func (enode *ethAgentNode) setupRedis() {
-	redisClient, streamKey, consumerGroup, err := utils.NewRedisClient(&enode.AgentConfig.RedisConfig)
-	if err != nil {
-		log.Fatalf("unable to get redis client from redis URL flag: %v", err)
-	}
-
-	// setup redis client
-	enode.RedisClient = redisClient
-	enode.streamKey = streamKey
-	enode.consumerGroup = consumerGroup
-}
-
-func (enode *ethAgentNode) setupEthClient() {
-	ethClient, err := utils.NewEthClient(enode.AgentConfig.ChainConfig.RPCURL)
-	if err != nil {
-		log.Fatalf("unable to get ethereum client from Eth client flag: %v", err)
-	}
-
-	enode.EthClient = ethClient
-}
-
-func (enode *ethAgentNode) setupReplicaCodec() {
-	replicaAvro, err := avro.ParseSchemaFile(enode.AgentConfig.CodecConfig.AvroCodecPath)
-	if err != nil {
-		log.Fatalf("unable to parse avro schema for specimen from codec path flag: %v", err)
-	}
-	replicaCodec, err := goavro.NewCodec(replicaAvro.String())
-	if err != nil {
-		log.Fatalf("unable to generate avro codec for block-replica: %v", err)
-	}
-
-	enode.ReplicaCodec = replicaCodec
-}
-
-func (enode *ethAgentNode) setupStorageManager() {
-	storageManager, err := st.NewStorageManager(&enode.AgentConfig.StorageConfig)
-	if err != nil {
-		log.Fatalf("unable to setup storage manager: %v", err)
-	}
-
-	enode.StorageManager = storageManager
-}
-
 func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup string) {
 	if _, err := redisClient.XGroupCreateMkStream(streamKey, consumerGroup, "0").Result(); err != nil {
 		if !strings.Contains(fmt.Sprint(err), "BUSYGROUP") {
@@ -200,21 +189,21 @@ func createConsumerGroup(redisClient *redis.Client, streamKey, consumerGroup str
 	}
 }
 
-// EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
-func (node *ethAgentNode) EncodeProveAndUploadReplicaSegment(ctx context.Context, currentSegment *event.ReplicaSegmentWrapped) (string, error) {
+// atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
+func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context, currentSegment *event.ReplicaSegmentWrapped) (string, error) {
 	replicaSegmentAvro, err := handler.EncodeReplicaSegmentToAvro(node.ReplicaCodec, currentSegment.ReplicationSegment)
 	if err != nil {
 		return "", err
 	}
 	fmt.Printf("\n---> Processing %v <---\n", currentSegment.SegmentName)
 
-	replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, currentSegment, replicaSegmentAvro)
-	log.Info("binary file should be available: ", replicaURL)
+	replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, currentSegment.SegmentName, replicaSegmentAvro)
+	log.Info("eth binary file should be available: ", replicaURL)
 
 	log.Info("Submitting block-replica segment proof for: ", currentSegment.SegmentName)
 	proofTxHash := make(chan string, 1)
-	config := node.AgentConfig
-	go proof.SendBlockReplicaProofTx(ctx, config, node.EthClient, currentSegment, replicaSegmentAvro, replicaURL, proofTxHash)
+	lastBlockReplica := currentSegment.BlockReplicaEvent[len(currentSegment.BlockReplicaEvent)-1]
+	go node.proofchi.SendBlockReplicaProofTx(ctx, currentSegment.EndBlock, lastBlockReplica.Data, replicaSegmentAvro, replicaURL, proofTxHash)
 	pTxHash := <-proofTxHash
 
 	if pTxHash == "" {

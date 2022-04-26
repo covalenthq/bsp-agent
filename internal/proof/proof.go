@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
-	"github.com/covalenthq/bsp-agent/internal/event"
+	ty "github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -21,31 +21,36 @@ const (
 	proofTxTimeout uint64 = 60
 )
 
+type ProofchainInteractor struct {
+	config    *config.AgentConfig
+	ethClient *ethclient.Client
+	contract  *ProofChain
+}
+
+func NewProofchainInteractor(config *config.AgentConfig, ethClient *ethclient.Client) *ProofchainInteractor {
+	interactor := &ProofchainInteractor{config: config, ethClient: ethClient}
+	contractAddress := common.HexToAddress(config.ProofchainConfig.ProofChainAddr)
+	contract, err := NewProofChain(contractAddress, ethClient)
+	if err != nil {
+		log.Fatalf("error binding to deployed contract: %v", err.Error())
+	}
+
+	interactor.contract = contract
+	return interactor
+}
+
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
-func SendBlockReplicaProofTx(ctx context.Context, config *config.AgentConfig, ethClient *ethclient.Client, currentSegment *event.ReplicaSegmentWrapped, resultSegment []byte, replicaURL string, txHash chan string) {
+func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Context, chainHeight uint64, blockReplica *ty.BlockReplica, resultSegment []byte, replicaURL string, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
-
-	proofChain := config.ProofchainConfig.ProofChainAddr
-	lastBlockReplica := currentSegment.BlockReplicaEvent[len(currentSegment.BlockReplicaEvent)-1].Data
-	chainHeight := currentSegment.EndBlock
 
 	// txHash <- "dfd"
 
 	// return
 
-	_, opts, _, err := getTransactionOpts(ctx, &config.ChainConfig, ethClient)
+	_, opts, _, err := getTransactionOpts(ctx, &interactor.config.ChainConfig, interactor.ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
-		txHash <- ""
-
-		return
-	}
-
-	contractAddress := common.HexToAddress(proofChain)
-	contract, err := NewProofChain(contractAddress, ethClient)
-	if err != nil {
-		log.Error("error binding to deployed contract: ", err.Error())
 		txHash <- ""
 
 		return
@@ -60,7 +65,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.AgentConfig, et
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	transaction, err := contract.SubmitBlockSpecimenProof(opts, lastBlockReplica.NetworkId, chainHeight, lastBlockReplica.Hash, sha256Result, replicaURL)
+	transaction, err := interactor.contract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
 		log.Error("error calling deployed contract: ", err)
@@ -68,7 +73,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.AgentConfig, et
 
 		return
 	}
-	receipt, err := bind.WaitMined(ctx, ethClient, transaction)
+	receipt, err := bind.WaitMined(ctx, interactor.ethClient, transaction)
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		log.Error("block-result proof tx call: ", transaction.Hash(), " to proof contract failed: ", err.Error())
 		txHash <- ""
