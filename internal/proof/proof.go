@@ -68,7 +68,6 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
-
 	transaction, err := interactor.proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
@@ -102,7 +101,6 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 
 		return
 	}
-
 	txHash <- receipt.TxHash.String()
 }
 
