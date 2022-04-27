@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	proofTxTimeout uint64 = 300
+	proofTxTimeout uint64 = 301
 )
 
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
