@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	proofTxTimeout uint64 = 180
+	proofTxTimeout uint64 = 300
 )
 
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
@@ -68,24 +68,46 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 
 			return
 		}
-		log.Error("error calling deployed contract: ", err)
+		log.Error("error sending tx to deployed contract: ", err)
 		txHash <- ""
 
 		return
 	}
+
 	receipt, err := bind.WaitMined(ctx, ethClient, transaction)
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("block-result proof tx call: ", transaction.Hash(), " to proof contract failed: ", err.Error())
-		txHash <- ""
-
-		return
-	}
 	if err != nil {
-		log.Error("error in waiting for tx to be mined on the blockchain: ", err.Error())
-		txHash <- ""
+		log.Error("proof tx wait on mine timeout in seconds: ", proofTxTimeout, " with err: ", err.Error())
+		txHash <- "mine timeout"
 
 		return
 	}
+	if receipt.Status != types.ReceiptStatusSuccessful {
+		log.Error("proof tx failed/revereted, retrying proof tx for block hash: ", blockReplica.Hash)
+		retryTx, retryTxErr := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+		if retryTxErr != nil {
+			log.Error("error retrying tx to deployed contract: ", retryTxErr)
+			txHash <- ""
+
+			return
+		}
+		retryReceipt, retryReceiptErr := bind.WaitMined(ctx, ethClient, retryTx)
+		if retryReceiptErr != nil {
+			log.Error("proof tx wait on mine timeout in seconds: ", proofTxTimeout, " with err: ", retryReceiptErr.Error())
+			txHash <- "mine timeout"
+
+			return
+		}
+		if retryReceipt.Status != types.ReceiptStatusSuccessful {
+			log.Error("proof tx failed/revereted on tx retry, skipping: ", retryTx.Hash())
+
+			txHash <- retryTx.Hash().String()
+		}
+
+		txHash <- retryTx.Hash().String()
+
+		return
+	}
+
 	txHash <- receipt.TxHash.String()
 }
 
