@@ -80,6 +80,7 @@ func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethCl
 	}
 
 	receipt, err := bind.WaitMined(ctx, ethClient, transaction)
+
 	if err != nil {
 		log.Error("proof tx wait on mine timeout in seconds: ", proofTxTimeout, " with err: ", err.Error())
 		txHash <- "mine timeout"
@@ -88,12 +89,12 @@ func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethCl
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		if retryCount >= retryCountLimit {
-			log.Error("proof tx failed/revereted on tx retry, skipping: ", transaction.Hash())
-			txHash <- transaction.Hash().String()
+			log.Error("proof tx failed/reverted on tx retry, skipping: ", transaction.Hash())
+			txHash <- "retry fail"
 
 			return
 		}
-		log.Error("proof tx failed/revereted, retrying proof tx for block hash: ", blockReplica.Hash)
+		log.Error("proof tx failed/reverted, retrying proof tx for block hash: ", blockReplica.Hash.String())
 		executeWithRetry(ctx, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
 
 		return
