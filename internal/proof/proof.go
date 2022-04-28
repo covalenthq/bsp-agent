@@ -19,7 +19,8 @@ import (
 )
 
 const (
-	proofTxTimeout uint64 = 301
+	proofTxTimeout  uint64 = 301
+	retryCountLimit int    = 1 // 1 retry for proofchain submission
 )
 
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
@@ -53,6 +54,10 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
+	executeWithRetry(ctx, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
+}
+
+func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
 	transaction, err := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
@@ -82,28 +87,14 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 		return
 	}
 	if receipt.Status != types.ReceiptStatusSuccessful {
+		if retryCount >= retryCountLimit {
+			log.Error("proof tx failed/revereted on tx retry, skipping: ", transaction.Hash())
+			txHash <- transaction.Hash().String()
+
+			return
+		}
 		log.Error("proof tx failed/revereted, retrying proof tx for block hash: ", blockReplica.Hash)
-		retryTx, retryTxErr := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
-		if retryTxErr != nil {
-			log.Error("error retrying tx to deployed contract: ", retryTxErr)
-			txHash <- ""
-
-			return
-		}
-		retryReceipt, retryReceiptErr := bind.WaitMined(ctx, ethClient, retryTx)
-		if retryReceiptErr != nil {
-			log.Error("proof tx wait on mine timeout in seconds: ", proofTxTimeout, " with err: ", retryReceiptErr.Error())
-			txHash <- "mine timeout"
-
-			return
-		}
-		if retryReceipt.Status != types.ReceiptStatusSuccessful {
-			log.Error("proof tx failed/revereted on tx retry, skipping: ", retryTx.Hash())
-
-			txHash <- retryTx.Hash().String()
-		}
-
-		txHash <- retryTx.Hash().String()
+		executeWithRetry(ctx, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
 
 		return
 	}
