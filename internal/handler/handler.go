@@ -92,6 +92,8 @@ func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthC
 		return pTxHash, nil
 	case strings.Contains(pTxHash, "retry fail"):
 		return pTxHash, nil
+	case strings.Contains(pTxHash, "out-of-bounds block"):
+		return pTxHash, nil
 	case pTxHash == "":
 		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
 	default:

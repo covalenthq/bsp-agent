@@ -73,6 +73,12 @@ func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethCl
 
 			return
 		}
+		if strings.Contains(err.Error(), "Block height is out of bounds for live sync") {
+			log.Error("skip creating proof-chain session: ", err)
+			txHash <- "out-of-bounds block"
+
+			return
+		}
 		log.Error("error sending tx to deployed contract: ", err)
 		txHash <- ""
 
