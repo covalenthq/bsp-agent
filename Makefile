@@ -8,10 +8,10 @@ dockerdown:
 lint:
 	@golangci-lint run
 
-run-build:
+build:
 	@echo "---- Building Agent from cmd/bspagent ----"
-	@go build -o ./bin/bspagent/agent ./cmd/bspagent/*.go 
-	@echo "---- Done Building to ./bin/agent ----"
+	@go build -o ./bin/bspagent ./cmd/bspagent/ 
+	@echo "---- Done Building to ./bin/bspagent ----"
 
 run-agent-eth:
 	@echo "---- Running Agent from cmd/bspagent ----"
