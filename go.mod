@@ -28,6 +28,23 @@ require (
 require github.com/covalenthq/ipfs-pinner v0.1.5
 
 require (
+	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
+	github.com/apache/arrow/go/arrow v0.0.0-20210722123801-4591d76fce28 // indirect
+	github.com/benbjohnson/immutable v0.3.0 // indirect
+	github.com/deepmap/oapi-codegen v1.8.2 // indirect
+	github.com/gofrs/uuid v3.3.0+incompatible // indirect
+	github.com/google/flatbuffers v2.0.0+incompatible // indirect
+	github.com/influxdata/flux v0.140.0 // indirect
+	github.com/influxdata/influxql v1.1.1-0.20211004132434-7e7d61973256 // indirect
+	github.com/influxdata/line-protocol v0.0.0-20210311194329-9aa0e372d097 // indirect
+	github.com/sergi/go-diff v1.0.0 // indirect
+	github.com/uber/jaeger-client-go v2.28.0+incompatible // indirect
+	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
+	github.com/xlab/treeprint v0.0.0-20180616005107-d6fb6747feb6 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
+)
+
+require (
 	bazil.org/fuse v0.0.0-20200117225306-7b5117fecadc // indirect
 	cloud.google.com/go v0.100.2 // indirect
 	cloud.google.com/go/compute v1.6.1 // indirect
@@ -83,6 +100,8 @@ require (
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/huin/goupnp v1.0.3-0.20220313090229-ca81a64b4204 // indirect
+	github.com/influxdata/influxdb v1.9.6
+	github.com/influxdata/influxdb-client-go/v2 v2.8.2
 	github.com/ipfs/bbloom v0.0.4 // indirect
 	github.com/ipfs/go-bitfield v1.0.0 // indirect
 	github.com/ipfs/go-bitswap v0.6.0 // indirect

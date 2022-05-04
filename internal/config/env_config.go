@@ -20,16 +20,22 @@ type EthEnvConfig struct {
 	KeyStorePwd  string `envconfig:"MB_KEYSTORE_PWD"`
 }
 
-// IpfsEnvConfig is set of all configs that relates to IPFS pinning
+// IpfsEnvConfig is set of all configs that relates to IPFS pinning (passed via env)
 type IpfsEnvConfig struct {
 	ServiceToken string `envconfig:"IPFS_SERVICE_TOKEN"`
 }
 
+// MetricsEnvConfig is set of cli config for metrics
+type MetricsEnvConfig struct {
+	InfluxdbToken string `envconfig:"INFLUXDB_TOKEN"`
+}
+
 // EnvConfig is set of all EnvConfig that relates to .envrc
 type EnvConfig struct {
-	IpfsConfig  IpfsEnvConfig
-	RedisConfig RedisEnvConfig
-	EthConfig   EthEnvConfig
+	IpfsConfig    IpfsEnvConfig
+	RedisConfig   RedisEnvConfig
+	EthConfig     EthEnvConfig
+	MetricsConfig MetricsEnvConfig
 }
 
 func loadEnvConfig() (*EnvConfig, error) {
