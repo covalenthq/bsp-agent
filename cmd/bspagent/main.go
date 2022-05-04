@@ -17,7 +17,6 @@ import (
 
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/metrics/exp"
-	"github.com/covalenthq/bsp-agent/internal/metrics/influxdb"
 	"github.com/covalenthq/bsp-agent/internal/node"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 )
@@ -93,17 +92,6 @@ func setupMetrics() {
 		address := agconfig.MetricsConfig.HTTPServerAddr + ":" + agconfig.MetricsConfig.HTTPServerPort
 		log.Info("Enabling stand-alone metrics HTTP endpoint: ", address)
 		exp.Setup(address)
-	}
-
-	if agconfig.MetricsConfig.InfluxdbV2Enabled {
-		go influxdb.InfluxDBV2WithTags(metrics.DefaultRegistry,
-			time.Second*10,
-			"http://localhost:8086",
-			agconfig.MetricsConfig.InfluxdbV2Token,
-			agconfig.MetricsConfig.InfluxdbV2Bucket,
-			agconfig.MetricsConfig.InfluxdbV2Organization,
-			"agent.",
-			make(map[string]string))
 	}
 }
 

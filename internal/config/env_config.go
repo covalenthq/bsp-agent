@@ -25,17 +25,11 @@ type IpfsEnvConfig struct {
 	ServiceToken string `envconfig:"IPFS_SERVICE_TOKEN"`
 }
 
-// MetricsEnvConfig is set of cli config for metrics
-type MetricsEnvConfig struct {
-	InfluxdbToken string `envconfig:"INFLUXDB_TOKEN"`
-}
-
 // EnvConfig is set of all EnvConfig that relates to .envrc
 type EnvConfig struct {
-	IpfsConfig    IpfsEnvConfig
-	RedisConfig   RedisEnvConfig
-	EthConfig     EthEnvConfig
-	MetricsConfig MetricsEnvConfig
+	IpfsConfig  IpfsEnvConfig
+	RedisConfig RedisEnvConfig
+	EthConfig   EthEnvConfig
 }
 
 func loadEnvConfig() (*EnvConfig, error) {

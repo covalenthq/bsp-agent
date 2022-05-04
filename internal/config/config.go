@@ -58,12 +58,6 @@ type MetricsConfig struct {
 	Enabled        bool
 	HTTPServerAddr string
 	HTTPServerPort string
-
-	// influxdb v2
-	InfluxdbV2Enabled      bool
-	InfluxdbV2Token        string
-	InfluxdbV2Bucket       string
-	InfluxdbV2Organization string
 }
 
 // AgentConfig composes all the different configs into a single config for agent node
@@ -110,8 +104,6 @@ func (ac *AgentConfig) populateFromEnvConfig(config *EnvConfig) {
 	ac.ChainConfig.PrivateKey = config.EthConfig.PrivateKey
 	ac.ChainConfig.KeystorePath = config.EthConfig.KeystorePath
 	ac.ChainConfig.KeyStorePwd = config.EthConfig.KeyStorePwd
-
-	ac.MetricsConfig.InfluxdbV2Token = config.MetricsConfig.InfluxdbToken
 }
 
 func (ac *AgentConfig) populateFromCliFlags() {
@@ -140,9 +132,6 @@ func (ac *AgentConfig) populateFromCliFlags() {
 	flag.BoolVar(&ac.MetricsConfig.Enabled, "metrics", false, "enable metrics reporting and collection")
 	flag.StringVar(&ac.MetricsConfig.HTTPServerAddr, "metrics.addr", LookupEnvOrString("MetricsHttpServerAddr", "127.0.0.1"), "Enable stand-alone metrics HTTP server listening interface (default: \"127.0.0.1\")")
 	flag.StringVar(&ac.MetricsConfig.HTTPServerPort, "metrics.port", LookupEnvOrString("MetricsHttpServerPort", "6061"), "Metrics HTTP server listening port (default: 6061)")
-	flag.BoolVar(&ac.MetricsConfig.InfluxdbV2Enabled, "metrics.influxdbv2", false, " Enable metrics export/push to an external InfluxDB v2 database")
-	flag.StringVar(&ac.MetricsConfig.InfluxdbV2Organization, "metrics.influxdb.organization", LookupEnvOrString("MetricsInfluxdbOrg", "agent"), "InfluxDB organization name (v2 only) (default: \"agent\")")
-	flag.StringVar(&ac.MetricsConfig.InfluxdbV2Bucket, "metrics.influxdb.bucket", LookupEnvOrString("MetricsInfluxdbBucket", "agent"), "  InfluxDB bucket name to push reported metrics to (v2 only) (default: \"geth\")")
 
 	flag.Parse()
 }

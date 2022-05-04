@@ -5,7 +5,8 @@ run:
   timeout: 5m
   modules-download-mode: readonly
   skip-files:
-    - internal/metrics/**/*.go
+    - internal/metrics/*.go
+    - internal/metrics/exp/*.go
 
 linters:
   enable:
