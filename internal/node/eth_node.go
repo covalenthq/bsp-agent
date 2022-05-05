@@ -216,9 +216,16 @@ func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context
 		return pTxHash, nil
 	case strings.Contains(pTxHash, "presubmitted hash"):
 		return pTxHash, nil
+	case strings.Contains(pTxHash, "mine timeout"):
+		return pTxHash, nil
+	case strings.Contains(pTxHash, "retry fail"):
+		return pTxHash, nil
+	case strings.Contains(pTxHash, "out-of-bounds block"):
+		return pTxHash, nil
 	case pTxHash == "":
 		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", currentSegment.SegmentName)
 	default:
+		// success. Store now...
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", currentSegment.SegmentName)
 		filename := objectFileName(currentSegment.SegmentName, pTxHash)
 		err = node.StorageManager.Store(ctx, ccid, filename, replicaSegmentAvro)

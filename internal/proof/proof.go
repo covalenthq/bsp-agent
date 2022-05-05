@@ -19,7 +19,8 @@ import (
 )
 
 const (
-	proofTxTimeout uint64 = 60
+	proofTxTimeout  uint64 = 301
+	retryCountLimit int    = 1 // 1 retry for proofchain submission
 )
 
 // ProofchainInteractor a wrapper over proofchain contract to help clients interact with it
@@ -64,7 +65,12 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 		return
 	}
 	sha256Result := sha256.Sum256(jsonResult)
-	transaction, err := interactor.proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+
+	executeWithRetry(ctx, interactor.proofChainContract, interactor.ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
+}
+
+func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
+	transaction, err := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "Session submissions have closed") {
@@ -79,24 +85,39 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 
 			return
 		}
-		log.Error("error calling deployed contract: ", err)
+		if strings.Contains(err.Error(), "Block height is out of bounds for live sync") {
+			log.Error("skip creating proof-chain session: ", err)
+			txHash <- "out-of-bounds block"
+
+			return
+		}
+		log.Error("error sending tx to deployed contract: ", err)
 		txHash <- ""
 
 		return
 	}
-	receipt, err := bind.WaitMined(ctx, interactor.ethClient, transaction)
-	if receipt.Status != types.ReceiptStatusSuccessful {
-		log.Error("block-result proof tx call: ", transaction.Hash(), " to proof contract failed: ", err.Error())
-		txHash <- ""
 
-		return
-	}
+	receipt, err := bind.WaitMined(ctx, ethClient, transaction)
+
 	if err != nil {
-		log.Error("error in waiting for tx to be mined on the blockchain: ", err.Error())
-		txHash <- ""
+		log.Error("proof tx wait on mine timeout in seconds: ", proofTxTimeout, " with err: ", err.Error())
+		txHash <- "mine timeout"
 
 		return
 	}
+	if receipt.Status != types.ReceiptStatusSuccessful {
+		if retryCount >= retryCountLimit {
+			log.Error("proof tx failed/reverted on tx retry, skipping: ", transaction.Hash())
+			txHash <- "retry fail"
+
+			return
+		}
+		log.Error("proof tx failed/reverted, retrying proof tx for block hash: ", blockReplica.Hash.String())
+		executeWithRetry(ctx, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
+
+		return
+	}
+
 	txHash <- receipt.TxHash.String()
 }
 
