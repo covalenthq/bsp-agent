@@ -9,6 +9,7 @@ import (
 
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
+	"github.com/covalenthq/bsp-agent/internal/metrics"
 	"github.com/covalenthq/bsp-agent/internal/proof"
 	"github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/utils"
@@ -52,6 +53,9 @@ type agentNode struct {
 	// stream processing
 	//nolint // false positive in structcheck linter causes it to incorrectly identify `segment` as unused
 	segment event.ReplicaSegmentWrapped
+
+	// metrics
+	blockProofingMetric metrics.Timer // captures duration and rate of block proofing
 }
 
 // NewAgentNode creates a new agent node of given ChainType, and config.
@@ -65,6 +69,7 @@ func NewAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {
 	anode.setupReplicaCodec()
 	anode.setupStorageManager()
 	anode.setupProofchainInteractor()
+	anode.setupMetrics()
 
 	switch chainType {
 	case Ethereum:
@@ -152,4 +157,8 @@ func (anode *agentNode) setupStorageManager() {
 
 func (anode *agentNode) setupProofchainInteractor() {
 	anode.proofchi = proof.NewProofchainInteractor(anode.AgentConfig, anode.EthClient)
+}
+
+func (anode *agentNode) setupMetrics() {
+	anode.blockProofingMetric = metrics.GetOrRegisterTimer("agent/blocks/success", metrics.DefaultRegistry)
 }

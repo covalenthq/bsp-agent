@@ -11,6 +11,7 @@ import (
 
 	gcp "cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/metrics"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	pinner "github.com/covalenthq/ipfs-pinner"
 	pincore "github.com/covalenthq/ipfs-pinner/core"
@@ -25,6 +26,9 @@ type Manager struct {
 	GcpStore   *gcp.Client
 	LocalStore *LocalStoreClient
 	IpfsStore  *pinner.PinnerNode
+
+	ipfsSuccessCount metrics.Counter
+	ipfsFailureCount metrics.Counter
 }
 
 // NewStorageManager create and setup a new storage manager with given config
@@ -35,6 +39,7 @@ func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
 	manager.setupGcpStore()
 	manager.setupIpfsPinner()
 	manager.setupLocalFs()
+	manager.setupMetrics()
 
 	if manager.GcpStore == nil && manager.IpfsStore == nil {
 		return nil, fmt.Errorf("cannot setup gcp store or ipfs store")
@@ -141,6 +146,11 @@ func (manager *Manager) setupLocalFs() {
 	}
 }
 
+func (manager *Manager) setupMetrics() {
+	manager.ipfsSuccessCount = metrics.GetOrRegisterCounter("agent/storage/ipfs/success", metrics.DefaultRegistry)
+	manager.ipfsFailureCount = metrics.GetOrRegisterCounter("agent/storage/ipfs/failure", metrics.DefaultRegistry)
+}
+
 func (manager *Manager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.Cid, binaryFileName string) (cid.Cid, error) {
 	// assuming that bin files are written (rather than cloud only storage)
 	// need to explore strategy to directly upload in memory byte array via pinner
@@ -155,15 +165,20 @@ func (manager *Manager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.C
 	}
 
 	if err != nil {
+		manager.ipfsFailureCount.Inc(1)
+
 		return cid.Undef, fmt.Errorf("failure in opening/generating file for upload: %w", err)
 	}
 
 	fcid, err := pinnode.PinService().UploadFile(ctx, file)
 	if err != nil {
+		manager.ipfsFailureCount.Inc(1)
+
 		return cid.Undef, fmt.Errorf("failure in uploading specimen object to IPFS: %w", err)
 	}
 
 	log.Infof("File %s successfully uploaded to IPFS with pin: %s", file.Name(), fcid.String())
+	manager.ipfsSuccessCount.Inc(1)
 
 	return fcid, nil
 }

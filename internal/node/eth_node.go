@@ -26,10 +26,12 @@ const (
 
 type ethAgentNode struct {
 	*agentNode
+
+	lastBlockTime time.Time
 }
 
 func newEthAgentNode(anode *agentNode) *ethAgentNode {
-	return &ethAgentNode{anode}
+	return &ethAgentNode{anode, time.Now()}
 }
 
 func (node *ethAgentNode) NodeChainType() ChainType {
@@ -40,6 +42,7 @@ func (node *ethAgentNode) Start(ctx context.Context) {
 	var consumerName = uuid.NewV4().String()
 	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, node.streamKey, node.consumerGroup)
 	createConsumerGroup(node.RedisClient, node.streamKey, node.consumerGroup)
+	node.lastBlockTime = time.Now()
 	go node.consumeEvents(consumerName)
 	go node.consumePendingEvents(consumerName)
 }
@@ -163,6 +166,10 @@ func (node *ethAgentNode) processStream(message redis.XMessage) {
 			node.segment = event.ReplicaSegmentWrapped{}
 			node.segment.SegmentName = ""
 			node.segment.IDBatch = []string{}
+
+			// record metrics
+			node.blockProofingMetric.UpdateSince(node.lastBlockTime)
+			node.lastBlockTime = time.Now()
 		}
 	default:
 		// collect block replicas and stream ids to skip

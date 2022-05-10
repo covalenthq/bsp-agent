@@ -8,12 +8,15 @@ import (
 	"os/signal"
 	"path"
 	"syscall"
+	"time"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
+	"github.com/covalenthq/bsp-agent/internal/metrics"
 	"github.com/covalenthq/lumberjack/v3"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/metrics/exp"
 	"github.com/covalenthq/bsp-agent/internal/node"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 )
@@ -63,6 +66,8 @@ func main() {
 	chainType := determineChainType(agconfig)
 	agentNode = node.NewAgentNode(chainType, agconfig)
 
+	setupMetrics()
+
 	agentNode.Start(context.Background())
 
 	// Gracefully disconnect
@@ -72,6 +77,22 @@ func main() {
 
 	agentNode.StopProcessing()
 	agentNode.Close()
+}
+
+func setupMetrics() {
+	// address := fmt.Sprintf("%s:%d", ctx.GlobalString(MetricsHTTPFlag.Name), ctx.GlobalInt(MetricsPortFlag.Name))
+	if !agconfig.MetricsConfig.Enabled {
+		log.Info("metrics not enabled. Skipping metrucs setup...")
+
+		return
+	}
+
+	go metrics.CollectProcessMetrics(3 * time.Second)
+	if agconfig.MetricsConfig.HTTPServerAddr != "" {
+		address := agconfig.MetricsConfig.HTTPServerAddr + ":" + agconfig.MetricsConfig.HTTPServerPort
+		log.Info("Enabling stand-alone metrics HTTP endpoint: ", address)
+		exp.Setup(address)
+	}
 }
 
 func determineChainType(agconfig *config.AgentConfig) node.ChainType {
