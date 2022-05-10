@@ -23,23 +23,35 @@ const (
 	retryCountLimit int    = 1 // 1 retry for proofchain submission
 )
 
+// ProofchainInteractor a wrapper over proofchain contract to help clients interact with it
+type ProofchainInteractor struct {
+	config             *config.AgentConfig
+	ethClient          *ethclient.Client
+	proofChainContract *ProofChain
+}
+
+// NewProofchainInteractor creates a new `ProofchainInteractor` and does the setup
+func NewProofchainInteractor(config *config.AgentConfig, ethClient *ethclient.Client) *ProofchainInteractor {
+	interactor := &ProofchainInteractor{config: config, ethClient: ethClient}
+	contractAddress := common.HexToAddress(config.ProofchainConfig.ProofChainAddr)
+	contract, err := NewProofChain(contractAddress, ethClient)
+	if err != nil {
+		log.Fatalf("error binding to deployed contract: %v", err.Error())
+	}
+
+	interactor.proofChainContract = contract
+
+	return interactor
+}
+
 // SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
-func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proofChain string, ethClient *ethclient.Client, chainHeight uint64, chainLen uint64, resultSegment []byte, replicaURL string, blockReplica *ty.BlockReplica, txHash chan string) {
+func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Context, chainHeight uint64, blockReplica *ty.BlockReplica, resultSegment []byte, replicaURL string, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
-	_, opts, _, err := getTransactionOpts(ctx, config, ethClient)
+	_, opts, _, err := getTransactionOpts(ctx, &interactor.config.ChainConfig, interactor.ethClient)
 	if err != nil {
 		log.Error("error getting transaction ops: ", err.Error())
-		txHash <- ""
-
-		return
-	}
-
-	contractAddress := common.HexToAddress(proofChain)
-	proofChainContract, err := NewProofChain(contractAddress, ethClient)
-	if err != nil {
-		log.Error("error binding to deployed contract: ", err.Error())
 		txHash <- ""
 
 		return
@@ -54,7 +66,7 @@ func SendBlockReplicaProofTx(ctx context.Context, config *config.EthConfig, proo
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	executeWithRetry(ctx, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
+	executeWithRetry(ctx, interactor.proofChainContract, interactor.ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
 }
 
 func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
@@ -109,8 +121,8 @@ func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethCl
 	txHash <- receipt.TxHash.String()
 }
 
-func getTransactionOpts(ctx context.Context, config *config.EthConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
-	sKey := config.PrivateKey
+func getTransactionOpts(ctx context.Context, cfg *config.ChainConfig, ethClient *ethclient.Client) (common.Address, *bind.TransactOpts, uint64, error) {
+	sKey := cfg.PrivateKey
 	chainID, err := ethClient.ChainID(ctx)
 	if err != nil {
 		log.Error("error in getting transaction options: ", err.Error())

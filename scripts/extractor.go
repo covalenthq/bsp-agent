@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/TylerBrock/colorjson"
+	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/linkedin/goavro/v2"
 	"gopkg.in/avro.v0"
@@ -26,16 +27,16 @@ var (
 )
 
 func main() {
-	flag.StringVar(&binaryFilePathFlag, "binary-file-path", utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
-	flag.StringVar(&avroCodecPathFlag, "codec-path", utils.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
-	flag.IntVar(&indentJSONFlag, "indent-json", utils.LookupEnvOrInt("IndentJson", indentJSONFlag), "allows for an indented view of the AVRO decoded JSON object")
+	flag.StringVar(&binaryFilePathFlag, "binary-file-path", config.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
+	flag.StringVar(&avroCodecPathFlag, "codec-path", config.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
+	flag.IntVar(&indentJSONFlag, "indent-json", config.LookupEnvOrInt("IndentJson", indentJSONFlag), "allows for an indented view of the AVRO decoded JSON object")
 
 	flag.Parse()
 	fmt.Println("bsp-extractor command line config: ", utils.GetConfig(flag.CommandLine))
 
-	avroCodecPathFlag = utils.LookupEnvOrString("CodecPath", avroCodecPathFlag)
-	binaryFilePathFlag = utils.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag)
-	indentJSONFlag = utils.LookupEnvOrInt("BinaryFilePath", indentJSONFlag)
+	avroCodecPathFlag = config.LookupEnvOrString("CodecPath", avroCodecPathFlag)
+	binaryFilePathFlag = config.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag)
+	indentJSONFlag = config.LookupEnvOrInt("BinaryFilePath", indentJSONFlag)
 
 	colorJSON := colorjson.NewFormatter()
 	colorJSON.Indent = indentJSONFlag

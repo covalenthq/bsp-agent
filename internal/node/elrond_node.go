@@ -1,5 +1,4 @@
-// Package websocket provides a websocket interface as a data ingestion mechanism
-package websocket
+package node
 
 import (
 	"context"
@@ -8,23 +7,39 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 
-	"cloud.google.com/go/storage"
-	"github.com/covalenthq/bsp-agent/internal/config"
-	"github.com/covalenthq/bsp-agent/internal/proof"
-	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gorilla/websocket"
-	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
 )
 
-// ConsumeWebsocketsEvents is the primary consumer of websocket events from an websocket endpoint
-func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, replicaCodec *goavro.Codec, ethClient *ethclient.Client, gcpStorageClient *storage.Client, binaryLocalPath, replicaBucket, proofChain string) {
-	var replicaURL string
+type elrondAgentNode struct {
+	*agentNode
+}
+
+func newElrondAgentNode(anode *agentNode) *elrondAgentNode {
+	return &elrondAgentNode{anode}
+}
+
+func (node *elrondAgentNode) NodeChainType() ChainType {
+	return Elrond
+}
+
+func (node *elrondAgentNode) Start(ctx context.Context) {
+	websocketUrls := node.AgentConfig.ChainConfig.WebsocketURLs
+	if websocketUrls != "" {
+		urlArr := strings.Split(websocketUrls, " ")
+		for _, url := range urlArr {
+			go node.consumeWebsocketsEvents(url)
+		}
+	}
+}
+
+// consumeWebsocketsEvents is the primary consumer of websocket events from an websocket endpoint
+func (node *elrondAgentNode) consumeWebsocketsEvents(websocketURL string) {
 	ctx := context.Background()
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -77,23 +92,23 @@ func ConsumeWebsocketsEvents(config *config.EthConfig, websocketURL string, repl
 				log.Error("error in sending acknowledged hash: ", errAcknowledgeData)
 			}
 
+			replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, segmentName, message)
+			log.Info("elrond binary file should be available: ", replicaURL)
+
 			proofTxHash := make(chan string, 1)
-			// Only google storage is supported for now
-			if gcpStorageClient != nil {
-				replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
-			} else {
-				replicaURL = "only local ./bin/"
-			}
-			go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, uint64(res.Block.Nonce), 1, message, replicaURL, &types.BlockReplica{}, proofTxHash)
+			go node.proofchi.SendBlockReplicaProofTx(ctx, uint64(res.Block.Nonce), &types.BlockReplica{}, message, replicaURL, proofTxHash)
 			pTxHash := <-proofTxHash
-			if pTxHash != "" {
-				log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-				err := st.HandleObjectUploadToBucket(ctx, gcpStorageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, message)
-				if err != nil {
-					log.Error("error in handling object upload and storage: ", err)
-				}
-			} else {
+
+			if pTxHash == "" {
 				log.Error("failed to prove & upload block-replica segment from websocket event: ", segmentName)
+			}
+
+			log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
+			filename := objectFileName(segmentName, pTxHash)
+			err = node.StorageManager.Store(ctx, ccid, filename, message)
+
+			if err != nil {
+				log.Error("error in storing object: ", err)
 			}
 		}
 	}()
