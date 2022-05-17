@@ -1,11 +1,15 @@
-// Package handler contains all the encoding to avro handler functions
+// Package handler contains fns for encoding to avro
 package handler
 
 import (
+	"bytes"
 	"fmt"
 
+	"github.com/go-redis/redis/v7"
+	"github.com/golang/snappy"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
+	"github.com/ubiq/go-ubiq/rlp"
 
 	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/types"
@@ -27,8 +31,8 @@ func EncodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment i
 	return binaryReplicaSegment, nil
 }
 
-// ParseStreamToEvent takes the stream message and parses it to a block replica event
-func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
+// ParseEventToBlockReplica takes block-replica data and parses it to a block-replica event
+func ParseEventToBlockReplica(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
 	replEvent, ok := e.(*event.BlockReplicaEvent)
 	if !ok {
 		return nil, fmt.Errorf("incorrect event type: %v", replEvent)
@@ -39,4 +43,31 @@ func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*
 	}
 
 	return replicaEvent, nil
+}
+
+// ParseMessageToBlockReplica decodes the redis message to a BlockReplicaEvent
+func ParseMessageToBlockReplica(msg redis.XMessage) (*event.BlockReplicaEvent, error) {
+	hash := msg.Values["hash"].(string)
+	decodedData, err := snappy.Decode(nil, []byte(msg.Values["data"].(string)))
+	if err != nil {
+		log.Info("Failed to snappy decode: ", err.Error())
+
+		return nil, fmt.Errorf("%w", err)
+	}
+
+	var blockReplica types.BlockReplica
+	err = rlp.Decode(bytes.NewReader(decodedData), &blockReplica)
+	if err != nil {
+		log.Error("error decoding RLP bytes to block-replica: ", err)
+
+		return nil, fmt.Errorf("%w", err)
+	}
+
+	newEvent, _ := event.NewBlockReplicaEvent()
+	replica, err := ParseEventToBlockReplica(newEvent, hash, &blockReplica)
+	if err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+
+	return replica, nil
 }
