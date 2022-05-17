@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// LookupEnvOrString looks up flag env that is a string
+// LookupEnvOrString looks up a flag env that is a string
 func LookupEnvOrString(key string, defaultVal string) string {
 	if val, ok := os.LookupEnv(key); ok {
 		return val
@@ -15,7 +15,7 @@ func LookupEnvOrString(key string, defaultVal string) string {
 	return defaultVal
 }
 
-// LookupEnvOrInt looks up flag env that is an integer
+// LookupEnvOrInt looks up a flag env that is an integer
 func LookupEnvOrInt(key string, defaultVal int) int {
 	if val, ok := os.LookupEnv(key); ok {
 		v, err := strconv.Atoi(val)

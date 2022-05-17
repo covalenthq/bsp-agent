@@ -1,3 +1,4 @@
+// Package config contains all the config functions that is used by the bsp-agent node
 package config
 
 import (
@@ -10,7 +11,7 @@ var (
 	logFolderDefault              = "./logs/"
 )
 
-// RedisConfig all redis related config
+// RedisConfig contains all redis related config
 type RedisConfig struct {
 	RedisURL               string
 	Password               string
@@ -18,12 +19,12 @@ type RedisConfig struct {
 	ConsumerPendingTimeout int // defaults to 1 min
 }
 
-// CodecConfig all codec related config
+// CodecConfig contains all AVRO codec related config
 type CodecConfig struct {
 	AvroCodecPath string
 }
 
-// StorageConfig composes of configs needed by differtn stores
+// StorageConfig contains all configs needed by different stores
 type StorageConfig struct {
 	// local
 	BinaryFilePath string
@@ -37,12 +38,12 @@ type StorageConfig struct {
 	IpfsServiceToken string
 }
 
-// ProofchainConfig all proof chain related configurations
+// ProofchainConfig contains all proof-chain configs
 type ProofchainConfig struct {
 	ProofChainAddr string
 }
 
-// ChainConfig config around the supported blockchains
+// ChainConfig contains config for all supported blockchains
 type ChainConfig struct {
 	RPCURL       string
 	PrivateKey   string
@@ -53,14 +54,14 @@ type ChainConfig struct {
 	WebsocketURLs string
 }
 
-// MetricsConfig config around collecting metrics from agent
+// MetricsConfig contains config for collecting performance metrics
 type MetricsConfig struct {
 	Enabled        bool
 	HTTPServerAddr string
 	HTTPServerPort string
 }
 
-// AgentConfig composes all the different configs into a single config for agent node
+// AgentConfig composes all configs into a single full (env and flags) config for the bsp-agent node
 type AgentConfig struct {
 	RedisConfig      RedisConfig
 	CodecConfig      CodecConfig
@@ -72,30 +73,30 @@ type AgentConfig struct {
 	LogFolder string
 }
 
-// NewAgentConfig create a new empty config
+// NewAgentConfig creates a new empty config
 func NewAgentConfig() *AgentConfig {
 	return &AgentConfig{}
 }
 
-// LoadConfig populates the config from env flags and cli arguments
+// LoadConfig gets the config from env flags and cli arguments
 func (ac *AgentConfig) LoadConfig() {
 	envConfig, err := loadEnvConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	ac.populateFromEnvConfig(envConfig)
-	ac.populateFromCliFlags()
+	ac.getConfigFromEnv(envConfig)
+	ac.getConfigFromFlags()
 }
 
-// SegmentLength #block-specimen within a single proofchain tx
+// SegmentLength get number of block-specimens encoded within a block-replica
 func (ac *AgentConfig) SegmentLength() int {
-	// number of block specimen/results within a single uploaded avro encoded object
-	// defaults to 1 block per segment in bsp-agent live mode
+	// number of block specimen/results within a single uploaded avro encoded block-replica object
+	// defaults to 1 block per segment in bsp-geth/agent "live" mode
 	return 1
 }
 
-func (ac *AgentConfig) populateFromEnvConfig(config *EnvConfig) {
+func (ac *AgentConfig) getConfigFromEnv(config *EnvConfig) {
 	ac.StorageConfig.IpfsServiceToken = config.IpfsConfig.ServiceToken
 
 	ac.RedisConfig.Password = config.RedisConfig.Password
@@ -106,20 +107,20 @@ func (ac *AgentConfig) populateFromEnvConfig(config *EnvConfig) {
 	ac.ChainConfig.KeyStorePwd = config.EthConfig.KeyStorePwd
 }
 
-func (ac *AgentConfig) populateFromCliFlags() {
+func (ac *AgentConfig) getConfigFromFlags() {
 	// redis
 	flag.StringVar(&ac.RedisConfig.RedisURL, "redis-url", LookupEnvOrString("RedisURL", ""), "redis consumer stream url")
 	flag.IntVar(&ac.RedisConfig.BlockDivisor, "block-divisor", LookupEnvOrInt("BlockDivisor", blockDivisorDefault), "integer divisor that allows for selecting only block numbers divisible by this number")
 	flag.IntVar(&ac.RedisConfig.ConsumerPendingTimeout, "consumer-timeout", LookupEnvOrInt("ConsumerPendingTimeout", consumerPendingTimeoutDefault), "number of seconds to wait before pending messages consumer timeout")
 
-	// codec
+	// avro codec
 	flag.StringVar(&ac.CodecConfig.AvroCodecPath, "avro-codec-path", LookupEnvOrString("CodecPath", ""), "local path to AVRO .avsc files housing the specimen/result schemas")
 
-	// chain
+	// proof-chain
 	flag.StringVar(&ac.ProofchainConfig.ProofChainAddr, "proof-chain-address", LookupEnvOrString("ProofChain", ""), "hex string address for deployed proof-chain contract")
 	flag.StringVar(&ac.ChainConfig.WebsocketURLs, "websocket-urls", LookupEnvOrString("WebsocketURLs", ""), "url to websockets clients separated by space")
 
-	// log
+	// logs
 	flag.StringVar(&ac.LogFolder, "log-folder", LookupEnvOrString("LogFolder", logFolderDefault), "Location where the log files should be placed")
 
 	// storage
