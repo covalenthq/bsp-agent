@@ -1,3 +1,4 @@
+// Package node contains structs/interfaces for bsp-agent node, it aggregates all the services and orchestrates processing of redis stream (or websocket) encoded (rlp for evm) block-replica  messages created by bsp-geth
 package node
 
 import (
@@ -17,6 +18,16 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/linkedin/goavro/v2"
 )
+
+// AgentNode defines the interface to interact with the bsp-agent node.
+// The lifecycle of an AgentNode goes from start -> stop (processing) -> close.
+// It is assumed that all the setup work has been done at Start()
+type AgentNode interface {
+	NodeChainType() ChainType
+	Start(ctx context.Context)
+	StopProcessing()
+	Close()
+}
 
 // ChainType ChainType is the blockchain on which the agent is configured to run.
 // Current allowed values are "ethereum" and "elrond"
