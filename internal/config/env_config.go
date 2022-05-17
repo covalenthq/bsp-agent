@@ -20,7 +20,7 @@ type EthEnvConfig struct {
 	KeyStorePwd  string `envconfig:"MB_KEYSTORE_PWD"`
 }
 
-// IpfsEnvConfig is set of all configs that relates to IPFS pinning
+// IpfsEnvConfig is set of all configs that relates to IPFS pinning (passed via env)
 type IpfsEnvConfig struct {
 	ServiceToken string `envconfig:"IPFS_SERVICE_TOKEN"`
 }
