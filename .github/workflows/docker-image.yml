@@ -1,4 +1,4 @@
-name: docker-image-ci
+name: docker-image
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
     - name: Load .env file
       uses: xom9ikk/dotenv@v1.0.2
 
-    - name: Run Containers
+    - name: Run containers
       run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
 
     - name: Check running agent
@@ -44,9 +44,9 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete .envrc file
+    - name: Delete .env file
       run: |
-        rm -rf .envrc
+        rm -rf .env
 
     - name: Stop containers
       if: always()
@@ -91,9 +91,9 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete .envrc file
+    - name: Delete .env file
       run: |
-        rm -rf .envrc
+        rm -rf .env
 
     - name: Stop containers
       if: always()
