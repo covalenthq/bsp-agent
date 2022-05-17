@@ -1,4 +1,4 @@
-// Package handler contains fns for encoding to avro
+// Package handler contains fns for encoding redis stream messages to block-replica AVRO segments
 package handler
 
 import (
