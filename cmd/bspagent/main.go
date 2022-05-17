@@ -63,7 +63,7 @@ func init() {
 
 func main() {
 	log.Info("bsp-agent command line config: ", utils.GetConfig(flag.CommandLine))
-	chainType := determineChainType(agconfig)
+	chainType := getChainType(agconfig)
 	agentNode = node.NewAgentNode(chainType, agconfig)
 
 	setupMetrics()
@@ -82,7 +82,7 @@ func main() {
 func setupMetrics() {
 	// address := fmt.Sprintf("%s:%d", ctx.GlobalString(MetricsHTTPFlag.Name), ctx.GlobalInt(MetricsPortFlag.Name))
 	if !agconfig.MetricsConfig.Enabled {
-		log.Info("metrics not enabled. Skipping metrucs setup...")
+		log.Info("metrics not enabled - skipping metrics setup...")
 
 		return
 	}
@@ -95,7 +95,7 @@ func setupMetrics() {
 	}
 }
 
-func determineChainType(agconfig *config.AgentConfig) node.ChainType {
+func getChainType(agconfig *config.AgentConfig) node.ChainType {
 	webSockUrls := agconfig.ChainConfig.WebsocketURLs
 	if webSockUrls != "" {
 		return node.Elrond
