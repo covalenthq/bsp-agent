@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  linter:
-    name: lint-dockerfile
+  lint-dockerfile:
+    name: docker-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

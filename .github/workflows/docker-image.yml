@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-eth:
+  bsp-agent-eth:
     runs-on: ubuntu-latest
     steps:
     - name: Login to GitHub Container Registry
@@ -52,7 +52,7 @@ jobs:
       if: always()
       run: docker-compose -f "docker-compose-ci.yml" down
   
-  build-elrond:
+  bsp-agent-elrond:
     runs-on: ubuntu-latest
     env:
       BLOCKCHAIN: elrond
