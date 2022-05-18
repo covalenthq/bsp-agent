@@ -44,9 +44,9 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete .env file
+    - name: Delete .env & bin files
       run: |
-        rm -rf .env
+        rm -rf .env && rm -rf ./bin/block-ethereum
 
     - name: Stop containers
       if: always()
@@ -91,9 +91,9 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete .env file
+    - name: Delete .env file & bin files
       run: |
-        rm -rf .env
+        rm -rf .env && rm -rf ./bin/block-elrond
 
     - name: Stop containers
       if: always()
