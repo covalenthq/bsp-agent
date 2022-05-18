@@ -1,4 +1,4 @@
-// Package proof contains all the functions to make a proof on the proofchain about a block replica
+// Package proof contains all functions to make a proof-chain tx for an encoded block-replica object
 package proof
 
 import (
@@ -30,7 +30,7 @@ type ProofchainInteractor struct {
 	proofChainContract *ProofChain
 }
 
-// NewProofchainInteractor creates a new `ProofchainInteractor` and does the setup
+// NewProofchainInteractor sets up a new interactor for proof-chain
 func NewProofchainInteractor(config *config.AgentConfig, ethClient *ethclient.Client) *ProofchainInteractor {
 	interactor := &ProofchainInteractor{config: config, ethClient: ethClient}
 	contractAddress := common.HexToAddress(config.ProofchainConfig.ProofChainAddr)
@@ -44,7 +44,7 @@ func NewProofchainInteractor(config *config.AgentConfig, ethClient *ethclient.Cl
 	return interactor
 }
 
-// SendBlockReplicaProofTx calls the proof-chain contract to make a transaction for the block-replica that it is processing
+// SendBlockReplicaProofTx makes a proof-chain tx for the block-replica that has been processed
 func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Context, chainHeight uint64, blockReplica *ty.BlockReplica, resultSegment []byte, replicaURL string, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()

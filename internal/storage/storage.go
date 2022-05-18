@@ -34,13 +34,12 @@ func generateCidFor(ctx context.Context, pinnode pinapi.PinnerNode, content []by
 
 // getPinnerNode get pinner node (web3.storage or pinata supported for now)
 func getPinnerNode(pst pincore.PinningService, token string) (pinapi.PinnerNode, error) {
-	var pinnode pinapi.PinnerNode
 	switch pst {
 	case pincore.Pinata, pincore.Web3Storage:
 		clientCreateReq := pinclient.NewClientRequest(pst).BearerToken(token)
 		cidComputationOnly := (pst == pincore.Pinata)
 		nodeCreateReq := pinapi.NewNodeRequest(clientCreateReq).CidVersion(0).CidComputeOnly(cidComputationOnly)
-		pinnode = pinapi.NewPinnerNode(*nodeCreateReq)
+		pinnode := pinapi.NewPinnerNode(*nodeCreateReq)
 
 		return pinnode, nil
 	case "":

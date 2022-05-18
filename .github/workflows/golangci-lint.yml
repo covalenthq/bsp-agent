@@ -9,9 +9,10 @@ permissions:
   contents: read
   # Optional: allow read access to pull request. Use with `only-new-issues` option.
   # pull-requests: read
+
 jobs:
-  golangci-build:
-    name: Build
+  golangci-lint:
+    name: go-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

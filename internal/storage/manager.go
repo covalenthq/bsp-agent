@@ -31,7 +31,7 @@ type Manager struct {
 	ipfsFailureCount metrics.Counter
 }
 
-// NewStorageManager create and setup a new storage manager with given config
+// NewStorageManager creates and sets up a new storage manager with given config
 func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
 	manager := &Manager{}
 	manager.StorageConfig = conf
@@ -41,15 +41,17 @@ func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
 	manager.setupLocalFs()
 	manager.setupMetrics()
 
-	if manager.GcpStore == nil && manager.IpfsStore == nil {
-		return nil, fmt.Errorf("cannot setup gcp store or ipfs store")
+	if manager.IpfsStore == nil {
+		log.Errorf("cannot setup IPFS store; no ipfs service flags provided")
+	}
+	if manager.GcpStore == nil {
+		log.Errorf("cannot setup GCP store; no gcp service flags provided")
 	}
 
 	return manager, nil
 }
 
-// GenerateLocation calculate the non-local location (gcp or ipfs) for the given segment and data
-// cid is returned in case of ipfs
+// GenerateLocation calculates the non-local location (gcp or ipfs) for the given segment and data, cid is returned in case of ipfs
 func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string, replicaSegmentAvro []byte) (string, cid.Cid) {
 	config := manager.StorageConfig
 	var replicaURL string
@@ -61,12 +63,11 @@ func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string
 	case manager.IpfsStore != nil:
 		ccid, err = generateCidFor(ctx, *manager.IpfsStore, replicaSegmentAvro)
 		if err != nil {
-			log.Errorf("error generating cid for %s. Error: %s", config.BinaryFilePath, err)
+			log.Errorf("error generating cid for %s. Error: %s", config.BinaryFilePath+segmentName, err)
 			replicaURL = "only local: " + config.BinaryFilePath + segmentName
 		} else {
 			replicaURL = "ipfs://" + ccid.String()
 		}
-
 	default:
 		replicaURL = "only local: " + config.BinaryFilePath + segmentName
 	}
@@ -130,6 +131,11 @@ func (manager *Manager) setupGcpStore() {
 }
 
 func (manager *Manager) setupIpfsPinner() {
+	if manager.StorageConfig.IpfsServiceType == "" && manager.StorageConfig.IpfsServiceToken == "" {
+		manager.IpfsStore = nil
+
+		return
+	}
 	pinnode, err := getPinnerNode(pincore.PinningService(manager.StorageConfig.IpfsServiceType), manager.StorageConfig.IpfsServiceToken)
 	if err != nil {
 		log.Fatalf("error creating pinner node: %v", err)

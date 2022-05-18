@@ -155,7 +155,7 @@ An Ethereum (moonbeam) RPC URL specifies the ethereum client connection string u
 
 ```env
     export MB_RPC_URL=http://127.0.0.1:7545
-    export MB_PRIVATE_KEY=cef7c71eac8558cc2953a519f80f0cb2541e15a3b0760e848895a78fd842d5a5
+    export MB_PRIVATE_KEY=****************************************************************
     export IPFS_SERVICE_TOKEN=*****
     export REDIS_PWD=your-redis-password #optional
     export MB_KEYSTORE_PATH=path/to/keystore/file.json #optional

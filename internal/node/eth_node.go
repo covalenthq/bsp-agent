@@ -123,7 +123,7 @@ func (node *ethAgentNode) consumePendingEvents(consumerName string) {
 
 func (node *ethAgentNode) processStream(message redis.XMessage) {
 	ctx := context.Background()
-	replica, err := ReplicaFromRedisMessage(message)
+	replica, err := handler.ParseMessageToBlockReplica(message)
 
 	if err != nil {
 		log.Fatalf("error decoding from redis message: %v", err)

@@ -1,4 +1,3 @@
-// Package config contains all the config functions that cannot be used in the cli interface
 package config
 
 import (
@@ -7,12 +6,12 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-// RedisEnvConfig is set of all config that relates to redis
+// RedisEnvConfig contains all config for redis
 type RedisEnvConfig struct {
 	Password string `envconfig:"REDIS_PWD" default:""`
 }
 
-// EthEnvConfig is set of all config that relates to ethereum / ethereum like (EVM) networks
+// EthEnvConfig contains all config for ethereum / ethereum like (EVM) networks
 type EthEnvConfig struct {
 	RPCURL       string `envconfig:"MB_RPC_URL"`
 	PrivateKey   string `envconfig:"MB_PRIVATE_KEY"`
@@ -20,12 +19,12 @@ type EthEnvConfig struct {
 	KeyStorePwd  string `envconfig:"MB_KEYSTORE_PWD"`
 }
 
-// IpfsEnvConfig is set of all configs that relates to IPFS pinning (passed via env)
+// IpfsEnvConfig contains all config for IPFS pinning services
 type IpfsEnvConfig struct {
-	ServiceToken string `envconfig:"IPFS_SERVICE_TOKEN"`
+	ServiceToken string `envconfig:"IPFS_SERVICE_TOKEN" default:""`
 }
 
-// EnvConfig is set of all EnvConfig that relates to .envrc
+// EnvConfig composes all configs into a single env config for the bsp-agent node
 type EnvConfig struct {
 	IpfsConfig  IpfsEnvConfig
 	RedisConfig RedisEnvConfig
