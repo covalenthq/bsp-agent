@@ -17,11 +17,10 @@ import (
 )
 
 const (
-	consumerEvents             int64  = 1
-	consumerPendingIdleTime    int64  = 30
-	consumerPendingTimeTicker  int64  = 10
-	consumerPendingTimeoutFlag int64  = 60
-	start                      string = ">"
+	consumerEvents            int64  = 1
+	consumerPendingIdleTime   int64  = 30
+	consumerPendingTimeTicker int64  = 10
+	start                     string = ">"
 )
 
 type ethAgentNode struct {
@@ -73,13 +72,14 @@ func (node *ethAgentNode) consumeEvents(consumerName string) {
 
 // consume pending messages from redis
 func (node *ethAgentNode) consumePendingEvents(consumerName string) {
-	timeout := time.After(time.Second * time.Duration(consumerPendingTimeoutFlag))
+	timeoutDuration := node.AgentConfig.RedisConfig.ConsumerPendingTimeout
+	timeout := time.After(time.Second * time.Duration(timeoutDuration))
 	ticker := time.NewTicker(time.Second * time.Duration(consumerPendingTimeTicker))
 	for {
 		select {
 		case <-timeout:
 			// this would always timeout and exit. What's the point of this then?
-			log.Info("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), " after timeout: ", consumerPendingTimeoutFlag, " seconds")
+			log.Info("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), " after timeout: ", timeoutDuration, " seconds")
 			os.Exit(0)
 		case <-ticker.C:
 			var streamsRetry []string
