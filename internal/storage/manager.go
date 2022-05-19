@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	gcp "cloud.google.com/go/storage"
@@ -165,6 +166,9 @@ func (manager *Manager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.C
 	pinnode := *manager.IpfsStore
 	if pinnode.PinService().ServiceType() == pincore.Web3Storage {
 		file, err = generateCarFile(ctx, *manager.IpfsStore, ccid)
+		if err == nil {
+			_ = syscall.Unlink(file.Name()) // delete car file once it's uploaded and closed
+		}
 	} else {
 		objPath := objectFilePath(binaryFileName, manager.StorageConfig.BinaryFilePath)
 		file, err = os.Open(filepath.Clean(objPath))
@@ -175,6 +179,11 @@ func (manager *Manager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.C
 
 		return cid.Undef, fmt.Errorf("failure in opening/generating file for upload: %w", err)
 	}
+
+	defer func() {
+		_ = file.Close()
+		_ = pinnode.UnixfsService().RemoveDag(ctx, ccid)
+	}()
 
 	fcid, err := pinnode.PinService().UploadFile(ctx, file)
 	if err != nil {
