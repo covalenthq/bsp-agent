@@ -20,8 +20,8 @@ import (
 )
 
 // AgentNode defines the interface to interact with the bsp-agent node.
-// The lifecycle of an AgentNode goes from start -> stop (processing) -> close.
-// It is assumed that all the setup work has been done at Start()
+// The lifecycle of an AgentNode goes from:
+// start (processing) -> stop (processing) -> close.
 type AgentNode interface {
 	NodeChainType() ChainType
 	Start(ctx context.Context)
@@ -52,7 +52,8 @@ type agentNode struct {
 	ReplicaCodec *goavro.Codec
 	EthClient    *ethclient.Client
 
-	redisWaitGrp sync.WaitGroup
+	eventStreamWaitGrp   *sync.WaitGroup
+	pendingEventsWaitGrp *sync.WaitGroup
 
 	// proochain
 	proofchi *proof.ProofchainInteractor
@@ -80,6 +81,7 @@ func NewAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {
 	anode.setupReplicaCodec()
 	anode.setupStorageManager()
 	anode.setupProofchainInteractor()
+	anode.setupWaitGrps()
 	anode.setupMetrics()
 
 	switch chainType {
@@ -107,7 +109,8 @@ func (anode *agentNode) Start(ctx context.Context) {
 
 func (anode *agentNode) StopProcessing() {
 	log.Warn("Received interrupt. Flushing in-memory blocks...")
-	anode.redisWaitGrp.Wait()
+	anode.eventStreamWaitGrp.Wait()
+	anode.pendingEventsWaitGrp.Wait()
 	log.Warn("waitgrp ended. Closing node...")
 }
 
@@ -168,6 +171,11 @@ func (anode *agentNode) setupStorageManager() {
 
 func (anode *agentNode) setupProofchainInteractor() {
 	anode.proofchi = proof.NewProofchainInteractor(anode.AgentConfig, anode.EthClient)
+}
+
+func (anode *agentNode) setupWaitGrps() {
+	anode.eventStreamWaitGrp = new(sync.WaitGroup)
+	anode.pendingEventsWaitGrp = new(sync.WaitGroup)
 }
 
 func (anode *agentNode) setupMetrics() {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -63,10 +64,10 @@ func (node *ethAgentNode) consumeEvents(consumerName string) {
 		}
 
 		for _, stream := range streams[0].Messages {
-			node.redisWaitGrp.Add(1)
-			go node.processStream(stream)
+			node.eventStreamWaitGrp.Add(1)
+			go node.processStream(stream, node.eventStreamWaitGrp)
 		}
-		node.redisWaitGrp.Wait()
+		node.eventStreamWaitGrp.Wait()
 	}
 }
 
@@ -111,24 +112,24 @@ func (node *ethAgentNode) consumePendingEvents(consumerName string) {
 					return
 				}
 				for _, stream := range streams {
-					node.redisWaitGrp.Add(1)
-					go node.processStream(stream)
+					node.pendingEventsWaitGrp.Add(1)
+					go node.processStream(stream, node.pendingEventsWaitGrp)
 				}
-				node.redisWaitGrp.Wait()
+				node.pendingEventsWaitGrp.Wait()
 			}
 			log.Info("Process pending streams at: ", time.Now().Format(time.RFC3339))
 		}
 	}
 }
 
-func (node *ethAgentNode) processStream(message redis.XMessage) {
+func (node *ethAgentNode) processStream(message redis.XMessage, waitGroup *sync.WaitGroup) {
 	ctx := context.Background()
 	replica, err := handler.ParseMessageToBlockReplica(message)
 
 	if err != nil {
 		log.Fatalf("error decoding from redis message: %v", err)
 	}
-	defer node.redisWaitGrp.Done()
+	defer waitGroup.Done()
 	objectType := replica.Type()
 	objectReplica := replica.Data
 

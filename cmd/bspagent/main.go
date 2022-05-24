@@ -80,7 +80,6 @@ func main() {
 }
 
 func setupMetrics() {
-	// address := fmt.Sprintf("%s:%d", ctx.GlobalString(MetricsHTTPFlag.Name), ctx.GlobalInt(MetricsPortFlag.Name))
 	if !agconfig.MetricsConfig.Enabled {
 		log.Info("metrics not enabled - skipping metrics setup...")
 
