@@ -20,8 +20,8 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/ubiq/go-ubiq v3.0.1+incompatible
-	golang.org/x/sys v0.0.0-20220502124256-b6088ccd6cba
-	google.golang.org/api v0.78.0
+	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6
+	google.golang.org/api v0.80.0
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 )
 
