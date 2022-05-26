@@ -22,7 +22,8 @@ run-agent-eth:
 	--block-divisor=3  \
 	--proof-chain-address="0x8243AF52B91649547DC80814670Dd1683F360E4c"  \
 	--consumer-timeout=10000000  \
-	--log-folder ./logs/  \
+	--log-folder ./logs/ \
+	--ipfs-service=web3.storage
 
 run-agent-elrond:
 	@echo "---- Running Agent from cmd/bspagent ----"
@@ -32,7 +33,7 @@ run-agent-elrond:
 	--binary-file-path="./bin/block-elrond/" \
 	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
-	--segment-length=1 \
 	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
-	--consumer-timeout=80 \
+	--consumer-timeout=8000 \
 	--websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 
+	--ipfs-service=web3.storage
