@@ -238,7 +238,13 @@ export REDIS_PWD=your-redis-pwd
 
 `--log-folder` - specifies the location (folder) where the log files have to be placed. In case of error (like permission errors), the logs are not recorded in files.
 
-`--ipfs-service` - specifies the IPFS node as service to be used for block specimen uploads, supported options are `pinata` and `web3.storage`. 
+`--ipfs-service` - specifies the IPFS node as service to be used for block specimen uploads, supported options are `pinata` and `web3.storage`.
+
+`--metrics` - enable metrics collection and reporting
+
+`--metrics.addr` - Enable stand-alone metrics HTTP server listening interface (default: "127.0.0.1")
+
+`--metrics.port` - Metrics HTTP server listening port (default: 6061)
 
 ## <span id="docker">Docker</span>
 
