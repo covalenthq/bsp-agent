@@ -36,4 +36,4 @@ run-agent-elrond:
 	--segment-length=1 \
 	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
 	--consumer-timeout=80 \
-	--websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 
+	--websocket-urls="34.69.250.147:20000 34.69.250.147:20001 34.69.250.147:20002 34.69.250.147:20003"  
