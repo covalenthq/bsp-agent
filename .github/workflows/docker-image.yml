@@ -1,4 +1,4 @@
-name: docker-image-ci
+name: docker-image
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-eth:
+  bsp-agent-eth:
     runs-on: ubuntu-latest
     steps:
     - name: Login to GitHub Container Registry
@@ -35,7 +35,7 @@ jobs:
     - name: Load .env file
       uses: xom9ikk/dotenv@v1.0.2
 
-    - name: Run Containers
+    - name: Run containers
       run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
 
     - name: Check running agent
@@ -44,15 +44,15 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete .envrc file
+    - name: Delete .env & bin files
       run: |
-        rm -rf .envrc
+        rm -rf .env && rm -rf ./bin/block-ethereum
 
     - name: Stop containers
       if: always()
       run: docker-compose -f "docker-compose-ci.yml" down
   
-  build-elrond:
+  bsp-agent-elrond:
     runs-on: ubuntu-latest
     env:
       BLOCKCHAIN: elrond
@@ -91,9 +91,9 @@ jobs:
     - name: Check running containers
       run: docker ps
 
-    - name: Delete .envrc file
+    - name: Delete .env file & bin files
       run: |
-        rm -rf .envrc
+        rm -rf .env && rm -rf ./bin/block-elrond
 
     - name: Stop containers
       if: always()

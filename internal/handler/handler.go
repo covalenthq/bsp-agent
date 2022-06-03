@@ -1,23 +1,19 @@
-// Package handler contains all the encoding to avro handler functions
+// Package handler contains fns for encoding redis stream messages to block-replica AVRO segments
 package handler
 
 import (
-	"context"
+	"bytes"
 	"fmt"
 
-	"cloud.google.com/go/storage"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ipfs/go-cid"
+	"github.com/go-redis/redis/v7"
+	"github.com/golang/snappy"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
+	"github.com/ubiq/go-ubiq/rlp"
 
-	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/event"
-	"github.com/covalenthq/bsp-agent/internal/proof"
-	st "github.com/covalenthq/bsp-agent/internal/storage"
 	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/covalenthq/bsp-agent/internal/utils"
-	pinapi "github.com/covalenthq/ipfs-pinner"
 )
 
 // EncodeReplicaSegmentToAvro encodes replica segment into AVRO binary encoding
@@ -35,8 +31,8 @@ func EncodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment i
 	return binaryReplicaSegment, nil
 }
 
-// ParseStreamToEvent takes the stream message and parses it to a block replica event
-func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
+// ParseEventToBlockReplica takes block-replica data and parses it to a block-replica event
+func ParseEventToBlockReplica(e event.Event, hash string, data *types.BlockReplica) (*event.BlockReplicaEvent, error) {
 	replEvent, ok := e.(*event.BlockReplicaEvent)
 	if !ok {
 		return nil, fmt.Errorf("incorrect event type: %v", replEvent)
@@ -49,50 +45,29 @@ func ParseStreamToEvent(e event.Event, hash string, data *types.BlockReplica) (*
 	return replicaEvent, nil
 }
 
-// EncodeProveAndUploadReplicaSegment atomically encodes the event into an AVRO binary, proves the replica on proof-chain and upload and stores the binary file
-func EncodeProveAndUploadReplicaSegment(ctx context.Context, config *config.EthConfig, pinnode pinapi.PinnerNode, replicaAvro *goavro.Codec, replicaSegment *event.ReplicationSegment, blockReplica *types.BlockReplica, gcpStorageClient *storage.Client, ethClient *ethclient.Client, binaryLocalPath, replicaBucket, segmentName, proofChain string) (string, error) {
-	replicaSegmentAvro, err := EncodeReplicaSegmentToAvro(replicaAvro, replicaSegment)
+// ParseMessageToBlockReplica decodes the redis message to a BlockReplicaEvent
+func ParseMessageToBlockReplica(msg redis.XMessage) (*event.BlockReplicaEvent, error) {
+	hash := msg.Values["hash"].(string)
+	decodedData, err := snappy.Decode(nil, []byte(msg.Values["data"].(string)))
 	if err != nil {
-		return "", err
-	}
-	fmt.Printf("\n---> Processing %v <---\n", segmentName)
-	log.Info("Submitting block-replica segment proof for: ", segmentName)
+		log.Info("Failed to snappy decode: ", err.Error())
 
-	proofTxHash := make(chan string, 1)
-	var replicaURL string
-	var ccid cid.Cid
-	switch {
-	case gcpStorageClient != nil:
-		replicaURL = "https://storage.cloud.google.com/" + replicaBucket + "/" + segmentName
-	case pinnode != nil:
-		ccid, err = st.GenerateCidFor(ctx, pinnode, replicaSegmentAvro)
-		if err != nil {
-			log.Errorf("error generating cid for %s. Error: %s", binaryLocalPath, err)
-			replicaURL = "only local: " + binaryLocalPath
-		} else {
-			replicaURL = "ipfs://" + ccid.String()
-		}
-
-	default:
-		replicaURL = "only local: " + binaryLocalPath
+		return nil, fmt.Errorf("%w", err)
 	}
 
-	log.Info("binary file should be available: ", replicaURL)
+	var blockReplica types.BlockReplica
+	err = rlp.Decode(bytes.NewReader(decodedData), &blockReplica)
+	if err != nil {
+		log.Error("error decoding RLP bytes to block-replica: ", err)
 
-	go proof.SendBlockReplicaProofTx(ctx, config, proofChain, ethClient, replicaSegment.EndBlock, replicaSegment.Elements, replicaSegmentAvro, replicaURL, blockReplica, proofTxHash)
-	pTxHash := <-proofTxHash
-	if pTxHash != "" {
-		// Support GCP file upload (with local binary save) or IPFS upload (with local bin) but not both
-		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
-		err := st.HandleObjectUploadToBucket(ctx, gcpStorageClient, binaryLocalPath, replicaBucket, segmentName, pTxHash, replicaSegmentAvro)
-		_ = st.HandleObjectUploadToIPFS(ctx, pinnode, ccid, binaryLocalPath, segmentName, pTxHash)
-
-		if err != nil {
-			return "", fmt.Errorf("error in uploading object to bucket: %w", err)
-		}
-	} else {
-		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", segmentName)
+		return nil, fmt.Errorf("%w", err)
 	}
 
-	return pTxHash, nil
+	newEvent, _ := event.NewBlockReplicaEvent()
+	replica, err := ParseEventToBlockReplica(newEvent, hash, &blockReplica)
+	if err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+
+	return replica, nil
 }

@@ -1,4 +1,4 @@
-// Package event contains all the events that relate to a block replica
+// Package event contains events/interfaces for raw and processsed block-replica objects
 package event
 
 import (
@@ -6,6 +6,14 @@ import (
 
 	ty "github.com/covalenthq/bsp-agent/internal/types"
 )
+
+// ReplicaSegmentWrapped wraps a ReplicationSegment with additional information
+type ReplicaSegmentWrapped struct {
+	ReplicationSegment
+	IDBatch     []string
+	SkipIDBatch []string
+	SegmentName string
+}
 
 // ReplicationSegment is block replication segment that is converted to AVRO encoding
 type ReplicationSegment struct {
@@ -15,29 +23,34 @@ type ReplicationSegment struct {
 	Elements          uint64               `json:"elements"`
 }
 
-// BlockReplicaEvent is a replication event coming from redis stream
+// BlockReplicaEvent is a replication event coming from a redis stream
 type BlockReplicaEvent struct {
 	Hash string           `json:"hash"`
 	Data *ty.BlockReplica `json:"data"`
 }
 
-// Event allows for accessing the hash of the object
+// Event allows for accessing the hash of block-replica event object
 type Event interface {
 	GetBlockReplicaHash() string
 	GetBlockReplicaString() string
 }
 
-// NewBlockReplicaEvent creates a new block replica event
+// NewBlockReplicaEvent creates a new block-replica event
 func NewBlockReplicaEvent() (Event, error) {
 	return &BlockReplicaEvent{}, nil
 }
 
-// GetBlockReplicaString gets the block replica string
+// GetBlockReplicaString gets the block-replica string
 func (o *BlockReplicaEvent) GetBlockReplicaString() string {
 	return fmt.Sprintf("hash: %s", o.Hash)
 }
 
-// GetBlockReplicaHash gets the block replica hash
+// GetBlockReplicaHash gets the block-replica hash
 func (o *BlockReplicaEvent) GetBlockReplicaHash() string {
 	return o.Hash
+}
+
+// Type gets the block-replica event types - block-specimen, block-result, or combined(block-replica)
+func (o *BlockReplicaEvent) Type() string {
+	return o.Data.Type[5:]
 }

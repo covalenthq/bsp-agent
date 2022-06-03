@@ -26,9 +26,9 @@ import (
 )
 
 // NewRedisClient provides a new redis client using a redis config
-func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*redis.Client, string, string, error) {
+func NewRedisClient(rconfig *config.RedisConfig) (*redis.Client, string, string, error) {
 	var pwd string
-	redisURL, err := url.Parse(redisConnection)
+	redisURL, err := url.Parse(rconfig.RedisURL)
 	if err != nil {
 		log.Fatalf("unable to parse redis connection string: %v", err)
 	}
@@ -37,7 +37,7 @@ func NewRedisClient(redisConnection string, redisConfig *config.RedisConfig) (*r
 	if pass != "" {
 		log.Fatal("remove password from connection string cli flag and add it in .envrc as `REDIS_PWD`")
 	} else {
-		pwd = redisConfig.Password
+		pwd = rconfig.Password
 	}
 
 	dbString := strings.ReplaceAll(redisURL.Path, "/", "")
@@ -104,7 +104,7 @@ func StructToMap(data interface{}) (map[string]interface{}, error) {
 }
 
 // AckTrimStreamSegment acknowledges a stream segment from the redis stream
-func AckTrimStreamSegment(_ *config.Config, redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) (int64, error) {
+func AckTrimStreamSegment(redisClient *redis.Client, segmentLength int, streamKey, consumerGroup string, streamIDs []string) (int64, error) {
 	if len(streamIDs) == segmentLength {
 		redisClient.XAck(streamKey, consumerGroup, streamIDs...)
 		redisClient.XDel(streamKey, streamIDs...)
@@ -118,29 +118,6 @@ func AckTrimStreamSegment(_ *config.Config, redisClient *redis.Client, segmentLe
 	}
 
 	return 0, fmt.Errorf("failed to match streamIDs length to segment length config")
-}
-
-// LookupEnvOrString looks up flag env that is a string
-func LookupEnvOrString(key string, defaultVal string) string {
-	if val, ok := os.LookupEnv(key); ok {
-		return val
-	}
-
-	return defaultVal
-}
-
-// LookupEnvOrInt looks up flag env that is an integer
-func LookupEnvOrInt(key string, defaultVal int) int {
-	if val, ok := os.LookupEnv(key); ok {
-		v, err := strconv.Atoi(val)
-		if err != nil {
-			log.Fatalf("unable to lookupEnvOrInt[%s]: %v", key, err)
-		}
-
-		return v
-	}
-
-	return defaultVal
 }
 
 // GetConfig retrieves the config from the config packages

@@ -8,21 +8,21 @@ dockerdown:
 lint:
 	@golangci-lint run
 
-run-build:
+build:
 	@echo "---- Building Agent from cmd/bspagent ----"
-	@go build -o ./bin/bspagent/agent ./cmd/bspagent/*.go 
-	@echo "---- Done Building to ./bin/agent ----"
+	@go build -o ./bin/bspagent ./cmd/bspagent/ 
+	@echo "---- Done Building to ./bin/bspagent ----"
 
 run-agent-eth:
 	@echo "---- Running Agent from cmd/bspagent ----"
 	@go run ./cmd/bspagent/*.go \
-	--redis-url="redis://username:@localhost:6379/0?topic=replication-1#replicate-1"  \
+	--redis-url="redis://username:@localhost:6379/0?topic=replication-2#replicate-1"  \
 	--avro-codec-path="./codec/block-ethereum.avsc"  \
 	--binary-file-path="./bin/block-ethereum/" \
 	--block-divisor=3  \
 	--proof-chain-address="0x8243AF52B91649547DC80814670Dd1683F360E4c"  \
 	--consumer-timeout=10000000  \
-	--log-folder ./logs/  \
+	--log-folder ./logs/ \
 	--ipfs-service=web3.storage
 
 run-agent-elrond:
@@ -33,7 +33,8 @@ run-agent-elrond:
 	--binary-file-path="./bin/block-elrond/" \
 	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
-	--segment-length=1 \
 	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
-	--consumer-timeout=80 \
-	--websocket-urls="34.69.250.147:20000 34.69.250.147:20001 34.69.250.147:20002 34.69.250.147:20003"  
+	--websocket-urls="34.69.250.147:20000 34.69.250.147:20001 34.69.250.147:20002 34.69.250.147:20003" \ 
+	--consumer-timeout=8000 \
+	--ipfs-service=web3.storage
+
