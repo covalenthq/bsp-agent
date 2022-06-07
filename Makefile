@@ -34,6 +34,7 @@ run-agent-elrond:
 	--gcp-svc-account="/Users/pranay/.config/gcloud/bsp-2.json" \
 	--replica-bucket="covalenthq-geth-block-specimen" \
 	--proof-chain-address=0xbFCa723A2661350f86f397CEdF807D6e596d7874 \
+	--websocket-urls="34.69.250.147:20000 34.69.250.147:20001 34.69.250.147:20002 34.69.250.147:20003" \ 
 	--consumer-timeout=8000 \
-	--websocket-urls="34.66.210.112:20000 34.66.210.112:20001 34.66.210.112:20002 34.66.210.112:20003" 
 	--ipfs-service=web3.storage
+
