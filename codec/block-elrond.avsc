@@ -31,59 +31,55 @@
                },
                {
                   "name":"MiniBlocks",
-                  "type":{
-                     "type":[
-                        "null",
-                        {
-                           "type":"array",
-                           "items":{
-                              "name":"MiniBlock",
-                              "type":"record",
-                              "fields":[
-                                 {
-                                    "name":"Hash",
-                                    "type":"hash"
-                                 },
-                                 {
-                                    "name":"SenderShardID",
-                                    "type":"int"
-                                 },
-                                 {
-                                    "name":"ReceiverShardID",
-                                    "type":"int"
-                                 },
-                                 {
-                                    "name":"Type",
-                                    "type":"int"
-                                 },
-                                 {
-                                    "name":"Timestamp",
-                                    "type":"long"
-                                 },
-                                 {
-                                    "name":"TxHashes",
-                                    "type":{
-                                       "type":"array",
-                                       "items":"bytes"
-                                    }
+                  "type":[
+                     "null",
+                     {
+                        "type":"array",
+                        "items":{
+                           "name":"MiniBlock",
+                           "type":"record",
+                           "fields":[
+                              {
+                                 "name":"Hash",
+                                 "type":"hash"
+                              },
+                              {
+                                 "name":"SenderShardID",
+                                 "type":"int"
+                              },
+                              {
+                                 "name":"ReceiverShardID",
+                                 "type":"int"
+                              },
+                              {
+                                 "name":"Type",
+                                 "type":"int"
+                              },
+                              {
+                                 "name":"Timestamp",
+                                 "type":"long"
+                              },
+                              {
+                                 "name":"TxHashes",
+                                 "type":{
+                                    "type":"array",
+                                    "items":"bytes"
                                  }
-                              ]
-                           }
+                              }
+                           ]
                         }
-                     ]
-                  }
+                     }
+                  ]
                },
                {
                   "name":"NotarizedBlocksHashes",
-                  "type":{
-                     "type":[
-                        "null",
-                        {
-                           "type":"array",
-                           "items":"hash"
-                        }
-                     ]
-                  }
+                  "type":[
+                     "null",
+                     {
+                        "type":"array",
+                        "items":"hash"
+                     }
+                  ]
                },
                {
                   "name":"Proposer",
