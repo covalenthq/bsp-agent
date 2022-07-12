@@ -130,30 +130,26 @@
                                        },
                                        {
                                           "name":"accessList",
-                                          "type":[
-                                             "null",
-                                             {
-                                                "type":"array",
-                                                "items":{
-                                                   "name":"accessList_record",
-                                                   "type":"record",
-                                                   "fields":[
-                                                      {
-                                                         "name":"address",
-                                                         "type":"string"
-                                                      },
-                                                      {
-                                                         "name":"storageKeys",
-                                                         "type":{
-                                                            "type":"array",
-                                                            "items":"string"
-                                                         }
+                                          "type":{
+                                             "type":"array",
+                                             "items":{
+                                                "name":"accessList_record",
+                                                "type":"record",
+                                                "fields":[
+                                                   {
+                                                      "name":"address",
+                                                      "type":"string"
+                                                   },
+                                                   {
+                                                      "name":"storageKeys",
+                                                      "type":{
+                                                         "type":"array",
+                                                         "items":"string"
                                                       }
-                                                   ]
-                                                }
+                                                   }
+                                                ]
                                              }
-                                          ],
-                                          "default":null
+                                          }
                                        },
                                        {
                                           "name":"chainId",
