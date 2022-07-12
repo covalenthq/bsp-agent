@@ -126,7 +126,7 @@
                                     "fields":[
                                        {
                                           "name":"type",
-                                          "type":"string"
+                                          "type":"int"
                                        },
                                        {
                                           "name":"accessList",
