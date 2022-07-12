@@ -181,10 +181,7 @@
                                        },
                                        {
                                           "name":"to",
-                                          "type":[
-                                             "\u00ff",
-                                             "string"
-                                          ],
+                                          "type":"string",
                                           "default":"\u00ff"
                                        },
                                        {
@@ -380,23 +377,27 @@
                                     },
                                     {
                                        "name":"BlockHashRead",
-                                       "type":{
-                                          "type":"array",
-                                          "items":{
-                                             "name":"BlockHashRead_record",
-                                             "type":"record",
-                                             "fields":[
-                                                {
-                                                   "name":"BlockNumber",
-                                                   "type":"int"
-                                                },
-                                                {
-                                                   "name":"BlockHash",
-                                                   "type":"string"
-                                                }
-                                             ]
+                                       "type":[
+                                          "null",
+                                          {
+                                             "type":"array",
+                                             "items":{
+                                                "name":"BlockHashRead_record",
+                                                "type":"record",
+                                                "fields":[
+                                                   {
+                                                      "name":"BlockNumber",
+                                                      "type":"int"
+                                                   },
+                                                   {
+                                                      "name":"BlockHash",
+                                                      "type":"string"
+                                                   }
+                                                ]
+                                             }
                                           }
-                                       }
+                                       ],
+                                       "default":null
                                     }
                                  ]
                               }
