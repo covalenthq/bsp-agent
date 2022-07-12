@@ -182,7 +182,7 @@
                                        {
                                           "name":"to",
                                           "type":"string",
-                                          "default":"\u00ff"
+                                          "default":"null"
                                        },
                                        {
                                           "name":"value",
