@@ -130,7 +130,7 @@
                                        },
                                        {
                                           "name":"accessList",
-                                          "type": [
+                                          "type":[
                                              "null",
                                              {
                                                 "type":"array",
