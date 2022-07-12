@@ -181,7 +181,10 @@
                                        },
                                        {
                                           "name":"to",
-                                          "type":"string",
+                                          "type":[
+                                             "\u00ff",
+                                             "string"
+                                          ],
                                           "default":"\u00ff"
                                        },
                                        {
