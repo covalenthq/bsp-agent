@@ -125,16 +125,59 @@
                                     "type":"record",
                                     "fields":[
                                        {
+                                          "name":"type",
+                                          "type":"string"
+                                       },
+                                       {
+                                          "name":"accessList",
+                                          "type": [
+                                             "null",
+                                             {
+                                                "type":"array",
+                                                "items":{
+                                                   "name":"accessList_record",
+                                                   "type":"record",
+                                                   "fields":[
+                                                      {
+                                                         "name":"address",
+                                                         "type":"string"
+                                                      },
+                                                      {
+                                                         "name":"storageKeys",
+                                                         "type":{
+                                                            "type":"array",
+                                                            "items":"string"
+                                                         }
+                                                      }
+                                                   ]
+                                                }
+                                             }
+                                          ],
+                                          "default":null
+                                       },
+                                       {
+                                          "name":"chainId",
+                                          "type":"long"
+                                       },
+                                       {
                                           "name":"nonce",
-                                          "type":"int"
+                                          "type":"long"
                                        },
                                        {
                                           "name":"gasPrice",
                                           "type":"long"
                                        },
                                        {
+                                          "name":"gasTipCap",
+                                          "type":"long"
+                                       },
+                                       {
+                                          "name":"gasFeeCap",
+                                          "type":"long"
+                                       },
+                                       {
                                           "name":"gas",
-                                          "type":"int"
+                                          "type":"long"
                                        },
                                        {
                                           "name":"from",
@@ -335,6 +378,26 @@
                                              ]
                                           }
                                        }
+                                    },
+                                    {
+                                       "name":"BlockHashRead",
+                                       "type":{
+                                          "type":"array",
+                                          "items":{
+                                             "name":"BlockHashRead_record",
+                                             "type":"record",
+                                             "fields":[
+                                                {
+                                                   "name":"BlockNumber",
+                                                   "type":"int"
+                                                },
+                                                {
+                                                   "name":"BlockHash",
+                                                   "type":"string"
+                                                }
+                                             ]
+                                          }
+                                       }
                                     }
                                  ]
                               }
@@ -357,6 +420,11 @@
       {
          "name":"elements",
          "type":"long"
+      },
+      {
+         "name":"codecVersion",
+         "type":"double",
+         "default":0.2
       }
    ]
 }
