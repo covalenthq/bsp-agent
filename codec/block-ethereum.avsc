@@ -181,7 +181,10 @@
                                        },
                                        {
                                           "name":"to",
-                                          "type":"string",
+                                          "type":[
+                                             "null",
+                                             "string"
+                                          ],
                                           "default":"null"
                                        },
                                        {
@@ -376,13 +379,12 @@
                                        }
                                     },
                                     {
-                                       "name":"BlockHashRead",
-                                       "type":[
-                                          "null",
+                                       "name":"BlockhashRead",
+                                       "type":
                                           {
                                              "type":"array",
                                              "items":{
-                                                "name":"BlockHashRead_record",
+                                                "name":"BlockhashRead_record",
                                                 "type":"record",
                                                 "fields":[
                                                    {
@@ -396,8 +398,7 @@
                                                 ]
                                              }
                                           }
-                                       ],
-                                       "default":null
+                                       
                                     }
                                  ]
                               }
