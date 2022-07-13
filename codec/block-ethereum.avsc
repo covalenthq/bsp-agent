@@ -380,25 +380,23 @@
                                     },
                                     {
                                        "name":"BlockhashRead",
-                                       "type":
-                                          {
-                                             "type":"array",
-                                             "items":{
-                                                "name":"BlockhashRead_record",
-                                                "type":"record",
-                                                "fields":[
-                                                   {
-                                                      "name":"BlockNumber",
-                                                      "type":"int"
-                                                   },
-                                                   {
-                                                      "name":"BlockHash",
-                                                      "type":"string"
-                                                   }
-                                                ]
-                                             }
+                                       "type":{
+                                          "type":"array",
+                                          "items":{
+                                             "name":"BlockhashRead_record",
+                                             "type":"record",
+                                             "fields":[
+                                                {
+                                                   "name":"BlockNumber",
+                                                   "type":"int"
+                                                },
+                                                {
+                                                   "name":"BlockHash",
+                                                   "type":"string"
+                                                }
+                                             ]
                                           }
-                                       
+                                       }
                                     }
                                  ]
                               }
