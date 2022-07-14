@@ -19,7 +19,7 @@ type BlockReplica struct {
 	TotalDifficulty *big.Int
 	Header          *Header
 	Transactions    []*Transaction
-	Uncles          []*Header `json:"uncles,omitempty" rlp:"nil"`
+	Uncles          []*Header `json:"uncles,omitempty"`
 	Receipts        []*Receipt
 	Senders         []common.Address
 	State           *StateSpecimen `json:"State"`

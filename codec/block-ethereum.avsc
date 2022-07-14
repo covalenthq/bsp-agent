@@ -201,14 +201,11 @@
                            },
                            {
                               "name":"uncles",
-                              "type":[
-                                 "null",
-                                 {
-                                    "type":"array",
-                                    "items":"Header"
-                                 }
-                              ],
-                              "default":null
+                              "type":{
+                                 "type":"array",
+                                 "items":"Header"
+                              },
+                              "default": []
                            },
                            {
                               "name":"Receipts",

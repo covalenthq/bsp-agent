@@ -212,6 +212,7 @@ func Writable(path string) bool {
 }
 
 // UnwrapAvroUnion "unwraps" the "to" field from the replica map
+//nolint:varnamelen
 func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	vs := data
 	for k1 := range data {
@@ -238,6 +239,8 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 											if v7, ok := m6["string"]; ok {
 												vsm["to"] = v7
 											}
+										} else {
+											vsm[k6] = v6
 										}
 									}
 									vst[k5] = vsm
