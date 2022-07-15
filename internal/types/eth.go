@@ -25,9 +25,15 @@ type BlockReplica struct {
 	State           *StateSpecimen
 }
 type StateSpecimen struct {
-	AccountRead []*accountRead
-	StorageRead []*storageRead
-	CodeRead    []*codeRead
+	AccountRead   []*accountRead
+	StorageRead   []*storageRead
+	CodeRead      []*codeRead
+	BlockhashRead []*blockhashRead
+}
+
+type blockhashRead struct {
+	BlockNumber uint64
+	BlockHash   common.Hash
 }
 
 type BlockNonce [8]byte
@@ -54,13 +60,27 @@ type Header struct {
 }
 
 type Transaction struct {
+	Type         byte            `json:"type"`
+	AccessList   AccessList      `json:"accessList"`
+	ChainId      *big.Int        `json:"chainId"`
 	AccountNonce uint64          `json:"nonce"`
 	Price        *big.Int        `json:"gasPrice"`
 	GasLimit     uint64          `json:"gas"`
+	GasTipCap    *big.Int        `json:"gasTipCap"`
+	GasFeeCap    *big.Int        `json:"gasFeeCap"`
 	Sender       common.Address  `json:"from"`
-	Recipient    *common.Address `json:"to,omitempty" rlp:"nil"` // nil means contract creation
+	Recipient    *common.Address `json:"to" rlp:"nil"` // nil means contract creation
 	Amount       *big.Int        `json:"value"`
 	Payload      []byte          `json:"input"`
+}
+
+// AccessList is an EIP-2930 access list.
+type AccessList []AccessTuple
+
+// AccessTuple is the element type of an access list.
+type AccessTuple struct {
+	Address     common.Address `json:"address"        gencodec:"required"`
+	StorageKeys []common.Hash  `json:"storageKeys"    gencodec:"required"`
 }
 
 type Logs struct {
