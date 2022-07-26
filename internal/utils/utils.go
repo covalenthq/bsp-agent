@@ -234,10 +234,15 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 									m5 := m4[k5].(map[string]interface{})
 									vsm := make(map[string]interface{})
 									for k6, v6 := range m5 {
-										if k6 == "to" && v6 != nil {
+										if (k6 == "to" || k6 == "from") && v6 != nil {
 											m6 := v6.(map[string]interface{})
 											if v7, ok := m6["string"]; ok {
-												vsm["to"] = v7
+												vsm[k6] = v7
+											}
+										} else if (k6 == "v" || k6 == "r" || k6 == "s") && v6 != nil {
+											m6 := v6.(map[string]interface{})
+											if v7, ok := m6["bytes"]; ok {
+												vsm[k6] = v7
 											}
 										} else {
 											vsm[k6] = v6
@@ -283,11 +288,17 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 									m5 := m4[k5].(map[string]interface{})
 									vsm := m5
 									for k6, v6 := range m5 {
-										if k6 == "to" {
+										if k6 == "to" || k6 == "from" {
 											if v6 == nil {
 												vsm[k6] = goavro.Union("null", nil)
 											} else {
 												vsm[k6] = goavro.Union("string", v6)
+											}
+										} else if k6 == "v" || k6 == "r" || k6 == "s" {
+											if v6 == nil {
+												vsm[k6] = goavro.Union("null", nil)
+											} else {
+												vsm[k6] = goavro.Union("bytes", v6)
 											}
 										}
 									}

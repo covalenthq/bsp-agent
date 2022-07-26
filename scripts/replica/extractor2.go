@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
-	"math/big"
 	"os"
 	"path/filepath"
 	"sort"
@@ -63,6 +62,7 @@ func generateTestForOneBlock(binaryFilePathFlag string,
 		filename := replicaSegmentFile.Name()
 		fileNameSplit := strings.Split(filename, "-")
 		directory := fileNameSplit[1] // block number is the directory
+		//directory = "/Users/sudeep/repos/data/" + directory
 		if err := os.MkdirAll(directory, os.ModePerm); err != nil {
 			panic(err)
 		}
@@ -73,7 +73,7 @@ func generateTestForOneBlock(binaryFilePathFlag string,
 
 		replicaSegment := decodeReplicaSegment(fileBuff, codec, *formatter)
 		var replicaSegmentJSON []byte
-		if replicaSegmentJSON, err = json.MarshalIndent(replicaSegment, "", " "); err != nil {
+		if replicaSegmentJSON, err = json.MarshalIndent(replicaSegment.BlockReplicaEvent[0].Data, "", " "); err != nil {
 			panic(err)
 		}
 
@@ -200,7 +200,7 @@ func getComponents(segment *event.ReplicationSegment) []*blockPair {
 			Type:            "block-specimen",
 			NetworkId:       replica.Data.NetworkId,
 			Hash:            replica.Data.Hash,
-			TotalDifficulty: &big.Int{},
+			TotalDifficulty: &types.BigInt{},
 			Header:          replica.Data.Header,
 			Transactions:    replica.Data.Transactions,
 			Uncles:          replica.Data.Uncles,

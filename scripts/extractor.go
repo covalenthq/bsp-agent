@@ -59,11 +59,16 @@ func main() {
 			log.Error("unable to convert from native Go to textual avro: ", err)
 		}
 		decodedAvro := string(textAvro)
+		// decodedAvro is the data in json form
+		// but we want to color it up!
 		err = json.Unmarshal([]byte(decodedAvro), &fileMap)
 		if err != nil {
 			log.Error("unable to unmarshal decoded AVRO binary: ", err)
 		}
-		colorJSONMap, _ := colorJSON.Marshal(fileMap)
+		colorJSONMap, err := colorJSON.Marshal(fileMap)
+		if err != nil {
+			panic(err)
+		}
 
 		fmt.Println("\nfile: ", filepath.Join(binaryFilePathFlag, filepath.Base(filename)), "bytes: ", size, "\n", string(colorJSONMap))
 	}

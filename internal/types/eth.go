@@ -2,8 +2,6 @@
 package types
 
 import (
-	"math/big"
-
 	"github.com/ubiq/go-ubiq/common"
 )
 
@@ -16,7 +14,7 @@ type BlockReplica struct {
 	Type            string
 	NetworkId       uint64
 	Hash            common.Hash
-	TotalDifficulty *big.Int
+	TotalDifficulty *BigInt
 	Header          *Header
 	Transactions    []*Transaction
 	Uncles          []*Header `json:"uncles,omitempty"`
@@ -25,13 +23,13 @@ type BlockReplica struct {
 	State           *StateSpecimen `json:"State"`
 }
 type StateSpecimen struct {
-	AccountRead   []*accountRead
-	StorageRead   []*storageRead
-	CodeRead      []*codeRead
-	BlockhashRead []*blockhashRead
+	AccountRead   []*AccountRead
+	StorageRead   []*StorageRead
+	CodeRead      []*CodeRead
+	BlockhashRead []*BlockhashRead
 }
 
-type blockhashRead struct {
+type BlockhashRead struct {
 	BlockNumber uint64
 	BlockHash   common.Hash
 }
@@ -48,30 +46,33 @@ type Header struct {
 	TxHash      common.Hash    `json:"transactionsRoot"`
 	ReceiptHash common.Hash    `json:"receiptsRoot"`
 	Bloom       Bloom          `json:"logsBloom"`
-	Difficulty  *big.Int       `json:"difficulty"`
-	Number      *big.Int       `json:"number"`
+	Difficulty  *BigInt        `json:"difficulty"`
+	Number      *BigInt        `json:"number"`
 	GasLimit    uint64         `json:"gasLimit"`
 	GasUsed     uint64         `json:"gasUsed"`
 	Time        uint64         `json:"timestamp"`
 	Extra       []byte         `json:"extraData"`
 	MixDigest   common.Hash    `json:"mixHash"`
 	Nonce       BlockNonce     `json:"nonce"`
-	BaseFee     *big.Int       `json:"baseFeePerGas"`
+	BaseFee     *BigInt        `json:"baseFeePerGas"`
 }
 
 type Transaction struct {
 	Type         byte            `json:"type"`
 	AccessList   AccessList      `json:"accessList"`
-	ChainId      *big.Int        `json:"chainId"`
+	ChainId      *BigInt         `json:"chainId"`
 	AccountNonce uint64          `json:"nonce"`
-	Price        *big.Int        `json:"gasPrice"`
+	Price        *BigInt         `json:"gasPrice"`
 	GasLimit     uint64          `json:"gas"`
-	GasTipCap    *big.Int        `json:"gasTipCap"`
-	GasFeeCap    *big.Int        `json:"gasFeeCap"`
-	Sender       common.Address  `json:"from"`
+	GasTipCap    *BigInt         `json:"gasTipCap"`
+	GasFeeCap    *BigInt         `json:"gasFeeCap"`
+	Sender       *common.Address `json:"from" rlp:"nil"`
 	Recipient    *common.Address `json:"to" rlp:"nil"` // nil means contract creation
-	Amount       *big.Int        `json:"value"`
+	Amount       *BigInt         `json:"value"`
 	Payload      []byte          `json:"input"`
+	V            *BigInt         `json:"v" rlp:"nilString"`
+	R            *BigInt         `json:"r" rlp:"nilString"`
+	S            *BigInt         `json:"s" rlp:"nilString"`
 }
 
 // AccessList is an EIP-2930 access list.
@@ -104,20 +105,20 @@ type Receipt struct {
 	GasUsed           uint64
 }
 
-type accountRead struct {
+type AccountRead struct {
 	Address  common.Address
 	Nonce    uint64
-	Balance  *big.Int
+	Balance  *BigInt
 	CodeHash common.Hash
 }
 
-type storageRead struct {
+type StorageRead struct {
 	Account common.Address
 	SlotKey common.Hash
 	Value   common.Hash
 }
 
-type codeRead struct {
+type CodeRead struct {
 	Hash common.Hash
 	Code []byte
 }
