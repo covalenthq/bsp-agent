@@ -1,4 +1,4 @@
-package types
+package types_test
 
 import (
 	"encoding/json"
@@ -34,7 +34,6 @@ func TestGolangBindings(t *testing.T) {
 	}
 
 	fmt.Println(string(dbytes))
-	//assert.Equal(t, string(dbytes), "{\"x\":[2,1,8,1,0,6,7,6,8,2,5,9,3,5,6,4,1,0,0,0]}", "marshalled bytes not same")
 
 	mapData := make(map[string]interface{})
 	err = json.Unmarshal(dbytes, &mapData)
@@ -46,7 +45,7 @@ func TestGolangBindings(t *testing.T) {
 }
 
 func TestAnother(t *testing.T) {
-	v, _ := new(big.Int).SetString("21810676825935641000", 10)
+	bigIntV, _ := new(big.Int).SetString("21810676825935641000", 10)
 	replicaCodec := setupReplicaCodec()
 	from := common.StringToAddress("0x21d3b08e73ba157cf46832f2b81644aeea4b4aa4")
 	seg := event.ReplicationSegment{
@@ -67,7 +66,7 @@ func TestAnother(t *testing.T) {
 					Transactions: []*types.Transaction{
 						{
 							AccessList:   make(types.AccessList, 0),
-							Amount:       &types.BigInt{Int: v},
+							Amount:       &types.BigInt{Int: bigIntV},
 							AccountNonce: 33,
 							ChainId:      new(types.BigInt).SetUint64(1),
 							GasFeeCap:    new(types.BigInt).SetUint64(211321234),

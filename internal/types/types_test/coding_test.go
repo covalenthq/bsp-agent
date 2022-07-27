@@ -1,4 +1,4 @@
-package types
+package types_test
 
 import (
 	"encoding/json"
@@ -12,24 +12,22 @@ import (
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/fatih/color"
 
-	//tt "github.com/ethereum/go-ethereum/core/types"
 	"github.com/linkedin/goavro/v2"
 	"gopkg.in/avro.v0"
 )
 
 func TestRlpCoding(t *testing.T) {
 	type InputStructure struct {
-		T1 *big.Int //`rlp:"nilList"`
+		T1 *big.Int
 		T2 *big.Int
 	}
 
 	type OutputStructure struct {
-		T1 *types.BigInt //`rlp:"nilList"`
+		T1 *types.BigInt
 		T2 *types.BigInt
 	}
 
 	inp := InputStructure{T1: new(big.Int).SetUint64(12), T2: new(big.Int).SetUint64(8)}
-	//vv := Sss{T1: nil, T2: new(big.Int).SetUint64(8)}
 	out := OutputStructure{}
 	bytes, err := rlp.EncodeToBytes(inp)
 	if err != nil {
@@ -41,16 +39,19 @@ func TestRlpCoding(t *testing.T) {
 	err = rlp.DecodeBytes(bytes, &out)
 	if err != nil {
 		t.Errorf("dec error is not nil: %v", err)
+
 		return
 	}
 
 	if out.T1.Int.Cmp(inp.T1) != 0 {
 		t.Errorf("encoded/decoded values don't match: %v %v", out.T1.Int, inp.T1)
+
 		return
 	}
 
 	if out.T2.Int.Cmp(inp.T2) != 0 {
 		t.Errorf("encoded/decoded values don't match: %v %v", out.T2.Int, inp.T2)
+
 		return
 	}
 
@@ -70,7 +71,6 @@ func TestRlpCodingWithNils(t *testing.T) {
 	}
 
 	inp := InputStructure{T1: nil, T2: new(big.Int).SetUint64(8)}
-	//vv := Sss{T1: nil, T2: new(big.Int).SetUint64(8)}
 	out := OutputStructure{}
 	bytes, err := rlp.EncodeToBytes(inp)
 	if err != nil {
@@ -82,16 +82,19 @@ func TestRlpCodingWithNils(t *testing.T) {
 	err = rlp.DecodeBytes(bytes, &out)
 	if err != nil {
 		t.Errorf("dec error is not nil: %v", err)
+
 		return
 	}
 
 	if !(out.T1 == nil && inp.T1 == nil) {
 		t.Errorf("encoded/decoded values don't match: %v %v", out.T1, inp.T1)
+
 		return
 	}
 
 	if out.T2.Int.Cmp(inp.T2) != 0 {
 		t.Errorf("encoded/decoded values don't match: %v %v", out.T2.Int, inp.T2)
+
 		return
 	}
 
@@ -174,7 +177,6 @@ func TestAvroEncodingForUnionSchemaAndNilBigInt(t *testing.T) {
 		panic(err)
 	}
 
-	//inp := StructT{V: new(types.BigInt).SetUint64(123)}
 	inp := StructT{}
 	replicaMap, err := utils.StructToMap(inp)
 	if err != nil {
@@ -238,7 +240,6 @@ func TestAvroEncodingForUnionSchemaAndBigInt(t *testing.T) {
 	}
 
 	inp := StructT{V: new(types.BigInt).SetUint64(123)}
-	//ss := StructT{}
 	replicaMap, err := utils.StructToMap(inp)
 	if err != nil {
 		t.Fatalf("error in converting struct to map: %v", err)

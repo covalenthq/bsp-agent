@@ -500,7 +500,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.2
+         "default":0.3
       }
    ]
 }

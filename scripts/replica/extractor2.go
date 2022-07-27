@@ -62,7 +62,7 @@ func generateTestForOneBlock(binaryFilePathFlag string,
 		filename := replicaSegmentFile.Name()
 		fileNameSplit := strings.Split(filename, "-")
 		directory := fileNameSplit[1] // block number is the directory
-		//directory = "/Users/sudeep/repos/data/" + directory
+		// directory = "/Users/<user>/repos/data/" + directory
 		if err := os.MkdirAll(directory, os.ModePerm); err != nil {
 			panic(err)
 		}

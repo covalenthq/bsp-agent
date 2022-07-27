@@ -234,17 +234,18 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 									m5 := m4[k5].(map[string]interface{})
 									vsm := make(map[string]interface{})
 									for k6, v6 := range m5 {
-										if (k6 == "to" || k6 == "from") && v6 != nil {
+										switch {
+										case (k6 == "to" || k6 == "from") && v6 != nil:
 											m6 := v6.(map[string]interface{})
 											if v7, ok := m6["string"]; ok {
 												vsm[k6] = v7
 											}
-										} else if (k6 == "v" || k6 == "r" || k6 == "s") && v6 != nil {
+										case (k6 == "v" || k6 == "r" || k6 == "s") && v6 != nil:
 											m6 := v6.(map[string]interface{})
 											if v7, ok := m6["bytes"]; ok {
 												vsm[k6] = v7
 											}
-										} else {
+										default:
 											vsm[k6] = v6
 										}
 									}
