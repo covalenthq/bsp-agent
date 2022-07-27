@@ -19,10 +19,10 @@ type BlockReplica struct {
 	TotalDifficulty *big.Int
 	Header          *Header
 	Transactions    []*Transaction
-	Uncles          []*Header
+	Uncles          []*Header `json:"uncles,omitempty" rlp:"nil"`
 	Receipts        []*Receipt
 	Senders         []common.Address
-	State           *StateSpecimen
+	State           *StateSpecimen `json:"State"`
 }
 type StateSpecimen struct {
 	AccountRead   []*accountRead

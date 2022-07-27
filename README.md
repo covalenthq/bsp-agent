@@ -309,3 +309,11 @@ go run extractor.go \
 ```
 
 Please make sure that the --binary-file-path and --avro-codec-path matches the ones given while running the agent above. --indent-json (0,1,2) can be used to pretty print and inspect the AVRO json objects.
+
+#### extractor2.go
+
+similar to extractor.go, but outputs the specimen, result and block_replica in separate json files.
+
+```bash
+go run extractor2.go --binary-file-path="/Users/sudeep/repos/bsp-agent/data/block-ethereum/" --codec-path "../../codec/block-ethereum.avsc" --indent-json 0 --end-block-number 15185258 --start-block-number 15185258 --chain-id "1"
+```

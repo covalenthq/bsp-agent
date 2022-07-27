@@ -211,6 +211,52 @@ func Writable(path string) bool {
 	return unix.Access(path, unix.W_OK) == nil
 }
 
+// UnwrapAvroUnion "unwraps" the "to" field from the replica map
+func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
+	vs := data
+	for k1 := range data {
+		if k1 == "replicaEvent" {
+			m1 := data[k1].([]interface{})
+			vsr := m1
+			for k2 := range m1 {
+				m2 := m1[k2].(map[string]interface{})
+				vso := m2
+				for k3 := range m2 {
+					if k3 == "data" {
+						m3 := m2[k3].(map[string]interface{})
+						vsd := m3
+						for k4 := range m3 {
+							if k4 == "Transactions" {
+								m4 := m3[k4].([]interface{})
+								vst := m4
+								for k5 := range m4 {
+									m5 := m4[k5].(map[string]interface{})
+									vsm := make(map[string]interface{})
+									for k6, v6 := range m5 {
+										if k6 == "to" && v6 != nil {
+											m6 := v6.(map[string]interface{})
+											if v7, ok := m6["string"]; ok {
+												vsm["to"] = v7
+											}
+										}
+									}
+									vst[k5] = vsm
+								}
+								vsd[k4] = vst
+							}
+						}
+						vso[k3] = vsd
+					}
+				}
+				vsr[k2] = vso
+			}
+			vs[k1] = vsr
+		}
+	}
+
+	return vs
+}
+
 // MapToAvroUnion converts the "to" field in the replica map to an Avro Union type allowing <nil>
 //nolint:varnamelen
 func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
