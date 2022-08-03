@@ -65,11 +65,15 @@ func main() {
 		if err != nil {
 			log.Error("unable to unmarshal decoded AVRO binary: ", err)
 		}
-		// colorJSONMap, _ := colorJSON.Marshal(fileMap)
 
-		jsonBytes, _ := json.Marshal(string(decodedAvro))
+		rawJson := json.RawMessage(string(decodedAvro))
 
-		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", jsonBytes, 0600); err != nil {
+		bytes, err := rawJson.MarshalJSON()
+		if err != nil {
+			log.Error("unable to get Marshal raw json: ", err)
+		}
+
+		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", bytes, 0600); err != nil {
 			log.Error("unable to write to file: ", err)
 		}
 
