@@ -68,12 +68,12 @@ func main() {
 
 		rawJson := json.RawMessage(string(decodedAvro))
 
-		bytes, err := rawJson.MarshalJSON()
+		indentJson, err := json.MarshalIndent(rawJson, "", "\t")
 		if err != nil {
-			log.Error("unable to get Marshal raw json: ", err)
+			log.Error("unable to get indent raw json: ", err)
 		}
 
-		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", bytes, 0600); err != nil {
+		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", indentJson, 0600); err != nil {
 			log.Error("unable to write to file: ", err)
 		}
 
