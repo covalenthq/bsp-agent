@@ -27,6 +27,7 @@ var (
 	indentJSONFlag     int
 )
 
+//nolint:unconvert
 func main() {
 	flag.StringVar(&binaryFilePathFlag, "binary-file-path", config.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
 	flag.StringVar(&avroCodecPathFlag, "codec-path", config.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
@@ -66,19 +67,18 @@ func main() {
 			log.Error("unable to unmarshal decoded AVRO binary: ", err)
 		}
 
-		rawJson := json.RawMessage(string(decodedAvro))
+		rawJSON := json.RawMessage(string(decodedAvro))
 
-		indentJson, err := json.MarshalIndent(rawJson, "", "\t")
+		indentJSON, err := json.MarshalIndent(rawJSON, "", "\t")
 		if err != nil {
 			log.Error("unable to get indent raw json: ", err)
 		}
 
-		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", indentJson, 0600); err != nil {
+		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", indentJSON, 0600); err != nil {
 			log.Error("unable to write to file: ", err)
 		}
 
 		fmt.Println("\nfile: ", filepath.Join(outputFilePathFlag, filepath.Base(filename+"-specimen.json")), "bytes: ", size)
-
 	}
 }
 
