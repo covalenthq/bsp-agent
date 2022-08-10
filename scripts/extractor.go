@@ -23,13 +23,16 @@ import (
 var (
 	binaryFilePathFlag string
 	avroCodecPathFlag  string
+	outputFilePathFlag string
 	indentJSONFlag     int
 )
 
+//nolint:unconvert
 func main() {
 	flag.StringVar(&binaryFilePathFlag, "binary-file-path", config.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
 	flag.StringVar(&avroCodecPathFlag, "codec-path", config.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
 	flag.IntVar(&indentJSONFlag, "indent-json", config.LookupEnvOrInt("IndentJson", indentJSONFlag), "allows for an indented view of the AVRO decoded JSON object")
+	flag.StringVar(&outputFilePathFlag, "output-file-path", config.LookupEnvOrString("OutputFilePath", outputFilePathFlag), "local path to output files for the specimen/result.json")
 
 	flag.Parse()
 	fmt.Println("bsp-extractor command line config: ", utils.GetConfig(flag.CommandLine))
@@ -63,9 +66,19 @@ func main() {
 		if err != nil {
 			log.Error("unable to unmarshal decoded AVRO binary: ", err)
 		}
-		colorJSONMap, _ := colorJSON.Marshal(fileMap)
 
-		fmt.Println("\nfile: ", filepath.Join(binaryFilePathFlag, filepath.Base(filename)), "bytes: ", size, "\n", string(colorJSONMap))
+		rawJSON := json.RawMessage(string(decodedAvro))
+
+		indentJSON, err := json.MarshalIndent(rawJSON, "", "\t")
+		if err != nil {
+			log.Error("unable to get indent raw json: ", err)
+		}
+
+		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", indentJSON, 0600); err != nil {
+			log.Error("unable to write to file: ", err)
+		}
+
+		fmt.Println("\nfile: ", filepath.Join(outputFilePathFlag, filepath.Base(filename+"-specimen.json")), "bytes: ", size)
 	}
 }
 
