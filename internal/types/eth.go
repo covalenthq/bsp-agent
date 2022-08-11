@@ -72,6 +72,9 @@ type Transaction struct {
 	Recipient    *common.Address `json:"to" rlp:"nil"` // nil means contract creation
 	Amount       *big.Int        `json:"value"`
 	Payload      []byte          `json:"input"`
+	V            *big.Int        `json:"v" rlp:"nil"`
+	R            *big.Int        `json:"r" rlp:"nil"`
+	S            *big.Int        `json:"s" rlp:"nil"`
 }
 
 // AccessList is an EIP-2930 access list.

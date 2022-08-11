@@ -194,6 +194,18 @@
                                        {
                                           "name":"input",
                                           "type":"string"
+                                       },
+                                       {
+                                          "name":"v",
+                                          "type":"int"
+                                       },
+                                       {
+                                          "name":"r",
+                                          "type":"double"
+                                       },
+                                       {
+                                          "name":"s",
+                                          "type":"double"
                                        }
                                     ]
                                  }
