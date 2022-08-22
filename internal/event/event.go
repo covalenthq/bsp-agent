@@ -52,5 +52,6 @@ func (o *BlockReplicaEvent) GetBlockReplicaHash() string {
 
 // Type gets the block-replica event types - block-specimen, block-result, or combined(block-replica)
 func (o *BlockReplicaEvent) Type() string {
+	// would return -replica, -specimen or -result
 	return o.Data.Type[5:]
 }

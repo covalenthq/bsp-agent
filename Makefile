@@ -38,3 +38,8 @@ run-agent-elrond:
 	--consumer-timeout=8000 \
 	--ipfs-service=web3.storage
 
+test:
+	@echo "---- Testing Agent from cmd/bspagent ----"
+	@go test ./... -coverprofile=coverage.out
+	@echo "---- Done Testing for cmd/bspagent ----"
+

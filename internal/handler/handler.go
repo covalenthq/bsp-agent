@@ -27,6 +27,8 @@ func EncodeReplicaSegmentToAvro(replicaAvro *goavro.Codec, blockReplicaSegment i
 	binaryReplicaSegment, err := replicaAvro.BinaryFromNative(nil, replicaMod)
 	if err != nil {
 		log.Error("failed to convert Go map to Avro binary data: ", err)
+
+		return nil, fmt.Errorf("error in converting binary from go native: %w", err)
 	}
 
 	return binaryReplicaSegment, nil
