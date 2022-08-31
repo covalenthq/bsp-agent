@@ -465,7 +465,7 @@
                                              "fields":[
                                                 {
                                                    "name":"BlockNumber",
-                                                   "type":"int"
+                                                   "type":"double"
                                                 },
                                                 {
                                                    "name":"BlockHash",
