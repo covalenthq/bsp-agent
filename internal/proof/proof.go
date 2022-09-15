@@ -91,6 +91,12 @@ func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethCl
 
 			return
 		}
+		if strings.Contains(err.Error(), "Invalid block height") {
+			log.Error("skip creating proof-chain session: ", err)
+			txHash <- "invalid block height"
+
+			return
+		}
 		log.Error("error sending tx to deployed contract: ", err)
 		txHash <- ""
 
