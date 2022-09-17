@@ -56,6 +56,7 @@ func init() {
 		outWriter = &bspLogger
 	}
 
+	utils.Version()
 	log.SetOutput(outWriter)
 	log.SetLevel(log.InfoLevel)
 	log.WithFields(log.Fields{"file": "main.go"}).Info("bsp-agent is running...")

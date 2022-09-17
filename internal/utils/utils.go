@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -25,6 +26,24 @@ import (
 	"golang.org/x/sys/unix"
 	"google.golang.org/api/option"
 )
+
+const (
+	clientIdentifier = "bspagent" // Client identifier to advertise over the network
+)
+
+const (
+	// BspAgentVersionMajor is Major version component of the current release
+	BspAgentVersionMajor = 1
+	// BspAgentVersionMinor is Minor version component of the current release
+	BspAgentVersionMinor = 3
+	// BspAgentVersionPatch is Patch version component of the current release
+	BspAgentVersionPatch = 1
+)
+
+// BspAgentVersion holds the textual version string.
+var BspAgentVersion = func() string {
+	return fmt.Sprintf("%d.%d.%d", BspAgentVersionMajor, BspAgentVersionMinor, BspAgentVersionPatch)
+}()
 
 // NewRedisClient provides a new redis client using a redis config
 func NewRedisClient(rconfig *config.RedisConfig) (*redis.Client, string, string, error) {
@@ -318,4 +337,15 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	}
 
 	return vs
+}
+
+// Version Provides version info on bsp agent binary
+func Version() {
+	fmt.Println(clientIdentifier)
+	fmt.Println("Bsp Agent Version:", BspAgentVersion)
+	fmt.Println("Architecture:", runtime.GOARCH)
+	fmt.Println("Go Version:", runtime.Version())
+	fmt.Println("Operating System:", runtime.GOOS)
+	fmt.Printf("GOPATH=%s\n", os.Getenv("GOPATH"))
+	fmt.Printf("GOROOT=%s\n", runtime.GOROOT())
 }
