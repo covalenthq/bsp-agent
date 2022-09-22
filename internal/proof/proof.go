@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -71,6 +72,20 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 
 func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
 	transaction, err := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+
+	fmt.Println(transaction, "transaction")
+
+	fmt.Println(opts, "opts")
+
+	fmt.Println(blockReplica.NetworkId, "blockreplica network id")
+
+	fmt.Println(chainHeight, "chainHeight")
+
+	fmt.Println(blockReplica.Hash, "blockReplica.Hash")
+
+	fmt.Println(sha256Result, "sha256Result")
+
+	fmt.Println(replicaURL, "replicaURL")
 
 	if err != nil {
 		if strings.Contains(err.Error(), "Session submissions have closed") {
