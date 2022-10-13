@@ -9,7 +9,9 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
+	"math"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -39,15 +41,11 @@ var (
 	startBlockNumberFlag int64
 	endBlockNumberFlag   int64
 	chainIDFlag          string
+	outputFilePathFlag   string
 )
 
-func generateTestForOneBlock(binaryFilePathFlag string,
-	avroCodecPathFlag string,
-	indentJSONFlag int,
-	startingBlockNumber int64,
-	endingBlockNumber int64,
-	chainID string) {
-	replicaSegmentFiles := filterReplicaSegmentFiles(binaryFilePathFlag, startingBlockNumber, endingBlockNumber, chainID)
+func generateTestForOneBlock() {
+	replicaSegmentFiles := filterReplicaSegmentFiles(binaryFilePathFlag, startBlockNumberFlag, endBlockNumberFlag, chainIDFlag)
 	codec := getAvroCodec(avroCodecPathFlag)
 
 	// colorjson formatter can correctly format the block replicas big.Int
@@ -62,11 +60,11 @@ func generateTestForOneBlock(binaryFilePathFlag string,
 		filename := replicaSegmentFile.Name()
 		fileNameSplit := strings.Split(filename, "-")
 		directory := fileNameSplit[1] // block number is the directory
-		// directory = "/Users/<user>/repos/data/" + directory
-		if err := os.MkdirAll(directory, os.ModePerm); err != nil {
+		if err := os.MkdirAll(outputFilePathFlag, os.ModePerm); err != nil {
 			panic(err)
 		}
 		fileBuff, _, err := readReplicaFile(binaryFilePathFlag, filename)
+
 		if err != nil {
 			panic(err)
 		}
@@ -77,9 +75,7 @@ func generateTestForOneBlock(binaryFilePathFlag string,
 			panic(err)
 		}
 
-		if err = ioutil.WriteFile(directory+"/segment.json", replicaSegmentJSON, 0600); err != nil {
-			panic(err)
-		}
+		writeFile(outputFilePathFlag, directory+".segment.json", replicaSegmentJSON)
 
 		for _, component := range getComponents(replicaSegment) {
 			filename := component.specimen.Header.Number.String()
@@ -88,18 +84,21 @@ func generateTestForOneBlock(binaryFilePathFlag string,
 				panic(err)
 			}
 
-			if err = ioutil.WriteFile(directory+"/"+filename+".specimen.json", componentJSON, 0600); err != nil {
-				panic(err)
-			}
+			writeFile(outputFilePathFlag, filename+".specimen.json", componentJSON)
 
 			if componentJSON, err = json.MarshalIndent(component.result, "", " "); err != nil {
 				panic(err)
 			}
 
-			if err = ioutil.WriteFile(directory+"/"+filename+".result.json", componentJSON, 0600); err != nil {
-				panic(err)
-			}
+			writeFile(outputFilePathFlag, filename+".result.json", componentJSON)
 		}
+	}
+}
+
+func writeFile(outputDir string, filename string, data []byte) {
+	filepath := path.Join(outputFilePathFlag, filename)
+	if err := ioutil.WriteFile(filepath, data, 0600); err != nil {
+		panic(err)
 	}
 }
 
@@ -239,13 +238,14 @@ func main() {
 	flag.StringVar(&binaryFilePathFlag, "binary-file-path", config.LookupEnvOrString("BinaryFilePath", binaryFilePathFlag), "local path to AVRO encoded binary files that contain block-replicas")
 	flag.StringVar(&avroCodecPathFlag, "codec-path", config.LookupEnvOrString("CodecPath", avroCodecPathFlag), "local path to AVRO .avsc files housing the specimen/result schemas")
 	flag.IntVar(&indentJSONFlag, "indent-json", config.LookupEnvOrInt("IndentJson", indentJSONFlag), "allows for an indented view of the AVRO decoded JSON object")
-	flag.Int64Var(&startBlockNumberFlag, "start-block-number", config.LookupEnvOrInt64("StartBlockNumber", startBlockNumberFlag), "block number range's start for txs.json and env.json and alloc.json")
-	flag.Int64Var(&endBlockNumberFlag, "end-block-number", config.LookupEnvOrInt64("EndBlockNumber", endBlockNumberFlag), "block number range's end for txs.json and env.json and alloc.json")
-	flag.StringVar(&chainIDFlag, "chain-id", config.LookupEnvOrString("chainID", chainIDFlag), "chain id for txs.json and env.json and alloc.json")
+	flag.Int64Var(&startBlockNumberFlag, "start-block-number", config.LookupEnvOrInt64("StartBlockNumber", 0), "block number range's start (default 0)")
+	flag.Int64Var(&endBlockNumberFlag, "end-block-number", config.LookupEnvOrInt64("EndBlockNumber", math.MaxInt64), "block number range's end (default MAX_INT64)")
+	flag.StringVar(&chainIDFlag, "chain-id", config.LookupEnvOrString("chainID", "1"), "chain id (default 1)")
+	flag.StringVar(&outputFilePathFlag, "output-file-path", config.LookupEnvOrString("OutputFilePath", "./"), "local path to output files for the specimen/result.json (default: ./)")
 	flag.Parse()
 
 	if startBlockNumberFlag > endBlockNumberFlag {
 		fmt.Println(errors.New("starting block should be smaller than or equal to the ending block"))
 	}
-	generateTestForOneBlock(binaryFilePathFlag, avroCodecPathFlag, indentJSONFlag, startBlockNumberFlag, endBlockNumberFlag, chainIDFlag)
+	generateTestForOneBlock()
 }
