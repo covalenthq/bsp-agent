@@ -23,7 +23,6 @@ import (
 	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
-	"github.com/ubiq/go-ubiq/common"
 
 	"github.com/TylerBrock/colorjson"
 	"github.com/linkedin/goavro/v2"
@@ -96,7 +95,7 @@ func generateTestForOneBlock() {
 }
 
 func writeFile(outputDir string, filename string, data []byte) {
-	filepath := path.Join(outputFilePathFlag, filename)
+	filepath := path.Join(outputDir, filename)
 	if err := ioutil.WriteFile(filepath, data, 0600); err != nil {
 		panic(err)
 	}
@@ -115,6 +114,7 @@ func getAvroCodec(path string) *goavro.Codec {
 	return replicaCodec
 }
 
+// picks out the replica files in `path` which fall within start-end range and given chainID
 func filterReplicaSegmentFiles(path string, start int64, end int64, chainID string) []fs.FileInfo {
 	allFiles, err := ioutil.ReadDir(path)
 	if err != nil {
@@ -199,12 +199,12 @@ func getComponents(segment *event.ReplicationSegment) []*blockPair {
 			Type:            "block-specimen",
 			NetworkId:       replica.Data.NetworkId,
 			Hash:            replica.Data.Hash,
-			TotalDifficulty: &types.BigInt{},
+			TotalDifficulty: replica.Data.TotalDifficulty,
 			Header:          replica.Data.Header,
 			Transactions:    replica.Data.Transactions,
 			Uncles:          replica.Data.Uncles,
 			Receipts:        []*types.Receipt{},
-			Senders:         []common.Address{},
+			Senders:         replica.Data.Senders,
 			State:           replica.Data.State,
 		}
 
