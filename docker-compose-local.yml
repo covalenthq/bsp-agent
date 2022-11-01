@@ -65,7 +65,7 @@ services:
     entrypoint: >
      /bin/bash -l -c "
       truffle migrate --network docker;
-      #nc -v agent 8008;
+      nc -v agent 8008;
       sleep 100000;"
     depends_on:
       - node
@@ -76,37 +76,37 @@ services:
     ports:
       - "8008:8008"
 
-  # agent:
-  #   container_name: bsp-agent
-  #   links:
-  #     - "cqt-virtnet:proof-chain"
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   restart: on-failure
-  #   depends_on:
-  #     cqt-virtnet:
-  #       condition: service_started
-  #   volumes:
-  #     - /Users/pranay/.config/gcloud:/app/gcloud
-  #   entrypoint: >
-  #     /bin/bash -l -c "
-  #       echo Waiting for proof-chain to be deployed...;
-  #       while ! nc -v -l -k -p 8008;
-  #       do
-  #       sleep 1;
-  #       done;
-  #       echo proof-chain contracts deployed!;
-  #       ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication-1#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum  --block-divisor=10  --consumer-timeout=10000000  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --ipfs-service=web3.storage --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=100000;
-  #       exit 0;"
-  #   environment:
-  #     - MB_PRIVATE_KEY=${PRIVATE_KEY}
-  #     - MB_RPC_URL=${RPC_URL}
-  #     - BLOCKCHAIN=${BLOCKCHAIN}
-  #   networks:
-  #     - cqt-net
-  #   ports:
-  #     - "8080:8080"
+  agent:
+    container_name: bsp-agent
+    links:
+      - "cqt-virtnet:proof-chain"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      cqt-virtnet:
+        condition: service_started
+    volumes:
+      - /Users/pranay/.config/gcloud:/app/gcloud
+    entrypoint: >
+      /bin/bash -l -c "
+        echo Waiting for proof-chain to be deployed...;
+        while ! nc -v -l -k -p 8008;
+        do
+        sleep 1;
+        done;
+        echo proof-chain contracts deployed!;
+        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication-2#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=1  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=100000;
+        exit 0;"
+    environment:
+      - MB_PRIVATE_KEY=${PRIVATE_KEY}
+      - MB_RPC_URL=${RPC_URL}
+      - BLOCKCHAIN=${BLOCKCHAIN}
+    networks:
+      - cqt-net
+    ports:
+      - "8080:8080"
 
 networks:
   cqt-net:
