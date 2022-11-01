@@ -47,6 +47,7 @@
   - [<span id="docker">Docker</span>](#docker)
   - [<span id="scripts">Scripts</span>](#scripts)
     - [<span id="inspect">Inspect</span>](#inspect)
+      - [extractor2.go](#extractor2go)
 
 ## <span id="agent_intro">Introduction</span>
 
@@ -312,8 +313,8 @@ Please make sure that the --binary-file-path and --avro-codec-path matches the o
 
 #### extractor2.go
 
-similar to extractor.go, but outputs the specimen, result and block_replica in separate json files.
+similar to extractor.go, but outputs the specimen, result and block_replica in separate json files. It works with the ethereum block codec version 0.3. Whereas, extractor.go works with codec version 0.2 only. Ideally both scripts should be able to handle the different versions. 
 
 ```bash
-go run extractor2.go --binary-file-path="/Users/sudeep/repos/bsp-agent/data/block-ethereum/" --codec-path "../../codec/block-ethereum.avsc" --indent-json 0 --end-block-number 15185258 --start-block-number 15185258 --chain-id "1"
+go run extractor2.go --binary-file-path="/Users/sudeep/repos/bsp-agent/data/block-ethereum/" --codec-path "../../codec/block-ethereum.avsc" --indent-json 0 --end-block-number 15185258 --start-block-number 15185258 --chain-id "1" --output-file-path "./"
 ```
