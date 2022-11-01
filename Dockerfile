@@ -7,7 +7,7 @@ RUN go mod download
 # Build the services
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o bsp-agent ./cmd/bspagent
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o bsp-extractor ./scripts/extractor.go
-
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o bsp-extractor-2 ./scripts/replica/extractor2.go
 # Runtime/test -  second phase.
 FROM alpine:3.15.0
 RUN mkdir /app
@@ -19,6 +19,7 @@ COPY --from=builder /build/entry.sh /app
 COPY --from=builder /build/data /app/data
 COPY --from=builder /build/codec /app/codec
 COPY --from=builder /build/bsp-extractor /app
+COPY --from=builder /build/bsp-extractor-2 /app
 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 CMD [ "./entry.sh" ]
