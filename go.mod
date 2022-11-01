@@ -18,7 +18,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/linkedin/goavro/v2 v2.11.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.0
 	github.com/ubiq/go-ubiq v3.0.1+incompatible
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8
 	google.golang.org/api v0.91.0
