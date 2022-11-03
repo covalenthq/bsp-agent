@@ -118,7 +118,7 @@
                                        "name":"nonce",
                                        "type":{
                                           "type":"array",
-                                          "items":"int"
+                                          "items":"long"
                                        }
                                     },
                                     {
@@ -332,7 +332,7 @@
                                                    },
                                                    {
                                                       "name":"blockNumber",
-                                                      "type":"int"
+                                                      "type":"long"
                                                    },
                                                    {
                                                       "name":"transactionHash",
@@ -393,7 +393,7 @@
                                                 },
                                                 {
                                                    "name":"Nonce",
-                                                   "type":"int"
+                                                   "type":"long"
                                                 },
                                                 {
                                                    "name":"Balance",
@@ -465,7 +465,7 @@
                                              "fields":[
                                                 {
                                                    "name":"BlockNumber",
-                                                   "type":"double"
+                                                   "type":"long"
                                                 },
                                                 {
                                                    "name":"BlockHash",
@@ -500,7 +500,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.3
+         "default":0.31
       }
    ]
 }
