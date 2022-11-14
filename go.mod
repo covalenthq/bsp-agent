@@ -14,7 +14,7 @@ require (
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/golang/snappy v0.0.4
 	github.com/gorilla/websocket v1.5.0
-	github.com/ipfs/go-cid v0.1.0
+	github.com/ipfs/go-cid v0.3.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/linkedin/goavro/v2 v2.12.0
 	github.com/satori/go.uuid v1.2.0
