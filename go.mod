@@ -40,7 +40,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/google/flatbuffers v2.0.5+incompatible // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.0 // indirect
-	github.com/influxdata/flux v0.161.0 // indirect
+	github.com/influxdata/flux v0.170.1 // indirect
 	github.com/influxdata/influxql v1.1.1-0.20211004132434-7e7d61973256 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20210311194329-9aa0e372d097 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
@@ -108,7 +108,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/huin/goupnp v1.0.3 // indirect
-	github.com/influxdata/influxdb v1.9.8
+	github.com/influxdata/influxdb v1.10.0
 	github.com/influxdata/influxdb-client-go/v2 v2.11.0
 	github.com/ipfs/bbloom v0.0.4 // indirect
 	github.com/ipfs/go-bitfield v1.0.0 // indirect
