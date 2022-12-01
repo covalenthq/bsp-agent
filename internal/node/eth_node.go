@@ -208,7 +208,7 @@ func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context
 	if err != nil {
 		return "", fmt.Errorf("error encoding to avro: %w", err)
 	}
-	fmt.Printf("\n---> Processing %v <---\n", currentSegment.SegmentName)
+	log.Infof("\n---> Processing %s <---\n", currentSegment.SegmentName)
 
 	replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, currentSegment.SegmentName, replicaSegmentAvro)
 	log.Info("eth binary file should be available: ", replicaURL)

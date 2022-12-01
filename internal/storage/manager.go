@@ -1,3 +1,4 @@
+// Package storage manages storage of network artifacts
 package storage
 
 import (
@@ -6,18 +7,18 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
-	"syscall"
 	"time"
 
 	gcp "cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/metrics"
 	"github.com/covalenthq/bsp-agent/internal/utils"
-	pinner "github.com/covalenthq/ipfs-pinner"
-	pincore "github.com/covalenthq/ipfs-pinner/core"
 	"github.com/ipfs/go-cid"
 	log "github.com/sirupsen/logrus"
+)
+
+const (
+	uploadTimeout int64 = 50
 )
 
 // Manager composes of all the different storage types supported by the agent
@@ -26,7 +27,7 @@ type Manager struct {
 
 	GcpStore   *gcp.Client
 	LocalStore *LocalStoreClient
-	IpfsStore  *pinner.PinnerNode
+	IpfsStore  *ipfsStore
 
 	ipfsSuccessCount metrics.Counter
 	ipfsFailureCount metrics.Counter
@@ -38,7 +39,7 @@ func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
 	manager.StorageConfig = conf
 
 	manager.setupGcpStore()
-	manager.setupIpfsPinner()
+	manager.setupIpfsStore()
 	manager.setupLocalFs()
 	manager.setupMetrics()
 
@@ -62,7 +63,7 @@ func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string
 	case manager.GcpStore != nil:
 		replicaURL = "https://storage.cloud.google.com/" + config.ReplicaBucketLoc + "/" + segmentName
 	case manager.IpfsStore != nil:
-		ccid, err = generateCidFor(ctx, *manager.IpfsStore, replicaSegmentAvro)
+		ccid, err = manager.IpfsStore.CalcCid(replicaSegmentAvro)
 		if err != nil {
 			log.Errorf("error generating cid for %s. Error: %s", config.BinaryFilePath+segmentName, err)
 			replicaURL = "only local: " + config.BinaryFilePath + segmentName
@@ -99,7 +100,14 @@ func (manager *Manager) Store(ctx context.Context, ccid cid.Cid, filename string
 			return fmt.Errorf("cid is Undefined")
 		}
 		var ucid cid.Cid
-		ucid, err = manager.handleObjectUploadToIPFS(ctx, ccid, filename)
+		ucid, err = manager.IpfsStore.Upload(data)
+		if err != nil {
+			manager.ipfsFailureCount.Inc(1)
+			log.Errorf("ipfs store reported error: %v", err)
+
+			return err
+		}
+		manager.ipfsSuccessCount.Inc(1)
 		log.Infof("client side cid is: %s, while uploaded is: %s", ccid.String(), ucid.String())
 	} else if manager.GcpStore != nil {
 		err = manager.writeToCloudStorage(ctx, filename, data)
@@ -131,20 +139,13 @@ func (manager *Manager) setupGcpStore() {
 	manager.GcpStore = gcpStorageClient
 }
 
-func (manager *Manager) setupIpfsPinner() {
-	if manager.StorageConfig.IpfsServiceType == "" && manager.StorageConfig.IpfsServiceToken == "" {
-		manager.IpfsStore = nil
-
-		return
-	}
-	pinnode, err := getPinnerNode(pincore.PinningService(manager.StorageConfig.IpfsServiceType), manager.StorageConfig.IpfsServiceToken)
+func (manager *Manager) setupIpfsStore() {
+	store, err := newIpfsStore(manager.StorageConfig)
 	if err != nil {
-		log.Fatalf("error creating pinner node: %v", err)
-
-		return
+		log.Fatalf("error creating ipfs store: %v", err)
 	}
 
-	manager.IpfsStore = &pinnode
+	manager.IpfsStore = store
 }
 
 func (manager *Manager) setupLocalFs() {
@@ -156,46 +157,6 @@ func (manager *Manager) setupLocalFs() {
 func (manager *Manager) setupMetrics() {
 	manager.ipfsSuccessCount = metrics.GetOrRegisterCounter("agent/storage/ipfs/success", metrics.DefaultRegistry)
 	manager.ipfsFailureCount = metrics.GetOrRegisterCounter("agent/storage/ipfs/failure", metrics.DefaultRegistry)
-}
-
-func (manager *Manager) handleObjectUploadToIPFS(ctx context.Context, ccid cid.Cid, binaryFileName string) (cid.Cid, error) {
-	// assuming that bin files are written (rather than cloud only storage)
-	// need to explore strategy to directly upload in memory byte array via pinner
-	var file *os.File
-	var err error
-	pinnode := *manager.IpfsStore
-	if pinnode.PinService().ServiceType() == pincore.Web3Storage {
-		file, err = generateCarFile(ctx, *manager.IpfsStore, ccid)
-		if err == nil {
-			_ = syscall.Unlink(file.Name()) // delete car file once it's uploaded and closed
-		}
-	} else {
-		objPath := objectFilePath(binaryFileName, manager.StorageConfig.BinaryFilePath)
-		file, err = os.Open(filepath.Clean(objPath))
-	}
-
-	if err != nil {
-		manager.ipfsFailureCount.Inc(1)
-
-		return cid.Undef, fmt.Errorf("failure in opening/generating file for upload: %w", err)
-	}
-
-	defer func() {
-		_ = file.Close()
-		_ = pinnode.UnixfsService().RemoveDag(ctx, ccid)
-	}()
-
-	fcid, err := pinnode.PinService().UploadFile(ctx, file)
-	if err != nil {
-		manager.ipfsFailureCount.Inc(1)
-
-		return cid.Undef, fmt.Errorf("failure in uploading specimen object to IPFS: %w", err)
-	}
-
-	log.Infof("File %s successfully uploaded to IPFS with pin: %s", file.Name(), fcid.String())
-	manager.ipfsSuccessCount.Inc(1)
-
-	return fcid, nil
 }
 
 func (manager *Manager) writeToCloudStorage(ctx context.Context, filename string, object []byte) error {
@@ -226,8 +187,4 @@ func validatePath(path, objectName string) error {
 	}
 
 	return nil
-}
-
-func objectFilePath(filename, binaryLocalPath string) string {
-	return filepath.Join(binaryLocalPath, filepath.Base(filename))
 }

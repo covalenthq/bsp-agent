@@ -21,7 +21,7 @@ type EthEnvConfig struct {
 
 // IpfsEnvConfig contains all config for IPFS pinning services
 type IpfsEnvConfig struct {
-	ServiceToken string `envconfig:"IPFS_SERVICE_TOKEN" default:""`
+	IpfsPinnerServer string `envconfig:"IFPS_PINNER_SERVER" default:"http://127.0.0.1:3000"`
 }
 
 // EnvConfig composes all configs into a single env config for the bsp-agent node

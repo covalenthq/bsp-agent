@@ -36,17 +36,17 @@
 # BSP Agent
 
 - [BSP Agent](#bsp-agent)
-  - [<span id="agent_intro">Introduction</span>](#introduction)
-  - [<span id="agent_resources">Resources</span>](#resources)
-  - [<span id="agent_arch">Architecture</span>](#architecture)
-  - [<span id="agent_block">Block-replica</span>](#block-replica)
-    - [<span id="state_specimen">State-specimen</span>](#state-specimen)
-  - [<span id="environment">Environment</span>](#environment)
-  - [<span id="build_run">Build & Run</span>](#build--run)
-    - [<span id="flag_definitions">Flag definitions</span>](#flag-definitions)
-  - [<span id="docker">Docker</span>](#docker)
-  - [<span id="scripts">Scripts</span>](#scripts)
-    - [<span id="inspect">Inspect</span>](#inspect)
+  - [Introduction](#introduction)
+  - [Resources](#resources)
+  - [Architecture](#architecture)
+  - [Block-replica](#block-replica)
+    - [State-specimen](#state-specimen)
+  - [Environment](#environment)
+  - [Build \& Run](#build--run)
+    - [Flag definitions](#flag-definitions)
+  - [Docker](#docker)
+  - [Scripts](#scripts)
+    - [Inspect](#inspect)
       - [extractor2.go](#extractor2go)
 
 ## <span id="agent_intro">Introduction</span>
@@ -204,7 +204,7 @@ go run ./cmd/bspagent/*.go \
   --proof-chain-address="0x8243AF52B91649547DC80814670Dd1683F360E4c" \
   --consumer-timeout=10000000  \
   --log-folder ./logs/  \
-  --ipfs-service=web3.storage
+  --ipfs-pinner-server="http://127.0.0.1:3000/""
 ```
 
 Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --proof-chain-address and run with the following.
@@ -239,7 +239,7 @@ export REDIS_PWD=your-redis-pwd
 
 `--log-folder` - specifies the location (folder) where the log files have to be placed. In case of error (like permission errors), the logs are not recorded in files.
 
-`--ipfs-service` - specifies the IPFS node as service to be used for block specimen uploads, supported options are `pinata` and `web3.storage`.
+`--ipfs-pinner-server` - specifies the http server for ipfs-pinner which interacts with ipfs to upload/download files.
 
 `--metrics` - enable metrics collection and reporting
 
