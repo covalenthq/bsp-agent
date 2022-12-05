@@ -78,7 +78,7 @@ require (
 	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/influxdata/influxdb v1.10.0
-	github.com/influxdata/influxdb-client-go/v2 v2.12.0
+	github.com/influxdata/influxdb-client-go/v2 v2.12.1
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
