@@ -123,7 +123,7 @@ func (ac *AgentConfig) getConfigFromFlags() {
 	flag.StringVar(&ac.LogFolder, "log-folder", LookupEnvOrString("LogFolder", logFolderDefault), "Location where the log files should be placed")
 
 	// storage
-	flag.StringVar(&ac.StorageConfig.IpfsPinnerServer, "ipfs-pinner-server", LookupEnvOrString("IpfsPinnerServer", ""), "IPFS pinner server url for uploading data")
+	flag.StringVar(&ac.StorageConfig.IpfsPinnerServer, "ipfs-pinner-server", LookupEnvOrString("IpfsPinnerServer", "http://127.0.0.1:3000/"), "IPFS pinner server url for uploading data")
 	flag.StringVar(&ac.StorageConfig.BinaryFilePath, "binary-file-path", LookupEnvOrString("BinaryFilePath", ""), "local path to AVRO encoded binary files that contain block-replicas")
 	flag.StringVar(&ac.StorageConfig.GcpSvcAccountAuthFile, "gcp-svc-account", LookupEnvOrString("GcpSvcAccount", ""), "local path to google cloud platform service account auth file")
 	flag.StringVar(&ac.StorageConfig.ReplicaBucketLoc, "replica-bucket", LookupEnvOrString("ReplicaBucket", ""), "google cloud platform object store target for specimen")
