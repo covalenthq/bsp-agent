@@ -5,9 +5,9 @@ WORKDIR /build
 COPY . .
 RUN go mod download
 # Build the services
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o bsp-agent ./cmd/bspagent
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o bsp-extractor ./scripts/extractor.go
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-s -w" -o bsp-extractor-2 ./scripts/replica/extractor2.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-s -w" -o bsp-agent ./cmd/bspagent
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-s -w" -o bsp-extractor ./scripts/extractor.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-s -w" -o bsp-extractor-2 ./scripts/replica/extractor2.go
 # Runtime/test -  second phase.
 FROM alpine:3.15.0
 RUN mkdir /app
