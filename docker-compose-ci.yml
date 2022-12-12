@@ -92,12 +92,13 @@ services:
       - "8008:8008"
 
   agent:
+    image: "ghcr.io/covalenthq/bsp-agent:latest"
     container_name: bsp-agent
     links:
       - "cqt-virtnet:proof-chain"
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     restart: on-failure
     depends_on:
       cqt-virtnet:
