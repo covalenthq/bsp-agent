@@ -3,6 +3,8 @@ version: '3'
 services:
   ipfs-pinner:
     image: "gcr.io/covalent-project/ipfs-pinner:latest"
+    volumes:
+      - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
     restart: on-failure
     expose:
@@ -113,7 +115,7 @@ services:
         sleep 1;
         done;
         echo proof-chain contracts deployed!;
-        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication-2#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=1  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=100000;
+        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication-2#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=1  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=100000 --ipfs-pinner-server="http://ipfs-pinner:3000/";
         exit 0;"
     environment:
       - MB_PRIVATE_KEY=${PRIVATE_KEY}
