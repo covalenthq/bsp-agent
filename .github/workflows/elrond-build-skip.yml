@@ -1,0 +1,15 @@
+name: elrond-build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  bsp-agent-elrond:
+    runs-on: ubuntu-latest
+    env:
+      BLOCKCHAIN: elrond
+    steps:
+      - run: 'echo "No build required"'
