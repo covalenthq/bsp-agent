@@ -22,6 +22,7 @@ const (
 	consumerPendingIdleTime   int64  = 30
 	consumerPendingTimeTicker int64  = 10
 	start                     string = ">"
+	segmentLength             int    = 1
 )
 
 type ethAgentNode struct {
@@ -133,63 +134,55 @@ func (node *ethAgentNode) processStream(message redis.XMessage, waitGroup *sync.
 	objectType := replica.Type()
 	objectReplica := replica.Data
 
-	segment := &node.segment
-
 	switch {
 	case err != nil:
 		log.Error("error on process event: ", err)
 	case err == nil && objectReplica.Header.Number.Uint64()%uint64(node.AgentConfig.RedisConfig.BlockDivisor) == 0:
 		// collect stream ids and block replicas
+		segment := &event.ReplicaSegmentWrapped{}
 		segment.IDBatch = append(segment.IDBatch, message.ID)
 		segment.BlockReplicaEvent = append(segment.BlockReplicaEvent, replica)
-		segmentLength := node.AgentConfig.SegmentLength()
+		// log.Info("IDBatch: ", segment.IDBatch, "  segmentLength:", segmentLength, "  blockReplicaEvent size:", len(segment.BlockReplicaEvent), "  messageId, id: ", message.ID, objectReplica.Header.Number.Uint64())
 		if len(segment.BlockReplicaEvent) == 1 {
 			segment.StartBlock = replica.Data.Header.Number.Uint64()
 		}
-		if len(segment.BlockReplicaEvent) == segmentLength {
-			segment.EndBlock = replica.Data.Header.Number.Uint64()
-			segment.Elements = uint64(segmentLength)
-			segment.SegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(segment.StartBlock) + objectType
-			// avro encode, prove and upload
+		segment.StartBlock = replica.Data.Header.Number.Uint64()
+		segment.EndBlock = replica.Data.Header.Number.Uint64()
+		segment.Elements = uint64(segmentLength)
+		segment.SegmentName = fmt.Sprint(replica.Data.NetworkId) + "-" + fmt.Sprint(segment.StartBlock) + objectType
+		// avro encode, prove and upload
 
-			_, err := node.encodeProveAndUploadReplicaSegment(ctx, segment)
-			if err != nil {
-				log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
-				panic(err)
-			}
-			// ack amd trim stream segment batch id
-			xlen, err := utils.AckTrimStreamSegment(node.RedisClient, segmentLength, node.streamKey, node.consumerGroup, segment.IDBatch)
-			if err != nil {
-				log.Error("failed to match streamIDs length to segment length config: ", err)
-			}
-			log.Info("stream ids acked and trimmed: ", segment.IDBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
-			// reset segment, name, id batch stores
-			node.segment = event.ReplicaSegmentWrapped{}
-			node.segment.SegmentName = ""
-			node.segment.IDBatch = []string{}
-
-			// record metrics
-			node.blockProofingMetric.UpdateSince(node.lastBlockTime)
-			node.lastBlockTime = time.Now()
-		}
-	default:
-		// collect block replicas and stream ids to skip
-		segment.SkipIDBatch = append(segment.SkipIDBatch, message.ID)
-		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", node.AgentConfig.RedisConfig.BlockDivisor)
-		if len(segment.BlockReplicaEvent) != 0 {
-			// we only proceed with ack'ing/trimming the skipped ids once a segment is flushed.
-			return
-		}
-		// once segment is processed, trim the skipped ids too
-		// ack amd trim stream skip batch ids
-		xlen, err := utils.AckTrimStreamSegment(node.RedisClient, len(segment.SkipIDBatch), node.streamKey, node.consumerGroup, segment.SkipIDBatch)
+		_, err := node.encodeProveAndUploadReplicaSegment(ctx, segment)
 		if err != nil {
-			log.Error("failed to match streamIDs length to segment length config: ", err)
+			log.Error("failed to avro encode, prove and upload block-result segment with err: ", err)
 			panic(err)
 		}
-		log.Info("stream ids acked and trimmed: ", segment.SkipIDBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
-		// reset skip id batch stores
-		segment.SkipIDBatch = []string{}
+		// ack amd trim stream segment batch id
+		xlen, err := utils.AckTrimStreamSegment(node.RedisClient, segmentLength, node.streamKey, node.consumerGroup, segment.IDBatch)
+		if err != nil {
+			log.Error("failed to match streamIDs length to segment length config: ", err)
+		}
+		log.Info("stream ids acked and trimmed: ", segment.IDBatch, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
+		// record metrics
+		node.blockProofingMetric.UpdateSince(node.lastBlockTime)
+		node.lastBlockTime = time.Now()
+
+		// ack the skipped ids
+		skippedIds := node.segment.SkipIDBatch
+		if len(skippedIds) != 0 {
+			node.segment.SkipIDBatch = []string{}
+			xlen, err = utils.AckTrimStreamSegment(node.RedisClient, len(skippedIds), node.streamKey, node.consumerGroup, skippedIds)
+			if err != nil {
+				log.Error("failed to match streamIDs length to segment length config: ", err)
+				panic(err)
+			}
+			log.Info("stream ids acked and trimmed: ", skippedIds, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
+		}
+
+	default:
+		// collect block replicas and stream ids to skip
+		node.segment.SkipIDBatch = append(node.segment.SkipIDBatch, message.ID)
+		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", node.AgentConfig.RedisConfig.BlockDivisor)
 	}
 }
 
