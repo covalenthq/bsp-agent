@@ -92,7 +92,7 @@ services:
       - "8008:8008"
 
   agent:
-    image: "ghcr.io/covalenthq/bsp-agent:latest"
+    image: "gcr.io/covalent-project/bsp-agent:latest"
     container_name: bsp-agent
     links:
       - "cqt-virtnet:proof-chain"
