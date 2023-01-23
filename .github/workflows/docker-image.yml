@@ -18,14 +18,6 @@ jobs:
           username: ${{ secrets.CR_USER }}
           password: ${{ secrets.CR_PAT }}
 
-      # - uses: actions/checkout@v2
-      # - uses: satackey/action-docker-layer-caching@v0.0.11
-      # - name: Build & Publish the Docker image
-      #   if: ${{ !env.ACT }}
-      #   run: |
-      #     docker build . --file Dockerfile --tag ghcr.io/covalenthq/bsp-agent:latest
-      #     docker push ghcr.io/covalenthq/bsp-agent:latest
-
       - name: Login to GCR
         uses: docker/login-action@v2
         with:
@@ -34,11 +26,6 @@ jobs:
           password: ${{ secrets.GCR_JSON_KEY }}
 
       - uses: actions/checkout@v2
-<<<<<<< HEAD
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-=======
-#       - uses: satackey/action-docker-layer-caching@v0.0.11
->>>>>>> 8a5e41d956d87a8a5bc46b487e2589763b8dcf0c
       - name: Build & Publish the Docker image
         run: |
           docker buildx create --name builder --use --platform=linux/amd64,linux/arm64  && docker buildx build --platform=linux/amd64,linux/arm64 . -t gcr.io/covalent-project/bsp-agent:latest --push
@@ -69,8 +56,4 @@ jobs:
 
       - name: Stop containers
         if: always()
-<<<<<<< HEAD
         run: docker-compose -f "docker-compose-ci.yml" down
-=======
-        run: docker-compose -f "docker-compose-ci.yml" down
->>>>>>> 8a5e41d956d87a8a5bc46b487e2589763b8dcf0c
