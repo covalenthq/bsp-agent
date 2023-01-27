@@ -11,7 +11,6 @@ import (
 type ReplicaSegmentWrapped struct {
 	ReplicationSegment
 	IDBatch     []string
-	SkipIDBatch []string
 	SegmentName string
 }
 

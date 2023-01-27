@@ -80,7 +80,6 @@ func (node *ethAgentNode) consumePendingEvents(consumerName string) {
 	for {
 		select {
 		case <-timeout:
-			// this would always timeout and exit. What's the point of this then?
 			log.Info("Process pending streams stopped at: ", time.Now().Format(time.RFC3339), " after timeout: ", timeoutDuration, " seconds")
 			os.Exit(0)
 		case <-ticker.C:
@@ -142,7 +141,6 @@ func (node *ethAgentNode) processStream(message redis.XMessage, waitGroup *sync.
 		segment := &event.ReplicaSegmentWrapped{}
 		segment.IDBatch = append(segment.IDBatch, message.ID)
 		segment.BlockReplicaEvent = append(segment.BlockReplicaEvent, replica)
-		// log.Info("IDBatch: ", segment.IDBatch, "  segmentLength:", segmentLength, "  blockReplicaEvent size:", len(segment.BlockReplicaEvent), "  messageId, id: ", message.ID, objectReplica.Header.Number.Uint64())
 		if len(segment.BlockReplicaEvent) == 1 {
 			segment.StartBlock = replica.Data.Header.Number.Uint64()
 		}
@@ -167,22 +165,15 @@ func (node *ethAgentNode) processStream(message redis.XMessage, waitGroup *sync.
 		node.blockProofingMetric.UpdateSince(node.lastBlockTime)
 		node.lastBlockTime = time.Now()
 
-		// ack the skipped ids
-		skippedIds := node.segment.SkipIDBatch
-		if len(skippedIds) != 0 {
-			node.segment.SkipIDBatch = []string{}
-			xlen, err = utils.AckTrimStreamSegment(node.RedisClient, len(skippedIds), node.streamKey, node.consumerGroup, skippedIds)
-			if err != nil {
-				log.Error("failed to match streamIDs length to segment length config: ", err)
-				panic(err)
-			}
-			log.Info("stream ids acked and trimmed: ", skippedIds, ", for stream key: ", node.streamKey, ", with current length: ", xlen)
-		}
-
 	default:
 		// collect block replicas and stream ids to skip
-		node.segment.SkipIDBatch = append(node.segment.SkipIDBatch, message.ID)
+		skippedIds := []string{message.ID}
 		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", node.AgentConfig.RedisConfig.BlockDivisor)
+		_, err := utils.AckTrimStreamSegment(node.RedisClient, len(skippedIds), node.streamKey, node.consumerGroup, skippedIds)
+		if err != nil {
+			log.Error("failed to match streamIDs length to segment length config: ", err)
+			panic(err)
+		}
 	}
 }
 
