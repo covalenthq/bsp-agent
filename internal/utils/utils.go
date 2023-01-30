@@ -1,4 +1,5 @@
 // Package utils contains all the utilites used across the repo
+//
 //nolint:wrapcheck
 package utils
 
@@ -35,9 +36,9 @@ const (
 	// BspAgentVersionMajor is Major version component of the current release
 	BspAgentVersionMajor = 1
 	// BspAgentVersionMinor is Minor version component of the current release
-	BspAgentVersionMinor = 2
+	BspAgentVersionMinor = 3
 	// BspAgentVersionPatch is Patch version component of the current release
-	BspAgentVersionPatch = 8
+	BspAgentVersionPatch = 1
 )
 
 // BspAgentVersion holds the textual version string.
@@ -231,6 +232,7 @@ func Writable(path string) bool {
 }
 
 // UnwrapAvroUnion "unwraps" the "to" field from the replica map
+//
 //nolint:varnamelen
 func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	vs := data
@@ -286,6 +288,7 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 }
 
 // MapToAvroUnion converts the "to" field in the replica map to an Avro Union type allowing <nil>
+//
 //nolint:varnamelen
 func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	vs := data
