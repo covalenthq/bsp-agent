@@ -21,7 +21,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/ubiq/go-ubiq v3.0.1+incompatible
 	golang.org/x/sys v0.3.0
-	google.golang.org/api v0.108.0
+	google.golang.org/api v0.109.0
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 )
 
