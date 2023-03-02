@@ -2,10 +2,12 @@ name: docker-image
 
 on:
   push:
-    branches: [main]
+    branches:
+    - "main"
   pull_request:
-    branches: [main]
-
+    branches: 
+    - "main"
+    - "develop"
 jobs:
   bsp-agent-eth:
     runs-on: ubuntu-latest
