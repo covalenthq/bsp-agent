@@ -44,10 +44,11 @@ func TestGolangBindings(t *testing.T) {
 	fmt.Println(mapData["x"])
 }
 
-func TestAnother(t *testing.T) {
+func TestAvroConversion(t *testing.T) {
 	bigIntV, _ := new(big.Int).SetString("21810676825935641000", 10)
 	replicaCodec := setupReplicaCodec()
 	from := common.StringToAddress("0x21d3b08e73ba157cf46832f2b81644aeea4b4aa4")
+	whash := common.BigToHash((&big.Int{}).SetInt64(3423423))
 	seg := event.ReplicationSegment{
 		BlockReplicaEvent: []*event.BlockReplicaEvent{
 			{
@@ -58,10 +59,11 @@ func TestAnother(t *testing.T) {
 					Hash:            common.Hash{},
 					TotalDifficulty: new(types.BigInt).SetUint64(211),
 					Header: &types.Header{
-						Difficulty: new(types.BigInt).SetUint64(211),
-						Number:     new(types.BigInt).SetUint64(211),
-						BaseFee:    new(types.BigInt).SetUint64(211),
-						Extra:      []byte{},
+						Difficulty:      new(types.BigInt).SetUint64(211),
+						Number:          new(types.BigInt).SetUint64(211),
+						BaseFee:         new(types.BigInt).SetUint64(211),
+						Extra:           []byte{},
+						WithdrawalsHash: &whash,
 					},
 					Transactions: []*types.Transaction{
 						{
