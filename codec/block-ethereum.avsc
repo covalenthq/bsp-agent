@@ -508,7 +508,7 @@
       {
          "name": "codecVersion",
          "type": "double",
-         "default": 0.31
+         "default": 0.32
       }
    ]
 }
