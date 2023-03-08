@@ -39,22 +39,23 @@ type BlockNonce [8]byte
 type Bloom [BloomByteLength]byte
 
 type Header struct {
-	ParentHash  common.Hash    `json:"parentHash"`
-	UncleHash   common.Hash    `json:"sha3Uncles"`
-	Coinbase    common.Address `json:"miner"`
-	Root        common.Hash    `json:"stateRoot"`
-	TxHash      common.Hash    `json:"transactionsRoot"`
-	ReceiptHash common.Hash    `json:"receiptsRoot"`
-	Bloom       Bloom          `json:"logsBloom"`
-	Difficulty  *BigInt        `json:"difficulty"`
-	Number      *BigInt        `json:"number"`
-	GasLimit    uint64         `json:"gasLimit"`
-	GasUsed     uint64         `json:"gasUsed"`
-	Time        uint64         `json:"timestamp"`
-	Extra       []byte         `json:"extraData"`
-	MixDigest   common.Hash    `json:"mixHash"`
-	Nonce       BlockNonce     `json:"nonce"`
-	BaseFee     *BigInt        `json:"baseFeePerGas"`
+	ParentHash      common.Hash    `json:"parentHash"`
+	UncleHash       common.Hash    `json:"sha3Uncles"`
+	Coinbase        common.Address `json:"miner"`
+	Root            common.Hash    `json:"stateRoot"`
+	TxHash          common.Hash    `json:"transactionsRoot"`
+	ReceiptHash     common.Hash    `json:"receiptsRoot"`
+	Bloom           Bloom          `json:"logsBloom"`
+	Difficulty      *BigInt        `json:"difficulty"`
+	Number          *BigInt        `json:"number"`
+	GasLimit        uint64         `json:"gasLimit"`
+	GasUsed         uint64         `json:"gasUsed"`
+	Time            uint64         `json:"timestamp"`
+	Extra           []byte         `json:"extraData"`
+	MixDigest       common.Hash    `json:"mixHash"`
+	Nonce           BlockNonce     `json:"nonce"`
+	BaseFee         *BigInt        `json:"baseFeePerGas"`
+	WithdrawalsHash *common.Hash   `json:"withdrawalsRoot" rlp:"nil,optional"`
 }
 
 type Transaction struct {

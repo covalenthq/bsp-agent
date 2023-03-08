@@ -128,6 +128,14 @@
                                           "logicalType":"decimal",
                                           "precision":1000
                                        }
+                                    },
+                                    {
+                                       "name":"withdrawalsRoot",
+                                       "type":[
+                                          "null",
+                                          "string"
+                                       ],
+                                       "default":"null"
                                     }
                                  ]
                               }
@@ -500,7 +508,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.31
+         "default":0.32
       }
    ]
 }
