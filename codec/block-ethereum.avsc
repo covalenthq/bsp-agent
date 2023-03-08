@@ -1,174 +1,174 @@
 {
-   "type": "record",
-   "namespace": "com.covalenthq.brp.avro",
-   "name": "ReplicationSegment",
-   "fields": [
+   "type":"record",
+   "namespace":"com.covalenthq.brp.avro",
+   "name":"ReplicationSegment",
+   "fields":[
       {
-         "name": "replicaEvent",
-         "type": {
-            "type": "array",
-            "items": {
-               "name": "replicaEvent",
-               "type": "record",
-               "fields": [
+         "name":"replicaEvent",
+         "type":{
+            "type":"array",
+            "items":{
+               "name":"replicaEvent",
+               "type":"record",
+               "fields":[
                   {
-                     "name": "hash",
-                     "type": "string"
+                     "name":"hash",
+                     "type":"string"
                   },
                   {
-                     "name": "data",
-                     "type": {
-                        "name": "data",
-                        "type": "record",
-                        "fields": [
+                     "name":"data",
+                     "type":{
+                        "name":"data",
+                        "type":"record",
+                        "fields":[
                            {
-                              "name": "Type",
-                              "type": "string"
+                              "name":"Type",
+                              "type":"string"
                            },
                            {
-                              "name": "NetworkId",
-                              "type": "int"
+                              "name":"NetworkId",
+                              "type":"int"
                            },
                            {
-                              "name": "Hash",
-                              "type": "string"
+                              "name":"Hash",
+                              "type":"string"
                            },
                            {
-                              "name": "TotalDifficulty",
-                              "type": {
-                                 "type": "bytes",
-                                 "logicalType": "decimal",
-                                 "precision": 1000
+                              "name":"TotalDifficulty",
+                              "type":{
+                                 "type":"bytes",
+                                 "logicalType":"decimal",
+                                 "precision":1000
                               }
                            },
                            {
-                              "name": "Header",
-                              "type": {
-                                 "name": "Header",
-                                 "type": "record",
-                                 "fields": [
+                              "name":"Header",
+                              "type":{
+                                 "name":"Header",
+                                 "type":"record",
+                                 "fields":[
                                     {
-                                       "name": "parentHash",
-                                       "type": "string"
+                                       "name":"parentHash",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "sha3Uncles",
-                                       "type": "string"
+                                       "name":"sha3Uncles",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "miner",
-                                       "type": "string"
+                                       "name":"miner",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "stateRoot",
-                                       "type": "string"
+                                       "name":"stateRoot",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "transactionsRoot",
-                                       "type": "string"
+                                       "name":"transactionsRoot",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "receiptsRoot",
-                                       "type": "string"
+                                       "name":"receiptsRoot",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "logsBloom",
-                                       "type": {
-                                          "type": "array",
-                                          "items": "int"
+                                       "name":"logsBloom",
+                                       "type":{
+                                          "type":"array",
+                                          "items":"int"
                                        }
                                     },
                                     {
-                                       "name": "difficulty",
-                                       "type": {
-                                          "type": "bytes",
-                                          "logicalType": "decimal",
-                                          "precision": 1000
+                                       "name":"difficulty",
+                                       "type":{
+                                          "type":"bytes",
+                                          "logicalType":"decimal",
+                                          "precision":1000
                                        }
                                     },
                                     {
-                                       "name": "number",
-                                       "type": {
-                                          "type": "bytes",
-                                          "logicalType": "decimal",
-                                          "precision": 1000
+                                       "name":"number",
+                                       "type":{
+                                          "type":"bytes",
+                                          "logicalType":"decimal",
+                                          "precision":1000
                                        }
                                     },
                                     {
-                                       "name": "gasLimit",
-                                       "type": "int"
+                                       "name":"gasLimit",
+                                       "type":"int"
                                     },
                                     {
-                                       "name": "gasUsed",
-                                       "type": "int"
+                                       "name":"gasUsed",
+                                       "type":"int"
                                     },
                                     {
-                                       "name": "timestamp",
-                                       "type": "int"
+                                       "name":"timestamp",
+                                       "type":"int"
                                     },
                                     {
-                                       "name": "extraData",
-                                       "type": "string"
+                                       "name":"extraData",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "mixHash",
-                                       "type": "string"
+                                       "name":"mixHash",
+                                       "type":"string"
                                     },
                                     {
-                                       "name": "nonce",
-                                       "type": {
-                                          "type": "array",
-                                          "items": "long"
+                                       "name":"nonce",
+                                       "type":{
+                                          "type":"array",
+                                          "items":"long"
                                        }
                                     },
                                     {
-                                       "name": "baseFeePerGas",
-                                       "type": {
-                                          "type": "bytes",
-                                          "logicalType": "decimal",
-                                          "precision": 1000
+                                       "name":"baseFeePerGas",
+                                       "type":{
+                                          "type":"bytes",
+                                          "logicalType":"decimal",
+                                          "precision":1000
                                        }
                                     },
                                     {
-                                       "name": "withdrawalsRoot",
-                                       "type": [
+                                       "name":"withdrawalsRoot",
+                                       "type":[
                                           "null",
                                           "string"
                                        ],
-                                       "default": "null"
+                                       "default":"null"
                                     }
                                  ]
                               }
                            },
                            {
-                              "name": "Transactions",
-                              "type": {
-                                 "type": "array",
-                                 "items": {
-                                    "name": "Transactions_record",
-                                    "type": "record",
-                                    "fields": [
+                              "name":"Transactions",
+                              "type":{
+                                 "type":"array",
+                                 "items":{
+                                    "name":"Transactions_record",
+                                    "type":"record",
+                                    "fields":[
                                        {
-                                          "name": "type",
-                                          "type": "int"
+                                          "name":"type",
+                                          "type":"int"
                                        },
                                        {
-                                          "name": "accessList",
-                                          "type": {
-                                             "type": "array",
-                                             "items": {
-                                                "name": "accessList_record",
-                                                "type": "record",
-                                                "fields": [
+                                          "name":"accessList",
+                                          "type":{
+                                             "type":"array",
+                                             "items":{
+                                                "name":"accessList_record",
+                                                "type":"record",
+                                                "fields":[
                                                    {
-                                                      "name": "address",
-                                                      "type": "string"
+                                                      "name":"address",
+                                                      "type":"string"
                                                    },
                                                    {
-                                                      "name": "storageKeys",
-                                                      "type": {
-                                                         "type": "array",
-                                                         "items": "string"
+                                                      "name":"storageKeys",
+                                                      "type":{
+                                                         "type":"array",
+                                                         "items":"string"
                                                       }
                                                    }
                                                 ]
@@ -176,308 +176,308 @@
                                           }
                                        },
                                        {
-                                          "name": "chainId",
-                                          "type": {
-                                             "type": "bytes",
-                                             "logicalType": "decimal",
-                                             "precision": 1000
+                                          "name":"chainId",
+                                          "type":{
+                                             "type":"bytes",
+                                             "logicalType":"decimal",
+                                             "precision":1000
                                           }
                                        },
                                        {
-                                          "name": "nonce",
-                                          "type": "long"
+                                          "name":"nonce",
+                                          "type":"long"
                                        },
                                        {
-                                          "name": "gasPrice",
-                                          "type": {
-                                             "type": "bytes",
-                                             "logicalType": "decimal",
-                                             "precision": 1000
+                                          "name":"gasPrice",
+                                          "type":{
+                                             "type":"bytes",
+                                             "logicalType":"decimal",
+                                             "precision":1000
                                           }
                                        },
                                        {
-                                          "name": "gasTipCap",
-                                          "type": {
-                                             "type": "bytes",
-                                             "logicalType": "decimal",
-                                             "precision": 1000
+                                          "name":"gasTipCap",
+                                          "type":{
+                                             "type":"bytes",
+                                             "logicalType":"decimal",
+                                             "precision":1000
                                           }
                                        },
                                        {
-                                          "name": "gasFeeCap",
-                                          "type": {
-                                             "type": "bytes",
-                                             "logicalType": "decimal",
-                                             "precision": 1000
+                                          "name":"gasFeeCap",
+                                          "type":{
+                                             "type":"bytes",
+                                             "logicalType":"decimal",
+                                             "precision":1000
                                           }
                                        },
                                        {
-                                          "name": "gas",
-                                          "type": "long"
+                                          "name":"gas",
+                                          "type":"long"
                                        },
                                        {
-                                          "name": "from",
-                                          "type": [
+                                          "name":"from",
+                                          "type":[
                                              "null",
                                              "string"
                                           ],
-                                          "default": "null"
+                                          "default":"null"
                                        },
                                        {
-                                          "name": "to",
-                                          "type": [
+                                          "name":"to",
+                                          "type":[
                                              "null",
                                              "string"
                                           ],
-                                          "default": "null"
+                                          "default":"null"
                                        },
                                        {
-                                          "name": "v",
-                                          "type": [
+                                          "name":"v",
+                                          "type":[
                                              "null",
                                              {
-                                                "type": "bytes",
-                                                "logicalType": "decimal",
-                                                "precision": 1000
+                                                "type":"bytes",
+                                                "logicalType":"decimal",
+                                                "precision":1000
                                              }
                                           ],
-                                          "default": "null"
+                                          "default":"null"
                                        },
                                        {
-                                          "name": "r",
-                                          "type": [
+                                          "name":"r",
+                                          "type":[
                                              "null",
                                              {
-                                                "type": "bytes",
-                                                "logicalType": "decimal",
-                                                "precision": 1000
+                                                "type":"bytes",
+                                                "logicalType":"decimal",
+                                                "precision":1000
                                              }
                                           ],
-                                          "default": "null"
+                                          "default":"null"
                                        },
                                        {
-                                          "name": "s",
-                                          "type": [
+                                          "name":"s",
+                                          "type":[
                                              "null",
                                              {
-                                                "type": "bytes",
-                                                "logicalType": "decimal",
-                                                "precision": 1000
+                                                "type":"bytes",
+                                                "logicalType":"decimal",
+                                                "precision":1000
                                              }
                                           ],
-                                          "default": "null"
+                                          "default":"null"
                                        },
                                        {
-                                          "name": "value",
-                                          "type": {
-                                             "type": "bytes",
-                                             "logicalType": "decimal",
-                                             "precision": 1000
+                                          "name":"value",
+                                          "type":{
+                                             "type":"bytes",
+                                             "logicalType":"decimal",
+                                             "precision":1000
                                           }
                                        },
                                        {
-                                          "name": "input",
-                                          "type": "string"
+                                          "name":"input",
+                                          "type":"string"
                                        }
                                     ]
                                  }
                               }
                            },
                            {
-                              "name": "uncles",
-                              "type": {
-                                 "type": "array",
-                                 "items": "Header"
+                              "name":"uncles",
+                              "type":{
+                                 "type":"array",
+                                 "items":"Header"
                               },
                               "default": []
                            },
                            {
-                              "name": "Receipts",
-                              "type": {
-                                 "type": "array",
-                                 "items": {
-                                    "name": "Receipts_record",
-                                    "type": "record",
-                                    "fields": [
+                              "name":"Receipts",
+                              "type":{
+                                 "type":"array",
+                                 "items":{
+                                    "name":"Receipts_record",
+                                    "type":"record",
+                                    "fields":[
                                        {
-                                          "name": "PostStateOrStatus",
-                                          "type": "string"
+                                          "name":"PostStateOrStatus",
+                                          "type":"string"
                                        },
                                        {
-                                          "name": "CumulativeGasUsed",
-                                          "type": "int"
+                                          "name":"CumulativeGasUsed",
+                                          "type":"int"
                                        },
                                        {
-                                          "name": "TxHash",
-                                          "type": "string"
+                                          "name":"TxHash",
+                                          "type":"string"
                                        },
                                        {
-                                          "name": "ContractAddress",
-                                          "type": "string"
+                                          "name":"ContractAddress",
+                                          "type":"string"
                                        },
                                        {
-                                          "name": "Logs",
-                                          "type": {
-                                             "type": "array",
-                                             "items": {
-                                                "name": "Logs_record",
-                                                "type": "record",
-                                                "fields": [
+                                          "name":"Logs",
+                                          "type":{
+                                             "type":"array",
+                                             "items":{
+                                                "name":"Logs_record",
+                                                "type":"record",
+                                                "fields":[
                                                    {
-                                                      "name": "address",
-                                                      "type": "string"
+                                                      "name":"address",
+                                                      "type":"string"
                                                    },
                                                    {
-                                                      "name": "topics",
-                                                      "type": {
-                                                         "type": "array",
-                                                         "items": "string"
+                                                      "name":"topics",
+                                                      "type":{
+                                                         "type":"array",
+                                                         "items":"string"
                                                       }
                                                    },
                                                    {
-                                                      "name": "data",
-                                                      "type": "string"
+                                                      "name":"data",
+                                                      "type":"string"
                                                    },
                                                    {
-                                                      "name": "blockNumber",
-                                                      "type": "long"
+                                                      "name":"blockNumber",
+                                                      "type":"long"
                                                    },
                                                    {
-                                                      "name": "transactionHash",
-                                                      "type": "string"
+                                                      "name":"transactionHash",
+                                                      "type":"string"
                                                    },
                                                    {
-                                                      "name": "transactionIndex",
-                                                      "type": "int"
+                                                      "name":"transactionIndex",
+                                                      "type":"int"
                                                    },
                                                    {
-                                                      "name": "blockHash",
-                                                      "type": "string"
+                                                      "name":"blockHash",
+                                                      "type":"string"
                                                    },
                                                    {
-                                                      "name": "logIndex",
-                                                      "type": "int"
+                                                      "name":"logIndex",
+                                                      "type":"int"
                                                    },
                                                    {
-                                                      "name": "removed",
-                                                      "type": "boolean"
+                                                      "name":"removed",
+                                                      "type":"boolean"
                                                    }
                                                 ]
                                              }
                                           }
                                        },
                                        {
-                                          "name": "GasUsed",
-                                          "type": "int"
+                                          "name":"GasUsed",
+                                          "type":"int"
                                        }
                                     ]
                                  }
                               }
                            },
                            {
-                              "name": "Senders",
-                              "type": {
-                                 "type": "array",
-                                 "items": "string"
+                              "name":"Senders",
+                              "type":{
+                                 "type":"array",
+                                 "items":"string"
                               }
                            },
                            {
-                              "name": "State",
-                              "type": {
-                                 "name": "State",
-                                 "type": "record",
-                                 "fields": [
+                              "name":"State",
+                              "type":{
+                                 "name":"State",
+                                 "type":"record",
+                                 "fields":[
                                     {
-                                       "name": "AccountRead",
-                                       "type": {
-                                          "type": "array",
-                                          "items": {
-                                             "name": "AccountRead_record",
-                                             "type": "record",
-                                             "fields": [
+                                       "name":"AccountRead",
+                                       "type":{
+                                          "type":"array",
+                                          "items":{
+                                             "name":"AccountRead_record",
+                                             "type":"record",
+                                             "fields":[
                                                 {
-                                                   "name": "Address",
-                                                   "type": "string"
+                                                   "name":"Address",
+                                                   "type":"string"
                                                 },
                                                 {
-                                                   "name": "Nonce",
-                                                   "type": "long"
+                                                   "name":"Nonce",
+                                                   "type":"long"
                                                 },
                                                 {
-                                                   "name": "Balance",
-                                                   "type": {
-                                                      "type": "bytes",
-                                                      "logicalType": "decimal",
-                                                      "precision": 1000
+                                                   "name":"Balance",
+                                                   "type":{
+                                                      "type":"bytes",
+                                                      "logicalType":"decimal",
+                                                      "precision":1000
                                                    }
                                                 },
                                                 {
-                                                   "name": "CodeHash",
-                                                   "type": "string"
+                                                   "name":"CodeHash",
+                                                   "type":"string"
                                                 }
                                              ]
                                           }
                                        }
                                     },
                                     {
-                                       "name": "StorageRead",
-                                       "type": {
-                                          "type": "array",
-                                          "items": {
-                                             "name": "StorageRead_record",
-                                             "type": "record",
-                                             "fields": [
+                                       "name":"StorageRead",
+                                       "type":{
+                                          "type":"array",
+                                          "items":{
+                                             "name":"StorageRead_record",
+                                             "type":"record",
+                                             "fields":[
                                                 {
-                                                   "name": "Account",
-                                                   "type": "string"
+                                                   "name":"Account",
+                                                   "type":"string"
                                                 },
                                                 {
-                                                   "name": "SlotKey",
-                                                   "type": "string"
+                                                   "name":"SlotKey",
+                                                   "type":"string"
                                                 },
                                                 {
-                                                   "name": "Value",
-                                                   "type": "string"
+                                                   "name":"Value",
+                                                   "type":"string"
                                                 }
                                              ]
                                           }
                                        }
                                     },
                                     {
-                                       "name": "CodeRead",
-                                       "type": {
-                                          "type": "array",
-                                          "items": {
-                                             "name": "CodeRead_record",
-                                             "type": "record",
-                                             "fields": [
+                                       "name":"CodeRead",
+                                       "type":{
+                                          "type":"array",
+                                          "items":{
+                                             "name":"CodeRead_record",
+                                             "type":"record",
+                                             "fields":[
                                                 {
-                                                   "name": "Hash",
-                                                   "type": "string"
+                                                   "name":"Hash",
+                                                   "type":"string"
                                                 },
                                                 {
-                                                   "name": "Code",
-                                                   "type": "string"
+                                                   "name":"Code",
+                                                   "type":"string"
                                                 }
                                              ]
                                           }
                                        }
                                     },
                                     {
-                                       "name": "BlockhashRead",
-                                       "type": {
-                                          "type": "array",
-                                          "items": {
-                                             "name": "BlockhashRead_record",
-                                             "type": "record",
-                                             "fields": [
+                                       "name":"BlockhashRead",
+                                       "type":{
+                                          "type":"array",
+                                          "items":{
+                                             "name":"BlockhashRead_record",
+                                             "type":"record",
+                                             "fields":[
                                                 {
-                                                   "name": "BlockNumber",
-                                                   "type": "long"
+                                                   "name":"BlockNumber",
+                                                   "type":"long"
                                                 },
                                                 {
-                                                   "name": "BlockHash",
-                                                   "type": "string"
+                                                   "name":"BlockHash",
+                                                   "type":"string"
                                                 }
                                              ]
                                           }
@@ -494,21 +494,21 @@
          }
       },
       {
-         "name": "startBlock",
-         "type": "long"
+         "name":"startBlock",
+         "type":"long"
       },
       {
-         "name": "endBlock",
-         "type": "long"
+         "name":"endBlock",
+         "type":"long"
       },
       {
-         "name": "elements",
-         "type": "long"
+         "name":"elements",
+         "type":"long"
       },
       {
-         "name": "codecVersion",
-         "type": "double",
-         "default": 0.32
+         "name":"codecVersion",
+         "type":"double",
+         "default":0.32
       }
    ]
 }
