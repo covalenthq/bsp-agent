@@ -70,7 +70,7 @@ func generateTestForOneBlock() {
 
 		replicaSegment := decodeReplicaSegment(fileBuff, codec, *formatter)
 		var replicaSegmentJSON []byte
-		if replicaSegmentJSON, err = json.MarshalIndent(replicaSegment.BlockReplicaEvent[0].Data, "", " "); err != nil {
+		if replicaSegmentJSON, err = json.MarshalIndent(replicaSegment, "", " "); err != nil {
 			panic(err)
 		}
 

@@ -328,6 +328,19 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 									vst[k5] = vsm
 								}
 								vsd[k4] = vst
+							} else if k4 == "Header" {
+								m4 := m3[k4].(map[string]interface{})
+								vst := m4
+								for k5, v5 := range m4 {
+									if k5 == "withdrawalsRoot" {
+										if v5 == nil {
+											vst[k5] = goavro.Union("null", nil)
+										} else {
+											vst[k5] = goavro.Union("string", v5)
+										}
+									}
+								}
+								vsd[k4] = vst
 							}
 						}
 						vso[k3] = vsd
