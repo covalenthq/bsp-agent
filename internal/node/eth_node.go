@@ -216,6 +216,8 @@ func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context
 		return pTxHash, nil
 	case strings.Contains(pTxHash, "invalid block"):
 		return pTxHash, nil
+	case strings.Contains(pTxHash, "already known"):
+		return pTxHash, nil
 	case pTxHash == "":
 		return "", fmt.Errorf("failed to prove & upload block-replica segment event: %v", currentSegment.SegmentName)
 	default:

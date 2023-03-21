@@ -97,6 +97,13 @@ func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethCl
 
 			return
 		}
+		if strings.Contains(err.Error(), "already known") {
+			log.Error("tx already known, skipping: ", err)
+			txHash <- "already known"
+
+			return
+		}
+
 		log.Error("error sending tx to deployed contract: ", err)
 		txHash <- ""
 
