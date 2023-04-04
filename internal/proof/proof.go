@@ -66,6 +66,16 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
+	// set max priority fee per gas (to create dynamic tx)
+	// dynamic tx are supposedly more likely to be included in the block
+	maxPriorityFeePerGas, err := interactor.ethClient.SuggestGasTipCap(ctx)
+	if err != nil {
+		log.Error("error in getting max priority fee per gas: ", err.Error())
+		maxPriorityFeePerGas = nil
+	}
+	log.Info("max priority fee per gas: ", maxPriorityFeePerGas)
+	opts.GasTipCap = maxPriorityFeePerGas
+
 	executeWithRetry(ctx, interactor.proofChainContract, interactor.ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
 }
 
