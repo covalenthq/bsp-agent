@@ -21,6 +21,7 @@ type BlockReplica struct {
 	Receipts        []*Receipt
 	Senders         []common.Address
 	State           *StateSpecimen `json:"State"`
+	Withdrawals     []*Withdrawal
 }
 type StateSpecimen struct {
 	AccountRead   []*AccountRead
@@ -32,6 +33,13 @@ type StateSpecimen struct {
 type BlockhashRead struct {
 	BlockNumber uint64
 	BlockHash   common.Hash
+}
+
+type Withdrawal struct {
+	Index     uint64         `json:"index"`          // monotonically increasing identifier issued by consensus layer
+	Validator uint64         `json:"validatorIndex"` // index of validator associated with withdrawal
+	Address   common.Address `json:"address"`        // target address for withdrawn ether
+	Amount    uint64         `json:"amount"`         // value of withdrawal in Gwei
 }
 
 type BlockNonce [8]byte
