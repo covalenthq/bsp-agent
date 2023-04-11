@@ -485,6 +485,34 @@
                                     }
                                  ]
                               }
+                           },
+                           {
+                              "name":"Withdrawals",
+                              "type":{
+                                 "type":"array",
+                                 "items":{
+                                    "name":"Withdrawals_record",
+                                    "type":"record",
+                                    "fields":[
+                                       {
+                                          "name":"index",
+                                          "type":"long"
+                                       },
+                                       {
+                                          "name":"validatorIndex",
+                                          "type":"long"
+                                       },
+                                       {
+                                          "name":"address",
+                                          "type":"string"
+                                       },
+                                       {
+                                          "name":"amount",
+                                          "type":"long"
+                                       }
+                                    ]
+                                 }
+                              }
                            }
                         ]
                      }
@@ -508,7 +536,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.32
+         "default":0.33
       }
    ]
 }
