@@ -57,7 +57,6 @@ func (store *ipfsStore) fetchCid(contents []byte, withUpload bool) (cid.Cid, err
 		return cid.Undef, err
 	}
 
-	//nolint:noctx
 	req, err := http.NewRequest(http.MethodPost, targetURL.String(), buffer)
 	if err != nil {
 		return cid.Undef, fmt.Errorf("error creating request: %w", err)
