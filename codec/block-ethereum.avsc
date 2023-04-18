@@ -540,7 +540,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.33
+         "default":0.34
       }
    ]
 }
