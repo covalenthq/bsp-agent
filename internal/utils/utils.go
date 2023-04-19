@@ -304,7 +304,8 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 						m3 := m2[k3].(map[string]interface{})
 						vsd := m3
 						for k4 := range m3 {
-							if k4 == "Transactions" {
+							switch k4 {
+							case "Transactions":
 								m4 := m3[k4].([]interface{})
 								vst := m4
 								for k5 := range m4 {
@@ -328,7 +329,8 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 									vst[k5] = vsm
 								}
 								vsd[k4] = vst
-							} else if k4 == "Header" {
+
+							case "Header":
 								m4 := m3[k4].(map[string]interface{})
 								vst := m4
 								for k5, v5 := range m4 {
@@ -341,7 +343,8 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 									}
 								}
 								vsd[k4] = vst
-							} else if k4 == "Withdrawals" {
+
+							case "Withdrawals":
 								if m3[k4] == nil {
 									vsd[k4] = goavro.Union("null", nil)
 								} else {
