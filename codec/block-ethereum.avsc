@@ -285,11 +285,14 @@
                            },
                            {
                               "name":"uncles",
-                              "type":{
-                                 "type":"array",
-                                 "items":"Header"
-                              },
-                              "default":[]
+                              "type":[
+                                 "null",
+                                 {
+                                    "type":"array",
+                                    "items":"Header"
+                                 }
+                              ],
+                              "default":"null"
                            },
                            {
                               "name":"Receipts",
