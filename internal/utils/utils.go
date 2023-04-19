@@ -341,7 +341,17 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 									}
 								}
 								vsd[k4] = vst
+							} else if k4 == "Withdrawals" {
+								if m3[k4] == nil {
+									vsd[k4] = goavro.Union("null", nil)
+								} else {
+									m4 := m3[k4].([]interface{})
+									vsd[k4] = goavro.Union("array", m4)
+								}
 							}
+						}
+						if vsd["Withdrawals"] == nil {
+							vsd["Withdrawals"] = goavro.Union("null", nil)
 						}
 						vso[k3] = vsd
 					}

@@ -86,6 +86,14 @@ func TestAvroConversion(t *testing.T) {
 						CodeRead:      []*types.CodeRead{},
 						BlockhashRead: []*types.BlockhashRead{},
 					},
+					Withdrawals: []*types.Withdrawal{
+						{
+							Index:     1,
+							Validator: 33,
+							Address:   from,
+							Amount:    123455,
+						},
+					},
 				},
 			},
 		},
