@@ -543,7 +543,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.34
+         "default":0.35
       }
    ]
 }
