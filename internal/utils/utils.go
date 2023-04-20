@@ -344,7 +344,7 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 								}
 								vsd[k4] = vst
 
-							case "Withdrawals":
+							case "Withdrawals", "Uncles":
 								if m3[k4] == nil {
 									vsd[k4] = goavro.Union("null", nil)
 								} else {
@@ -355,6 +355,9 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 						}
 						if vsd["Withdrawals"] == nil {
 							vsd["Withdrawals"] = goavro.Union("null", nil)
+						}
+						if vsd["Uncles"] == nil {
+							vsd["Uncles"] = goavro.Union("null", nil)
 						}
 						vso[k3] = vsd
 					}
