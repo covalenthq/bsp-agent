@@ -19,6 +19,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
+	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/elodina/go-avro"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
@@ -248,7 +249,8 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 						m3 := m2[k3].(map[string]interface{})
 						vsd := m3
 						for k4 := range m3 {
-							if k4 == "Transactions" {
+							switch k4 {
+							case "Transactions":
 								m4 := m3[k4].([]interface{})
 								vst := m4
 								for k5 := range m4 {
@@ -273,6 +275,27 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 									vst[k5] = vsm
 								}
 								vsd[k4] = vst
+
+							case "Header":
+								m4 := m3[k4].(map[string]interface{})
+								vst := m4
+								for k5, v5 := range m4 {
+									if k5 == "withdrawalsRoot" && v5 != nil{
+										m5 := v5.(map[string]interface{})
+										if v6, ok := m5["string"]; ok {
+											vst[k5] = v6
+										}
+									}
+								}
+								vsd[k4] = vst
+
+							case "Withdrawals", "Uncles":
+								m4 := m3[k4].(map[string]interface{})
+								if m3[k4] == nil {
+									vsd[k4] = []*types.Withdrawal{}
+								} else {
+									vsd[k4] = m4["array"]
+								}
 							}
 						}
 						vso[k3] = vsd
