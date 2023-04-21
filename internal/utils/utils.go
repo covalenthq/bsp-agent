@@ -280,7 +280,7 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 								m4 := m3[k4].(map[string]interface{})
 								vst := m4
 								for k5, v5 := range m4 {
-									if k5 == "withdrawalsRoot" && v5 != nil{
+									if k5 == "withdrawalsRoot" && v5 != nil {
 										m5 := v5.(map[string]interface{})
 										if v6, ok := m5["string"]; ok {
 											vst[k5] = v6
