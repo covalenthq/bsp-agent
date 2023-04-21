@@ -19,7 +19,6 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
-	"github.com/covalenthq/bsp-agent/internal/types"
 	"github.com/elodina/go-avro"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
@@ -291,8 +290,10 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 
 							case "Withdrawals", "Uncles":
 								m4 := m3[k4].(map[string]interface{})
+								fmt.Println(k4)
+								fmt.Println("m4", m4)
 								if m3[k4] == nil {
-									vsd[k4] = []*types.Withdrawal{}
+									vsd[k4] = nil
 								} else {
 									vsd[k4] = m4["array"]
 								}
