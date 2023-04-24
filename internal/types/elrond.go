@@ -1,4 +1,5 @@
 // Package types contains all the types used across the repo
+//
 //nolint:stylecheck,revive
 package types
 

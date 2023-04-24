@@ -206,6 +206,7 @@ func getComponents(segment *event.ReplicationSegment) []*blockPair {
 			Receipts:        []*types.Receipt{},
 			Senders:         replica.Data.Senders,
 			State:           replica.Data.State,
+			Withdrawals:     replica.Data.Withdrawals,
 		}
 
 		result := types.BlockReplica{
@@ -219,6 +220,7 @@ func getComponents(segment *event.ReplicationSegment) []*blockPair {
 			Receipts:        replica.Data.Receipts,
 			Senders:         replica.Data.Senders,
 			State:           &types.StateSpecimen{},
+			Withdrawals:     replica.Data.Withdrawals,
 		}
 		pairs = append(pairs, &blockPair{
 			specimen: &specimen,
