@@ -126,7 +126,6 @@ func filterReplicaSegmentFiles(path string, start int64, end int64, chainID stri
 	var filteredFiles []fs.FileInfo
 	for _, fileInfo := range allFiles {
 		fileName := fileInfo.Name()
-		fmt.Println("filename: ", fileName)
 		fileNameSplit := strings.Split(fileName, "-") // chainId-startBlocknumber-replica-....
 		fBlockNumber := fileNameSplit[1]              // the block number
 		fChainID := fileNameSplit[0]
