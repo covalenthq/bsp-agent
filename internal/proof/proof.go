@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"math/big"
 	"strings"
 	"time"
 
@@ -19,8 +20,10 @@ import (
 )
 
 const (
-	proofTxTimeout  uint64 = 601
-	retryCountLimit int    = 1 // 1 retry for proofchain submission
+	proofTxTimeout          uint64 = 601
+	retryCountLimit         int    = 1 // 1 retry for proofchain submission
+	basefeeWiggleMultiplier        = 2
+	moonbeamStaticBaseFee   int64  = 100000000000 // moonbeam static base fee, to be removed after RT2300
 )
 
 // ProofchainInteractor a wrapper over proofchain contract to help clients interact with it
@@ -66,7 +69,36 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
+	interactor.setTransactionFeeParams(ctx, opts)
 	executeWithRetry(ctx, interactor.proofChainContract, interactor.ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
+}
+
+func (interactor *ProofchainInteractor) setTransactionFeeParams(ctx context.Context, opts *bind.TransactOpts) {
+	baseFee := moonbeamStaticBaseFee
+
+	switch head, errHead := interactor.ethClient.HeaderByNumber(ctx, nil); {
+	case errHead != nil:
+		log.Error("cannot find the latest header: ", errHead.Error())
+	case head.BaseFee != nil:
+		baseFee = head.BaseFee.Int64()
+	default:
+		log.Info("base fee not found in latest header, using static fee for moonbeam")
+	}
+
+	gasTipCap, err := interactor.ethClient.SuggestGasTipCap(ctx)
+	if err != nil {
+		log.Error("cannot get the gas tip cap, will revert to legacy tx: ", err.Error())
+
+		return
+	}
+	gasFeeCap := new(big.Int).Add(
+		gasTipCap,
+		new(big.Int).Mul(big.NewInt(baseFee), big.NewInt(basefeeWiggleMultiplier)),
+	)
+
+	opts.GasTipCap = gasTipCap
+	opts.GasFeeCap = gasFeeCap
+	log.Info("tip cap: ", gasTipCap, " fee cap: ", gasFeeCap)
 }
 
 func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
