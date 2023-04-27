@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	proofTxTimeout  uint64 = 301
+	proofTxTimeout  uint64 = 601
 	retryCountLimit int    = 1 // 1 retry for proofchain submission
 )
 
