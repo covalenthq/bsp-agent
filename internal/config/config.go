@@ -7,7 +7,7 @@ import (
 
 var (
 	blockDivisorDefault           = 3
-	consumerPendingTimeoutDefault = 60
+	consumerPendingTimeoutDefault = 180
 	logFolderDefault              = "./logs/"
 )
 

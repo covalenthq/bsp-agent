@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	proofTxTimeout          uint64 = 301
+	proofTxTimeout          uint64 = 480
 	retryCountLimit         int    = 1 // 1 retry for proofchain submission
 	basefeeWiggleMultiplier        = 2
 	moonbeamStaticBaseFee   int64  = 100000000000 // moonbeam static base fee, to be removed after RT2300
@@ -101,7 +101,6 @@ func (interactor *ProofchainInteractor) setTransactionFeeParams(ctx context.Cont
 }
 
 func executeWithRetry(ctx context.Context, interactor *ProofchainInteractor, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
-
 	feeOpts := interactor.setTransactionFeeParams(ctx, opts)
 
 	transaction, err := proofChainContract.SubmitBlockSpecimenProof(feeOpts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
