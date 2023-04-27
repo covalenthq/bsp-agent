@@ -21,7 +21,7 @@ import (
 
 const (
 	proofTxTimeout          uint64 = 601
-	retryCountLimit         int    = 1 // 1 retry for proofchain submission
+	retryCountLimit         int    = 0 // 1 retry for proofchain submission
 	basefeeWiggleMultiplier        = 2
 	moonbeamStaticBaseFee   int64  = 100000000000 // moonbeam static base fee, to be removed after RT2300
 )
