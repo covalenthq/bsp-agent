@@ -11,24 +11,11 @@
       {
         "indexed": false,
         "internalType": "uint64",
-        "name": "newMaxNumberOfHashesPer24H",
+        "name": "threshold",
         "type": "uint64"
       }
     ],
-    "name": "BlockSpecimenMaxNumberOfHashesPer24HChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "newBlockSpecimenMinSubmissionsRequired",
-        "type": "uint128"
-      }
-    ],
-    "name": "BlockSpecimenMinSubmissionRequiredChanged",
+    "name": "BlockHeightSubmissionThresholdChanged",
     "type": "event"
   },
   {
@@ -41,19 +28,19 @@
         "type": "uint64"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint64",
         "name": "blockHeight",
         "type": "uint64"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "bytes32",
         "name": "blockHash",
         "type": "bytes32"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "bytes32",
         "name": "specimenHash",
         "type": "bytes32"
@@ -123,29 +110,61 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint128",
-        "name": "blockHeight",
-        "type": "uint128"
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
       },
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "proofHash",
-        "type": "bytes32"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "blockOnTargetChain",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "blockOnCurrentChain",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "secondsPerBlock",
+        "type": "uint256"
       }
     ],
-    "name": "BlockSpecimenSessionFinalized",
+    "name": "ChainSyncDataChanged",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxSubmissions",
+        "type": "uint256"
+      }
+    ],
+    "name": "MaxSubmissionsPerBlockHeightChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": false,
         "internalType": "uint128",
@@ -173,19 +192,6 @@
       }
     ],
     "name": "NthBlockChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint64",
-        "name": "numberOfBlocks",
-        "type": "uint64"
-      }
-    ],
-    "name": "NumberOfBlocksPer24HChanged",
     "type": "event"
   },
   {
@@ -295,24 +301,37 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "previousAdminRole",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "newAdminRole",
-        "type": "bytes32"
+        "internalType": "uint64",
+        "name": "secondsPerBlock",
+        "type": "uint64"
       }
     ],
-    "name": "RoleAdminChanged",
+    "name": "SecondsPerBlockChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint64",
+        "name": "blockHeight",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "deadline",
+        "type": "uint64"
+      }
+    ],
+    "name": "SessionStarted",
     "type": "event"
   },
   {
@@ -346,9 +365,9 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint64",
+        "internalType": "uint256",
         "name": "newQuorumThreshold",
-        "type": "uint64"
+        "type": "uint256"
       }
     ],
     "name": "SpecimenSessionQuorumChanged",
@@ -410,6 +429,19 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "auditor",
+        "type": "address"
+      }
+    ],
+    "name": "addAuditor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "operator",
         "type": "address"
       },
@@ -417,14 +449,22 @@
         "internalType": "uint128",
         "name": "validatorId",
         "type": "uint128"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
       }
     ],
-    "name": "addOperator",
+    "name": "addBSPOperator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "governor",
+        "type": "address"
+      }
+    ],
+    "name": "addGovernor",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -476,45 +516,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "blockSpecimenQuorum",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "blockSpecimenRewardAllocation",
-    "outputs": [
-      {
-        "internalType": "uint128",
-        "name": "",
-        "type": "uint128"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "blockSpecimenSessionDuration",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -522,7 +523,7 @@
         "type": "address"
       }
     ],
-    "name": "disableOperator",
+    "name": "disableBSPOperator",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -553,7 +554,7 @@
         "type": "address"
       }
     ],
-    "name": "enableOperator",
+    "name": "enableBSPOperator",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -577,6 +578,129 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getAllOperators",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_bsps",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "__governors",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "__auditors",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getBSPRoleData",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "requiredStake",
+        "type": "uint128"
+      },
+      {
+        "internalType": "address[]",
+        "name": "activeMembers",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      }
+    ],
+    "name": "getChainData",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "blockOnTargetChain",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "blockOnCurrentChain",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsPerBlock",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint128",
+        "name": "allowedThreshold",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint128",
+        "name": "maxSubmissionsPerBlockHeight",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint64",
+        "name": "nthBlock",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMetadata",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "stakingInterface",
+        "type": "address"
+      },
+      {
+        "internalType": "uint128",
+        "name": "blockSpecimenRewardAllocation",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint64",
+        "name": "blockSpecimenSessionDuration",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "minSubmissionsRequired",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint256",
+        "name": "blockSpecimenQuorum",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsPerBlock",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint128",
@@ -590,19 +714,6 @@
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getRoleTypes",
-    "outputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "roleTypes",
-        "type": "bytes32[]"
       }
     ],
     "stateMutability": "view",
@@ -648,81 +759,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "roleName",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint128",
-        "name": "validatorId",
-        "type": "uint128"
-      }
-    ],
-    "name": "isSufficientlyStakedForRole",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "name": "maxNumberOfHashesPer24H",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "minSubmissionsRequired",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "name": "nthBlock",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -756,11 +792,37 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "auditor",
+        "type": "address"
+      }
+    ],
+    "name": "removeAuditor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "operator",
         "type": "address"
       }
     ],
-    "name": "removeOperator",
+    "name": "removeBSPOperator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "governor",
+        "type": "address"
+      }
+    ],
+    "name": "removeGovernor",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -775,12 +837,30 @@
   {
     "inputs": [
       {
+        "internalType": "uint128",
+        "name": "newStakeAmount",
+        "type": "uint128"
+      }
+    ],
+    "name": "setBSPRequiredStake",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint64",
-        "name": "minSubmissions",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "threshold",
         "type": "uint64"
       }
     ],
-    "name": "setBlockSpecimenMinSubmissionRequired",
+    "name": "setBlockHeightSubmissionsThreshold",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -819,12 +899,40 @@
         "type": "uint64"
       },
       {
+        "internalType": "uint256",
+        "name": "blockOnTargetChain",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "blockOnCurrentChain",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsPerBlock",
+        "type": "uint256"
+      }
+    ],
+    "name": "setChainSyncData",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
         "internalType": "uint64",
         "name": "maxSubmissions",
         "type": "uint64"
       }
     ],
-    "name": "setMaxNumberOfHashesPer24H",
+    "name": "setMaxSubmissionsPerBlockHeight",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -863,22 +971,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint64",
-        "name": "numberOfBlocks",
-        "type": "uint64"
-      }
-    ],
-    "name": "setNumberOfBlocksPer24H",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
+        "internalType": "uint256",
         "name": "quorum",
-        "type": "uint64"
+        "type": "uint256"
       }
     ],
     "name": "setQuorumThreshold",
@@ -889,17 +984,12 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "roleName",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint128",
-        "name": "newStakeAmount",
-        "type": "uint128"
+        "internalType": "uint64",
+        "name": "secondsPerBlock",
+        "type": "uint64"
       }
     ],
-    "name": "setRequiredStakeForRole",
+    "name": "setSecondsPerBlock",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
