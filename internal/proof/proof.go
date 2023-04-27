@@ -20,8 +20,8 @@ import (
 )
 
 const (
-	proofTxTimeout          uint64 = 601
-	retryCountLimit         int    = 0 // 1 retry for proofchain submission
+	proofTxTimeout          uint64 = 301
+	retryCountLimit         int    = 1 // 1 retry for proofchain submission
 	basefeeWiggleMultiplier        = 2
 	moonbeamStaticBaseFee   int64  = 100000000000 // moonbeam static base fee, to be removed after RT2300
 )
@@ -69,11 +69,10 @@ func (interactor *ProofchainInteractor) SendBlockReplicaProofTx(ctx context.Cont
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	interactor.setTransactionFeeParams(ctx, opts)
-	executeWithRetry(ctx, interactor.proofChainContract, interactor.ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
+	executeWithRetry(ctx, interactor, interactor.proofChainContract, interactor.ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0)
 }
 
-func (interactor *ProofchainInteractor) setTransactionFeeParams(ctx context.Context, opts *bind.TransactOpts) {
+func (interactor *ProofchainInteractor) setTransactionFeeParams(ctx context.Context, opts *bind.TransactOpts) (returnOpts *bind.TransactOpts) {
 	baseFee := moonbeamStaticBaseFee
 
 	switch head, errHead := interactor.ethClient.HeaderByNumber(ctx, nil); {
@@ -88,8 +87,6 @@ func (interactor *ProofchainInteractor) setTransactionFeeParams(ctx context.Cont
 	gasTipCap, err := interactor.ethClient.SuggestGasTipCap(ctx)
 	if err != nil {
 		log.Error("cannot get the gas tip cap, will revert to legacy tx: ", err.Error())
-
-		return
 	}
 	gasFeeCap := new(big.Int).Add(
 		gasTipCap,
@@ -99,10 +96,15 @@ func (interactor *ProofchainInteractor) setTransactionFeeParams(ctx context.Cont
 	opts.GasTipCap = gasTipCap
 	opts.GasFeeCap = gasFeeCap
 	log.Info("tip cap: ", gasTipCap, " fee cap: ", gasFeeCap)
+
+	return opts
 }
 
-func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
-	transaction, err := proofChainContract.SubmitBlockSpecimenProof(opts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
+func executeWithRetry(ctx context.Context, interactor *ProofchainInteractor, proofChainContract *ProofChain, ethClient *ethclient.Client, opts *bind.TransactOpts, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int) {
+
+	feeOpts := interactor.setTransactionFeeParams(ctx, opts)
+
+	transaction, err := proofChainContract.SubmitBlockSpecimenProof(feeOpts, blockReplica.NetworkId, chainHeight, blockReplica.Hash, sha256Result, replicaURL)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "Session submissions have closed") {
@@ -158,7 +160,8 @@ func executeWithRetry(ctx context.Context, proofChainContract *ProofChain, ethCl
 			return
 		}
 		log.Error("proof tx failed/reverted, retrying proof tx for block hash: ", blockReplica.Hash.String())
-		executeWithRetry(ctx, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
+		newFeeOpts := interactor.setTransactionFeeParams(ctx, opts)
+		executeWithRetry(ctx, interactor, proofChainContract, ethClient, newFeeOpts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
 
 		return
 	}
