@@ -38,7 +38,7 @@ const (
 	// BspAgentVersionMinor is Minor version component of the current release
 	BspAgentVersionMinor = 4
 	// BspAgentVersionPatch is Patch version component of the current release
-	BspAgentVersionPatch = 4
+	BspAgentVersionPatch = 7
 )
 
 // BspAgentVersion holds the textual version string.
@@ -290,8 +290,6 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 
 							case "Withdrawals", "Uncles":
 								m4 := m3[k4].(map[string]interface{})
-								fmt.Println(k4)
-								fmt.Println("m4", m4)
 								if m3[k4] == nil {
 									vsd[k4] = nil
 								} else {

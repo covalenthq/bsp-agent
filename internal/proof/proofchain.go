@@ -30,7 +30,7 @@ var (
 
 // ProofChainMetaData contains all meta data concerning the ProofChain contract.
 var ProofChainMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newMaxNumberOfHashesPer24H\",\"type\":\"uint64\"}],\"name\":\"BlockSpecimenMaxNumberOfHashesPer24HChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenMinSubmissionsRequired\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenMinSubmissionRequiredChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"submittedStake\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenProductionProofSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockhash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenhash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenRewardAwarded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenRewardAllocation\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenRewardChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint128\",\"name\":\"blockHeight\",\"type\":\"uint128\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"proofHash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenSessionFinalized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newStakeRequirement\",\"type\":\"uint128\"}],\"name\":\"MinimumRequiredStakeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"name\":\"NthBlockChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"numberOfBlocks\",\"type\":\"uint64\"}],\"name\":\"NumberOfBlocksPer24HChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"OperatorAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorDisabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorEnabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"QuorumNotReached\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionDurationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionMinSubmissionChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newQuorumThreshold\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionQuorumChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newInterfaceAddress\",\"type\":\"address\"}],\"name\":\"StakingInterfaceChanged\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"AUDITOR_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"addOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"validator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"commissionRate\",\"type\":\"uint128\"}],\"name\":\"addValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"definitiveSpecimenHash\",\"type\":\"bytes32\"}],\"name\":\"arbitrateBlockSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenQuorum\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenRewardAllocation\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"blockSpecimenSessionDuration\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"disableOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"disableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"enableOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"finalizeAndRewardSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"getOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRoleTypes\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"roleTypes\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakingContract\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"isSufficientlyStakedForRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"maxNumberOfHashesPer24H\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"minSubmissionsRequired\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"name\":\"nthBlock\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"operatorRoles\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"removeOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenMinSubmissionRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenReward\",\"type\":\"uint128\"}],\"name\":\"setBlockSpecimenReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenSessionDuration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"maxSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMaxNumberOfHashesPer24H\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMinSubmissionsRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"n\",\"type\":\"uint64\"}],\"name\":\"setNthBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"numberOfBlocks\",\"type\":\"uint64\"}],\"name\":\"setNumberOfBlocksPer24H\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"quorum\",\"type\":\"uint64\"}],\"name\":\"setQuorumThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"roleName\",\"type\":\"bytes32\"},{\"internalType\":\"uint128\",\"name\":\"newStakeAmount\",\"type\":\"uint128\"}],\"name\":\"setRequiredStakeForRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stakingContractAddress\",\"type\":\"address\"}],\"name\":\"setStakingInterface\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"submitBlockSpecimenProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"validatorIDs\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"threshold\",\"type\":\"uint64\"}],\"name\":\"BlockHeightSubmissionThresholdChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"submittedStake\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenProductionProofSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockhash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenhash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenRewardAwarded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenRewardAllocation\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenRewardChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"}],\"name\":\"ChainSyncDataChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"maxSubmissions\",\"type\":\"uint256\"}],\"name\":\"MaxSubmissionsPerBlockHeightChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newStakeRequirement\",\"type\":\"uint128\"}],\"name\":\"MinimumRequiredStakeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"name\":\"NthBlockChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"OperatorAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorDisabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorEnabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"QuorumNotReached\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"secondsPerBlock\",\"type\":\"uint64\"}],\"name\":\"SecondsPerBlockChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"deadline\",\"type\":\"uint64\"}],\"name\":\"SessionStarted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionDurationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionMinSubmissionChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newQuorumThreshold\",\"type\":\"uint256\"}],\"name\":\"SpecimenSessionQuorumChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newInterfaceAddress\",\"type\":\"address\"}],\"name\":\"StakingInterfaceChanged\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"AUDITOR_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"addAuditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"addBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"governor\",\"type\":\"address\"}],\"name\":\"addGovernor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"validator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"commissionRate\",\"type\":\"uint128\"}],\"name\":\"addValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"definitiveSpecimenHash\",\"type\":\"bytes32\"}],\"name\":\"arbitrateBlockSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"disableBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"disableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"enableBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"finalizeAndRewardSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"_bsps\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"__governors\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"__auditors\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBSPRoleData\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"requiredStake\",\"type\":\"uint128\"},{\"internalType\":\"address[]\",\"name\":\"activeMembers\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"}],\"name\":\"getChainData\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"},{\"internalType\":\"uint128\",\"name\":\"allowedThreshold\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"maxSubmissionsPerBlockHeight\",\"type\":\"uint128\"},{\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMetadata\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"stakingInterface\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"blockSpecimenRewardAllocation\",\"type\":\"uint128\"},{\"internalType\":\"uint64\",\"name\":\"blockSpecimenSessionDuration\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"minSubmissionsRequired\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"blockSpecimenQuorum\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"getOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakingContract\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"operatorRoles\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"removeAuditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"removeBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"governor\",\"type\":\"address\"}],\"name\":\"removeGovernor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newStakeAmount\",\"type\":\"uint128\"}],\"name\":\"setBSPRequiredStake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"threshold\",\"type\":\"uint64\"}],\"name\":\"setBlockHeightSubmissionsThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenReward\",\"type\":\"uint128\"}],\"name\":\"setBlockSpecimenReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenSessionDuration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"}],\"name\":\"setChainSyncData\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"maxSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMaxSubmissionsPerBlockHeight\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMinSubmissionsRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"n\",\"type\":\"uint64\"}],\"name\":\"setNthBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"quorum\",\"type\":\"uint256\"}],\"name\":\"setQuorumThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"secondsPerBlock\",\"type\":\"uint64\"}],\"name\":\"setSecondsPerBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stakingContractAddress\",\"type\":\"address\"}],\"name\":\"setStakingInterface\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"submitBlockSpecimenProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"validatorIDs\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // ProofChainABI is the input ABI used to generate the binding from.
@@ -272,97 +272,229 @@ func (_ProofChain *ProofChainCallerSession) GOVERNANCEROLE() ([32]byte, error) {
 	return _ProofChain.Contract.GOVERNANCEROLE(&_ProofChain.CallOpts)
 }
 
-// BlockSpecimenQuorum is a free data retrieval call binding the contract method 0x96df32b5.
+// GetAllOperators is a free data retrieval call binding the contract method 0xd911c632.
 //
-// Solidity: function blockSpecimenQuorum() view returns(uint64)
-func (_ProofChain *ProofChainCaller) BlockSpecimenQuorum(opts *bind.CallOpts) (uint64, error) {
+// Solidity: function getAllOperators() view returns(address[] _bsps, address[] __governors, address[] __auditors)
+func (_ProofChain *ProofChainCaller) GetAllOperators(opts *bind.CallOpts) (struct {
+	Bsps      []common.Address
+	Governors []common.Address
+	Auditors  []common.Address
+}, error) {
 	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "blockSpecimenQuorum")
+	err := _ProofChain.contract.Call(opts, &out, "getAllOperators")
 
+	outstruct := new(struct {
+		Bsps      []common.Address
+		Governors []common.Address
+		Auditors  []common.Address
+	})
 	if err != nil {
-		return *new(uint64), err
+		return *outstruct, err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
+	outstruct.Bsps = *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
+	outstruct.Governors = *abi.ConvertType(out[1], new([]common.Address)).(*[]common.Address)
+	outstruct.Auditors = *abi.ConvertType(out[2], new([]common.Address)).(*[]common.Address)
 
-	return out0, err
+	return *outstruct, err
 
 }
 
-// BlockSpecimenQuorum is a free data retrieval call binding the contract method 0x96df32b5.
+// GetAllOperators is a free data retrieval call binding the contract method 0xd911c632.
 //
-// Solidity: function blockSpecimenQuorum() view returns(uint64)
-func (_ProofChain *ProofChainSession) BlockSpecimenQuorum() (uint64, error) {
-	return _ProofChain.Contract.BlockSpecimenQuorum(&_ProofChain.CallOpts)
+// Solidity: function getAllOperators() view returns(address[] _bsps, address[] __governors, address[] __auditors)
+func (_ProofChain *ProofChainSession) GetAllOperators() (struct {
+	Bsps      []common.Address
+	Governors []common.Address
+	Auditors  []common.Address
+}, error) {
+	return _ProofChain.Contract.GetAllOperators(&_ProofChain.CallOpts)
 }
 
-// BlockSpecimenQuorum is a free data retrieval call binding the contract method 0x96df32b5.
+// GetAllOperators is a free data retrieval call binding the contract method 0xd911c632.
 //
-// Solidity: function blockSpecimenQuorum() view returns(uint64)
-func (_ProofChain *ProofChainCallerSession) BlockSpecimenQuorum() (uint64, error) {
-	return _ProofChain.Contract.BlockSpecimenQuorum(&_ProofChain.CallOpts)
+// Solidity: function getAllOperators() view returns(address[] _bsps, address[] __governors, address[] __auditors)
+func (_ProofChain *ProofChainCallerSession) GetAllOperators() (struct {
+	Bsps      []common.Address
+	Governors []common.Address
+	Auditors  []common.Address
+}, error) {
+	return _ProofChain.Contract.GetAllOperators(&_ProofChain.CallOpts)
 }
 
-// BlockSpecimenRewardAllocation is a free data retrieval call binding the contract method 0xb143d7db.
+// GetBSPRoleData is a free data retrieval call binding the contract method 0x1fd55ae9.
 //
-// Solidity: function blockSpecimenRewardAllocation() view returns(uint128)
-func (_ProofChain *ProofChainCaller) BlockSpecimenRewardAllocation(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function getBSPRoleData() view returns(uint128 requiredStake, address[] activeMembers)
+func (_ProofChain *ProofChainCaller) GetBSPRoleData(opts *bind.CallOpts) (struct {
+	RequiredStake *big.Int
+	ActiveMembers []common.Address
+}, error) {
 	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "blockSpecimenRewardAllocation")
+	err := _ProofChain.contract.Call(opts, &out, "getBSPRoleData")
 
+	outstruct := new(struct {
+		RequiredStake *big.Int
+		ActiveMembers []common.Address
+	})
 	if err != nil {
-		return *new(*big.Int), err
+		return *outstruct, err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	outstruct.RequiredStake = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	outstruct.ActiveMembers = *abi.ConvertType(out[1], new([]common.Address)).(*[]common.Address)
 
-	return out0, err
+	return *outstruct, err
 
 }
 
-// BlockSpecimenRewardAllocation is a free data retrieval call binding the contract method 0xb143d7db.
+// GetBSPRoleData is a free data retrieval call binding the contract method 0x1fd55ae9.
 //
-// Solidity: function blockSpecimenRewardAllocation() view returns(uint128)
-func (_ProofChain *ProofChainSession) BlockSpecimenRewardAllocation() (*big.Int, error) {
-	return _ProofChain.Contract.BlockSpecimenRewardAllocation(&_ProofChain.CallOpts)
+// Solidity: function getBSPRoleData() view returns(uint128 requiredStake, address[] activeMembers)
+func (_ProofChain *ProofChainSession) GetBSPRoleData() (struct {
+	RequiredStake *big.Int
+	ActiveMembers []common.Address
+}, error) {
+	return _ProofChain.Contract.GetBSPRoleData(&_ProofChain.CallOpts)
 }
 
-// BlockSpecimenRewardAllocation is a free data retrieval call binding the contract method 0xb143d7db.
+// GetBSPRoleData is a free data retrieval call binding the contract method 0x1fd55ae9.
 //
-// Solidity: function blockSpecimenRewardAllocation() view returns(uint128)
-func (_ProofChain *ProofChainCallerSession) BlockSpecimenRewardAllocation() (*big.Int, error) {
-	return _ProofChain.Contract.BlockSpecimenRewardAllocation(&_ProofChain.CallOpts)
+// Solidity: function getBSPRoleData() view returns(uint128 requiredStake, address[] activeMembers)
+func (_ProofChain *ProofChainCallerSession) GetBSPRoleData() (struct {
+	RequiredStake *big.Int
+	ActiveMembers []common.Address
+}, error) {
+	return _ProofChain.Contract.GetBSPRoleData(&_ProofChain.CallOpts)
 }
 
-// BlockSpecimenSessionDuration is a free data retrieval call binding the contract method 0x24dc223d.
+// GetChainData is a free data retrieval call binding the contract method 0x54cfa69f.
 //
-// Solidity: function blockSpecimenSessionDuration() view returns(uint64)
-func (_ProofChain *ProofChainCaller) BlockSpecimenSessionDuration(opts *bind.CallOpts) (uint64, error) {
+// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
+func (_ProofChain *ProofChainCaller) GetChainData(opts *bind.CallOpts, chainId uint64) (struct {
+	BlockOnTargetChain           *big.Int
+	BlockOnCurrentChain          *big.Int
+	SecondsPerBlock              *big.Int
+	AllowedThreshold             *big.Int
+	MaxSubmissionsPerBlockHeight *big.Int
+	NthBlock                     uint64
+}, error) {
 	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "blockSpecimenSessionDuration")
+	err := _ProofChain.contract.Call(opts, &out, "getChainData", chainId)
 
+	outstruct := new(struct {
+		BlockOnTargetChain           *big.Int
+		BlockOnCurrentChain          *big.Int
+		SecondsPerBlock              *big.Int
+		AllowedThreshold             *big.Int
+		MaxSubmissionsPerBlockHeight *big.Int
+		NthBlock                     uint64
+	})
 	if err != nil {
-		return *new(uint64), err
+		return *outstruct, err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
+	outstruct.BlockOnTargetChain = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	outstruct.BlockOnCurrentChain = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.SecondsPerBlock = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+	outstruct.AllowedThreshold = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
+	outstruct.MaxSubmissionsPerBlockHeight = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
+	outstruct.NthBlock = *abi.ConvertType(out[5], new(uint64)).(*uint64)
 
-	return out0, err
+	return *outstruct, err
 
 }
 
-// BlockSpecimenSessionDuration is a free data retrieval call binding the contract method 0x24dc223d.
+// GetChainData is a free data retrieval call binding the contract method 0x54cfa69f.
 //
-// Solidity: function blockSpecimenSessionDuration() view returns(uint64)
-func (_ProofChain *ProofChainSession) BlockSpecimenSessionDuration() (uint64, error) {
-	return _ProofChain.Contract.BlockSpecimenSessionDuration(&_ProofChain.CallOpts)
+// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
+func (_ProofChain *ProofChainSession) GetChainData(chainId uint64) (struct {
+	BlockOnTargetChain           *big.Int
+	BlockOnCurrentChain          *big.Int
+	SecondsPerBlock              *big.Int
+	AllowedThreshold             *big.Int
+	MaxSubmissionsPerBlockHeight *big.Int
+	NthBlock                     uint64
+}, error) {
+	return _ProofChain.Contract.GetChainData(&_ProofChain.CallOpts, chainId)
 }
 
-// BlockSpecimenSessionDuration is a free data retrieval call binding the contract method 0x24dc223d.
+// GetChainData is a free data retrieval call binding the contract method 0x54cfa69f.
 //
-// Solidity: function blockSpecimenSessionDuration() view returns(uint64)
-func (_ProofChain *ProofChainCallerSession) BlockSpecimenSessionDuration() (uint64, error) {
-	return _ProofChain.Contract.BlockSpecimenSessionDuration(&_ProofChain.CallOpts)
+// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
+func (_ProofChain *ProofChainCallerSession) GetChainData(chainId uint64) (struct {
+	BlockOnTargetChain           *big.Int
+	BlockOnCurrentChain          *big.Int
+	SecondsPerBlock              *big.Int
+	AllowedThreshold             *big.Int
+	MaxSubmissionsPerBlockHeight *big.Int
+	NthBlock                     uint64
+}, error) {
+	return _ProofChain.Contract.GetChainData(&_ProofChain.CallOpts, chainId)
+}
+
+// GetMetadata is a free data retrieval call binding the contract method 0x7a5b4f59.
+//
+// Solidity: function getMetadata() view returns(address stakingInterface, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlock)
+func (_ProofChain *ProofChainCaller) GetMetadata(opts *bind.CallOpts) (struct {
+	StakingInterface              common.Address
+	BlockSpecimenRewardAllocation *big.Int
+	BlockSpecimenSessionDuration  uint64
+	MinSubmissionsRequired        uint64
+	BlockSpecimenQuorum           *big.Int
+	SecondsPerBlock               *big.Int
+}, error) {
+	var out []interface{}
+	err := _ProofChain.contract.Call(opts, &out, "getMetadata")
+
+	outstruct := new(struct {
+		StakingInterface              common.Address
+		BlockSpecimenRewardAllocation *big.Int
+		BlockSpecimenSessionDuration  uint64
+		MinSubmissionsRequired        uint64
+		BlockSpecimenQuorum           *big.Int
+		SecondsPerBlock               *big.Int
+	})
+	if err != nil {
+		return *outstruct, err
+	}
+
+	outstruct.StakingInterface = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+	outstruct.BlockSpecimenRewardAllocation = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.BlockSpecimenSessionDuration = *abi.ConvertType(out[2], new(uint64)).(*uint64)
+	outstruct.MinSubmissionsRequired = *abi.ConvertType(out[3], new(uint64)).(*uint64)
+	outstruct.BlockSpecimenQuorum = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
+	outstruct.SecondsPerBlock = *abi.ConvertType(out[5], new(*big.Int)).(**big.Int)
+
+	return *outstruct, err
+
+}
+
+// GetMetadata is a free data retrieval call binding the contract method 0x7a5b4f59.
+//
+// Solidity: function getMetadata() view returns(address stakingInterface, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlock)
+func (_ProofChain *ProofChainSession) GetMetadata() (struct {
+	StakingInterface              common.Address
+	BlockSpecimenRewardAllocation *big.Int
+	BlockSpecimenSessionDuration  uint64
+	MinSubmissionsRequired        uint64
+	BlockSpecimenQuorum           *big.Int
+	SecondsPerBlock               *big.Int
+}, error) {
+	return _ProofChain.Contract.GetMetadata(&_ProofChain.CallOpts)
+}
+
+// GetMetadata is a free data retrieval call binding the contract method 0x7a5b4f59.
+//
+// Solidity: function getMetadata() view returns(address stakingInterface, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlock)
+func (_ProofChain *ProofChainCallerSession) GetMetadata() (struct {
+	StakingInterface              common.Address
+	BlockSpecimenRewardAllocation *big.Int
+	BlockSpecimenSessionDuration  uint64
+	MinSubmissionsRequired        uint64
+	BlockSpecimenQuorum           *big.Int
+	SecondsPerBlock               *big.Int
+}, error) {
+	return _ProofChain.Contract.GetMetadata(&_ProofChain.CallOpts)
 }
 
 // GetOperators is a free data retrieval call binding the contract method 0xd3a8b2a8.
@@ -396,37 +528,6 @@ func (_ProofChain *ProofChainCallerSession) GetOperators(validatorId *big.Int) (
 	return _ProofChain.Contract.GetOperators(&_ProofChain.CallOpts, validatorId)
 }
 
-// GetRoleTypes is a free data retrieval call binding the contract method 0x96c61cb2.
-//
-// Solidity: function getRoleTypes() view returns(bytes32[] roleTypes)
-func (_ProofChain *ProofChainCaller) GetRoleTypes(opts *bind.CallOpts) ([][32]byte, error) {
-	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "getRoleTypes")
-
-	if err != nil {
-		return *new([][32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([][32]byte)).(*[][32]byte)
-
-	return out0, err
-
-}
-
-// GetRoleTypes is a free data retrieval call binding the contract method 0x96c61cb2.
-//
-// Solidity: function getRoleTypes() view returns(bytes32[] roleTypes)
-func (_ProofChain *ProofChainSession) GetRoleTypes() ([][32]byte, error) {
-	return _ProofChain.Contract.GetRoleTypes(&_ProofChain.CallOpts)
-}
-
-// GetRoleTypes is a free data retrieval call binding the contract method 0x96c61cb2.
-//
-// Solidity: function getRoleTypes() view returns(bytes32[] roleTypes)
-func (_ProofChain *ProofChainCallerSession) GetRoleTypes() ([][32]byte, error) {
-	return _ProofChain.Contract.GetRoleTypes(&_ProofChain.CallOpts)
-}
-
 // IsEnabled is a free data retrieval call binding the contract method 0x9015d371.
 //
 // Solidity: function isEnabled(address operator) view returns(bool)
@@ -456,130 +557,6 @@ func (_ProofChain *ProofChainSession) IsEnabled(operator common.Address) (bool, 
 // Solidity: function isEnabled(address operator) view returns(bool)
 func (_ProofChain *ProofChainCallerSession) IsEnabled(operator common.Address) (bool, error) {
 	return _ProofChain.Contract.IsEnabled(&_ProofChain.CallOpts, operator)
-}
-
-// IsSufficientlyStakedForRole is a free data retrieval call binding the contract method 0x74c595ed.
-//
-// Solidity: function isSufficientlyStakedForRole(bytes32 roleName, uint128 validatorId) view returns(bool)
-func (_ProofChain *ProofChainCaller) IsSufficientlyStakedForRole(opts *bind.CallOpts, roleName [32]byte, validatorId *big.Int) (bool, error) {
-	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "isSufficientlyStakedForRole", roleName, validatorId)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsSufficientlyStakedForRole is a free data retrieval call binding the contract method 0x74c595ed.
-//
-// Solidity: function isSufficientlyStakedForRole(bytes32 roleName, uint128 validatorId) view returns(bool)
-func (_ProofChain *ProofChainSession) IsSufficientlyStakedForRole(roleName [32]byte, validatorId *big.Int) (bool, error) {
-	return _ProofChain.Contract.IsSufficientlyStakedForRole(&_ProofChain.CallOpts, roleName, validatorId)
-}
-
-// IsSufficientlyStakedForRole is a free data retrieval call binding the contract method 0x74c595ed.
-//
-// Solidity: function isSufficientlyStakedForRole(bytes32 roleName, uint128 validatorId) view returns(bool)
-func (_ProofChain *ProofChainCallerSession) IsSufficientlyStakedForRole(roleName [32]byte, validatorId *big.Int) (bool, error) {
-	return _ProofChain.Contract.IsSufficientlyStakedForRole(&_ProofChain.CallOpts, roleName, validatorId)
-}
-
-// MaxNumberOfHashesPer24H is a free data retrieval call binding the contract method 0xf271f4dd.
-//
-// Solidity: function maxNumberOfHashesPer24H(uint64 ) view returns(uint64)
-func (_ProofChain *ProofChainCaller) MaxNumberOfHashesPer24H(opts *bind.CallOpts, arg0 uint64) (uint64, error) {
-	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "maxNumberOfHashesPer24H", arg0)
-
-	if err != nil {
-		return *new(uint64), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
-
-	return out0, err
-
-}
-
-// MaxNumberOfHashesPer24H is a free data retrieval call binding the contract method 0xf271f4dd.
-//
-// Solidity: function maxNumberOfHashesPer24H(uint64 ) view returns(uint64)
-func (_ProofChain *ProofChainSession) MaxNumberOfHashesPer24H(arg0 uint64) (uint64, error) {
-	return _ProofChain.Contract.MaxNumberOfHashesPer24H(&_ProofChain.CallOpts, arg0)
-}
-
-// MaxNumberOfHashesPer24H is a free data retrieval call binding the contract method 0xf271f4dd.
-//
-// Solidity: function maxNumberOfHashesPer24H(uint64 ) view returns(uint64)
-func (_ProofChain *ProofChainCallerSession) MaxNumberOfHashesPer24H(arg0 uint64) (uint64, error) {
-	return _ProofChain.Contract.MaxNumberOfHashesPer24H(&_ProofChain.CallOpts, arg0)
-}
-
-// MinSubmissionsRequired is a free data retrieval call binding the contract method 0x6d261e00.
-//
-// Solidity: function minSubmissionsRequired() view returns(uint64)
-func (_ProofChain *ProofChainCaller) MinSubmissionsRequired(opts *bind.CallOpts) (uint64, error) {
-	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "minSubmissionsRequired")
-
-	if err != nil {
-		return *new(uint64), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
-
-	return out0, err
-
-}
-
-// MinSubmissionsRequired is a free data retrieval call binding the contract method 0x6d261e00.
-//
-// Solidity: function minSubmissionsRequired() view returns(uint64)
-func (_ProofChain *ProofChainSession) MinSubmissionsRequired() (uint64, error) {
-	return _ProofChain.Contract.MinSubmissionsRequired(&_ProofChain.CallOpts)
-}
-
-// MinSubmissionsRequired is a free data retrieval call binding the contract method 0x6d261e00.
-//
-// Solidity: function minSubmissionsRequired() view returns(uint64)
-func (_ProofChain *ProofChainCallerSession) MinSubmissionsRequired() (uint64, error) {
-	return _ProofChain.Contract.MinSubmissionsRequired(&_ProofChain.CallOpts)
-}
-
-// NthBlock is a free data retrieval call binding the contract method 0xc7f99302.
-//
-// Solidity: function nthBlock(uint64 ) view returns(uint64)
-func (_ProofChain *ProofChainCaller) NthBlock(opts *bind.CallOpts, arg0 uint64) (uint64, error) {
-	var out []interface{}
-	err := _ProofChain.contract.Call(opts, &out, "nthBlock", arg0)
-
-	if err != nil {
-		return *new(uint64), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(uint64)).(*uint64)
-
-	return out0, err
-
-}
-
-// NthBlock is a free data retrieval call binding the contract method 0xc7f99302.
-//
-// Solidity: function nthBlock(uint64 ) view returns(uint64)
-func (_ProofChain *ProofChainSession) NthBlock(arg0 uint64) (uint64, error) {
-	return _ProofChain.Contract.NthBlock(&_ProofChain.CallOpts, arg0)
-}
-
-// NthBlock is a free data retrieval call binding the contract method 0xc7f99302.
-//
-// Solidity: function nthBlock(uint64 ) view returns(uint64)
-func (_ProofChain *ProofChainCallerSession) NthBlock(arg0 uint64) (uint64, error) {
-	return _ProofChain.Contract.NthBlock(&_ProofChain.CallOpts, arg0)
 }
 
 // OperatorRoles is a free data retrieval call binding the contract method 0x6ab9d8e8.
@@ -675,25 +652,67 @@ func (_ProofChain *ProofChainCallerSession) ValidatorIDs(arg0 common.Address) (*
 	return _ProofChain.Contract.ValidatorIDs(&_ProofChain.CallOpts, arg0)
 }
 
-// AddOperator is a paid mutator transaction binding the contract method 0xd43e451d.
+// AddAuditor is a paid mutator transaction binding the contract method 0xe429cef1.
 //
-// Solidity: function addOperator(address operator, uint128 validatorId, bytes32 role) returns()
-func (_ProofChain *ProofChainTransactor) AddOperator(opts *bind.TransactOpts, operator common.Address, validatorId *big.Int, role [32]byte) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "addOperator", operator, validatorId, role)
+// Solidity: function addAuditor(address auditor) returns()
+func (_ProofChain *ProofChainTransactor) AddAuditor(opts *bind.TransactOpts, auditor common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "addAuditor", auditor)
 }
 
-// AddOperator is a paid mutator transaction binding the contract method 0xd43e451d.
+// AddAuditor is a paid mutator transaction binding the contract method 0xe429cef1.
 //
-// Solidity: function addOperator(address operator, uint128 validatorId, bytes32 role) returns()
-func (_ProofChain *ProofChainSession) AddOperator(operator common.Address, validatorId *big.Int, role [32]byte) (*types.Transaction, error) {
-	return _ProofChain.Contract.AddOperator(&_ProofChain.TransactOpts, operator, validatorId, role)
+// Solidity: function addAuditor(address auditor) returns()
+func (_ProofChain *ProofChainSession) AddAuditor(auditor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddAuditor(&_ProofChain.TransactOpts, auditor)
 }
 
-// AddOperator is a paid mutator transaction binding the contract method 0xd43e451d.
+// AddAuditor is a paid mutator transaction binding the contract method 0xe429cef1.
 //
-// Solidity: function addOperator(address operator, uint128 validatorId, bytes32 role) returns()
-func (_ProofChain *ProofChainTransactorSession) AddOperator(operator common.Address, validatorId *big.Int, role [32]byte) (*types.Transaction, error) {
-	return _ProofChain.Contract.AddOperator(&_ProofChain.TransactOpts, operator, validatorId, role)
+// Solidity: function addAuditor(address auditor) returns()
+func (_ProofChain *ProofChainTransactorSession) AddAuditor(auditor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddAuditor(&_ProofChain.TransactOpts, auditor)
+}
+
+// AddBSPOperator is a paid mutator transaction binding the contract method 0xcc96e413.
+//
+// Solidity: function addBSPOperator(address operator, uint128 validatorId) returns()
+func (_ProofChain *ProofChainTransactor) AddBSPOperator(opts *bind.TransactOpts, operator common.Address, validatorId *big.Int) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "addBSPOperator", operator, validatorId)
+}
+
+// AddBSPOperator is a paid mutator transaction binding the contract method 0xcc96e413.
+//
+// Solidity: function addBSPOperator(address operator, uint128 validatorId) returns()
+func (_ProofChain *ProofChainSession) AddBSPOperator(operator common.Address, validatorId *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddBSPOperator(&_ProofChain.TransactOpts, operator, validatorId)
+}
+
+// AddBSPOperator is a paid mutator transaction binding the contract method 0xcc96e413.
+//
+// Solidity: function addBSPOperator(address operator, uint128 validatorId) returns()
+func (_ProofChain *ProofChainTransactorSession) AddBSPOperator(operator common.Address, validatorId *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddBSPOperator(&_ProofChain.TransactOpts, operator, validatorId)
+}
+
+// AddGovernor is a paid mutator transaction binding the contract method 0x3c4a25d0.
+//
+// Solidity: function addGovernor(address governor) returns()
+func (_ProofChain *ProofChainTransactor) AddGovernor(opts *bind.TransactOpts, governor common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "addGovernor", governor)
+}
+
+// AddGovernor is a paid mutator transaction binding the contract method 0x3c4a25d0.
+//
+// Solidity: function addGovernor(address governor) returns()
+func (_ProofChain *ProofChainSession) AddGovernor(governor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddGovernor(&_ProofChain.TransactOpts, governor)
+}
+
+// AddGovernor is a paid mutator transaction binding the contract method 0x3c4a25d0.
+//
+// Solidity: function addGovernor(address governor) returns()
+func (_ProofChain *ProofChainTransactorSession) AddGovernor(governor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.AddGovernor(&_ProofChain.TransactOpts, governor)
 }
 
 // AddValidator is a paid mutator transaction binding the contract method 0xa2e7e441.
@@ -738,25 +757,25 @@ func (_ProofChain *ProofChainTransactorSession) ArbitrateBlockSpecimenSession(ch
 	return _ProofChain.Contract.ArbitrateBlockSpecimenSession(&_ProofChain.TransactOpts, chainId, blockHeight, blockHash, definitiveSpecimenHash)
 }
 
-// DisableOperator is a paid mutator transaction binding the contract method 0xf56408ed.
+// DisableBSPOperator is a paid mutator transaction binding the contract method 0x13e3f452.
 //
-// Solidity: function disableOperator(address operator) returns()
-func (_ProofChain *ProofChainTransactor) DisableOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "disableOperator", operator)
+// Solidity: function disableBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactor) DisableBSPOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "disableBSPOperator", operator)
 }
 
-// DisableOperator is a paid mutator transaction binding the contract method 0xf56408ed.
+// DisableBSPOperator is a paid mutator transaction binding the contract method 0x13e3f452.
 //
-// Solidity: function disableOperator(address operator) returns()
-func (_ProofChain *ProofChainSession) DisableOperator(operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.DisableOperator(&_ProofChain.TransactOpts, operator)
+// Solidity: function disableBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainSession) DisableBSPOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.DisableBSPOperator(&_ProofChain.TransactOpts, operator)
 }
 
-// DisableOperator is a paid mutator transaction binding the contract method 0xf56408ed.
+// DisableBSPOperator is a paid mutator transaction binding the contract method 0x13e3f452.
 //
-// Solidity: function disableOperator(address operator) returns()
-func (_ProofChain *ProofChainTransactorSession) DisableOperator(operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.DisableOperator(&_ProofChain.TransactOpts, operator)
+// Solidity: function disableBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactorSession) DisableBSPOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.DisableBSPOperator(&_ProofChain.TransactOpts, operator)
 }
 
 // DisableValidator is a paid mutator transaction binding the contract method 0xad9e91ee.
@@ -780,25 +799,25 @@ func (_ProofChain *ProofChainTransactorSession) DisableValidator(validatorId *bi
 	return _ProofChain.Contract.DisableValidator(&_ProofChain.TransactOpts, validatorId, blockNumber)
 }
 
-// EnableOperator is a paid mutator transaction binding the contract method 0xdd307b99.
+// EnableBSPOperator is a paid mutator transaction binding the contract method 0xdf4112c2.
 //
-// Solidity: function enableOperator(address operator) returns()
-func (_ProofChain *ProofChainTransactor) EnableOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "enableOperator", operator)
+// Solidity: function enableBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactor) EnableBSPOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "enableBSPOperator", operator)
 }
 
-// EnableOperator is a paid mutator transaction binding the contract method 0xdd307b99.
+// EnableBSPOperator is a paid mutator transaction binding the contract method 0xdf4112c2.
 //
-// Solidity: function enableOperator(address operator) returns()
-func (_ProofChain *ProofChainSession) EnableOperator(operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.EnableOperator(&_ProofChain.TransactOpts, operator)
+// Solidity: function enableBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainSession) EnableBSPOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.EnableBSPOperator(&_ProofChain.TransactOpts, operator)
 }
 
-// EnableOperator is a paid mutator transaction binding the contract method 0xdd307b99.
+// EnableBSPOperator is a paid mutator transaction binding the contract method 0xdf4112c2.
 //
-// Solidity: function enableOperator(address operator) returns()
-func (_ProofChain *ProofChainTransactorSession) EnableOperator(operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.EnableOperator(&_ProofChain.TransactOpts, operator)
+// Solidity: function enableBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactorSession) EnableBSPOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.EnableBSPOperator(&_ProofChain.TransactOpts, operator)
 }
 
 // FinalizeAndRewardSpecimenSession is a paid mutator transaction binding the contract method 0x8ecd30bc.
@@ -843,25 +862,67 @@ func (_ProofChain *ProofChainTransactorSession) Initialize(initialOwner common.A
 	return _ProofChain.Contract.Initialize(&_ProofChain.TransactOpts, initialOwner, stakingContract)
 }
 
-// RemoveOperator is a paid mutator transaction binding the contract method 0xac8a584a.
+// RemoveAuditor is a paid mutator transaction binding the contract method 0xe6116cfd.
 //
-// Solidity: function removeOperator(address operator) returns()
-func (_ProofChain *ProofChainTransactor) RemoveOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "removeOperator", operator)
+// Solidity: function removeAuditor(address auditor) returns()
+func (_ProofChain *ProofChainTransactor) RemoveAuditor(opts *bind.TransactOpts, auditor common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "removeAuditor", auditor)
 }
 
-// RemoveOperator is a paid mutator transaction binding the contract method 0xac8a584a.
+// RemoveAuditor is a paid mutator transaction binding the contract method 0xe6116cfd.
 //
-// Solidity: function removeOperator(address operator) returns()
-func (_ProofChain *ProofChainSession) RemoveOperator(operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.RemoveOperator(&_ProofChain.TransactOpts, operator)
+// Solidity: function removeAuditor(address auditor) returns()
+func (_ProofChain *ProofChainSession) RemoveAuditor(auditor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveAuditor(&_ProofChain.TransactOpts, auditor)
 }
 
-// RemoveOperator is a paid mutator transaction binding the contract method 0xac8a584a.
+// RemoveAuditor is a paid mutator transaction binding the contract method 0xe6116cfd.
 //
-// Solidity: function removeOperator(address operator) returns()
-func (_ProofChain *ProofChainTransactorSession) RemoveOperator(operator common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.RemoveOperator(&_ProofChain.TransactOpts, operator)
+// Solidity: function removeAuditor(address auditor) returns()
+func (_ProofChain *ProofChainTransactorSession) RemoveAuditor(auditor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveAuditor(&_ProofChain.TransactOpts, auditor)
+}
+
+// RemoveBSPOperator is a paid mutator transaction binding the contract method 0xcf64a01d.
+//
+// Solidity: function removeBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactor) RemoveBSPOperator(opts *bind.TransactOpts, operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "removeBSPOperator", operator)
+}
+
+// RemoveBSPOperator is a paid mutator transaction binding the contract method 0xcf64a01d.
+//
+// Solidity: function removeBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainSession) RemoveBSPOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveBSPOperator(&_ProofChain.TransactOpts, operator)
+}
+
+// RemoveBSPOperator is a paid mutator transaction binding the contract method 0xcf64a01d.
+//
+// Solidity: function removeBSPOperator(address operator) returns()
+func (_ProofChain *ProofChainTransactorSession) RemoveBSPOperator(operator common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveBSPOperator(&_ProofChain.TransactOpts, operator)
+}
+
+// RemoveGovernor is a paid mutator transaction binding the contract method 0xeecdac88.
+//
+// Solidity: function removeGovernor(address governor) returns()
+func (_ProofChain *ProofChainTransactor) RemoveGovernor(opts *bind.TransactOpts, governor common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "removeGovernor", governor)
+}
+
+// RemoveGovernor is a paid mutator transaction binding the contract method 0xeecdac88.
+//
+// Solidity: function removeGovernor(address governor) returns()
+func (_ProofChain *ProofChainSession) RemoveGovernor(governor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveGovernor(&_ProofChain.TransactOpts, governor)
+}
+
+// RemoveGovernor is a paid mutator transaction binding the contract method 0xeecdac88.
+//
+// Solidity: function removeGovernor(address governor) returns()
+func (_ProofChain *ProofChainTransactorSession) RemoveGovernor(governor common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.RemoveGovernor(&_ProofChain.TransactOpts, governor)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
@@ -885,25 +946,46 @@ func (_ProofChain *ProofChainTransactorSession) RenounceOwnership() (*types.Tran
 	return _ProofChain.Contract.RenounceOwnership(&_ProofChain.TransactOpts)
 }
 
-// SetBlockSpecimenMinSubmissionRequired is a paid mutator transaction binding the contract method 0x7432d8dd.
+// SetBSPRequiredStake is a paid mutator transaction binding the contract method 0x5137b8b9.
 //
-// Solidity: function setBlockSpecimenMinSubmissionRequired(uint64 minSubmissions) returns()
-func (_ProofChain *ProofChainTransactor) SetBlockSpecimenMinSubmissionRequired(opts *bind.TransactOpts, minSubmissions uint64) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "setBlockSpecimenMinSubmissionRequired", minSubmissions)
+// Solidity: function setBSPRequiredStake(uint128 newStakeAmount) returns()
+func (_ProofChain *ProofChainTransactor) SetBSPRequiredStake(opts *bind.TransactOpts, newStakeAmount *big.Int) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setBSPRequiredStake", newStakeAmount)
 }
 
-// SetBlockSpecimenMinSubmissionRequired is a paid mutator transaction binding the contract method 0x7432d8dd.
+// SetBSPRequiredStake is a paid mutator transaction binding the contract method 0x5137b8b9.
 //
-// Solidity: function setBlockSpecimenMinSubmissionRequired(uint64 minSubmissions) returns()
-func (_ProofChain *ProofChainSession) SetBlockSpecimenMinSubmissionRequired(minSubmissions uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetBlockSpecimenMinSubmissionRequired(&_ProofChain.TransactOpts, minSubmissions)
+// Solidity: function setBSPRequiredStake(uint128 newStakeAmount) returns()
+func (_ProofChain *ProofChainSession) SetBSPRequiredStake(newStakeAmount *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetBSPRequiredStake(&_ProofChain.TransactOpts, newStakeAmount)
 }
 
-// SetBlockSpecimenMinSubmissionRequired is a paid mutator transaction binding the contract method 0x7432d8dd.
+// SetBSPRequiredStake is a paid mutator transaction binding the contract method 0x5137b8b9.
 //
-// Solidity: function setBlockSpecimenMinSubmissionRequired(uint64 minSubmissions) returns()
-func (_ProofChain *ProofChainTransactorSession) SetBlockSpecimenMinSubmissionRequired(minSubmissions uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetBlockSpecimenMinSubmissionRequired(&_ProofChain.TransactOpts, minSubmissions)
+// Solidity: function setBSPRequiredStake(uint128 newStakeAmount) returns()
+func (_ProofChain *ProofChainTransactorSession) SetBSPRequiredStake(newStakeAmount *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetBSPRequiredStake(&_ProofChain.TransactOpts, newStakeAmount)
+}
+
+// SetBlockHeightSubmissionsThreshold is a paid mutator transaction binding the contract method 0x2c58ed42.
+//
+// Solidity: function setBlockHeightSubmissionsThreshold(uint64 chainId, uint64 threshold) returns()
+func (_ProofChain *ProofChainTransactor) SetBlockHeightSubmissionsThreshold(opts *bind.TransactOpts, chainId uint64, threshold uint64) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setBlockHeightSubmissionsThreshold", chainId, threshold)
+}
+
+// SetBlockHeightSubmissionsThreshold is a paid mutator transaction binding the contract method 0x2c58ed42.
+//
+// Solidity: function setBlockHeightSubmissionsThreshold(uint64 chainId, uint64 threshold) returns()
+func (_ProofChain *ProofChainSession) SetBlockHeightSubmissionsThreshold(chainId uint64, threshold uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetBlockHeightSubmissionsThreshold(&_ProofChain.TransactOpts, chainId, threshold)
+}
+
+// SetBlockHeightSubmissionsThreshold is a paid mutator transaction binding the contract method 0x2c58ed42.
+//
+// Solidity: function setBlockHeightSubmissionsThreshold(uint64 chainId, uint64 threshold) returns()
+func (_ProofChain *ProofChainTransactorSession) SetBlockHeightSubmissionsThreshold(chainId uint64, threshold uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetBlockHeightSubmissionsThreshold(&_ProofChain.TransactOpts, chainId, threshold)
 }
 
 // SetBlockSpecimenReward is a paid mutator transaction binding the contract method 0x89587f05.
@@ -948,25 +1030,46 @@ func (_ProofChain *ProofChainTransactorSession) SetBlockSpecimenSessionDuration(
 	return _ProofChain.Contract.SetBlockSpecimenSessionDuration(&_ProofChain.TransactOpts, newSessionDuration)
 }
 
-// SetMaxNumberOfHashesPer24H is a paid mutator transaction binding the contract method 0xc700c43b.
+// SetChainSyncData is a paid mutator transaction binding the contract method 0x99146284.
 //
-// Solidity: function setMaxNumberOfHashesPer24H(uint64 chainId, uint64 maxSubmissions) returns()
-func (_ProofChain *ProofChainTransactor) SetMaxNumberOfHashesPer24H(opts *bind.TransactOpts, chainId uint64, maxSubmissions uint64) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "setMaxNumberOfHashesPer24H", chainId, maxSubmissions)
+// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock) returns()
+func (_ProofChain *ProofChainTransactor) SetChainSyncData(opts *bind.TransactOpts, chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlock *big.Int) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setChainSyncData", chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlock)
 }
 
-// SetMaxNumberOfHashesPer24H is a paid mutator transaction binding the contract method 0xc700c43b.
+// SetChainSyncData is a paid mutator transaction binding the contract method 0x99146284.
 //
-// Solidity: function setMaxNumberOfHashesPer24H(uint64 chainId, uint64 maxSubmissions) returns()
-func (_ProofChain *ProofChainSession) SetMaxNumberOfHashesPer24H(chainId uint64, maxSubmissions uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetMaxNumberOfHashesPer24H(&_ProofChain.TransactOpts, chainId, maxSubmissions)
+// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock) returns()
+func (_ProofChain *ProofChainSession) SetChainSyncData(chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlock *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetChainSyncData(&_ProofChain.TransactOpts, chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlock)
 }
 
-// SetMaxNumberOfHashesPer24H is a paid mutator transaction binding the contract method 0xc700c43b.
+// SetChainSyncData is a paid mutator transaction binding the contract method 0x99146284.
 //
-// Solidity: function setMaxNumberOfHashesPer24H(uint64 chainId, uint64 maxSubmissions) returns()
-func (_ProofChain *ProofChainTransactorSession) SetMaxNumberOfHashesPer24H(chainId uint64, maxSubmissions uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetMaxNumberOfHashesPer24H(&_ProofChain.TransactOpts, chainId, maxSubmissions)
+// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock) returns()
+func (_ProofChain *ProofChainTransactorSession) SetChainSyncData(chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlock *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetChainSyncData(&_ProofChain.TransactOpts, chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlock)
+}
+
+// SetMaxSubmissionsPerBlockHeight is a paid mutator transaction binding the contract method 0x67585e44.
+//
+// Solidity: function setMaxSubmissionsPerBlockHeight(uint64 chainId, uint64 maxSubmissions) returns()
+func (_ProofChain *ProofChainTransactor) SetMaxSubmissionsPerBlockHeight(opts *bind.TransactOpts, chainId uint64, maxSubmissions uint64) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setMaxSubmissionsPerBlockHeight", chainId, maxSubmissions)
+}
+
+// SetMaxSubmissionsPerBlockHeight is a paid mutator transaction binding the contract method 0x67585e44.
+//
+// Solidity: function setMaxSubmissionsPerBlockHeight(uint64 chainId, uint64 maxSubmissions) returns()
+func (_ProofChain *ProofChainSession) SetMaxSubmissionsPerBlockHeight(chainId uint64, maxSubmissions uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetMaxSubmissionsPerBlockHeight(&_ProofChain.TransactOpts, chainId, maxSubmissions)
+}
+
+// SetMaxSubmissionsPerBlockHeight is a paid mutator transaction binding the contract method 0x67585e44.
+//
+// Solidity: function setMaxSubmissionsPerBlockHeight(uint64 chainId, uint64 maxSubmissions) returns()
+func (_ProofChain *ProofChainTransactorSession) SetMaxSubmissionsPerBlockHeight(chainId uint64, maxSubmissions uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetMaxSubmissionsPerBlockHeight(&_ProofChain.TransactOpts, chainId, maxSubmissions)
 }
 
 // SetMinSubmissionsRequired is a paid mutator transaction binding the contract method 0x93742b56.
@@ -1011,67 +1114,46 @@ func (_ProofChain *ProofChainTransactorSession) SetNthBlock(chainId uint64, n ui
 	return _ProofChain.Contract.SetNthBlock(&_ProofChain.TransactOpts, chainId, n)
 }
 
-// SetNumberOfBlocksPer24H is a paid mutator transaction binding the contract method 0xf883465a.
+// SetQuorumThreshold is a paid mutator transaction binding the contract method 0x4524c7e1.
 //
-// Solidity: function setNumberOfBlocksPer24H(uint64 numberOfBlocks) returns()
-func (_ProofChain *ProofChainTransactor) SetNumberOfBlocksPer24H(opts *bind.TransactOpts, numberOfBlocks uint64) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "setNumberOfBlocksPer24H", numberOfBlocks)
-}
-
-// SetNumberOfBlocksPer24H is a paid mutator transaction binding the contract method 0xf883465a.
-//
-// Solidity: function setNumberOfBlocksPer24H(uint64 numberOfBlocks) returns()
-func (_ProofChain *ProofChainSession) SetNumberOfBlocksPer24H(numberOfBlocks uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetNumberOfBlocksPer24H(&_ProofChain.TransactOpts, numberOfBlocks)
-}
-
-// SetNumberOfBlocksPer24H is a paid mutator transaction binding the contract method 0xf883465a.
-//
-// Solidity: function setNumberOfBlocksPer24H(uint64 numberOfBlocks) returns()
-func (_ProofChain *ProofChainTransactorSession) SetNumberOfBlocksPer24H(numberOfBlocks uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetNumberOfBlocksPer24H(&_ProofChain.TransactOpts, numberOfBlocks)
-}
-
-// SetQuorumThreshold is a paid mutator transaction binding the contract method 0x7442f33a.
-//
-// Solidity: function setQuorumThreshold(uint64 quorum) returns()
-func (_ProofChain *ProofChainTransactor) SetQuorumThreshold(opts *bind.TransactOpts, quorum uint64) (*types.Transaction, error) {
+// Solidity: function setQuorumThreshold(uint256 quorum) returns()
+func (_ProofChain *ProofChainTransactor) SetQuorumThreshold(opts *bind.TransactOpts, quorum *big.Int) (*types.Transaction, error) {
 	return _ProofChain.contract.Transact(opts, "setQuorumThreshold", quorum)
 }
 
-// SetQuorumThreshold is a paid mutator transaction binding the contract method 0x7442f33a.
+// SetQuorumThreshold is a paid mutator transaction binding the contract method 0x4524c7e1.
 //
-// Solidity: function setQuorumThreshold(uint64 quorum) returns()
-func (_ProofChain *ProofChainSession) SetQuorumThreshold(quorum uint64) (*types.Transaction, error) {
+// Solidity: function setQuorumThreshold(uint256 quorum) returns()
+func (_ProofChain *ProofChainSession) SetQuorumThreshold(quorum *big.Int) (*types.Transaction, error) {
 	return _ProofChain.Contract.SetQuorumThreshold(&_ProofChain.TransactOpts, quorum)
 }
 
-// SetQuorumThreshold is a paid mutator transaction binding the contract method 0x7442f33a.
+// SetQuorumThreshold is a paid mutator transaction binding the contract method 0x4524c7e1.
 //
-// Solidity: function setQuorumThreshold(uint64 quorum) returns()
-func (_ProofChain *ProofChainTransactorSession) SetQuorumThreshold(quorum uint64) (*types.Transaction, error) {
+// Solidity: function setQuorumThreshold(uint256 quorum) returns()
+func (_ProofChain *ProofChainTransactorSession) SetQuorumThreshold(quorum *big.Int) (*types.Transaction, error) {
 	return _ProofChain.Contract.SetQuorumThreshold(&_ProofChain.TransactOpts, quorum)
 }
 
-// SetRequiredStakeForRole is a paid mutator transaction binding the contract method 0x4a40372a.
+// SetSecondsPerBlock is a paid mutator transaction binding the contract method 0xdd36a8d5.
 //
-// Solidity: function setRequiredStakeForRole(bytes32 roleName, uint128 newStakeAmount) returns()
-func (_ProofChain *ProofChainTransactor) SetRequiredStakeForRole(opts *bind.TransactOpts, roleName [32]byte, newStakeAmount *big.Int) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "setRequiredStakeForRole", roleName, newStakeAmount)
+// Solidity: function setSecondsPerBlock(uint64 secondsPerBlock) returns()
+func (_ProofChain *ProofChainTransactor) SetSecondsPerBlock(opts *bind.TransactOpts, secondsPerBlock uint64) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setSecondsPerBlock", secondsPerBlock)
 }
 
-// SetRequiredStakeForRole is a paid mutator transaction binding the contract method 0x4a40372a.
+// SetSecondsPerBlock is a paid mutator transaction binding the contract method 0xdd36a8d5.
 //
-// Solidity: function setRequiredStakeForRole(bytes32 roleName, uint128 newStakeAmount) returns()
-func (_ProofChain *ProofChainSession) SetRequiredStakeForRole(roleName [32]byte, newStakeAmount *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetRequiredStakeForRole(&_ProofChain.TransactOpts, roleName, newStakeAmount)
+// Solidity: function setSecondsPerBlock(uint64 secondsPerBlock) returns()
+func (_ProofChain *ProofChainSession) SetSecondsPerBlock(secondsPerBlock uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetSecondsPerBlock(&_ProofChain.TransactOpts, secondsPerBlock)
 }
 
-// SetRequiredStakeForRole is a paid mutator transaction binding the contract method 0x4a40372a.
+// SetSecondsPerBlock is a paid mutator transaction binding the contract method 0xdd36a8d5.
 //
-// Solidity: function setRequiredStakeForRole(bytes32 roleName, uint128 newStakeAmount) returns()
-func (_ProofChain *ProofChainTransactorSession) SetRequiredStakeForRole(roleName [32]byte, newStakeAmount *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetRequiredStakeForRole(&_ProofChain.TransactOpts, roleName, newStakeAmount)
+// Solidity: function setSecondsPerBlock(uint64 secondsPerBlock) returns()
+func (_ProofChain *ProofChainTransactorSession) SetSecondsPerBlock(secondsPerBlock uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetSecondsPerBlock(&_ProofChain.TransactOpts, secondsPerBlock)
 }
 
 // SetStakingInterface is a paid mutator transaction binding the contract method 0x3646aded.
@@ -1137,9 +1219,9 @@ func (_ProofChain *ProofChainTransactorSession) TransferOwnership(newOwner commo
 	return _ProofChain.Contract.TransferOwnership(&_ProofChain.TransactOpts, newOwner)
 }
 
-// ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator is returned from FilterBlockSpecimenMaxNumberOfHashesPer24HChanged and is used to iterate over the raw logs and unpacked data for BlockSpecimenMaxNumberOfHashesPer24HChanged events raised by the ProofChain contract.
-type ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator struct {
-	Event *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged // Event containing the contract specifics and raw log
+// ProofChainBlockHeightSubmissionThresholdChangedIterator is returned from FilterBlockHeightSubmissionThresholdChanged and is used to iterate over the raw logs and unpacked data for BlockHeightSubmissionThresholdChanged events raised by the ProofChain contract.
+type ProofChainBlockHeightSubmissionThresholdChangedIterator struct {
+	Event *ProofChainBlockHeightSubmissionThresholdChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1153,7 +1235,7 @@ type ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator) Next() bool {
+func (it *ProofChainBlockHeightSubmissionThresholdChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1162,7 +1244,7 @@ func (it *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator) Next() 
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged)
+			it.Event = new(ProofChainBlockHeightSubmissionThresholdChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1177,7 +1259,7 @@ func (it *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator) Next() 
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged)
+		it.Event = new(ProofChainBlockHeightSubmissionThresholdChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1193,52 +1275,52 @@ func (it *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator) Next() 
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator) Error() error {
+func (it *ProofChainBlockHeightSubmissionThresholdChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator) Close() error {
+func (it *ProofChainBlockHeightSubmissionThresholdChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged represents a BlockSpecimenMaxNumberOfHashesPer24HChanged event raised by the ProofChain contract.
-type ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged struct {
-	ChainId                    uint64
-	NewMaxNumberOfHashesPer24H uint64
-	Raw                        types.Log // Blockchain specific contextual infos
+// ProofChainBlockHeightSubmissionThresholdChanged represents a BlockHeightSubmissionThresholdChanged event raised by the ProofChain contract.
+type ProofChainBlockHeightSubmissionThresholdChanged struct {
+	ChainId   uint64
+	Threshold uint64
+	Raw       types.Log // Blockchain specific contextual infos
 }
 
-// FilterBlockSpecimenMaxNumberOfHashesPer24HChanged is a free log retrieval operation binding the contract event 0xcd51a09527f1fdcb091e787cf5c06a462c010eaef61de7b7c3904916d95a4abd.
+// FilterBlockHeightSubmissionThresholdChanged is a free log retrieval operation binding the contract event 0x4e4c0afc3a2b327c2f061f8ff5190a491f1042ba8f292a887bab97840947b7a9.
 //
-// Solidity: event BlockSpecimenMaxNumberOfHashesPer24HChanged(uint64 indexed chainId, uint64 newMaxNumberOfHashesPer24H)
-func (_ProofChain *ProofChainFilterer) FilterBlockSpecimenMaxNumberOfHashesPer24HChanged(opts *bind.FilterOpts, chainId []uint64) (*ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator, error) {
+// Solidity: event BlockHeightSubmissionThresholdChanged(uint64 indexed chainId, uint64 threshold)
+func (_ProofChain *ProofChainFilterer) FilterBlockHeightSubmissionThresholdChanged(opts *bind.FilterOpts, chainId []uint64) (*ProofChainBlockHeightSubmissionThresholdChangedIterator, error) {
 
 	var chainIdRule []interface{}
 	for _, chainIdItem := range chainId {
 		chainIdRule = append(chainIdRule, chainIdItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "BlockSpecimenMaxNumberOfHashesPer24HChanged", chainIdRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "BlockHeightSubmissionThresholdChanged", chainIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProofChainBlockSpecimenMaxNumberOfHashesPer24HChangedIterator{contract: _ProofChain.contract, event: "BlockSpecimenMaxNumberOfHashesPer24HChanged", logs: logs, sub: sub}, nil
+	return &ProofChainBlockHeightSubmissionThresholdChangedIterator{contract: _ProofChain.contract, event: "BlockHeightSubmissionThresholdChanged", logs: logs, sub: sub}, nil
 }
 
-// WatchBlockSpecimenMaxNumberOfHashesPer24HChanged is a free log subscription operation binding the contract event 0xcd51a09527f1fdcb091e787cf5c06a462c010eaef61de7b7c3904916d95a4abd.
+// WatchBlockHeightSubmissionThresholdChanged is a free log subscription operation binding the contract event 0x4e4c0afc3a2b327c2f061f8ff5190a491f1042ba8f292a887bab97840947b7a9.
 //
-// Solidity: event BlockSpecimenMaxNumberOfHashesPer24HChanged(uint64 indexed chainId, uint64 newMaxNumberOfHashesPer24H)
-func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenMaxNumberOfHashesPer24HChanged(opts *bind.WatchOpts, sink chan<- *ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged, chainId []uint64) (event.Subscription, error) {
+// Solidity: event BlockHeightSubmissionThresholdChanged(uint64 indexed chainId, uint64 threshold)
+func (_ProofChain *ProofChainFilterer) WatchBlockHeightSubmissionThresholdChanged(opts *bind.WatchOpts, sink chan<- *ProofChainBlockHeightSubmissionThresholdChanged, chainId []uint64) (event.Subscription, error) {
 
 	var chainIdRule []interface{}
 	for _, chainIdItem := range chainId {
 		chainIdRule = append(chainIdRule, chainIdItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "BlockSpecimenMaxNumberOfHashesPer24HChanged", chainIdRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "BlockHeightSubmissionThresholdChanged", chainIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1248,8 +1330,8 @@ func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenMaxNumberOfHashesPer24H
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged)
-				if err := _ProofChain.contract.UnpackLog(event, "BlockSpecimenMaxNumberOfHashesPer24HChanged", log); err != nil {
+				event := new(ProofChainBlockHeightSubmissionThresholdChanged)
+				if err := _ProofChain.contract.UnpackLog(event, "BlockHeightSubmissionThresholdChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1270,146 +1352,12 @@ func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenMaxNumberOfHashesPer24H
 	}), nil
 }
 
-// ParseBlockSpecimenMaxNumberOfHashesPer24HChanged is a log parse operation binding the contract event 0xcd51a09527f1fdcb091e787cf5c06a462c010eaef61de7b7c3904916d95a4abd.
+// ParseBlockHeightSubmissionThresholdChanged is a log parse operation binding the contract event 0x4e4c0afc3a2b327c2f061f8ff5190a491f1042ba8f292a887bab97840947b7a9.
 //
-// Solidity: event BlockSpecimenMaxNumberOfHashesPer24HChanged(uint64 indexed chainId, uint64 newMaxNumberOfHashesPer24H)
-func (_ProofChain *ProofChainFilterer) ParseBlockSpecimenMaxNumberOfHashesPer24HChanged(log types.Log) (*ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged, error) {
-	event := new(ProofChainBlockSpecimenMaxNumberOfHashesPer24HChanged)
-	if err := _ProofChain.contract.UnpackLog(event, "BlockSpecimenMaxNumberOfHashesPer24HChanged", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// ProofChainBlockSpecimenMinSubmissionRequiredChangedIterator is returned from FilterBlockSpecimenMinSubmissionRequiredChanged and is used to iterate over the raw logs and unpacked data for BlockSpecimenMinSubmissionRequiredChanged events raised by the ProofChain contract.
-type ProofChainBlockSpecimenMinSubmissionRequiredChangedIterator struct {
-	Event *ProofChainBlockSpecimenMinSubmissionRequiredChanged // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ProofChainBlockSpecimenMinSubmissionRequiredChangedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ProofChainBlockSpecimenMinSubmissionRequiredChanged)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ProofChainBlockSpecimenMinSubmissionRequiredChanged)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainBlockSpecimenMinSubmissionRequiredChangedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ProofChainBlockSpecimenMinSubmissionRequiredChangedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ProofChainBlockSpecimenMinSubmissionRequiredChanged represents a BlockSpecimenMinSubmissionRequiredChanged event raised by the ProofChain contract.
-type ProofChainBlockSpecimenMinSubmissionRequiredChanged struct {
-	NewBlockSpecimenMinSubmissionsRequired *big.Int
-	Raw                                    types.Log // Blockchain specific contextual infos
-}
-
-// FilterBlockSpecimenMinSubmissionRequiredChanged is a free log retrieval operation binding the contract event 0xe2c2e6446883e57e5ecbdcf7b0a4e67007bcdb9191111ae6589d05a053ad8617.
-//
-// Solidity: event BlockSpecimenMinSubmissionRequiredChanged(uint128 newBlockSpecimenMinSubmissionsRequired)
-func (_ProofChain *ProofChainFilterer) FilterBlockSpecimenMinSubmissionRequiredChanged(opts *bind.FilterOpts) (*ProofChainBlockSpecimenMinSubmissionRequiredChangedIterator, error) {
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "BlockSpecimenMinSubmissionRequiredChanged")
-	if err != nil {
-		return nil, err
-	}
-	return &ProofChainBlockSpecimenMinSubmissionRequiredChangedIterator{contract: _ProofChain.contract, event: "BlockSpecimenMinSubmissionRequiredChanged", logs: logs, sub: sub}, nil
-}
-
-// WatchBlockSpecimenMinSubmissionRequiredChanged is a free log subscription operation binding the contract event 0xe2c2e6446883e57e5ecbdcf7b0a4e67007bcdb9191111ae6589d05a053ad8617.
-//
-// Solidity: event BlockSpecimenMinSubmissionRequiredChanged(uint128 newBlockSpecimenMinSubmissionsRequired)
-func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenMinSubmissionRequiredChanged(opts *bind.WatchOpts, sink chan<- *ProofChainBlockSpecimenMinSubmissionRequiredChanged) (event.Subscription, error) {
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "BlockSpecimenMinSubmissionRequiredChanged")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainBlockSpecimenMinSubmissionRequiredChanged)
-				if err := _ProofChain.contract.UnpackLog(event, "BlockSpecimenMinSubmissionRequiredChanged", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseBlockSpecimenMinSubmissionRequiredChanged is a log parse operation binding the contract event 0xe2c2e6446883e57e5ecbdcf7b0a4e67007bcdb9191111ae6589d05a053ad8617.
-//
-// Solidity: event BlockSpecimenMinSubmissionRequiredChanged(uint128 newBlockSpecimenMinSubmissionsRequired)
-func (_ProofChain *ProofChainFilterer) ParseBlockSpecimenMinSubmissionRequiredChanged(log types.Log) (*ProofChainBlockSpecimenMinSubmissionRequiredChanged, error) {
-	event := new(ProofChainBlockSpecimenMinSubmissionRequiredChanged)
-	if err := _ProofChain.contract.UnpackLog(event, "BlockSpecimenMinSubmissionRequiredChanged", log); err != nil {
+// Solidity: event BlockHeightSubmissionThresholdChanged(uint64 indexed chainId, uint64 threshold)
+func (_ProofChain *ProofChainFilterer) ParseBlockHeightSubmissionThresholdChanged(log types.Log) (*ProofChainBlockHeightSubmissionThresholdChanged, error) {
+	event := new(ProofChainBlockHeightSubmissionThresholdChanged)
+	if err := _ProofChain.contract.UnpackLog(event, "BlockHeightSubmissionThresholdChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -1496,23 +1444,10 @@ type ProofChainBlockSpecimenProductionProofSubmitted struct {
 
 // FilterBlockSpecimenProductionProofSubmitted is a free log retrieval operation binding the contract event 0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c.
 //
-// Solidity: event BlockSpecimenProductionProofSubmitted(uint64 chainId, uint64 indexed blockHeight, bytes32 indexed blockHash, bytes32 indexed specimenHash, string storageURL, uint128 submittedStake)
-func (_ProofChain *ProofChainFilterer) FilterBlockSpecimenProductionProofSubmitted(opts *bind.FilterOpts, blockHeight []uint64, blockHash [][32]byte, specimenHash [][32]byte) (*ProofChainBlockSpecimenProductionProofSubmittedIterator, error) {
+// Solidity: event BlockSpecimenProductionProofSubmitted(uint64 chainId, uint64 blockHeight, bytes32 blockHash, bytes32 specimenHash, string storageURL, uint128 submittedStake)
+func (_ProofChain *ProofChainFilterer) FilterBlockSpecimenProductionProofSubmitted(opts *bind.FilterOpts) (*ProofChainBlockSpecimenProductionProofSubmittedIterator, error) {
 
-	var blockHeightRule []interface{}
-	for _, blockHeightItem := range blockHeight {
-		blockHeightRule = append(blockHeightRule, blockHeightItem)
-	}
-	var blockHashRule []interface{}
-	for _, blockHashItem := range blockHash {
-		blockHashRule = append(blockHashRule, blockHashItem)
-	}
-	var specimenHashRule []interface{}
-	for _, specimenHashItem := range specimenHash {
-		specimenHashRule = append(specimenHashRule, specimenHashItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "BlockSpecimenProductionProofSubmitted", blockHeightRule, blockHashRule, specimenHashRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "BlockSpecimenProductionProofSubmitted")
 	if err != nil {
 		return nil, err
 	}
@@ -1521,23 +1456,10 @@ func (_ProofChain *ProofChainFilterer) FilterBlockSpecimenProductionProofSubmitt
 
 // WatchBlockSpecimenProductionProofSubmitted is a free log subscription operation binding the contract event 0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c.
 //
-// Solidity: event BlockSpecimenProductionProofSubmitted(uint64 chainId, uint64 indexed blockHeight, bytes32 indexed blockHash, bytes32 indexed specimenHash, string storageURL, uint128 submittedStake)
-func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenProductionProofSubmitted(opts *bind.WatchOpts, sink chan<- *ProofChainBlockSpecimenProductionProofSubmitted, blockHeight []uint64, blockHash [][32]byte, specimenHash [][32]byte) (event.Subscription, error) {
+// Solidity: event BlockSpecimenProductionProofSubmitted(uint64 chainId, uint64 blockHeight, bytes32 blockHash, bytes32 specimenHash, string storageURL, uint128 submittedStake)
+func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenProductionProofSubmitted(opts *bind.WatchOpts, sink chan<- *ProofChainBlockSpecimenProductionProofSubmitted) (event.Subscription, error) {
 
-	var blockHeightRule []interface{}
-	for _, blockHeightItem := range blockHeight {
-		blockHeightRule = append(blockHeightRule, blockHeightItem)
-	}
-	var blockHashRule []interface{}
-	for _, blockHashItem := range blockHash {
-		blockHashRule = append(blockHashRule, blockHashItem)
-	}
-	var specimenHashRule []interface{}
-	for _, specimenHashItem := range specimenHash {
-		specimenHashRule = append(specimenHashRule, specimenHashItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "BlockSpecimenProductionProofSubmitted", blockHeightRule, blockHashRule, specimenHashRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "BlockSpecimenProductionProofSubmitted")
 	if err != nil {
 		return nil, err
 	}
@@ -1571,7 +1493,7 @@ func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenProductionProofSubmitte
 
 // ParseBlockSpecimenProductionProofSubmitted is a log parse operation binding the contract event 0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c.
 //
-// Solidity: event BlockSpecimenProductionProofSubmitted(uint64 chainId, uint64 indexed blockHeight, bytes32 indexed blockHash, bytes32 indexed specimenHash, string storageURL, uint128 submittedStake)
+// Solidity: event BlockSpecimenProductionProofSubmitted(uint64 chainId, uint64 blockHeight, bytes32 blockHash, bytes32 specimenHash, string storageURL, uint128 submittedStake)
 func (_ProofChain *ProofChainFilterer) ParseBlockSpecimenProductionProofSubmitted(log types.Log) (*ProofChainBlockSpecimenProductionProofSubmitted, error) {
 	event := new(ProofChainBlockSpecimenProductionProofSubmitted)
 	if err := _ProofChain.contract.UnpackLog(event, "BlockSpecimenProductionProofSubmitted", log); err != nil {
@@ -1878,9 +1800,9 @@ func (_ProofChain *ProofChainFilterer) ParseBlockSpecimenRewardChanged(log types
 	return event, nil
 }
 
-// ProofChainBlockSpecimenSessionFinalizedIterator is returned from FilterBlockSpecimenSessionFinalized and is used to iterate over the raw logs and unpacked data for BlockSpecimenSessionFinalized events raised by the ProofChain contract.
-type ProofChainBlockSpecimenSessionFinalizedIterator struct {
-	Event *ProofChainBlockSpecimenSessionFinalized // Event containing the contract specifics and raw log
+// ProofChainChainSyncDataChangedIterator is returned from FilterChainSyncDataChanged and is used to iterate over the raw logs and unpacked data for ChainSyncDataChanged events raised by the ProofChain contract.
+type ProofChainChainSyncDataChangedIterator struct {
+	Event *ProofChainChainSyncDataChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1894,7 +1816,7 @@ type ProofChainBlockSpecimenSessionFinalizedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProofChainBlockSpecimenSessionFinalizedIterator) Next() bool {
+func (it *ProofChainChainSyncDataChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1903,7 +1825,7 @@ func (it *ProofChainBlockSpecimenSessionFinalizedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProofChainBlockSpecimenSessionFinalized)
+			it.Event = new(ProofChainChainSyncDataChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1918,7 +1840,7 @@ func (it *ProofChainBlockSpecimenSessionFinalizedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProofChainBlockSpecimenSessionFinalized)
+		it.Event = new(ProofChainChainSyncDataChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1934,60 +1856,54 @@ func (it *ProofChainBlockSpecimenSessionFinalizedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainBlockSpecimenSessionFinalizedIterator) Error() error {
+func (it *ProofChainChainSyncDataChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProofChainBlockSpecimenSessionFinalizedIterator) Close() error {
+func (it *ProofChainChainSyncDataChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProofChainBlockSpecimenSessionFinalized represents a BlockSpecimenSessionFinalized event raised by the ProofChain contract.
-type ProofChainBlockSpecimenSessionFinalized struct {
-	BlockHeight *big.Int
-	ProofHash   [32]byte
-	Raw         types.Log // Blockchain specific contextual infos
+// ProofChainChainSyncDataChanged represents a ChainSyncDataChanged event raised by the ProofChain contract.
+type ProofChainChainSyncDataChanged struct {
+	ChainId             uint64
+	BlockOnTargetChain  *big.Int
+	BlockOnCurrentChain *big.Int
+	SecondsPerBlock     *big.Int
+	Raw                 types.Log // Blockchain specific contextual infos
 }
 
-// FilterBlockSpecimenSessionFinalized is a free log retrieval operation binding the contract event 0xcbbbca2698029deaaa991c42053b23dd488b5caf488e5223da54a08a48d7c31e.
+// FilterChainSyncDataChanged is a free log retrieval operation binding the contract event 0xfd97af399d19e6be9256c99c8e52b1809cdbc4dc96816739612b6fd4e6d940b0.
 //
-// Solidity: event BlockSpecimenSessionFinalized(uint128 indexed blockHeight, bytes32 indexed proofHash)
-func (_ProofChain *ProofChainFilterer) FilterBlockSpecimenSessionFinalized(opts *bind.FilterOpts, blockHeight []*big.Int, proofHash [][32]byte) (*ProofChainBlockSpecimenSessionFinalizedIterator, error) {
+// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock)
+func (_ProofChain *ProofChainFilterer) FilterChainSyncDataChanged(opts *bind.FilterOpts, chainId []uint64) (*ProofChainChainSyncDataChangedIterator, error) {
 
-	var blockHeightRule []interface{}
-	for _, blockHeightItem := range blockHeight {
-		blockHeightRule = append(blockHeightRule, blockHeightItem)
-	}
-	var proofHashRule []interface{}
-	for _, proofHashItem := range proofHash {
-		proofHashRule = append(proofHashRule, proofHashItem)
+	var chainIdRule []interface{}
+	for _, chainIdItem := range chainId {
+		chainIdRule = append(chainIdRule, chainIdItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "BlockSpecimenSessionFinalized", blockHeightRule, proofHashRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "ChainSyncDataChanged", chainIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProofChainBlockSpecimenSessionFinalizedIterator{contract: _ProofChain.contract, event: "BlockSpecimenSessionFinalized", logs: logs, sub: sub}, nil
+	return &ProofChainChainSyncDataChangedIterator{contract: _ProofChain.contract, event: "ChainSyncDataChanged", logs: logs, sub: sub}, nil
 }
 
-// WatchBlockSpecimenSessionFinalized is a free log subscription operation binding the contract event 0xcbbbca2698029deaaa991c42053b23dd488b5caf488e5223da54a08a48d7c31e.
+// WatchChainSyncDataChanged is a free log subscription operation binding the contract event 0xfd97af399d19e6be9256c99c8e52b1809cdbc4dc96816739612b6fd4e6d940b0.
 //
-// Solidity: event BlockSpecimenSessionFinalized(uint128 indexed blockHeight, bytes32 indexed proofHash)
-func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenSessionFinalized(opts *bind.WatchOpts, sink chan<- *ProofChainBlockSpecimenSessionFinalized, blockHeight []*big.Int, proofHash [][32]byte) (event.Subscription, error) {
+// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock)
+func (_ProofChain *ProofChainFilterer) WatchChainSyncDataChanged(opts *bind.WatchOpts, sink chan<- *ProofChainChainSyncDataChanged, chainId []uint64) (event.Subscription, error) {
 
-	var blockHeightRule []interface{}
-	for _, blockHeightItem := range blockHeight {
-		blockHeightRule = append(blockHeightRule, blockHeightItem)
-	}
-	var proofHashRule []interface{}
-	for _, proofHashItem := range proofHash {
-		proofHashRule = append(proofHashRule, proofHashItem)
+	var chainIdRule []interface{}
+	for _, chainIdItem := range chainId {
+		chainIdRule = append(chainIdRule, chainIdItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "BlockSpecimenSessionFinalized", blockHeightRule, proofHashRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "ChainSyncDataChanged", chainIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1997,8 +1913,8 @@ func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenSessionFinalized(opts *
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainBlockSpecimenSessionFinalized)
-				if err := _ProofChain.contract.UnpackLog(event, "BlockSpecimenSessionFinalized", log); err != nil {
+				event := new(ProofChainChainSyncDataChanged)
+				if err := _ProofChain.contract.UnpackLog(event, "ChainSyncDataChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2019,12 +1935,280 @@ func (_ProofChain *ProofChainFilterer) WatchBlockSpecimenSessionFinalized(opts *
 	}), nil
 }
 
-// ParseBlockSpecimenSessionFinalized is a log parse operation binding the contract event 0xcbbbca2698029deaaa991c42053b23dd488b5caf488e5223da54a08a48d7c31e.
+// ParseChainSyncDataChanged is a log parse operation binding the contract event 0xfd97af399d19e6be9256c99c8e52b1809cdbc4dc96816739612b6fd4e6d940b0.
 //
-// Solidity: event BlockSpecimenSessionFinalized(uint128 indexed blockHeight, bytes32 indexed proofHash)
-func (_ProofChain *ProofChainFilterer) ParseBlockSpecimenSessionFinalized(log types.Log) (*ProofChainBlockSpecimenSessionFinalized, error) {
-	event := new(ProofChainBlockSpecimenSessionFinalized)
-	if err := _ProofChain.contract.UnpackLog(event, "BlockSpecimenSessionFinalized", log); err != nil {
+// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock)
+func (_ProofChain *ProofChainFilterer) ParseChainSyncDataChanged(log types.Log) (*ProofChainChainSyncDataChanged, error) {
+	event := new(ProofChainChainSyncDataChanged)
+	if err := _ProofChain.contract.UnpackLog(event, "ChainSyncDataChanged", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ProofChainInitializedIterator is returned from FilterInitialized and is used to iterate over the raw logs and unpacked data for Initialized events raised by the ProofChain contract.
+type ProofChainInitializedIterator struct {
+	Event *ProofChainInitialized // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ProofChainInitializedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ProofChainInitialized)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ProofChainInitialized)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ProofChainInitializedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ProofChainInitializedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ProofChainInitialized represents a Initialized event raised by the ProofChain contract.
+type ProofChainInitialized struct {
+	Version uint8
+	Raw     types.Log // Blockchain specific contextual infos
+}
+
+// FilterInitialized is a free log retrieval operation binding the contract event 0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498.
+//
+// Solidity: event Initialized(uint8 version)
+func (_ProofChain *ProofChainFilterer) FilterInitialized(opts *bind.FilterOpts) (*ProofChainInitializedIterator, error) {
+
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "Initialized")
+	if err != nil {
+		return nil, err
+	}
+	return &ProofChainInitializedIterator{contract: _ProofChain.contract, event: "Initialized", logs: logs, sub: sub}, nil
+}
+
+// WatchInitialized is a free log subscription operation binding the contract event 0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498.
+//
+// Solidity: event Initialized(uint8 version)
+func (_ProofChain *ProofChainFilterer) WatchInitialized(opts *bind.WatchOpts, sink chan<- *ProofChainInitialized) (event.Subscription, error) {
+
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "Initialized")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ProofChainInitialized)
+				if err := _ProofChain.contract.UnpackLog(event, "Initialized", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseInitialized is a log parse operation binding the contract event 0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498.
+//
+// Solidity: event Initialized(uint8 version)
+func (_ProofChain *ProofChainFilterer) ParseInitialized(log types.Log) (*ProofChainInitialized, error) {
+	event := new(ProofChainInitialized)
+	if err := _ProofChain.contract.UnpackLog(event, "Initialized", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ProofChainMaxSubmissionsPerBlockHeightChangedIterator is returned from FilterMaxSubmissionsPerBlockHeightChanged and is used to iterate over the raw logs and unpacked data for MaxSubmissionsPerBlockHeightChanged events raised by the ProofChain contract.
+type ProofChainMaxSubmissionsPerBlockHeightChangedIterator struct {
+	Event *ProofChainMaxSubmissionsPerBlockHeightChanged // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ProofChainMaxSubmissionsPerBlockHeightChangedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ProofChainMaxSubmissionsPerBlockHeightChanged)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ProofChainMaxSubmissionsPerBlockHeightChanged)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ProofChainMaxSubmissionsPerBlockHeightChangedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ProofChainMaxSubmissionsPerBlockHeightChangedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ProofChainMaxSubmissionsPerBlockHeightChanged represents a MaxSubmissionsPerBlockHeightChanged event raised by the ProofChain contract.
+type ProofChainMaxSubmissionsPerBlockHeightChanged struct {
+	MaxSubmissions *big.Int
+	Raw            types.Log // Blockchain specific contextual infos
+}
+
+// FilterMaxSubmissionsPerBlockHeightChanged is a free log retrieval operation binding the contract event 0x1bca1fb481202bb14258ce1030d54e9e7bafc8b696d96b9eb733826e58a3a030.
+//
+// Solidity: event MaxSubmissionsPerBlockHeightChanged(uint256 maxSubmissions)
+func (_ProofChain *ProofChainFilterer) FilterMaxSubmissionsPerBlockHeightChanged(opts *bind.FilterOpts) (*ProofChainMaxSubmissionsPerBlockHeightChangedIterator, error) {
+
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "MaxSubmissionsPerBlockHeightChanged")
+	if err != nil {
+		return nil, err
+	}
+	return &ProofChainMaxSubmissionsPerBlockHeightChangedIterator{contract: _ProofChain.contract, event: "MaxSubmissionsPerBlockHeightChanged", logs: logs, sub: sub}, nil
+}
+
+// WatchMaxSubmissionsPerBlockHeightChanged is a free log subscription operation binding the contract event 0x1bca1fb481202bb14258ce1030d54e9e7bafc8b696d96b9eb733826e58a3a030.
+//
+// Solidity: event MaxSubmissionsPerBlockHeightChanged(uint256 maxSubmissions)
+func (_ProofChain *ProofChainFilterer) WatchMaxSubmissionsPerBlockHeightChanged(opts *bind.WatchOpts, sink chan<- *ProofChainMaxSubmissionsPerBlockHeightChanged) (event.Subscription, error) {
+
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "MaxSubmissionsPerBlockHeightChanged")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ProofChainMaxSubmissionsPerBlockHeightChanged)
+				if err := _ProofChain.contract.UnpackLog(event, "MaxSubmissionsPerBlockHeightChanged", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseMaxSubmissionsPerBlockHeightChanged is a log parse operation binding the contract event 0x1bca1fb481202bb14258ce1030d54e9e7bafc8b696d96b9eb733826e58a3a030.
+//
+// Solidity: event MaxSubmissionsPerBlockHeightChanged(uint256 maxSubmissions)
+func (_ProofChain *ProofChainFilterer) ParseMaxSubmissionsPerBlockHeightChanged(log types.Log) (*ProofChainMaxSubmissionsPerBlockHeightChanged, error) {
+	event := new(ProofChainMaxSubmissionsPerBlockHeightChanged)
+	if err := _ProofChain.contract.UnpackLog(event, "MaxSubmissionsPerBlockHeightChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -2100,39 +2284,28 @@ func (it *ProofChainMinimumRequiredStakeChangedIterator) Close() error {
 
 // ProofChainMinimumRequiredStakeChanged represents a MinimumRequiredStakeChanged event raised by the ProofChain contract.
 type ProofChainMinimumRequiredStakeChanged struct {
-	Role                [32]byte
 	NewStakeRequirement *big.Int
 	Raw                 types.Log // Blockchain specific contextual infos
 }
 
-// FilterMinimumRequiredStakeChanged is a free log retrieval operation binding the contract event 0xcc5adc82271e3da3beed19bdd358519f24712369aa0cd14ec87e36a0eaa8efaa.
+// FilterMinimumRequiredStakeChanged is a free log retrieval operation binding the contract event 0xb6c040bb0324b47cbf9a620cce03b311e24597626a57322173d5d5465f739d27.
 //
-// Solidity: event MinimumRequiredStakeChanged(bytes32 indexed role, uint128 newStakeRequirement)
-func (_ProofChain *ProofChainFilterer) FilterMinimumRequiredStakeChanged(opts *bind.FilterOpts, role [][32]byte) (*ProofChainMinimumRequiredStakeChangedIterator, error) {
+// Solidity: event MinimumRequiredStakeChanged(uint128 newStakeRequirement)
+func (_ProofChain *ProofChainFilterer) FilterMinimumRequiredStakeChanged(opts *bind.FilterOpts) (*ProofChainMinimumRequiredStakeChangedIterator, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "MinimumRequiredStakeChanged", roleRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "MinimumRequiredStakeChanged")
 	if err != nil {
 		return nil, err
 	}
 	return &ProofChainMinimumRequiredStakeChangedIterator{contract: _ProofChain.contract, event: "MinimumRequiredStakeChanged", logs: logs, sub: sub}, nil
 }
 
-// WatchMinimumRequiredStakeChanged is a free log subscription operation binding the contract event 0xcc5adc82271e3da3beed19bdd358519f24712369aa0cd14ec87e36a0eaa8efaa.
+// WatchMinimumRequiredStakeChanged is a free log subscription operation binding the contract event 0xb6c040bb0324b47cbf9a620cce03b311e24597626a57322173d5d5465f739d27.
 //
-// Solidity: event MinimumRequiredStakeChanged(bytes32 indexed role, uint128 newStakeRequirement)
-func (_ProofChain *ProofChainFilterer) WatchMinimumRequiredStakeChanged(opts *bind.WatchOpts, sink chan<- *ProofChainMinimumRequiredStakeChanged, role [][32]byte) (event.Subscription, error) {
+// Solidity: event MinimumRequiredStakeChanged(uint128 newStakeRequirement)
+func (_ProofChain *ProofChainFilterer) WatchMinimumRequiredStakeChanged(opts *bind.WatchOpts, sink chan<- *ProofChainMinimumRequiredStakeChanged) (event.Subscription, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "MinimumRequiredStakeChanged", roleRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "MinimumRequiredStakeChanged")
 	if err != nil {
 		return nil, err
 	}
@@ -2164,9 +2337,9 @@ func (_ProofChain *ProofChainFilterer) WatchMinimumRequiredStakeChanged(opts *bi
 	}), nil
 }
 
-// ParseMinimumRequiredStakeChanged is a log parse operation binding the contract event 0xcc5adc82271e3da3beed19bdd358519f24712369aa0cd14ec87e36a0eaa8efaa.
+// ParseMinimumRequiredStakeChanged is a log parse operation binding the contract event 0xb6c040bb0324b47cbf9a620cce03b311e24597626a57322173d5d5465f739d27.
 //
-// Solidity: event MinimumRequiredStakeChanged(bytes32 indexed role, uint128 newStakeRequirement)
+// Solidity: event MinimumRequiredStakeChanged(uint128 newStakeRequirement)
 func (_ProofChain *ProofChainFilterer) ParseMinimumRequiredStakeChanged(log types.Log) (*ProofChainMinimumRequiredStakeChanged, error) {
 	event := new(ProofChainMinimumRequiredStakeChanged)
 	if err := _ProofChain.contract.UnpackLog(event, "MinimumRequiredStakeChanged", log); err != nil {
@@ -2323,140 +2496,6 @@ func (_ProofChain *ProofChainFilterer) WatchNthBlockChanged(opts *bind.WatchOpts
 func (_ProofChain *ProofChainFilterer) ParseNthBlockChanged(log types.Log) (*ProofChainNthBlockChanged, error) {
 	event := new(ProofChainNthBlockChanged)
 	if err := _ProofChain.contract.UnpackLog(event, "NthBlockChanged", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// ProofChainNumberOfBlocksPer24HChangedIterator is returned from FilterNumberOfBlocksPer24HChanged and is used to iterate over the raw logs and unpacked data for NumberOfBlocksPer24HChanged events raised by the ProofChain contract.
-type ProofChainNumberOfBlocksPer24HChangedIterator struct {
-	Event *ProofChainNumberOfBlocksPer24HChanged // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ProofChainNumberOfBlocksPer24HChangedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ProofChainNumberOfBlocksPer24HChanged)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ProofChainNumberOfBlocksPer24HChanged)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainNumberOfBlocksPer24HChangedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ProofChainNumberOfBlocksPer24HChangedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ProofChainNumberOfBlocksPer24HChanged represents a NumberOfBlocksPer24HChanged event raised by the ProofChain contract.
-type ProofChainNumberOfBlocksPer24HChanged struct {
-	NumberOfBlocks uint64
-	Raw            types.Log // Blockchain specific contextual infos
-}
-
-// FilterNumberOfBlocksPer24HChanged is a free log retrieval operation binding the contract event 0xd110b97bc9e6210ae4a53402f5a2835c92dbe790fc6b679468af199a13756d98.
-//
-// Solidity: event NumberOfBlocksPer24HChanged(uint64 numberOfBlocks)
-func (_ProofChain *ProofChainFilterer) FilterNumberOfBlocksPer24HChanged(opts *bind.FilterOpts) (*ProofChainNumberOfBlocksPer24HChangedIterator, error) {
-
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "NumberOfBlocksPer24HChanged")
-	if err != nil {
-		return nil, err
-	}
-	return &ProofChainNumberOfBlocksPer24HChangedIterator{contract: _ProofChain.contract, event: "NumberOfBlocksPer24HChanged", logs: logs, sub: sub}, nil
-}
-
-// WatchNumberOfBlocksPer24HChanged is a free log subscription operation binding the contract event 0xd110b97bc9e6210ae4a53402f5a2835c92dbe790fc6b679468af199a13756d98.
-//
-// Solidity: event NumberOfBlocksPer24HChanged(uint64 numberOfBlocks)
-func (_ProofChain *ProofChainFilterer) WatchNumberOfBlocksPer24HChanged(opts *bind.WatchOpts, sink chan<- *ProofChainNumberOfBlocksPer24HChanged) (event.Subscription, error) {
-
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "NumberOfBlocksPer24HChanged")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainNumberOfBlocksPer24HChanged)
-				if err := _ProofChain.contract.UnpackLog(event, "NumberOfBlocksPer24HChanged", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseNumberOfBlocksPer24HChanged is a log parse operation binding the contract event 0xd110b97bc9e6210ae4a53402f5a2835c92dbe790fc6b679468af199a13756d98.
-//
-// Solidity: event NumberOfBlocksPer24HChanged(uint64 numberOfBlocks)
-func (_ProofChain *ProofChainFilterer) ParseNumberOfBlocksPer24HChanged(log types.Log) (*ProofChainNumberOfBlocksPer24HChanged, error) {
-	event := new(ProofChainNumberOfBlocksPer24HChanged)
-	if err := _ProofChain.contract.UnpackLog(event, "NumberOfBlocksPer24HChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -3299,9 +3338,9 @@ func (_ProofChain *ProofChainFilterer) ParseQuorumNotReached(log types.Log) (*Pr
 	return event, nil
 }
 
-// ProofChainRoleAdminChangedIterator is returned from FilterRoleAdminChanged and is used to iterate over the raw logs and unpacked data for RoleAdminChanged events raised by the ProofChain contract.
-type ProofChainRoleAdminChangedIterator struct {
-	Event *ProofChainRoleAdminChanged // Event containing the contract specifics and raw log
+// ProofChainSecondsPerBlockChangedIterator is returned from FilterSecondsPerBlockChanged and is used to iterate over the raw logs and unpacked data for SecondsPerBlockChanged events raised by the ProofChain contract.
+type ProofChainSecondsPerBlockChangedIterator struct {
+	Event *ProofChainSecondsPerBlockChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3315,7 +3354,7 @@ type ProofChainRoleAdminChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProofChainRoleAdminChangedIterator) Next() bool {
+func (it *ProofChainSecondsPerBlockChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3324,7 +3363,7 @@ func (it *ProofChainRoleAdminChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProofChainRoleAdminChanged)
+			it.Event = new(ProofChainSecondsPerBlockChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3339,7 +3378,7 @@ func (it *ProofChainRoleAdminChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProofChainRoleAdminChanged)
+		it.Event = new(ProofChainSecondsPerBlockChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3355,69 +3394,51 @@ func (it *ProofChainRoleAdminChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainRoleAdminChangedIterator) Error() error {
+func (it *ProofChainSecondsPerBlockChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProofChainRoleAdminChangedIterator) Close() error {
+func (it *ProofChainSecondsPerBlockChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProofChainRoleAdminChanged represents a RoleAdminChanged event raised by the ProofChain contract.
-type ProofChainRoleAdminChanged struct {
-	Role              [32]byte
-	PreviousAdminRole [32]byte
-	NewAdminRole      [32]byte
-	Raw               types.Log // Blockchain specific contextual infos
+// ProofChainSecondsPerBlockChanged represents a SecondsPerBlockChanged event raised by the ProofChain contract.
+type ProofChainSecondsPerBlockChanged struct {
+	SecondsPerBlock uint64
+	Raw             types.Log // Blockchain specific contextual infos
 }
 
-// FilterRoleAdminChanged is a free log retrieval operation binding the contract event 0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff.
+// FilterSecondsPerBlockChanged is a free log retrieval operation binding the contract event 0xcaf46ba335d93b98398af7142ea3e362a6b8e91c57da6bf1e8a704f86374dde0.
 //
-// Solidity: event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)
-func (_ProofChain *ProofChainFilterer) FilterRoleAdminChanged(opts *bind.FilterOpts, role [][32]byte, previousAdminRole [][32]byte, newAdminRole [][32]byte) (*ProofChainRoleAdminChangedIterator, error) {
+// Solidity: event SecondsPerBlockChanged(uint64 indexed secondsPerBlock)
+func (_ProofChain *ProofChainFilterer) FilterSecondsPerBlockChanged(opts *bind.FilterOpts, secondsPerBlock []uint64) (*ProofChainSecondsPerBlockChangedIterator, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var previousAdminRoleRule []interface{}
-	for _, previousAdminRoleItem := range previousAdminRole {
-		previousAdminRoleRule = append(previousAdminRoleRule, previousAdminRoleItem)
-	}
-	var newAdminRoleRule []interface{}
-	for _, newAdminRoleItem := range newAdminRole {
-		newAdminRoleRule = append(newAdminRoleRule, newAdminRoleItem)
+	var secondsPerBlockRule []interface{}
+	for _, secondsPerBlockItem := range secondsPerBlock {
+		secondsPerBlockRule = append(secondsPerBlockRule, secondsPerBlockItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "RoleAdminChanged", roleRule, previousAdminRoleRule, newAdminRoleRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "SecondsPerBlockChanged", secondsPerBlockRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProofChainRoleAdminChangedIterator{contract: _ProofChain.contract, event: "RoleAdminChanged", logs: logs, sub: sub}, nil
+	return &ProofChainSecondsPerBlockChangedIterator{contract: _ProofChain.contract, event: "SecondsPerBlockChanged", logs: logs, sub: sub}, nil
 }
 
-// WatchRoleAdminChanged is a free log subscription operation binding the contract event 0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff.
+// WatchSecondsPerBlockChanged is a free log subscription operation binding the contract event 0xcaf46ba335d93b98398af7142ea3e362a6b8e91c57da6bf1e8a704f86374dde0.
 //
-// Solidity: event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)
-func (_ProofChain *ProofChainFilterer) WatchRoleAdminChanged(opts *bind.WatchOpts, sink chan<- *ProofChainRoleAdminChanged, role [][32]byte, previousAdminRole [][32]byte, newAdminRole [][32]byte) (event.Subscription, error) {
+// Solidity: event SecondsPerBlockChanged(uint64 indexed secondsPerBlock)
+func (_ProofChain *ProofChainFilterer) WatchSecondsPerBlockChanged(opts *bind.WatchOpts, sink chan<- *ProofChainSecondsPerBlockChanged, secondsPerBlock []uint64) (event.Subscription, error) {
 
-	var roleRule []interface{}
-	for _, roleItem := range role {
-		roleRule = append(roleRule, roleItem)
-	}
-	var previousAdminRoleRule []interface{}
-	for _, previousAdminRoleItem := range previousAdminRole {
-		previousAdminRoleRule = append(previousAdminRoleRule, previousAdminRoleItem)
-	}
-	var newAdminRoleRule []interface{}
-	for _, newAdminRoleItem := range newAdminRole {
-		newAdminRoleRule = append(newAdminRoleRule, newAdminRoleItem)
+	var secondsPerBlockRule []interface{}
+	for _, secondsPerBlockItem := range secondsPerBlock {
+		secondsPerBlockRule = append(secondsPerBlockRule, secondsPerBlockItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "RoleAdminChanged", roleRule, previousAdminRoleRule, newAdminRoleRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "SecondsPerBlockChanged", secondsPerBlockRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3427,8 +3448,8 @@ func (_ProofChain *ProofChainFilterer) WatchRoleAdminChanged(opts *bind.WatchOpt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainRoleAdminChanged)
-				if err := _ProofChain.contract.UnpackLog(event, "RoleAdminChanged", log); err != nil {
+				event := new(ProofChainSecondsPerBlockChanged)
+				if err := _ProofChain.contract.UnpackLog(event, "SecondsPerBlockChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3449,12 +3470,166 @@ func (_ProofChain *ProofChainFilterer) WatchRoleAdminChanged(opts *bind.WatchOpt
 	}), nil
 }
 
-// ParseRoleAdminChanged is a log parse operation binding the contract event 0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff.
+// ParseSecondsPerBlockChanged is a log parse operation binding the contract event 0xcaf46ba335d93b98398af7142ea3e362a6b8e91c57da6bf1e8a704f86374dde0.
 //
-// Solidity: event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)
-func (_ProofChain *ProofChainFilterer) ParseRoleAdminChanged(log types.Log) (*ProofChainRoleAdminChanged, error) {
-	event := new(ProofChainRoleAdminChanged)
-	if err := _ProofChain.contract.UnpackLog(event, "RoleAdminChanged", log); err != nil {
+// Solidity: event SecondsPerBlockChanged(uint64 indexed secondsPerBlock)
+func (_ProofChain *ProofChainFilterer) ParseSecondsPerBlockChanged(log types.Log) (*ProofChainSecondsPerBlockChanged, error) {
+	event := new(ProofChainSecondsPerBlockChanged)
+	if err := _ProofChain.contract.UnpackLog(event, "SecondsPerBlockChanged", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ProofChainSessionStartedIterator is returned from FilterSessionStarted and is used to iterate over the raw logs and unpacked data for SessionStarted events raised by the ProofChain contract.
+type ProofChainSessionStartedIterator struct {
+	Event *ProofChainSessionStarted // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ProofChainSessionStartedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ProofChainSessionStarted)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ProofChainSessionStarted)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ProofChainSessionStartedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ProofChainSessionStartedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ProofChainSessionStarted represents a SessionStarted event raised by the ProofChain contract.
+type ProofChainSessionStarted struct {
+	ChainId     uint64
+	BlockHeight uint64
+	Deadline    uint64
+	Raw         types.Log // Blockchain specific contextual infos
+}
+
+// FilterSessionStarted is a free log retrieval operation binding the contract event 0x8b1f889addbfa41db5227bae3b091bd5c8b9a9122f874dfe54ba2f75aabe1f4c.
+//
+// Solidity: event SessionStarted(uint64 indexed chainId, uint64 indexed blockHeight, uint64 deadline)
+func (_ProofChain *ProofChainFilterer) FilterSessionStarted(opts *bind.FilterOpts, chainId []uint64, blockHeight []uint64) (*ProofChainSessionStartedIterator, error) {
+
+	var chainIdRule []interface{}
+	for _, chainIdItem := range chainId {
+		chainIdRule = append(chainIdRule, chainIdItem)
+	}
+	var blockHeightRule []interface{}
+	for _, blockHeightItem := range blockHeight {
+		blockHeightRule = append(blockHeightRule, blockHeightItem)
+	}
+
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "SessionStarted", chainIdRule, blockHeightRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ProofChainSessionStartedIterator{contract: _ProofChain.contract, event: "SessionStarted", logs: logs, sub: sub}, nil
+}
+
+// WatchSessionStarted is a free log subscription operation binding the contract event 0x8b1f889addbfa41db5227bae3b091bd5c8b9a9122f874dfe54ba2f75aabe1f4c.
+//
+// Solidity: event SessionStarted(uint64 indexed chainId, uint64 indexed blockHeight, uint64 deadline)
+func (_ProofChain *ProofChainFilterer) WatchSessionStarted(opts *bind.WatchOpts, sink chan<- *ProofChainSessionStarted, chainId []uint64, blockHeight []uint64) (event.Subscription, error) {
+
+	var chainIdRule []interface{}
+	for _, chainIdItem := range chainId {
+		chainIdRule = append(chainIdRule, chainIdItem)
+	}
+	var blockHeightRule []interface{}
+	for _, blockHeightItem := range blockHeight {
+		blockHeightRule = append(blockHeightRule, blockHeightItem)
+	}
+
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "SessionStarted", chainIdRule, blockHeightRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ProofChainSessionStarted)
+				if err := _ProofChain.contract.UnpackLog(event, "SessionStarted", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseSessionStarted is a log parse operation binding the contract event 0x8b1f889addbfa41db5227bae3b091bd5c8b9a9122f874dfe54ba2f75aabe1f4c.
+//
+// Solidity: event SessionStarted(uint64 indexed chainId, uint64 indexed blockHeight, uint64 deadline)
+func (_ProofChain *ProofChainFilterer) ParseSessionStarted(log types.Log) (*ProofChainSessionStarted, error) {
+	event := new(ProofChainSessionStarted)
+	if err := _ProofChain.contract.UnpackLog(event, "SessionStarted", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -3798,13 +3973,13 @@ func (it *ProofChainSpecimenSessionQuorumChangedIterator) Close() error {
 
 // ProofChainSpecimenSessionQuorumChanged represents a SpecimenSessionQuorumChanged event raised by the ProofChain contract.
 type ProofChainSpecimenSessionQuorumChanged struct {
-	NewQuorumThreshold uint64
+	NewQuorumThreshold *big.Int
 	Raw                types.Log // Blockchain specific contextual infos
 }
 
-// FilterSpecimenSessionQuorumChanged is a free log retrieval operation binding the contract event 0x7ab8150f5b613293e16e3a99396812661a51bad017fbe4204fb8faef1c315cb0.
+// FilterSpecimenSessionQuorumChanged is a free log retrieval operation binding the contract event 0x00ec8eefea39d742ff523b872c1931ff4d509ab873041c5d6e237d5f0fc053f8.
 //
-// Solidity: event SpecimenSessionQuorumChanged(uint64 newQuorumThreshold)
+// Solidity: event SpecimenSessionQuorumChanged(uint256 newQuorumThreshold)
 func (_ProofChain *ProofChainFilterer) FilterSpecimenSessionQuorumChanged(opts *bind.FilterOpts) (*ProofChainSpecimenSessionQuorumChangedIterator, error) {
 
 	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "SpecimenSessionQuorumChanged")
@@ -3814,9 +3989,9 @@ func (_ProofChain *ProofChainFilterer) FilterSpecimenSessionQuorumChanged(opts *
 	return &ProofChainSpecimenSessionQuorumChangedIterator{contract: _ProofChain.contract, event: "SpecimenSessionQuorumChanged", logs: logs, sub: sub}, nil
 }
 
-// WatchSpecimenSessionQuorumChanged is a free log subscription operation binding the contract event 0x7ab8150f5b613293e16e3a99396812661a51bad017fbe4204fb8faef1c315cb0.
+// WatchSpecimenSessionQuorumChanged is a free log subscription operation binding the contract event 0x00ec8eefea39d742ff523b872c1931ff4d509ab873041c5d6e237d5f0fc053f8.
 //
-// Solidity: event SpecimenSessionQuorumChanged(uint64 newQuorumThreshold)
+// Solidity: event SpecimenSessionQuorumChanged(uint256 newQuorumThreshold)
 func (_ProofChain *ProofChainFilterer) WatchSpecimenSessionQuorumChanged(opts *bind.WatchOpts, sink chan<- *ProofChainSpecimenSessionQuorumChanged) (event.Subscription, error) {
 
 	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "SpecimenSessionQuorumChanged")
@@ -3851,9 +4026,9 @@ func (_ProofChain *ProofChainFilterer) WatchSpecimenSessionQuorumChanged(opts *b
 	}), nil
 }
 
-// ParseSpecimenSessionQuorumChanged is a log parse operation binding the contract event 0x7ab8150f5b613293e16e3a99396812661a51bad017fbe4204fb8faef1c315cb0.
+// ParseSpecimenSessionQuorumChanged is a log parse operation binding the contract event 0x00ec8eefea39d742ff523b872c1931ff4d509ab873041c5d6e237d5f0fc053f8.
 //
-// Solidity: event SpecimenSessionQuorumChanged(uint64 newQuorumThreshold)
+// Solidity: event SpecimenSessionQuorumChanged(uint256 newQuorumThreshold)
 func (_ProofChain *ProofChainFilterer) ParseSpecimenSessionQuorumChanged(log types.Log) (*ProofChainSpecimenSessionQuorumChanged, error) {
 	event := new(ProofChainSpecimenSessionQuorumChanged)
 	if err := _ProofChain.contract.UnpackLog(event, "SpecimenSessionQuorumChanged", log); err != nil {

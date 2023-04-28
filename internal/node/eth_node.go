@@ -19,7 +19,7 @@ import (
 
 const (
 	consumerEvents            int64  = 1
-	consumerPendingIdleTime   int64  = 30
+	consumerPendingIdleTime   int64  = 360
 	consumerPendingTimeTicker int64  = 10
 	start                     string = ">"
 	segmentLength             int    = 1
