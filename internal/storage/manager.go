@@ -12,10 +12,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	uploadTimeout int64 = 50
-)
-
 // Manager composes of all the different storage types supported by the agent
 type Manager struct {
 	StorageConfig *config.StorageConfig
