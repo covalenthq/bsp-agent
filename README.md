@@ -53,7 +53,7 @@
 
 Decodes, packs, encodes, proves, stores and uploads block-replicas (can be block-results, block-specimens, or any other pre-defined block types), which are primarily "block-specimens" produced by EVM or non-EVM byte code based blockchains.
 
-These block-replicas are produced by go-ethereum nodes / websocket block data sources modified with block-specimen producers(BSP) streamed into a redis channel. The agent first decodes them from their native RLP encoding, repacks them into segments of bigger chunks containing more than one block's worth of data, creates a proof transaction on the proof-chain smart contract (also called cqt-virtnet) with a sha-256 checksum of the data contained in the object, and finally persists them into object storage (local and cloud) for a specified google bucket - atomically.
+These block-replicas are produced by go-ethereum nodes / websocket block data sources modified with block-specimen producers(BSP) streamed into a redis channel. The agent first decodes them from their native RLP encoding, repacks them into segments of bigger chunks containing more than one block's worth of data, creates a proof transaction on the proof-chain smart contract (also called cqt-virtnet) with a sha-256 checksum of the data contained in the object, and finally persists them into storage (local and IPFS).
 
 ## <span id="agent_resources">Resources</span>
 
@@ -207,7 +207,7 @@ go run ./cmd/bspagent/*.go \
   --ipfs-pinner-server="http://127.0.0.1:3000/""
 ```
 
-Or update the Makefile with the correct --gcp-svc-account, --replica-bucket & --proof-chain-address and run with the following.
+Or update the Makefile with the correct `--proof-chain-address` and run with the following.
 
 ```bash
     make run-agent-eth
@@ -226,10 +226,6 @@ export REDIS_PWD=your-redis-pwd
 `--avro-codec-path` - tells the BSP agent, the relative path to the AVRO .avsc files in the repo, since the agent ships with the corresponding .avsc files this remains fixed unless stated otherwise explicitly with another codec
 
 `--binary-file-path` - tells the BSP agent if local copies of the block-replica objects being created are to be stored in a given local directory. Please make sure the path (& directory) pre-exists before passing this flag
-
-`--gcp-svc-account` - sets the full path to the .json credentials file to the service account for the gcp bucket where the objects can be persisted
-
-`--replica-bucket` - lets the BSP agent know the “bucket-name” for cloud storage of block replica specimens/results (currently only google cloud storege is supported)
 
 `--block-divisor` - allows the operator to configure the number of block specimens being created, the block number divisible only by this number will be extracted, packed, encoded, uploaded and proofed.
 
