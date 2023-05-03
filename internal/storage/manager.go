@@ -2,30 +2,20 @@
 package storage
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"os"
-	"time"
 
-	gcp "cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/covalenthq/bsp-agent/internal/metrics"
-	"github.com/covalenthq/bsp-agent/internal/utils"
 	"github.com/ipfs/go-cid"
 	log "github.com/sirupsen/logrus"
-)
-
-const (
-	uploadTimeout int64 = 50
 )
 
 // Manager composes of all the different storage types supported by the agent
 type Manager struct {
 	StorageConfig *config.StorageConfig
 
-	GcpStore   *gcp.Client
 	LocalStore *LocalStoreClient
 	IpfsStore  *ipfsStore
 
@@ -38,7 +28,6 @@ func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
 	manager := &Manager{}
 	manager.StorageConfig = conf
 
-	manager.setupGcpStore()
 	manager.setupIpfsStore()
 	manager.setupLocalFs()
 	manager.setupMetrics()
@@ -46,22 +35,17 @@ func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
 	if manager.IpfsStore == nil {
 		log.Errorf("cannot setup IPFS store; no ipfs service flags provided")
 	}
-	if manager.GcpStore == nil {
-		log.Errorf("cannot setup GCP store; no gcp service flags provided")
-	}
 
 	return manager, nil
 }
 
-// GenerateLocation calculates the non-local location (gcp or ipfs) for the given segment and data, cid is returned in case of ipfs
+// GenerateLocation calculates the non-local location (ipfs) for the given segment and data, cid is returned in case of ipfs
 func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string, replicaSegmentAvro []byte) (string, cid.Cid) {
 	config := manager.StorageConfig
 	var replicaURL string
 	var ccid = cid.Undef
 	var err error
 	switch {
-	case manager.GcpStore != nil:
-		replicaURL = "https://storage.cloud.google.com/" + config.ReplicaBucketLoc + "/" + segmentName
 	case manager.IpfsStore != nil:
 		ccid, err = manager.IpfsStore.CalcCid(replicaSegmentAvro)
 		if err != nil {
@@ -94,7 +78,6 @@ func (manager *Manager) Store(ctx context.Context, ccid cid.Cid, filename string
 		}
 	}
 
-	// ipfs store has priority over gcp
 	if manager.IpfsStore != nil {
 		if ccid == cid.Undef {
 			return fmt.Errorf("cid is Undefined")
@@ -109,8 +92,6 @@ func (manager *Manager) Store(ctx context.Context, ccid cid.Cid, filename string
 		}
 		manager.ipfsSuccessCount.Inc(1)
 		log.Infof("client side cid is: %s, while uploaded is: %s", ccid.String(), ucid.String())
-	} else if manager.GcpStore != nil {
-		err = manager.writeToCloudStorage(ctx, filename, data)
 	}
 
 	return err
@@ -118,25 +99,7 @@ func (manager *Manager) Store(ctx context.Context, ccid cid.Cid, filename string
 
 // Close the stores which compose the manager
 func (manager *Manager) Close() {
-	if manager.GcpStore != nil {
-		err := manager.GcpStore.Close()
-		if err != nil {
-			log.Error("error in closing storage client: ", err)
-		}
-	}
-}
-
-func (manager *Manager) setupGcpStore() {
-	// setup gcp storage
-	storageConfig := manager.StorageConfig
-	gcpStorageClient, err := utils.NewGCPStorageClient(storageConfig.GcpSvcAccountAuthFile)
-	if err != nil {
-		log.Printf("unable to get gcp storage client; --gcp-svc-account flag not set or set incorrectly: %v", err)
-
-		return
-	}
-
-	manager.GcpStore = gcpStorageClient
+	// no op
 }
 
 func (manager *Manager) setupIpfsStore() {
@@ -157,23 +120,6 @@ func (manager *Manager) setupLocalFs() {
 func (manager *Manager) setupMetrics() {
 	manager.ipfsSuccessCount = metrics.GetOrRegisterCounter("agent/storage/ipfs/success", metrics.DefaultRegistry)
 	manager.ipfsFailureCount = metrics.GetOrRegisterCounter("agent/storage/ipfs/failure", metrics.DefaultRegistry)
-}
-
-func (manager *Manager) writeToCloudStorage(ctx context.Context, filename string, object []byte) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(uploadTimeout))
-	defer cancel()
-
-	bucket := manager.StorageConfig.ReplicaBucketLoc
-	wc := manager.GcpStore.Bucket(bucket).Object(filename).NewWriter(ctx)
-	if _, err := io.Copy(wc, bytes.NewReader(object)); err != nil {
-		return fmt.Errorf("error in copying data to file: %w", err)
-	}
-	if err := wc.Close(); err != nil {
-		return fmt.Errorf("error in closing file: %w", err)
-	}
-	log.Info("File successfully uploaded to: https://storage.cloud.google.com/" + bucket + "/" + filename)
-
-	return nil
 }
 
 func validatePath(path, objectName string) error {
