@@ -78,15 +78,21 @@ func (interactor *ProofchainInteractor) setTransactionFeeParams(ctx context.Cont
 	switch head, errHead := interactor.ethClient.HeaderByNumber(ctx, nil); {
 	case errHead != nil:
 		log.Error("cannot find the latest header: ", errHead.Error())
+
+		return opts
+
 	case head.BaseFee != nil:
 		baseFee = head.BaseFee.Int64()
+
 	default:
 		log.Info("base fee not found in latest header, using static fee for moonbeam")
 	}
 
 	gasTipCap, err := interactor.ethClient.SuggestGasTipCap(ctx)
 	if err != nil {
-		log.Error("cannot get the gas tip cap, will revert to legacy tx: ", err.Error())
+		log.Info("cannot get the gas tip cap, will revert to legacy tx: ", err.Error())
+
+		return opts
 	}
 	gasFeeCap := new(big.Int).Add(
 		gasTipCap,
