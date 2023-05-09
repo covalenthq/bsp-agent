@@ -28,7 +28,7 @@ require (
 	cloud.google.com/go/bigquery v1.50.0 // indirect
 	github.com/VictoriaMetrics/fastcache v1.10.0 // indirect
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
-	github.com/apache/arrow/go/v7 v7.0.0 // indirect
+	github.com/apache/arrow/go/v7 v7.0.1 // indirect
 	github.com/benbjohnson/immutable v0.3.0 // indirect
 	github.com/deckarep/golang-set/v2 v2.1.0 // indirect
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
@@ -36,9 +36,9 @@ require (
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
-	github.com/google/flatbuffers v2.0.8+incompatible // indirect
+	github.com/google/flatbuffers v22.9.30-0.20221019131441-5792623df42e+incompatible // indirect
 	github.com/holiman/uint256 v1.2.0 // indirect
-	github.com/influxdata/flux v0.170.1 // indirect
+	github.com/influxdata/flux v0.188.0 // indirect
 	github.com/influxdata/influxql v1.1.1-0.20211004132434-7e7d61973256 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20210311194329-9aa0e372d097 // indirect
 	github.com/onsi/gomega v1.19.0 // indirect
@@ -50,7 +50,6 @@ require (
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/xlab/treeprint v1.0.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	gonum.org/v1/gonum v0.11.0 // indirect
 )
 
 require (
@@ -71,7 +70,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
-	github.com/influxdata/influxdb v1.10.0
+	github.com/influxdata/influxdb v1.11.1
 	github.com/influxdata/influxdb-client-go/v2 v2.12.3
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
