@@ -5,7 +5,6 @@ package utils
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -17,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 
-	"cloud.google.com/go/storage"
 	"github.com/covalenthq/bsp-agent/internal/config"
 	"github.com/elodina/go-avro"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -25,7 +23,6 @@ import (
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
-	"google.golang.org/api/option"
 )
 
 const (
@@ -38,7 +35,7 @@ const (
 	// BspAgentVersionMinor is Minor version component of the current release
 	BspAgentVersionMinor = 4
 	// BspAgentVersionPatch is Patch version component of the current release
-	BspAgentVersionPatch = 7
+	BspAgentVersionPatch = 8
 )
 
 // BspAgentVersion holds the textual version string.
@@ -92,21 +89,6 @@ func NewEthClient(address string) (*ethclient.Client, error) {
 	}
 
 	return ethClient, nil
-}
-
-// NewGCPStorageClient initializes a new gcp storage client using a service account string
-func NewGCPStorageClient(serviceAccount string) (*storage.Client, error) {
-	ctx := context.Background()
-	if serviceAccount == "" {
-		return nil, fmt.Errorf("gcp-svc-account not provided: %v", serviceAccount)
-	}
-
-	gcpStorageClient, err := storage.NewClient(ctx, option.WithCredentialsFile(serviceAccount))
-	if err != nil {
-		return nil, fmt.Errorf("error in connecting to google storage: %w", err)
-	}
-
-	return gcpStorageClient, nil
 }
 
 // StructToMap converts a struct to go map
