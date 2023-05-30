@@ -20,7 +20,6 @@ import (
 	"github.com/elodina/go-avro"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/redis/v7"
-	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
@@ -213,166 +212,54 @@ func Writable(path string) bool {
 	return unix.Access(path, unix.W_OK) == nil
 }
 
-// UnwrapAvroUnion "unwraps" the "to" field from the replica map
-//
-//nolint:varnamelen
+// UnwrapAvroUnion unwraps avro wrapped maps
 func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
-	vs := data
-	for k1 := range data {
-		if k1 == "replicaEvent" {
-			m1 := data[k1].([]interface{})
-			vsr := m1
-			for k2 := range m1 {
-				m2 := m1[k2].(map[string]interface{})
-				vso := m2
-				for k3 := range m2 {
-					if k3 == "data" {
-						m3 := m2[k3].(map[string]interface{})
-						vsd := m3
-						for k4 := range m3 {
-							switch k4 {
-							case "Transactions":
-								m4 := m3[k4].([]interface{})
-								vst := m4
-								for k5 := range m4 {
-									m5 := m4[k5].(map[string]interface{})
-									vsm := make(map[string]interface{})
-									for k6, v6 := range m5 {
-										switch {
-										case (k6 == "to" || k6 == "from") && v6 != nil:
-											m6 := v6.(map[string]interface{})
-											if v7, ok := m6["string"]; ok {
-												vsm[k6] = v7
-											}
-										case (k6 == "v" || k6 == "r" || k6 == "s") && v6 != nil:
-											m6 := v6.(map[string]interface{})
-											if v7, ok := m6["bytes"]; ok {
-												vsm[k6] = v7
-											}
-										default:
-											vsm[k6] = v6
-										}
-									}
-									vst[k5] = vsm
-								}
-								vsd[k4] = vst
-
-							case "Header":
-								m4 := m3[k4].(map[string]interface{})
-								vst := m4
-								for k5, v5 := range m4 {
-									if k5 == "withdrawalsRoot" && v5 != nil {
-										m5 := v5.(map[string]interface{})
-										if v6, ok := m5["string"]; ok {
-											vst[k5] = v6
-										}
-									}
-								}
-								vsd[k4] = vst
-
-							case "Withdrawals", "Uncles":
-								m4 := m3[k4].(map[string]interface{})
-								if m3[k4] == nil {
-									vsd[k4] = nil
-								} else {
-									vsd[k4] = m4["array"]
-								}
-							}
-						}
-						vso[k3] = vsd
-					}
-				}
-				vsr[k2] = vso
-			}
-			vs[k1] = vsr
-		}
+	if data == nil {
+		return nil
 	}
 
-	return vs
+	// v, r, s
+	unwrapType(data, vLens, "bytes")
+	unwrapType(data, rLens, "bytes")
+	unwrapType(data, sLens, "bytes")
+
+	// to, from
+	unwrapType(data, toLens, "string")
+	unwrapType(data, fromLens, "string")
+
+	// withdrawalsRoot
+	unwrapType(data, withdrawalsRootLens, "string")
+
+	// withdrawals, uncles
+	unwrapType(data, withdrawalsLens, "array")
+	unwrapType(data, uncleLens, "array")
+
+	return data
 }
 
-// MapToAvroUnion converts the "to" field in the replica map to an Avro Union type allowing <nil>
-//
-//nolint:varnamelen
+// MapToAvroUnion converts the several field in the replica map to an Avro Union type allowing <nil>
 func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
-	vs := data
-	for k1 := range data {
-		if k1 == "replicaEvent" {
-			m1 := data[k1].([]interface{})
-			vsr := m1
-			for k2 := range m1 {
-				m2 := m1[k2].(map[string]interface{})
-				vso := m2
-				for k3 := range m2 {
-					if k3 == "data" {
-						m3 := m2[k3].(map[string]interface{})
-						vsd := m3
-						for k4 := range m3 {
-							switch k4 {
-							case "Transactions":
-								m4 := m3[k4].([]interface{})
-								vst := m4
-								for k5 := range m4 {
-									m5 := m4[k5].(map[string]interface{})
-									vsm := m5
-									for k6, v6 := range m5 {
-										if k6 == "to" || k6 == "from" {
-											if v6 == nil {
-												vsm[k6] = goavro.Union("null", nil)
-											} else {
-												vsm[k6] = goavro.Union("string", v6)
-											}
-										} else if k6 == "v" || k6 == "r" || k6 == "s" {
-											if v6 == nil {
-												vsm[k6] = goavro.Union("null", nil)
-											} else {
-												vsm[k6] = goavro.Union("bytes", v6)
-											}
-										}
-									}
-									vst[k5] = vsm
-								}
-								vsd[k4] = vst
-
-							case "Header":
-								m4 := m3[k4].(map[string]interface{})
-								vst := m4
-								for k5, v5 := range m4 {
-									if k5 == "withdrawalsRoot" {
-										if v5 == nil {
-											vst[k5] = goavro.Union("null", nil)
-										} else {
-											vst[k5] = goavro.Union("string", v5)
-										}
-									}
-								}
-								vsd[k4] = vst
-
-							case "Withdrawals", "Uncles":
-								if m3[k4] == nil {
-									vsd[k4] = goavro.Union("null", nil)
-								} else {
-									m4 := m3[k4].([]interface{})
-									vsd[k4] = goavro.Union("array", m4)
-								}
-							}
-						}
-						if vsd["Withdrawals"] == nil {
-							vsd["Withdrawals"] = goavro.Union("null", nil)
-						}
-						if vsd["Uncles"] == nil {
-							vsd["Uncles"] = goavro.Union("null", nil)
-						}
-						vso[k3] = vsd
-					}
-				}
-				vsr[k2] = vso
-			}
-			vs[k1] = vsr
-		}
+	if data == nil {
+		return nil
 	}
 
-	return vs
+	// v,r,s
+	wrapType(data, vLens, "bytes")
+	wrapType(data, rLens, "bytes")
+	wrapType(data, sLens, "bytes")
+
+	// to, from
+	wrapType(data, toLens, "string")
+	wrapType(data, fromLens, "string")
+
+	// withdrawalsRoot
+	wrapType(data, withdrawalsRootLens, "string")
+
+	// withdrawals, uncles
+	wrapType(data, withdrawalsLens, "array")
+	wrapType(data, uncleLens, "array")
+
+	return data
 }
 
 // Version Provides version info on bsp agent binary
