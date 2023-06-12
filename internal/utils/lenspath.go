@@ -1,9 +1,9 @@
 package utils
 
 import (
+	lensp "github.com/covalenthq/lenspath"
 	"github.com/linkedin/goavro/v2"
 	log "github.com/sirupsen/logrus"
-	lensp "github.com/covalenthq/lenspath"
 )
 
 var dataLens = createLenspath([]string{"replicaEvent", "*", "data"})
@@ -22,19 +22,20 @@ var uncleLens = composeLenspath(dataLens, []string{"Uncles"})
 
 // utilities for lenspath
 
-func unwrapType(data map[string]interface{}, lenspath *lensp.Lenspath, nonNilType string) map[string]interface{} {
-	return lenspathSetter(data, lenspath, func(leafd any) any {
+func unwrapType(data map[string]interface{}, lenspath *lensp.Lenspath, nonNilType string) {
+	lenspathSetter(data, lenspath, func(leafd any) any {
 		if leafd == nil {
 			return nil
 		}
 
 		mp := leafd.(map[string]interface{})
+
 		return mp[nonNilType]
 	})
 }
 
-func wrapType(data map[string]interface{}, lenspath *lensp.Lenspath, nonNilType string) map[string]interface{} {
-	return lenspathSetter(data, lenspath, func(leafd any) any {
+func wrapType(data map[string]interface{}, lenspath *lensp.Lenspath, nonNilType string) {
+	lenspathSetter(data, lenspath, func(leafd any) any {
 		wType := nonNilType
 		if leafd == nil {
 			wType = "null"
@@ -44,30 +45,32 @@ func wrapType(data map[string]interface{}, lenspath *lensp.Lenspath, nonNilType 
 	})
 }
 
-func lenspathSetter(data map[string]interface{}, lenspath *lensp.Lenspath, setter func(leafd any) any) map[string]interface{} {
+func lenspathSetter(data map[string]interface{}, lenspath *lensp.Lenspath, setter func(leafd any) any) {
 	err := lenspath.Setter(data, setter)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	return data
 }
 
 func composeLenspath(prevLenspath *lensp.Lenspath, lens []lensp.Lens) *lensp.Lenspath {
-	if lenspath, err := prevLenspath.Compose(lens); err != nil {
+	lenspath, err := prevLenspath.Compose(lens)
+	if err != nil {
 		log.Fatal(err)
+
 		return nil
-	} else {
-		return lenspath
 	}
+
+	return lenspath
 }
 
 func createLenspath(lens []lensp.Lens) *lensp.Lenspath {
-	if lenspath, err := lensp.Create(lens); err != nil {
+	lenspath, err := lensp.Create(lens)
+	if err != nil {
 		log.Fatal(err)
+
 		return nil
-	} else {
-		return lenspath
 	}
+
+	return lenspath
 }
