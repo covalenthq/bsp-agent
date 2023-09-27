@@ -14,6 +14,7 @@
     <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/covalenthq/bsp-agent">
   </a>
   <a href="https://bestpractices.coreinfrastructure.org/projects/5570"><img src="https://bestpractices.coreinfrastructure.org/projects/5570/badge"></a>
+  <a href="https://codecov.io/gh/covalenthq/bsp-agent"><img src="https://codecov.io/gh/covalenthq/bsp-agent/graph/badge.svg?token=DEB4871WZ3"/></a>
   <a href="http://covalenthq.com/discord">
     <img alt="Discord" src="https://img.shields.io/badge/discord-join%20chat-blue.svg" />
   </a>
