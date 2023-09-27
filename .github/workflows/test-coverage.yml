@@ -1,0 +1,35 @@
+name: go-test
+
+on:
+  push:
+    branches:
+    - "main"
+  pull_request:
+    branches: 
+    - "main"
+    - "develop"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go 1.19.x
+        uses: actions/setup-go@v4
+        with:
+          # Semantic version range syntax or exact version of Go
+          go-version: '1.19.x'
+          cache-dependency-path: ./go.sum
+      - name: Install dependencies
+        run: |
+          go get -d ./...
+      - name: Build Binaries
+        run: go build -v ./...
+      - name: Test with the Go CLI
+        run: go test ./... -coverprofile=coverage.out
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
