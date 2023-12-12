@@ -165,8 +165,7 @@ func executeWithRetry(ctx context.Context, interactor *ProofchainInteractor, pro
 			return
 		}
 		log.Error("proof tx failed/reverted, retrying proof tx for block hash: ", blockReplica.Hash.String())
-		newFeeOpts := interactor.setTransactionFeeParams(ctx, opts)
-		executeWithRetry(ctx, interactor, proofChainContract, ethClient, newFeeOpts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
+		executeWithRetry(ctx, interactor, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
 
 		return
 	}
