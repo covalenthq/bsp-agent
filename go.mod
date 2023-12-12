@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
-	github.com/btcsuite/btcd v0.22.0-beta // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/covalenthq/lenspath v0.3.2
 	github.com/covalenthq/lumberjack/v3 v3.0.1
