@@ -12,7 +12,7 @@ require (
 	github.com/ethereum/go-ethereum v1.11.5
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/golang/snappy v0.0.4
-	github.com/gorilla/websocket v1.5.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/ipfs/go-cid v0.1.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/linkedin/goavro/v2 v2.12.0
