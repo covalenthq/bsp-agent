@@ -15,5 +15,5 @@ else
     --block-divisor=3 \
     --proof-chain-address=0xea2ff902dbeeeccc828757b881b343f9316752e5 \
     --consumer-timeout=15 \
-    --ipfs-pinner-server="http://ipfs-pinner:3000/"
+    --ipfs-pinner-server="http://ipfs-pinner:3001/"
 fi
