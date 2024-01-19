@@ -123,7 +123,7 @@ services:
         sleep 1;
         done;
         echo proof-chain contracts deployed!;
-        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication-2#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=1  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=100000 --ipfs-pinner-server="http://ipfs-pinner:3001/";
+        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=3  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=100000 --ipfs-pinner-server="http://ipfs-pinner:3001/";
         exit 0;"
     environment:
       - MB_PRIVATE_KEY=${PRIVATE_KEY}
