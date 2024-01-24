@@ -119,7 +119,7 @@ func (ac *AgentConfig) getConfigFromFlags() {
 	flag.StringVar(&ac.LogFolder, "log-folder", LookupEnvOrString("LogFolder", logFolderDefault), "Location where the log files should be placed")
 
 	// storage
-	flag.StringVar(&ac.StorageConfig.IpfsPinnerServer, "ipfs-pinner-server", LookupEnvOrString("IpfsPinnerServer", "http://127.0.0.1:3000/"), "IPFS pinner server url for uploading data")
+	flag.StringVar(&ac.StorageConfig.IpfsPinnerServer, "ipfs-pinner-server", LookupEnvOrString("IpfsPinnerServer", "http://127.0.0.1:3001/"), "IPFS pinner server url for uploading data")
 	flag.StringVar(&ac.StorageConfig.BinaryFilePath, "binary-file-path", LookupEnvOrString("BinaryFilePath", ""), "local path to AVRO encoded binary files that contain block-replicas")
 
 	// metrics

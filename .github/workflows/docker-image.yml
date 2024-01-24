@@ -35,16 +35,21 @@ jobs:
       - name: Create .env file
         run: |
           touch .env
-          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-          echo RPC_URL=${{ secrets.RPC_URL }} >> .env
-          echo WEB3_JWT=${{ secrets.WEB3_JWT }} >> .env
+          {
+            echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}"
+            echo "RPC_URL=${{ secrets.RPC_URL }}"
+            echo "WEB3_JWT=${{ secrets.WEB3_JWT }}"
+            echo "W3_AGENT_KEY=${{ secrets.W3_AGENT_KEY }}"
+            echo "PROOF_OUT_HEX=${{ secrets.PROOF_OUT_HEX }}"
+            echo "W3_DELEGATION_FILE=${{ secrets.W3_DELEGATION_FILE }}"
+          } >> .env
           cat .env
 
       - name: Load .env file
         uses: xom9ikk/dotenv@v1.0.2
 
       - name: Run containers
-        run: docker-compose -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
+        run: docker-compose --env-file ".env" -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
 
       - name: Check running agent
         run: docker inspect bsp-agent
