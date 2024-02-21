@@ -1,6 +1,5 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
-// ./abigen  --abi generated-abis/ugly/BlockSpecimenProofChain.json   --pkg=proof --type=ProofChain --out=proofchain.go
 
 package proof
 
@@ -32,7 +31,7 @@ var (
 
 // ProofChainMetaData contains all meta data concerning the ProofChain contract.
 var ProofChainMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"threshold\",\"type\":\"uint64\"}],\"name\":\"BlockHeightSubmissionThresholdChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"BlockSpecimenProductionProofSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validatorBitMap\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenQuorum\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenRewardAllocation\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenRewardChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"}],\"name\":\"ChainSyncDataChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"maxSubmissions\",\"type\":\"uint256\"}],\"name\":\"MaxSubmissionsPerBlockHeightChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newStakeRequirement\",\"type\":\"uint128\"}],\"name\":\"MinimumRequiredStakeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"name\":\"NthBlockChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"OperatorAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"activeOperatorCount\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"OperatorRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"QuorumNotReached\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"secondsPerBlock\",\"type\":\"uint64\"}],\"name\":\"SecondsPerBlockChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"deadline\",\"type\":\"uint64\"}],\"name\":\"SessionStarted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionDurationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionMinSubmissionChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newQuorumThreshold\",\"type\":\"uint256\"}],\"name\":\"SpecimenSessionQuorumChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newStakingManager\",\"type\":\"address\"}],\"name\":\"StakingManagerChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"ValidatorDisabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"ValidatorEnabled\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"AUDITOR_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"addAuditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"addBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"governor\",\"type\":\"address\"}],\"name\":\"addGovernor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"disableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"enableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"finalizeSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"_bsps\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"__governors\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"__auditors\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBSPRoleData\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"requiredStake\",\"type\":\"uint128\"},{\"internalType\":\"address[]\",\"name\":\"activeMembers\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"}],\"name\":\"getChainData\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"},{\"internalType\":\"uint128\",\"name\":\"allowedThreshold\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"maxSubmissionsPerBlockHeight\",\"type\":\"uint128\"},{\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"getEnabledOperatorCount\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMetadata\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"stakingManager\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"blockSpecimenRewardAllocation\",\"type\":\"uint128\"},{\"internalType\":\"uint64\",\"name\":\"blockSpecimenSessionDuration\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"minSubmissionsRequired\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"blockSpecimenQuorum\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"getOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"specimenhash\",\"type\":\"bytes32\"}],\"name\":\"getURLS\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialOwner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakingManager\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isSessionOpen\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"isValidatorEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"operatorRoles\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"removeAuditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"removeBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"governor\",\"type\":\"address\"}],\"name\":\"removeGovernor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"threshold\",\"type\":\"uint64\"}],\"name\":\"setBlockHeightSubmissionsThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenReward\",\"type\":\"uint128\"}],\"name\":\"setBlockSpecimenReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenSessionDuration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlock\",\"type\":\"uint256\"}],\"name\":\"setChainSyncData\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"maxSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMaxSubmissionsPerBlockHeight\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMinSubmissionsRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"n\",\"type\":\"uint64\"}],\"name\":\"setNthBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"quorum\",\"type\":\"uint256\"}],\"name\":\"setQuorumThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"secondsPerBlock\",\"type\":\"uint64\"}],\"name\":\"setSecondsPerBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stakingManagerAddress\",\"type\":\"address\"}],\"name\":\"setStakingManagerAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"submitBlockSpecimenProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"validatorIDs\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"threshold\",\"type\":\"uint64\"}],\"name\":\"BlockHeightSubmissionThresholdChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"BlockSpecimenProductionProofSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validatorBitMap\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"}],\"name\":\"BlockSpecimenQuorum\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenRewardAllocation\",\"type\":\"uint128\"}],\"name\":\"BlockSpecimenRewardChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"secondsPerBlockTargetChain\",\"type\":\"uint256\"}],\"name\":\"ChainSyncDataChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"maxSubmissions\",\"type\":\"uint256\"}],\"name\":\"MaxSubmissionsPerBlockHeightChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"newStakeRequirement\",\"type\":\"uint128\"}],\"name\":\"MinimumRequiredStakeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"name\":\"NthBlockChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"OperatorAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"activeOperatorCount\",\"type\":\"uint128\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"OperatorRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"QuorumNotReached\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"secondsPerBlockCurrentChain\",\"type\":\"uint64\"}],\"name\":\"SecondsPerBlockCurrentChainChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"deadline\",\"type\":\"uint64\"}],\"name\":\"SessionStarted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionDurationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"SpecimenSessionMinSubmissionChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newQuorumThreshold\",\"type\":\"uint256\"}],\"name\":\"SpecimenSessionQuorumChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newStakingManager\",\"type\":\"address\"}],\"name\":\"StakingManagerChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"ValidatorDisabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"ValidatorEnabled\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"AUDITOR_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BLOCK_SPECIMEN_PRODUCER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"GOVERNANCE_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"addAuditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"addBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"governor\",\"type\":\"address\"}],\"name\":\"addGovernor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"disableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"enableValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"}],\"name\":\"finalizeSpecimenSession\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"_bsps\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"__governors\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"__auditors\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBSPRoleData\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"requiredStake\",\"type\":\"uint128\"},{\"internalType\":\"address[]\",\"name\":\"activeMembers\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"}],\"name\":\"getChainData\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlockTargetChain\",\"type\":\"uint256\"},{\"internalType\":\"uint128\",\"name\":\"allowedThreshold\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"maxSubmissionsPerBlockHeight\",\"type\":\"uint128\"},{\"internalType\":\"uint64\",\"name\":\"nthBlock\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"getEnabledOperatorCount\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMetadata\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"stakingManager\",\"type\":\"address\"},{\"internalType\":\"uint128\",\"name\":\"blockSpecimenRewardAllocation\",\"type\":\"uint128\"},{\"internalType\":\"uint64\",\"name\":\"blockSpecimenSessionDuration\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"minSubmissionsRequired\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"blockSpecimenQuorum\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlockCurrentChain\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"getOperators\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"specimenhash\",\"type\":\"bytes32\"}],\"name\":\"getURLS\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"initialGovernor\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakingManager\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isSessionOpen\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"validatorId\",\"type\":\"uint128\"}],\"name\":\"isValidatorEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"operatorRoles\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"removeAuditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"removeBSPOperator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"governor\",\"type\":\"address\"}],\"name\":\"removeGovernor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"threshold\",\"type\":\"uint64\"}],\"name\":\"setBlockHeightSubmissionsThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newBlockSpecimenReward\",\"type\":\"uint128\"}],\"name\":\"setBlockSpecimenReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"newSessionDuration\",\"type\":\"uint64\"}],\"name\":\"setBlockSpecimenSessionDuration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"blockOnTargetChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blockOnCurrentChain\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondsPerBlockTargetChain\",\"type\":\"uint256\"}],\"name\":\"setChainSyncData\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"maxSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMaxSubmissionsPerBlockHeight\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"minSubmissions\",\"type\":\"uint64\"}],\"name\":\"setMinSubmissionsRequired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"n\",\"type\":\"uint64\"}],\"name\":\"setNthBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"quorum\",\"type\":\"uint256\"}],\"name\":\"setQuorumThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"secondsPerBlockCurrentChain\",\"type\":\"uint64\"}],\"name\":\"setSecondsPerBlockCurrentChain\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stakingManagerAddress\",\"type\":\"address\"}],\"name\":\"setStakingManagerAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"chainId\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"blockHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"specimenHash\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"storageURL\",\"type\":\"string\"}],\"name\":\"submitBlockSpecimenProof\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"validatorIDs\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // ProofChainABI is the input ABI used to generate the binding from.
@@ -371,11 +370,11 @@ func (_ProofChain *ProofChainCallerSession) GetBSPRoleData() (struct {
 
 // GetChainData is a free data retrieval call binding the contract method 0x54cfa69f.
 //
-// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
+// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
 func (_ProofChain *ProofChainCaller) GetChainData(opts *bind.CallOpts, chainId uint64) (struct {
 	BlockOnTargetChain           *big.Int
 	BlockOnCurrentChain          *big.Int
-	SecondsPerBlock              *big.Int
+	SecondsPerBlockTargetChain   *big.Int
 	AllowedThreshold             *big.Int
 	MaxSubmissionsPerBlockHeight *big.Int
 	NthBlock                     uint64
@@ -386,7 +385,7 @@ func (_ProofChain *ProofChainCaller) GetChainData(opts *bind.CallOpts, chainId u
 	outstruct := new(struct {
 		BlockOnTargetChain           *big.Int
 		BlockOnCurrentChain          *big.Int
-		SecondsPerBlock              *big.Int
+		SecondsPerBlockTargetChain   *big.Int
 		AllowedThreshold             *big.Int
 		MaxSubmissionsPerBlockHeight *big.Int
 		NthBlock                     uint64
@@ -397,7 +396,7 @@ func (_ProofChain *ProofChainCaller) GetChainData(opts *bind.CallOpts, chainId u
 
 	outstruct.BlockOnTargetChain = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
 	outstruct.BlockOnCurrentChain = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-	outstruct.SecondsPerBlock = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+	outstruct.SecondsPerBlockTargetChain = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
 	outstruct.AllowedThreshold = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
 	outstruct.MaxSubmissionsPerBlockHeight = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
 	outstruct.NthBlock = *abi.ConvertType(out[5], new(uint64)).(*uint64)
@@ -408,11 +407,11 @@ func (_ProofChain *ProofChainCaller) GetChainData(opts *bind.CallOpts, chainId u
 
 // GetChainData is a free data retrieval call binding the contract method 0x54cfa69f.
 //
-// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
+// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
 func (_ProofChain *ProofChainSession) GetChainData(chainId uint64) (struct {
 	BlockOnTargetChain           *big.Int
 	BlockOnCurrentChain          *big.Int
-	SecondsPerBlock              *big.Int
+	SecondsPerBlockTargetChain   *big.Int
 	AllowedThreshold             *big.Int
 	MaxSubmissionsPerBlockHeight *big.Int
 	NthBlock                     uint64
@@ -422,11 +421,11 @@ func (_ProofChain *ProofChainSession) GetChainData(chainId uint64) (struct {
 
 // GetChainData is a free data retrieval call binding the contract method 0x54cfa69f.
 //
-// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
+// Solidity: function getChainData(uint64 chainId) view returns(uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain, uint128 allowedThreshold, uint128 maxSubmissionsPerBlockHeight, uint64 nthBlock)
 func (_ProofChain *ProofChainCallerSession) GetChainData(chainId uint64) (struct {
 	BlockOnTargetChain           *big.Int
 	BlockOnCurrentChain          *big.Int
-	SecondsPerBlock              *big.Int
+	SecondsPerBlockTargetChain   *big.Int
 	AllowedThreshold             *big.Int
 	MaxSubmissionsPerBlockHeight *big.Int
 	NthBlock                     uint64
@@ -467,14 +466,14 @@ func (_ProofChain *ProofChainCallerSession) GetEnabledOperatorCount(validatorId 
 
 // GetMetadata is a free data retrieval call binding the contract method 0x7a5b4f59.
 //
-// Solidity: function getMetadata() view returns(address stakingManager, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlock)
+// Solidity: function getMetadata() view returns(address stakingManager, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlockCurrentChain)
 func (_ProofChain *ProofChainCaller) GetMetadata(opts *bind.CallOpts) (struct {
 	StakingManager                common.Address
 	BlockSpecimenRewardAllocation *big.Int
 	BlockSpecimenSessionDuration  uint64
 	MinSubmissionsRequired        uint64
 	BlockSpecimenQuorum           *big.Int
-	SecondsPerBlock               *big.Int
+	SecondsPerBlockCurrentChain   *big.Int
 }, error) {
 	var out []interface{}
 	err := _ProofChain.contract.Call(opts, &out, "getMetadata")
@@ -485,7 +484,7 @@ func (_ProofChain *ProofChainCaller) GetMetadata(opts *bind.CallOpts) (struct {
 		BlockSpecimenSessionDuration  uint64
 		MinSubmissionsRequired        uint64
 		BlockSpecimenQuorum           *big.Int
-		SecondsPerBlock               *big.Int
+		SecondsPerBlockCurrentChain   *big.Int
 	})
 	if err != nil {
 		return *outstruct, err
@@ -496,7 +495,7 @@ func (_ProofChain *ProofChainCaller) GetMetadata(opts *bind.CallOpts) (struct {
 	outstruct.BlockSpecimenSessionDuration = *abi.ConvertType(out[2], new(uint64)).(*uint64)
 	outstruct.MinSubmissionsRequired = *abi.ConvertType(out[3], new(uint64)).(*uint64)
 	outstruct.BlockSpecimenQuorum = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
-	outstruct.SecondsPerBlock = *abi.ConvertType(out[5], new(*big.Int)).(**big.Int)
+	outstruct.SecondsPerBlockCurrentChain = *abi.ConvertType(out[5], new(*big.Int)).(**big.Int)
 
 	return *outstruct, err
 
@@ -504,28 +503,28 @@ func (_ProofChain *ProofChainCaller) GetMetadata(opts *bind.CallOpts) (struct {
 
 // GetMetadata is a free data retrieval call binding the contract method 0x7a5b4f59.
 //
-// Solidity: function getMetadata() view returns(address stakingManager, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlock)
+// Solidity: function getMetadata() view returns(address stakingManager, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlockCurrentChain)
 func (_ProofChain *ProofChainSession) GetMetadata() (struct {
 	StakingManager                common.Address
 	BlockSpecimenRewardAllocation *big.Int
 	BlockSpecimenSessionDuration  uint64
 	MinSubmissionsRequired        uint64
 	BlockSpecimenQuorum           *big.Int
-	SecondsPerBlock               *big.Int
+	SecondsPerBlockCurrentChain   *big.Int
 }, error) {
 	return _ProofChain.Contract.GetMetadata(&_ProofChain.CallOpts)
 }
 
 // GetMetadata is a free data retrieval call binding the contract method 0x7a5b4f59.
 //
-// Solidity: function getMetadata() view returns(address stakingManager, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlock)
+// Solidity: function getMetadata() view returns(address stakingManager, uint128 blockSpecimenRewardAllocation, uint64 blockSpecimenSessionDuration, uint64 minSubmissionsRequired, uint256 blockSpecimenQuorum, uint256 secondsPerBlockCurrentChain)
 func (_ProofChain *ProofChainCallerSession) GetMetadata() (struct {
 	StakingManager                common.Address
 	BlockSpecimenRewardAllocation *big.Int
 	BlockSpecimenSessionDuration  uint64
 	MinSubmissionsRequired        uint64
 	BlockSpecimenQuorum           *big.Int
-	SecondsPerBlock               *big.Int
+	SecondsPerBlockCurrentChain   *big.Int
 }, error) {
 	return _ProofChain.Contract.GetMetadata(&_ProofChain.CallOpts)
 }
@@ -906,23 +905,23 @@ func (_ProofChain *ProofChainTransactorSession) FinalizeSpecimenSession(chainId 
 
 // Initialize is a paid mutator transaction binding the contract method 0x485cc955.
 //
-// Solidity: function initialize(address initialOwner, address stakingManager) returns()
-func (_ProofChain *ProofChainTransactor) Initialize(opts *bind.TransactOpts, initialOwner common.Address, stakingManager common.Address) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "initialize", initialOwner, stakingManager)
+// Solidity: function initialize(address initialGovernor, address stakingManager) returns()
+func (_ProofChain *ProofChainTransactor) Initialize(opts *bind.TransactOpts, initialGovernor common.Address, stakingManager common.Address) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "initialize", initialGovernor, stakingManager)
 }
 
 // Initialize is a paid mutator transaction binding the contract method 0x485cc955.
 //
-// Solidity: function initialize(address initialOwner, address stakingManager) returns()
-func (_ProofChain *ProofChainSession) Initialize(initialOwner common.Address, stakingManager common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.Initialize(&_ProofChain.TransactOpts, initialOwner, stakingManager)
+// Solidity: function initialize(address initialGovernor, address stakingManager) returns()
+func (_ProofChain *ProofChainSession) Initialize(initialGovernor common.Address, stakingManager common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.Initialize(&_ProofChain.TransactOpts, initialGovernor, stakingManager)
 }
 
 // Initialize is a paid mutator transaction binding the contract method 0x485cc955.
 //
-// Solidity: function initialize(address initialOwner, address stakingManager) returns()
-func (_ProofChain *ProofChainTransactorSession) Initialize(initialOwner common.Address, stakingManager common.Address) (*types.Transaction, error) {
-	return _ProofChain.Contract.Initialize(&_ProofChain.TransactOpts, initialOwner, stakingManager)
+// Solidity: function initialize(address initialGovernor, address stakingManager) returns()
+func (_ProofChain *ProofChainTransactorSession) Initialize(initialGovernor common.Address, stakingManager common.Address) (*types.Transaction, error) {
+	return _ProofChain.Contract.Initialize(&_ProofChain.TransactOpts, initialGovernor, stakingManager)
 }
 
 // RemoveAuditor is a paid mutator transaction binding the contract method 0xe6116cfd.
@@ -1074,23 +1073,23 @@ func (_ProofChain *ProofChainTransactorSession) SetBlockSpecimenSessionDuration(
 
 // SetChainSyncData is a paid mutator transaction binding the contract method 0x99146284.
 //
-// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock) returns()
-func (_ProofChain *ProofChainTransactor) SetChainSyncData(opts *bind.TransactOpts, chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlock *big.Int) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "setChainSyncData", chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlock)
+// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain) returns()
+func (_ProofChain *ProofChainTransactor) SetChainSyncData(opts *bind.TransactOpts, chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlockTargetChain *big.Int) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setChainSyncData", chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlockTargetChain)
 }
 
 // SetChainSyncData is a paid mutator transaction binding the contract method 0x99146284.
 //
-// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock) returns()
-func (_ProofChain *ProofChainSession) SetChainSyncData(chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlock *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetChainSyncData(&_ProofChain.TransactOpts, chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlock)
+// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain) returns()
+func (_ProofChain *ProofChainSession) SetChainSyncData(chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlockTargetChain *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetChainSyncData(&_ProofChain.TransactOpts, chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlockTargetChain)
 }
 
 // SetChainSyncData is a paid mutator transaction binding the contract method 0x99146284.
 //
-// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock) returns()
-func (_ProofChain *ProofChainTransactorSession) SetChainSyncData(chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlock *big.Int) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetChainSyncData(&_ProofChain.TransactOpts, chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlock)
+// Solidity: function setChainSyncData(uint64 chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain) returns()
+func (_ProofChain *ProofChainTransactorSession) SetChainSyncData(chainId uint64, blockOnTargetChain *big.Int, blockOnCurrentChain *big.Int, secondsPerBlockTargetChain *big.Int) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetChainSyncData(&_ProofChain.TransactOpts, chainId, blockOnTargetChain, blockOnCurrentChain, secondsPerBlockTargetChain)
 }
 
 // SetMaxSubmissionsPerBlockHeight is a paid mutator transaction binding the contract method 0x67585e44.
@@ -1177,25 +1176,25 @@ func (_ProofChain *ProofChainTransactorSession) SetQuorumThreshold(quorum *big.I
 	return _ProofChain.Contract.SetQuorumThreshold(&_ProofChain.TransactOpts, quorum)
 }
 
-// SetSecondsPerBlock is a paid mutator transaction binding the contract method 0xdd36a8d5.
+// SetSecondsPerBlockCurrentChain is a paid mutator transaction binding the contract method 0x2ba719ad.
 //
-// Solidity: function setSecondsPerBlock(uint64 secondsPerBlock) returns()
-func (_ProofChain *ProofChainTransactor) SetSecondsPerBlock(opts *bind.TransactOpts, secondsPerBlock uint64) (*types.Transaction, error) {
-	return _ProofChain.contract.Transact(opts, "setSecondsPerBlock", secondsPerBlock)
+// Solidity: function setSecondsPerBlockCurrentChain(uint64 secondsPerBlockCurrentChain) returns()
+func (_ProofChain *ProofChainTransactor) SetSecondsPerBlockCurrentChain(opts *bind.TransactOpts, secondsPerBlockCurrentChain uint64) (*types.Transaction, error) {
+	return _ProofChain.contract.Transact(opts, "setSecondsPerBlockCurrentChain", secondsPerBlockCurrentChain)
 }
 
-// SetSecondsPerBlock is a paid mutator transaction binding the contract method 0xdd36a8d5.
+// SetSecondsPerBlockCurrentChain is a paid mutator transaction binding the contract method 0x2ba719ad.
 //
-// Solidity: function setSecondsPerBlock(uint64 secondsPerBlock) returns()
-func (_ProofChain *ProofChainSession) SetSecondsPerBlock(secondsPerBlock uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetSecondsPerBlock(&_ProofChain.TransactOpts, secondsPerBlock)
+// Solidity: function setSecondsPerBlockCurrentChain(uint64 secondsPerBlockCurrentChain) returns()
+func (_ProofChain *ProofChainSession) SetSecondsPerBlockCurrentChain(secondsPerBlockCurrentChain uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetSecondsPerBlockCurrentChain(&_ProofChain.TransactOpts, secondsPerBlockCurrentChain)
 }
 
-// SetSecondsPerBlock is a paid mutator transaction binding the contract method 0xdd36a8d5.
+// SetSecondsPerBlockCurrentChain is a paid mutator transaction binding the contract method 0x2ba719ad.
 //
-// Solidity: function setSecondsPerBlock(uint64 secondsPerBlock) returns()
-func (_ProofChain *ProofChainTransactorSession) SetSecondsPerBlock(secondsPerBlock uint64) (*types.Transaction, error) {
-	return _ProofChain.Contract.SetSecondsPerBlock(&_ProofChain.TransactOpts, secondsPerBlock)
+// Solidity: function setSecondsPerBlockCurrentChain(uint64 secondsPerBlockCurrentChain) returns()
+func (_ProofChain *ProofChainTransactorSession) SetSecondsPerBlockCurrentChain(secondsPerBlockCurrentChain uint64) (*types.Transaction, error) {
+	return _ProofChain.Contract.SetSecondsPerBlockCurrentChain(&_ProofChain.TransactOpts, secondsPerBlockCurrentChain)
 }
 
 // SetStakingManagerAddress is a paid mutator transaction binding the contract method 0x37e15bce.
@@ -1913,16 +1912,16 @@ func (it *ProofChainChainSyncDataChangedIterator) Close() error {
 
 // ProofChainChainSyncDataChanged represents a ChainSyncDataChanged event raised by the ProofChain contract.
 type ProofChainChainSyncDataChanged struct {
-	ChainId             uint64
-	BlockOnTargetChain  *big.Int
-	BlockOnCurrentChain *big.Int
-	SecondsPerBlock     *big.Int
-	Raw                 types.Log // Blockchain specific contextual infos
+	ChainId                    uint64
+	BlockOnTargetChain         *big.Int
+	BlockOnCurrentChain        *big.Int
+	SecondsPerBlockTargetChain *big.Int
+	Raw                        types.Log // Blockchain specific contextual infos
 }
 
 // FilterChainSyncDataChanged is a free log retrieval operation binding the contract event 0xfd97af399d19e6be9256c99c8e52b1809cdbc4dc96816739612b6fd4e6d940b0.
 //
-// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock)
+// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain)
 func (_ProofChain *ProofChainFilterer) FilterChainSyncDataChanged(opts *bind.FilterOpts, chainId []uint64) (*ProofChainChainSyncDataChangedIterator, error) {
 
 	var chainIdRule []interface{}
@@ -1939,7 +1938,7 @@ func (_ProofChain *ProofChainFilterer) FilterChainSyncDataChanged(opts *bind.Fil
 
 // WatchChainSyncDataChanged is a free log subscription operation binding the contract event 0xfd97af399d19e6be9256c99c8e52b1809cdbc4dc96816739612b6fd4e6d940b0.
 //
-// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock)
+// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain)
 func (_ProofChain *ProofChainFilterer) WatchChainSyncDataChanged(opts *bind.WatchOpts, sink chan<- *ProofChainChainSyncDataChanged, chainId []uint64) (event.Subscription, error) {
 
 	var chainIdRule []interface{}
@@ -1981,7 +1980,7 @@ func (_ProofChain *ProofChainFilterer) WatchChainSyncDataChanged(opts *bind.Watc
 
 // ParseChainSyncDataChanged is a log parse operation binding the contract event 0xfd97af399d19e6be9256c99c8e52b1809cdbc4dc96816739612b6fd4e6d940b0.
 //
-// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlock)
+// Solidity: event ChainSyncDataChanged(uint64 indexed chainId, uint256 blockOnTargetChain, uint256 blockOnCurrentChain, uint256 secondsPerBlockTargetChain)
 func (_ProofChain *ProofChainFilterer) ParseChainSyncDataChanged(log types.Log) (*ProofChainChainSyncDataChanged, error) {
 	event := new(ProofChainChainSyncDataChanged)
 	if err := _ProofChain.contract.UnpackLog(event, "ChainSyncDataChanged", log); err != nil {
@@ -3117,9 +3116,9 @@ func (_ProofChain *ProofChainFilterer) ParseQuorumNotReached(log types.Log) (*Pr
 	return event, nil
 }
 
-// ProofChainSecondsPerBlockChangedIterator is returned from FilterSecondsPerBlockChanged and is used to iterate over the raw logs and unpacked data for SecondsPerBlockChanged events raised by the ProofChain contract.
-type ProofChainSecondsPerBlockChangedIterator struct {
-	Event *ProofChainSecondsPerBlockChanged // Event containing the contract specifics and raw log
+// ProofChainSecondsPerBlockCurrentChainChangedIterator is returned from FilterSecondsPerBlockCurrentChainChanged and is used to iterate over the raw logs and unpacked data for SecondsPerBlockCurrentChainChanged events raised by the ProofChain contract.
+type ProofChainSecondsPerBlockCurrentChainChangedIterator struct {
+	Event *ProofChainSecondsPerBlockCurrentChainChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -3133,7 +3132,7 @@ type ProofChainSecondsPerBlockChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProofChainSecondsPerBlockChangedIterator) Next() bool {
+func (it *ProofChainSecondsPerBlockCurrentChainChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -3142,7 +3141,7 @@ func (it *ProofChainSecondsPerBlockChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProofChainSecondsPerBlockChanged)
+			it.Event = new(ProofChainSecondsPerBlockCurrentChainChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -3157,7 +3156,7 @@ func (it *ProofChainSecondsPerBlockChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProofChainSecondsPerBlockChanged)
+		it.Event = new(ProofChainSecondsPerBlockCurrentChainChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -3173,51 +3172,51 @@ func (it *ProofChainSecondsPerBlockChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProofChainSecondsPerBlockChangedIterator) Error() error {
+func (it *ProofChainSecondsPerBlockCurrentChainChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProofChainSecondsPerBlockChangedIterator) Close() error {
+func (it *ProofChainSecondsPerBlockCurrentChainChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProofChainSecondsPerBlockChanged represents a SecondsPerBlockChanged event raised by the ProofChain contract.
-type ProofChainSecondsPerBlockChanged struct {
-	SecondsPerBlock uint64
-	Raw             types.Log // Blockchain specific contextual infos
+// ProofChainSecondsPerBlockCurrentChainChanged represents a SecondsPerBlockCurrentChainChanged event raised by the ProofChain contract.
+type ProofChainSecondsPerBlockCurrentChainChanged struct {
+	SecondsPerBlockCurrentChain uint64
+	Raw                         types.Log // Blockchain specific contextual infos
 }
 
-// FilterSecondsPerBlockChanged is a free log retrieval operation binding the contract event 0xcaf46ba335d93b98398af7142ea3e362a6b8e91c57da6bf1e8a704f86374dde0.
+// FilterSecondsPerBlockCurrentChainChanged is a free log retrieval operation binding the contract event 0x52eb144349cf62d6190a9e1cbb6a601848aa63df834dd2a2e75bb0be3fef86f4.
 //
-// Solidity: event SecondsPerBlockChanged(uint64 indexed secondsPerBlock)
-func (_ProofChain *ProofChainFilterer) FilterSecondsPerBlockChanged(opts *bind.FilterOpts, secondsPerBlock []uint64) (*ProofChainSecondsPerBlockChangedIterator, error) {
+// Solidity: event SecondsPerBlockCurrentChainChanged(uint64 indexed secondsPerBlockCurrentChain)
+func (_ProofChain *ProofChainFilterer) FilterSecondsPerBlockCurrentChainChanged(opts *bind.FilterOpts, secondsPerBlockCurrentChain []uint64) (*ProofChainSecondsPerBlockCurrentChainChangedIterator, error) {
 
-	var secondsPerBlockRule []interface{}
-	for _, secondsPerBlockItem := range secondsPerBlock {
-		secondsPerBlockRule = append(secondsPerBlockRule, secondsPerBlockItem)
+	var secondsPerBlockCurrentChainRule []interface{}
+	for _, secondsPerBlockCurrentChainItem := range secondsPerBlockCurrentChain {
+		secondsPerBlockCurrentChainRule = append(secondsPerBlockCurrentChainRule, secondsPerBlockCurrentChainItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "SecondsPerBlockChanged", secondsPerBlockRule)
+	logs, sub, err := _ProofChain.contract.FilterLogs(opts, "SecondsPerBlockCurrentChainChanged", secondsPerBlockCurrentChainRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProofChainSecondsPerBlockChangedIterator{contract: _ProofChain.contract, event: "SecondsPerBlockChanged", logs: logs, sub: sub}, nil
+	return &ProofChainSecondsPerBlockCurrentChainChangedIterator{contract: _ProofChain.contract, event: "SecondsPerBlockCurrentChainChanged", logs: logs, sub: sub}, nil
 }
 
-// WatchSecondsPerBlockChanged is a free log subscription operation binding the contract event 0xcaf46ba335d93b98398af7142ea3e362a6b8e91c57da6bf1e8a704f86374dde0.
+// WatchSecondsPerBlockCurrentChainChanged is a free log subscription operation binding the contract event 0x52eb144349cf62d6190a9e1cbb6a601848aa63df834dd2a2e75bb0be3fef86f4.
 //
-// Solidity: event SecondsPerBlockChanged(uint64 indexed secondsPerBlock)
-func (_ProofChain *ProofChainFilterer) WatchSecondsPerBlockChanged(opts *bind.WatchOpts, sink chan<- *ProofChainSecondsPerBlockChanged, secondsPerBlock []uint64) (event.Subscription, error) {
+// Solidity: event SecondsPerBlockCurrentChainChanged(uint64 indexed secondsPerBlockCurrentChain)
+func (_ProofChain *ProofChainFilterer) WatchSecondsPerBlockCurrentChainChanged(opts *bind.WatchOpts, sink chan<- *ProofChainSecondsPerBlockCurrentChainChanged, secondsPerBlockCurrentChain []uint64) (event.Subscription, error) {
 
-	var secondsPerBlockRule []interface{}
-	for _, secondsPerBlockItem := range secondsPerBlock {
-		secondsPerBlockRule = append(secondsPerBlockRule, secondsPerBlockItem)
+	var secondsPerBlockCurrentChainRule []interface{}
+	for _, secondsPerBlockCurrentChainItem := range secondsPerBlockCurrentChain {
+		secondsPerBlockCurrentChainRule = append(secondsPerBlockCurrentChainRule, secondsPerBlockCurrentChainItem)
 	}
 
-	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "SecondsPerBlockChanged", secondsPerBlockRule)
+	logs, sub, err := _ProofChain.contract.WatchLogs(opts, "SecondsPerBlockCurrentChainChanged", secondsPerBlockCurrentChainRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3227,8 +3226,8 @@ func (_ProofChain *ProofChainFilterer) WatchSecondsPerBlockChanged(opts *bind.Wa
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProofChainSecondsPerBlockChanged)
-				if err := _ProofChain.contract.UnpackLog(event, "SecondsPerBlockChanged", log); err != nil {
+				event := new(ProofChainSecondsPerBlockCurrentChainChanged)
+				if err := _ProofChain.contract.UnpackLog(event, "SecondsPerBlockCurrentChainChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3249,12 +3248,12 @@ func (_ProofChain *ProofChainFilterer) WatchSecondsPerBlockChanged(opts *bind.Wa
 	}), nil
 }
 
-// ParseSecondsPerBlockChanged is a log parse operation binding the contract event 0xcaf46ba335d93b98398af7142ea3e362a6b8e91c57da6bf1e8a704f86374dde0.
+// ParseSecondsPerBlockCurrentChainChanged is a log parse operation binding the contract event 0x52eb144349cf62d6190a9e1cbb6a601848aa63df834dd2a2e75bb0be3fef86f4.
 //
-// Solidity: event SecondsPerBlockChanged(uint64 indexed secondsPerBlock)
-func (_ProofChain *ProofChainFilterer) ParseSecondsPerBlockChanged(log types.Log) (*ProofChainSecondsPerBlockChanged, error) {
-	event := new(ProofChainSecondsPerBlockChanged)
-	if err := _ProofChain.contract.UnpackLog(event, "SecondsPerBlockChanged", log); err != nil {
+// Solidity: event SecondsPerBlockCurrentChainChanged(uint64 indexed secondsPerBlockCurrentChain)
+func (_ProofChain *ProofChainFilterer) ParseSecondsPerBlockCurrentChainChanged(log types.Log) (*ProofChainSecondsPerBlockCurrentChainChanged, error) {
+	event := new(ProofChainSecondsPerBlockCurrentChainChanged)
+	if err := _ProofChain.contract.UnpackLog(event, "SecondsPerBlockCurrentChainChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
