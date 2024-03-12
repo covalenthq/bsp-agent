@@ -278,6 +278,70 @@
                                        {
                                           "name":"input",
                                           "type":"string"
+                                       },
+                                       {
+                                          "name":"blobFeeCap",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"bytes",
+                                                "logicalType":"decimal",
+                                                "precision":1000
+                                             }
+                                          ],
+                                          "default":"null"
+                                       },
+                                       {
+                                          "name":"blobHashes",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"array",
+                                                "items":"string"
+                                             }
+                                          ],
+                                          "default":"null"
+                                       },
+                                       {
+                                          "name":"blobGas",
+                                          "type":[
+                                             "null",
+                                             "int"
+                                          ],
+                                          "default":"null"
+                                       },
+                                       {
+                                          "name":"blobTxSideCar",
+                                          "type":{
+                                             "name":"blobTxSideCar",
+                                             "type":"record",
+                                             "fields":[
+                                                {
+                                                   "name":"Blobs",
+                                                   "type":[
+                                                      "null",
+                                                      "string"
+                                                   ],
+                                                   "default":"null"
+                                                },
+                                                {
+                                                   "name":"Commitments",
+                                                   "type":[
+                                                      "null",
+                                                      "string"
+                                                   ],
+                                                   "default":"null"
+                                                },
+                                                {
+                                                   "name":"Proofs",
+                                                   "type":[
+                                                      "null",
+                                                      "string"
+                                                   ],
+                                                   "default":"null"
+                                                }
+                                             ]
+                                          }
                                        }
                                     ]
                                  }

@@ -2,6 +2,9 @@
 package types
 
 import (
+	"math/big"
+
+	"github.com/ethereum/go-ethereum/crypto/kzg4844"
 	"github.com/ubiq/go-ubiq/common"
 )
 
@@ -67,21 +70,25 @@ type Header struct {
 }
 
 type Transaction struct {
-	Type         byte            `json:"type"`
-	AccessList   AccessList      `json:"accessList"`
-	ChainId      *BigInt         `json:"chainId"`
-	AccountNonce uint64          `json:"nonce"`
-	Price        *BigInt         `json:"gasPrice"`
-	GasLimit     uint64          `json:"gas"`
-	GasTipCap    *BigInt         `json:"gasTipCap"`
-	GasFeeCap    *BigInt         `json:"gasFeeCap"`
-	Sender       *common.Address `json:"from" rlp:"nil"`
-	Recipient    *common.Address `json:"to" rlp:"nil"` // nil means contract creation
-	Amount       *BigInt         `json:"value"`
-	Payload      []byte          `json:"input"`
-	V            *BigInt         `json:"v" rlp:"nilString"`
-	R            *BigInt         `json:"r" rlp:"nilString"`
-	S            *BigInt         `json:"s" rlp:"nilString"`
+	Type          byte            `json:"type"`
+	AccessList    AccessList      `json:"accessList"`
+	ChainId       *BigInt         `json:"chainId"`
+	AccountNonce  uint64          `json:"nonce"`
+	Price         *BigInt         `json:"gasPrice"`
+	GasLimit      uint64          `json:"gas"`
+	GasTipCap     *BigInt         `json:"gasTipCap"`
+	GasFeeCap     *BigInt         `json:"gasFeeCap"`
+	Sender        *common.Address `json:"from" rlp:"nil"`
+	Recipient     *common.Address `json:"to" rlp:"nil"` // nil means contract creation
+	Amount        *BigInt         `json:"value"`
+	Payload       []byte          `json:"input"`
+	BlobFeeCap    *big.Int        `json:"blobFeeCap" rlp:"nil"`
+	BlobHashes    []common.Hash   `json:"blobHashes" rlp:"nil"`
+	BlobGas       uint64          `json:"blobGas" rlp:"nil"`
+	BlobTxSidecar *BlobTxSidecar  `json:"blobTxSideCar,omitempty"`
+	V             *BigInt         `json:"v" rlp:"nilString"`
+	R             *BigInt         `json:"r" rlp:"nilString"`
+	S             *BigInt         `json:"s" rlp:"nilString"`
 }
 
 // AccessList is an EIP-2930 access list.
@@ -130,4 +137,11 @@ type StorageRead struct {
 type CodeRead struct {
 	Hash common.Hash
 	Code []byte
+}
+
+// BlobTxSidecar contains the blobs of a blob transaction.
+type BlobTxSidecar struct {
+	Blobs       []kzg4844.Blob       // Blobs needed by the blob pool
+	Commitments []kzg4844.Commitment // Commitments needed by the blob pool
+	Proofs      []kzg4844.Proof      // Proofs needed by the blob pool
 }
