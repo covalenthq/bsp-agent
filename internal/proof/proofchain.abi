@@ -129,7 +129,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "secondsPerBlock",
+        "name": "secondsPerBlockTargetChain",
         "type": "uint256"
       }
     ],
@@ -294,11 +294,11 @@
       {
         "indexed": true,
         "internalType": "uint64",
-        "name": "secondsPerBlock",
+        "name": "secondsPerBlockCurrentChain",
         "type": "uint64"
       }
     ],
-    "name": "SecondsPerBlockChanged",
+    "name": "SecondsPerBlockCurrentChainChanged",
     "type": "event"
   },
   {
@@ -594,7 +594,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "secondsPerBlock",
+        "name": "secondsPerBlockTargetChain",
         "type": "uint256"
       },
       {
@@ -666,7 +666,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "secondsPerBlock",
+        "name": "secondsPerBlockCurrentChain",
         "type": "uint256"
       }
     ],
@@ -715,7 +715,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "initialOwner",
+        "name": "initialGovernor",
         "type": "address"
       },
       {
@@ -937,7 +937,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "secondsPerBlock",
+        "name": "secondsPerBlockTargetChain",
         "type": "uint256"
       }
     ],
@@ -1012,11 +1012,11 @@
     "inputs": [
       {
         "internalType": "uint64",
-        "name": "secondsPerBlock",
+        "name": "secondsPerBlockCurrentChain",
         "type": "uint64"
       }
     ],
-    "name": "setSecondsPerBlock",
+    "name": "setSecondsPerBlockCurrentChain",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

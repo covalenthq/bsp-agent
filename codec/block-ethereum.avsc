@@ -136,6 +136,30 @@
                                           "string"
                                        ],
                                        "default":"null"
+                                    },
+                                    {
+                                       "name":"blobGasUsed",
+                                       "type":[
+                                          "null",
+                                          "int"
+                                       ],
+                                       "default":"null"
+                                    },
+                                    {
+                                       "name":"excessBlobGas",
+                                       "type":[
+                                          "null",
+                                          "int"
+                                       ],
+                                       "default":"null"
+                                    },
+                                    {
+                                       "name":"parentBeaconBlockRoot",
+                                       "type":[
+                                          "null",
+                                          "string"
+                                       ],
+                                       "default":"null"
                                     }
                                  ]
                               }
@@ -543,7 +567,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.35
+         "default":0.36
       }
    ]
 }

@@ -143,6 +143,13 @@ func executeWithRetry(ctx context.Context, interactor *ProofchainInteractor, pro
 			return
 		}
 
+		if strings.Contains(err.Error(), "Max submissions limit exceeded") {
+			log.Error("max submissions limit exceeded, skipping: ", err)
+			txHash <- "max submissions limit exceeded"
+
+			return
+		}
+
 		log.Error("error sending tx to deployed contract: ", err)
 		txHash <- ""
 
