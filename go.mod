@@ -26,7 +26,7 @@ require (
 
 require (
 	cloud.google.com/go/bigquery v1.50.0 // indirect
-	github.com/VictoriaMetrics/fastcache v1.12.1 // indirect
+	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
 	github.com/apache/arrow/go/v7 v7.0.0 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
@@ -36,11 +36,9 @@ require (
 	github.com/consensys/gnark-crypto v0.12.1 // indirect
 	github.com/crate-crypto/go-kzg-4844 v0.7.0 // indirect
 	github.com/deckarep/golang-set/v2 v2.1.0 // indirect
-	github.com/edsrzf/mmap-go v1.1.0 // indirect
 	github.com/ethereum/c-kzg-4844 v0.4.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/google/flatbuffers v2.0.8+incompatible // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/influxdata/flux v0.170.1 // indirect
@@ -58,6 +56,7 @@ require (
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/xlab/treeprint v1.0.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
+	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	gonum.org/v1/gonum v0.11.0 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
@@ -73,7 +72,6 @@ require (
 	github.com/fatih/color v1.16.0
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
-	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
@@ -118,6 +116,5 @@ require (
 	golang.org/x/tools v0.15.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
-	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	lukechampine.com/blake3 v1.1.6 // indirect
 )
