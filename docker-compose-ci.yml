@@ -102,7 +102,7 @@ services:
       - "8008:8008"
 
   agent:
-    image: "gcr.io/covalent-project/bsp-agent:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/bsp-agent:latest"
     container_name: bsp-agent
     links:
       - "cqt-virtnet:proof-chain"
