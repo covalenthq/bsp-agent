@@ -57,47 +57,40 @@ services:
     ports:
       - "8081:8081"
 
-  node:
-    image: trufflesuite/ganache-cli:v6.12.2
-    container_name: ganache-cli
-    restart: always
-    volumes:
-      - ./ganache_data:/ganache_data
-    entrypoint:
-      - node
-      - /app/ganache-core.docker.cli.js
-      - --deterministic
-      - --db=/ganache_data
-      - --mnemonic
-      - 'minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef'
-      - --networkId
-      - '5777'
-      - --hostname
-      - '0.0.0.0'
-    depends_on:
-      - redis-commander
-    networks:
-      - cqt-net
-    ports:
-      - "8545:8545"
-
-  cqt-virtnet:
-    image: "ghcr.io/covalenthq/cqt-virtnet:latest"
-    container_name: proof-chain
+  eth-node:
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
+    container_name: hardhat-node
     restart: on-failure
     expose:
-      - 8008
-    entrypoint: >
+      - "8545:8545"
+    entrypoint: |
       /bin/bash -l -c "
-       truffle migrate --network docker;
-       nc -v agent 8008;
-       sleep 100000;"
-    depends_on:
-      - node
+      echo "forked-node-address:" $ERIGON_NODE;
+      ./entrypoint.sh;"
     networks:
       - cqt-net
     environment:
-      npm_config_user: "root"
+      - ERIGON_NODE=${ERIGON_NODE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    ports:
+      - "8545:8545"
+
+  cqt-staking:
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
+    container_name: proof-chain
+    restart: on-failure
+    entrypoint: |
+      /bin/bash -l -c "
+      echo Waiting for hardhat-node to start up...;
+      sleep 20;
+      echo hard-hat node started!;
+      npm run docker:deploy;
+      nc -v agent 8008;
+      sleep 1000000;"
+    depends_on:
+      - eth-node
+    networks:
+      - cqt-net
     ports:
       - "8008:8008"
 
@@ -105,13 +98,13 @@ services:
     image: "us-docker.pkg.dev/covalent-project/network/bsp-agent:latest"
     container_name: bsp-agent
     links:
-      - "cqt-virtnet:proof-chain"
+      - "cqt-staking:proof-chain"
     # build:
     #   context: .
     #   dockerfile: Dockerfile
     restart: on-failure
     depends_on:
-      cqt-virtnet:
+      eth-node:
         condition: service_started
     volumes:
       - /Users/pranay/.config/gcloud:/app/gcloud
@@ -123,7 +116,7 @@ services:
         sleep 1;
         done;
         echo proof-chain contracts deployed!;
-        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication-2#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=3  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xEa2ff902dbeEECcc828757B881b343F9316752e5 --consumer-timeout=100000 --ipfs-pinner-server="http://ipfs-pinner:3001/";
+        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=3  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xce44d283b806C62698285D83c2Ca3F1e42Eb7112 --consumer-timeout=100000 --ipfs-pinner-server="http://ipfs-pinner:3001/";
         exit 0;"
     environment:
       - MB_PRIVATE_KEY=${PRIVATE_KEY}
