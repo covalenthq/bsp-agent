@@ -1,0 +1,131 @@
+version: '3'
+
+services:
+  ipfs-pinner:
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
+    volumes:
+      - ~/.ipfs:/root/.ipfs/
+    container_name: ipfs-pinner
+    restart: on-failure
+    entrypoint: |
+      /bin/bash -l -c "
+        touch proof_out_hex.txt;
+        chmod +x proof_out_hex.txt;
+        echo "$PROOF_OUT_HEX" > proof_out_hex.txt;
+        xxd -r -p proof_out_hex.txt > proof_from_hex.out;
+        chmod +x proof_from_hex.out;
+        mv ./proof_from_hex.out /root/.ipfs/proof_from_hex.out;
+        ./ipfs-server -port 3001 -w3-agent-key $W3_AGENT_KEY -w3-delegation-file $W3_DELEGATION_FILE;"
+    environment:
+      - W3_AGENT_KEY=${W3_AGENT_KEY}
+      - W3_DELEGATION_FILE=${W3_DELEGATION_FILE}
+      - PROOF_OUT_HEX=${PROOF_OUT_HEX}
+    networks:
+      - cqt-net
+    ports:
+      - "4001:4001"
+      - "3001:3001"
+
+  redis:
+    image: redis:alpine
+    container_name: redis-srv
+    restart: always
+    expose:
+      - 6379
+    volumes:
+      - ./data/redis:/data
+      - ./data/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - cqt-net
+    entrypoint: redis-server #/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander-web
+    hostname: redis-commander
+    restart: always
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    networks:
+      - cqt-net
+    ports:
+      - "8081:8081"
+
+  eth-node:
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
+    container_name: hardhat-node
+    restart: on-failure
+    expose:
+      - "8545:8545"
+    entrypoint: |
+      /bin/bash -l -c "
+      echo "forked-node-address:" $ERIGON_NODE;
+      ./entrypoint.sh;"
+    networks:
+      - cqt-net
+    environment:
+      - ERIGON_NODE=${ERIGON_NODE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    ports:
+      - "8545:8545"
+
+  cqt-staking:
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
+    container_name: proof-chain
+    restart: on-failure
+    entrypoint: |
+      /bin/bash -l -c "
+      echo Waiting for hardhat-node to start up...;
+      sleep 20;
+      echo hard-hat node started!;
+      npm run docker:deploy;
+      nc -v agent 8008;
+      sleep 1000000;"
+    depends_on:
+      - eth-node
+    networks:
+      - cqt-net
+    ports:
+      - "8008:8008"
+
+  agent:
+    image: "us-docker.pkg.dev/covalent-project/network/bsp-agent:latest"
+    container_name: bsp-agent
+    links:
+      - "cqt-staking:proof-chain"
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      eth-node:
+        condition: service_started
+    volumes:
+      - /Users/pranay/.config/gcloud:/app/gcloud
+    entrypoint: >
+      /bin/bash -l -c "
+        echo Waiting for proof-chain to be deployed...;
+        while ! nc -v -l -k -p 8008;
+        do
+        sleep 1;
+        done;
+        echo proof-chain contracts deployed!;
+        ./bsp-agent --redis-url=redis://username:@redis:6379/0?topic=replication#replicate --avro-codec-path=./codec/block-ethereum.avsc --binary-file-path=./bin/block-ethereum/  --block-divisor=3  --log-folder ./logs/ --metrics --metrics.port 6063 --metrics.addr 0.0.0.0 --proof-chain-address=0xce44d283b806C62698285D83c2Ca3F1e42Eb7112 --consumer-timeout=100000 --ipfs-pinner-server="http://ipfs-pinner:3001/";
+        exit 0;"
+    environment:
+      - MB_PRIVATE_KEY=${PRIVATE_KEY}
+      - MB_RPC_URL=${RPC_URL}
+      - BLOCKCHAIN=${BLOCKCHAIN}
+    networks:
+      - cqt-net
+    ports:
+      - "8080:8080"
+
+networks:
+  cqt-net:
