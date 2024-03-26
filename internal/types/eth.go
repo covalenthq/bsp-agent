@@ -89,7 +89,7 @@ type Transaction struct {
 	BlobFeeCap    *BigInt         `json:"blobFeeCap" rlp:"optional"`
 	BlobHashes    []common.Hash   `json:"blobHashes" rlp:"optional"`
 	BlobGas       uint64          `json:"blobGas" rlp:"optional"`
-	BlobTxSidecar *BlobTxSidecar  `json:"blobTxSidecar rlp:"optional"`
+	BlobTxSidecar *BlobTxSidecar  `json:"blobTxSidecar" rlp:"nil,optional"`
 }
 
 // AccessList is an EIP-2930 access list.
