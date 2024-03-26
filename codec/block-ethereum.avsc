@@ -335,9 +335,9 @@
                                           "default":"null"
                                        },
                                        {
-                                          "name":"blobTxSideCar",
+                                          "name":"blobTxSidecar",
                                           "type":{
-                                             "name":"blobTxSideCar",
+                                             "name":"blobTxSidecar",
                                              "type":"record",
                                              "fields":[
                                                 {
@@ -631,7 +631,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.36
+         "default":0.37
       }
    ]
 }
