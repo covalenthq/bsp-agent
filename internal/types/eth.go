@@ -85,13 +85,13 @@ type Transaction struct {
 	Recipient     *common.Address `json:"to" rlp:"nil"` // nil means contract creation
 	Amount        *BigInt         `json:"value"`
 	Payload       []byte          `json:"input"`
-	BlobFeeCap    *big.Int        `json:"blobFeeCap" rlp:"nil"`
-	BlobHashes    []common.Hash   `json:"blobHashes" rlp:"nil"`
-	BlobGas       uint64          `json:"blobGas" rlp:"nil"`
-	BlobTxSidecar *BlobTxSidecar  `json:"blobTxSideCar,omitempty"`
 	V             *BigInt         `json:"v" rlp:"nilString"`
 	R             *BigInt         `json:"r" rlp:"nilString"`
 	S             *BigInt         `json:"s" rlp:"nilString"`
+	BlobFeeCap    *big.Int        `json:"blobFeeCap" rlp:"optional"`
+	BlobHashes    []common.Hash   `json:"blobHashes" rlp:"optional"`
+	BlobGas       uint64          `json:"blobGas" rlp:"optional"`
+	BlobTxSidecar *BlobTxSidecar  `json:"blobTxSidecar" rlp:"optional"`
 }
 
 // AccessList is an EIP-2930 access list.
