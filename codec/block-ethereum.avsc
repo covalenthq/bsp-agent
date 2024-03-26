@@ -336,7 +336,9 @@
                                        },
                                        {
                                           "name":"blobTxSidecar",
-                                          "type":{
+                                          "type":[
+                                             "null",
+                                             {
                                              "name":"blobTxSidecar",
                                              "type":"record",
                                              "fields":[
@@ -366,6 +368,8 @@
                                                 }
                                              ]
                                           }
+                                       ],
+                                       "default":"null"
                                        }
                                     ]
                                  }
