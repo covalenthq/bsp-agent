@@ -2,8 +2,6 @@
 package types
 
 import (
-	"math/big"
-
 	"github.com/ethereum/go-ethereum/crypto/kzg4844"
 	"github.com/ubiq/go-ubiq/common"
 )
@@ -88,7 +86,7 @@ type Transaction struct {
 	V             *BigInt         `json:"v" rlp:"nilString"`
 	R             *BigInt         `json:"r" rlp:"nilString"`
 	S             *BigInt         `json:"s" rlp:"nilString"`
-	BlobFeeCap    *big.Int        `json:"blobFeeCap" rlp:"optional"`
+	BlobFeeCap    *BigInt         `json:"blobFeeCap" rlp:"optional"`
 	BlobHashes    []common.Hash   `json:"blobHashes" rlp:"optional"`
 	BlobGas       uint64          `json:"blobGas" rlp:"optional"`
 	BlobTxSidecar *BlobTxSidecar  `json:"blobTxSidecar" rlp:"optional"`
