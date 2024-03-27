@@ -339,37 +339,40 @@
                                           "type":[
                                              "null",
                                              {
-                                             "name":"blobTxSidecar",
-                                             "type":"record",
-                                             "fields":[
-                                                {
-                                                   "name":"Blobs",
-                                                   "type":[
-                                                      "null",
-                                                      "string"
-                                                   ],
-                                                   "default":"null"
-                                                },
-                                                {
-                                                   "name":"Commitments",
-                                                   "type":[
-                                                      "null",
-                                                      "string"
-                                                   ],
-                                                   "default":"null"
-                                                },
-                                                {
-                                                   "name":"Proofs",
-                                                   "type":[
-                                                      "null",
-                                                      "string"
-                                                   ],
-                                                   "default":"null"
+                                                "type":"array",
+                                                "items":{
+                                                   "name":"blobTxSidecar_record",
+                                                   "type":"record",
+                                                   "fields":[
+                                                      {
+                                                         "name":"Blobs",
+                                                         "type":[
+                                                            "null",
+                                                            "string"
+                                                         ],
+                                                         "default":"null"
+                                                      },
+                                                      {
+                                                         "name":"Commitments",
+                                                         "type":[
+                                                            "null",
+                                                            "string"
+                                                         ],
+                                                         "default":"null"
+                                                      },
+                                                      {
+                                                         "name":"Proofs",
+                                                         "type":[
+                                                            "null",
+                                                            "string"
+                                                         ],
+                                                         "default":"null"
+                                                      }
+                                                   ]
                                                 }
-                                             ]
-                                          }
-                                       ],
-                                       "default":"null"
+                                             }
+                                          ],
+                                          "default":"null"
                                        }
                                     ]
                                  }
