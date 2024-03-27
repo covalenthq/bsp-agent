@@ -346,27 +346,15 @@
                                                    "fields":[
                                                       {
                                                          "name":"Blobs",
-                                                         "type":[
-                                                            "null",
-                                                            "string"
-                                                         ],
-                                                         "default":"null"
+                                                         "type":"string"
                                                       },
                                                       {
                                                          "name":"Commitments",
-                                                         "type":[
-                                                            "null",
-                                                            "string"
-                                                         ],
-                                                         "default":"null"
+                                                         "type":"string"
                                                       },
                                                       {
                                                          "name":"Proofs",
-                                                         "type":[
-                                                            "null",
-                                                            "string"
-                                                         ],
-                                                         "default":"null"
+                                                         "type":"string"
                                                       }
                                                    ]
                                                 }
