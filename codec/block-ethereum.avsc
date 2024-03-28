@@ -577,13 +577,13 @@
                               "default":"null"
                            },
                            {
-                              "name":"blobTxSidecar",
+                              "name":"BlobTxSidecar",
                               "type":[
                                  "null",
                                  {
                                     "type":"array",
                                     "items":{
-                                       "name":"blobTxSidecar_record",
+                                       "name":"BlobTxSidecar_record",
                                        "type":"record",
                                        "fields":[
                                           {

@@ -10,6 +10,7 @@ import (
 var dataLens = createLenspath([]string{"replicaEvent", "*", "data"})
 var withdrawalsLens = composeLenspath(dataLens, []string{"Withdrawals"})
 var uncleLens = composeLenspath(dataLens, []string{"Uncles"})
+var blobTxSidecarLens = composeLenspath(dataLens, []string{"BlobTxSidecar"})
 
 // transactions
 var transactionsLens = composeLenspath(dataLens, []string{"Transactions", "*"})
@@ -19,13 +20,12 @@ var sLens = composeLenspath(transactionsLens, []string{"s"})
 var toLens = composeLenspath(transactionsLens, []string{"to"})
 var fromLens = composeLenspath(transactionsLens, []string{"from"})
 
-// blob tx
-var blobTxSidecarLens = composeLenspath(transactionsLens, []string{"blobTxSidecar"})
+// blob data
 var blobsLens = composeLenspath(blobTxSidecarLens, []string{"Blobs"})
 var commitmentsLens = composeLenspath(blobTxSidecarLens, []string{"Commitments"})
 var proofsLens = composeLenspath(blobTxSidecarLens, []string{"Proofs"})
 
-// blob header
+// blob tx fields
 var blobFeeCapLens = composeLenspath(transactionsLens, []string{"blobFeeCap"})
 var blobHashesLens = composeLenspath(transactionsLens, []string{"blobHashes"})
 var blobGasLens = composeLenspath(transactionsLens, []string{"blobGas"})
