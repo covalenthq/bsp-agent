@@ -588,27 +588,24 @@
                                        "fields":[
                                           {
                                              "name":"Blobs",
-                                             "type":[
-                                                "null",
-                                                "string"
-                                             ],
-                                             "default":"null"
+                                             "type":{
+                                                "type":"array",
+                                                "items":"bytes"
+                                             }
                                           },
                                           {
                                              "name":"Commitments",
-                                             "type":[
-                                                "null",
-                                                "string"
-                                             ],
-                                             "default":"null"
+                                             "type":{
+                                                "type":"array",
+                                                "items":"bytes"
+                                             }
                                           },
                                           {
                                              "name":"Proofs",
-                                             "type":[
-                                                "null",
-                                                "string"
-                                             ],
-                                             "default":"null"
+                                             "type":{
+                                                "type":"array",
+                                                "items":"bytes"
+                                             }
                                           }
                                        ]
                                     }
