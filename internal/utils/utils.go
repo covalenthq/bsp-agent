@@ -242,7 +242,7 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	unwrapType(data, blobHashesLens, "array")
 	unwrapType(data, blobGasLens, "int")
 
-	unwrapType(data, blobTxSidecarLens, "array")
+	unwrapType(data, blobTxSidecarsLens, "array")
 	unwrapType(data, blobsLens, "string")
 	unwrapType(data, commitmentsLens, "string")
 	unwrapType(data, proofsLens, "string")
@@ -280,7 +280,7 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, blobHashesLens, "array")
 	wrapType(data, blobGasLens, "int")
 
-	wrapType(data, blobTxSidecarLens, "array")
+	wrapType(data, blobTxSidecarsLens, "array")
 	wrapType(data, blobsLens, "string")
 	wrapType(data, commitmentsLens, "string")
 	wrapType(data, proofsLens, "string")
