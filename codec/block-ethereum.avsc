@@ -302,6 +302,37 @@
                                        {
                                           "name":"input",
                                           "type":"string"
+                                       },
+                                       {
+                                          "name":"blobFeeCap",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"bytes",
+                                                "logicalType":"decimal",
+                                                "precision":1000
+                                             }
+                                          ],
+                                          "default":"null"
+                                       },
+                                       {
+                                          "name":"blobHashes",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"array",
+                                                "items":"string"
+                                             }
+                                          ],
+                                          "default":"null"
+                                       },
+                                       {
+                                          "name":"blobGas",
+                                          "type":[
+                                             "null",
+                                             "int"
+                                          ],
+                                          "default":"null"
                                        }
                                     ]
                                  }
@@ -544,6 +575,43 @@
                                  }
                               ],
                               "default":"null"
+                           },
+                           {
+                              "name":"BlobTxSidecars",
+                              "type":[
+                                 "null",
+                                 {
+                                    "type":"array",
+                                    "items":{
+                                       "name":"BlobTxSidecars_record",
+                                       "type":"record",
+                                       "fields":[
+                                          {
+                                             "name":"Blobs",
+                                             "type":{
+                                                "type":"array",
+                                                "items":"bytes"
+                                             }
+                                          },
+                                          {
+                                             "name":"Commitments",
+                                             "type":{
+                                                "type":"array",
+                                                "items":"bytes"
+                                             }
+                                          },
+                                          {
+                                             "name":"Proofs",
+                                             "type":{
+                                                "type":"array",
+                                                "items":"bytes"
+                                             }
+                                          }
+                                       ]
+                                    }
+                                 }
+                              ],
+                              "default":"null"
                            }
                         ]
                      }
@@ -567,7 +635,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.36
+         "default":0.37
       }
    ]
 }
