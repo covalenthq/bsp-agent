@@ -72,24 +72,24 @@ type Header struct {
 }
 
 type Transaction struct {
-	Type          byte            `json:"type"`
-	AccessList    AccessList      `json:"accessList"`
-	ChainId       *BigInt         `json:"chainId"`
-	AccountNonce  uint64          `json:"nonce"`
-	Price         *BigInt         `json:"gasPrice"`
-	GasLimit      uint64          `json:"gas"`
-	GasTipCap     *BigInt         `json:"gasTipCap"`
-	GasFeeCap     *BigInt         `json:"gasFeeCap"`
-	Sender        *common.Address `json:"from" rlp:"nil"`
-	Recipient     *common.Address `json:"to" rlp:"nil"` // nil means contract creation
-	Amount        *BigInt         `json:"value"`
-	Payload       []byte          `json:"input"`
-	V             *BigInt         `json:"v" rlp:"nilString"`
-	R             *BigInt         `json:"r" rlp:"nilString"`
-	S             *BigInt         `json:"s" rlp:"nilString"`
-	BlobFeeCap    *BigInt         `json:"blobFeeCap" rlp:"optional"`
-	BlobHashes    []common.Hash   `json:"blobHashes" rlp:"optional"`
-	BlobGas       uint64          `json:"blobGas" rlp:"optional"`
+	Type         byte            `json:"type"`
+	AccessList   AccessList      `json:"accessList"`
+	ChainId      *BigInt         `json:"chainId"`
+	AccountNonce uint64          `json:"nonce"`
+	Price        *BigInt         `json:"gasPrice"`
+	GasLimit     uint64          `json:"gas"`
+	GasTipCap    *BigInt         `json:"gasTipCap"`
+	GasFeeCap    *BigInt         `json:"gasFeeCap"`
+	Sender       *common.Address `json:"from" rlp:"nil"`
+	Recipient    *common.Address `json:"to" rlp:"nil"` // nil means contract creation
+	Amount       *BigInt         `json:"value"`
+	Payload      []byte          `json:"input"`
+	V            *BigInt         `json:"v" rlp:"nilString"`
+	R            *BigInt         `json:"r" rlp:"nilString"`
+	S            *BigInt         `json:"s" rlp:"nilString"`
+	BlobFeeCap   *BigInt         `json:"blobFeeCap" rlp:"optional"`
+	BlobHashes   []common.Hash   `json:"blobHashes" rlp:"optional"`
+	BlobGas      uint64          `json:"blobGas" rlp:"optional"`
 }
 
 // AccessList is an EIP-2930 access list.
