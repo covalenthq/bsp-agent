@@ -92,7 +92,7 @@ func (node *elrondAgentNode) consumeWebsocketsEvents(websocketURL string) {
 				log.Error("error in sending acknowledged hash: ", errAcknowledgeData)
 			}
 
-			replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, segmentName, message)
+			replicaURL, ccid := node.StorageManager.GenerateLocation(segmentName, message)
 			log.Info("elrond binary file should be available: ", replicaURL)
 
 			proofTxHash := make(chan string, 1)
@@ -105,7 +105,7 @@ func (node *elrondAgentNode) consumeWebsocketsEvents(websocketURL string) {
 
 			log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", segmentName)
 			filename := objectFileName(segmentName, pTxHash)
-			err = node.StorageManager.Store(ctx, ccid, filename, message)
+			err = node.StorageManager.Store(ccid, filename, message)
 
 			if err != nil {
 				log.Error("error in storing object: ", err)

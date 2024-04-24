@@ -53,9 +53,8 @@ func NewRedisClient(rconfig *config.RedisConfig) (*redis.Client, string, string,
 	pass, _ := redisURL.User.Password()
 	if pass != "" {
 		log.Fatal("remove password from connection string cli flag and add it in .envrc as `REDIS_PWD`")
-	} else {
-		pwd = rconfig.Password
 	}
+	pwd = rconfig.Password
 
 	dbString := strings.ReplaceAll(redisURL.Path, "/", "")
 	urlMap, err := url.ParseQuery(redisURL.RawQuery)
