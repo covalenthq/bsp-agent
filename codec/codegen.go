@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-/* Code Generation Tool for Go-Avro
+/*Code Generation Tool for Go-Avro
 codegen allows to automatically create Go structs based on defined Avro schema.Usage:
 
 go run codegen.go --schema foo.avsc --schema bar.avsc --out foo.go
@@ -21,13 +21,12 @@ Command line flags:
 --schema - absolute or relative path to Avro schema file. Multiple of those are allowed but at least one is required.
 --out - absolute or relative path to output file. All directories will be created if necessary. Existing file will be truncated.
 */
-//code generator for avro schemas
+// code generator for avro schemas
 package main
 
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -58,7 +57,7 @@ func main() {
 
 	var schemas []string
 	for _, schema := range schema {
-		contents, err := ioutil.ReadFile(filepath.Clean(schema))
+		contents, err := os.ReadFile(filepath.Clean(schema))
 		checkErr(err)
 		schemas = append(schemas, string(contents))
 	}
@@ -69,7 +68,7 @@ func main() {
 
 	createDirs()
 	/* #nosec */
-	err = ioutil.WriteFile(*output, []byte(code), 0664)
+	err = os.WriteFile(*output, []byte(code), 0664)
 	checkErr(err)
 }
 

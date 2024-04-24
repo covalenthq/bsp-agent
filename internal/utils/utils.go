@@ -110,12 +110,12 @@ func AckTrimStreamSegment(redisClient *redis.Client, segmentLength int, streamKe
 		redisClient.XAck(streamKey, consumerGroup, streamIDs...)
 		redisClient.XDel(streamKey, streamIDs...)
 		xlen := redisClient.XLen(streamKey)
-		len, err := xlen.Result()
+		length, err := xlen.Result()
 		if err != nil {
 			log.Error("failed to extract length of stream key: ", streamKey, "with error: ", err)
 		}
 
-		return len, nil
+		return length, nil
 	}
 
 	return 0, fmt.Errorf("failed to match streamIDs length to segment length config")

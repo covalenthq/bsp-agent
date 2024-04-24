@@ -39,7 +39,7 @@ func (node *ethAgentNode) NodeChainType() ChainType {
 	return Ethereum
 }
 
-func (node *ethAgentNode) Start(ctx context.Context) {
+func (node *ethAgentNode) Start(_ context.Context) {
 	var consumerName = uuid.NewV4().String()
 	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, node.streamKey, node.consumerGroup)
 	createConsumerGroup(node.RedisClient, node.streamKey, node.consumerGroup)

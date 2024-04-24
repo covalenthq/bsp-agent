@@ -28,7 +28,7 @@ func (node *elrondAgentNode) NodeChainType() ChainType {
 	return Elrond
 }
 
-func (node *elrondAgentNode) Start(ctx context.Context) {
+func (node *elrondAgentNode) Start(_ context.Context) {
 	websocketUrls := node.AgentConfig.ChainConfig.WebsocketURLs
 	if websocketUrls != "" {
 		urlArr := strings.Split(websocketUrls, " ")
