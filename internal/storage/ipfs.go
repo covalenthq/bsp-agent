@@ -2,9 +2,10 @@ package storage
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -46,6 +47,7 @@ func (store *ipfsStore) CalcCid(contents []byte) (cid.Cid, error) {
 
 func (store *ipfsStore) fetchCid(contents []byte, withUpload bool) (cid.Cid, error) {
 	targetURL, _ := url.Parse(store.baseURL)
+	ctx := context.Background()
 	if withUpload {
 		targetURL.Path = path.Join(targetURL.Path, "upload")
 	} else {
@@ -57,7 +59,7 @@ func (store *ipfsStore) fetchCid(contents []byte, withUpload bool) (cid.Cid, err
 		return cid.Undef, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, targetURL.String(), buffer)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, targetURL.String(), buffer)
 	if err != nil {
 		return cid.Undef, fmt.Errorf("error creating request: %w", err)
 	}
@@ -74,7 +76,7 @@ func (store *ipfsStore) fetchCid(contents []byte, withUpload bool) (cid.Cid, err
 		}
 	}()
 
-	rbody, err := ioutil.ReadAll(resp.Body)
+	rbody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return cid.Undef, fmt.Errorf("error in reading response body: %w", err)
 	}

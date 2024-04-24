@@ -13,16 +13,12 @@ run:
 linters:
   enable:
   #-------------main-list--------------#
-    - deadcode # Finds unused code
     - errcheck # Errcheck is a program for checking for unchecked errors in go programs. These unchecked errors can be critical bugs in some cases
     - gosimple # Linter for Go source code that specializes in simplifying a code
     - govet # Vet examines Go source code and reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
     - ineffassign # Detects when assignments to existing variables are not used
-    - staticcheck # Staticcheck is a go vet on steroids, applying a ton of static analysis checks
-    - structcheck # Finds unused struct fields
     - typecheck # Like the front-end of a Go compiler, parses and type-checks Go code
     - unused # Checks Go code for unused constants, variables, functions and types
-    - varcheck # Finds unused global variables and constants
     - stylecheck # Stylecheck is a replacement for golint
     - gocritic # Provides diagnostics that check for bugs, performance and style issues. Extensible without recompilation through dynamic rules. Dynamic rules are written declaratively with AST patterns, filters, report message and optional suggestion.
     - gofmt # Gofmt checks whether code was gofmt-ed. By default this tool runs with -s option to check for code simplification
@@ -32,7 +28,6 @@ linters:
     - asciicheck # Simple linter to check that your code does not contain non-ASCII identifiers
     - bidichk # Checks for dangerous unicode character sequences
     - bodyclose # Checks whether HTTP response body is closed successfully
-    - depguard # Go linter that checks if package imports are in a list of acceptable packages
     - dogsled # Checks assignments with too many blank identifiers (e.g. x, , , _, := f())
     - dupl # Tool for code clone detection
     - exhaustive # Check exhaustiveness of enum switch statements
@@ -61,9 +56,13 @@ linters:
     - varnamelen # checks that the length of a variable's name matches its scope
     - whitespace # Tool for detection of leading and trailing whitespace
     - wrapcheck # Checks that errors returned from external packages are wrapped
-   
+    - staticcheck # Staticcheck is a go vet on steroids, applying a ton of static analysis checks
+
 disable:
   # main-list
+    ## disable now re-enable later
+    ## re-enable never
+    - depguard # Go linter that checks if package imports are in a list of acceptable packages
     - contextcheck # Check the function whether use a non-inherited context
     - cyclop # Checks function and package cyclomatic complexity 
     - durationcheck	# Check for two durations multiplied together

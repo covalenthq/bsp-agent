@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -74,7 +73,7 @@ func main() {
 			log.Error("unable to get indent raw json: ", err)
 		}
 
-		if err = ioutil.WriteFile(outputFilePathFlag+filename+"-specimen.json", indentJSON, 0600); err != nil {
+		if err = os.WriteFile(outputFilePathFlag+filename+"-specimen.json", indentJSON, 0600); err != nil {
 			log.Error("unable to write to file: ", err)
 		}
 
@@ -96,12 +95,21 @@ func getAvroCodec(path string) *goavro.Codec {
 }
 
 func getBinFiles(path string) []fs.FileInfo {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		log.Error("unable to read files from directory: ", err)
 	}
 
-	return files
+	// Convert []fs.DirEntry to []fs.FileInfo
+	fileInfos := make([]fs.FileInfo, len(files))
+	for i, file := range files {
+		fileInfos[i], err = file.Info()
+		if err != nil {
+			log.Error("unable to get file info: ", err)
+		}
+	}
+
+	return fileInfos
 }
 
 func copyFileToMemory(binaryFilePathFlag, filename string) ([]byte, int, error) {

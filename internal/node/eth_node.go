@@ -39,7 +39,7 @@ func (node *ethAgentNode) NodeChainType() ChainType {
 	return Ethereum
 }
 
-func (node *ethAgentNode) Start(ctx context.Context) {
+func (node *ethAgentNode) Start(_ context.Context) {
 	var consumerName = uuid.NewV4().String()
 	log.Printf("Initializing Consumer: %v | Redis Stream: %v | Consumer Group: %v", consumerName, node.streamKey, node.consumerGroup)
 	createConsumerGroup(node.RedisClient, node.streamKey, node.consumerGroup)
@@ -167,9 +167,9 @@ func (node *ethAgentNode) processStream(message redis.XMessage, waitGroup *sync.
 
 	default:
 		// collect block replicas and stream ids to skip
-		skippedIds := []string{message.ID}
+		skippedIDs := []string{message.ID}
 		log.Info("block-specimen not created for: ", objectReplica.Header.Number.Uint64(), ", base block number divisor is :", node.AgentConfig.RedisConfig.BlockDivisor)
-		_, err := utils.AckTrimStreamSegment(node.RedisClient, len(skippedIds), node.streamKey, node.consumerGroup, skippedIds)
+		_, err := utils.AckTrimStreamSegment(node.RedisClient, len(skippedIDs), node.streamKey, node.consumerGroup, skippedIDs)
 		if err != nil {
 			log.Error("failed to match streamIDs length to segment length config: ", err)
 			panic(err)
@@ -194,7 +194,7 @@ func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context
 	}
 	log.Infof("\n---> Processing %s <---\n", currentSegment.SegmentName)
 
-	replicaURL, ccid := node.StorageManager.GenerateLocation(ctx, currentSegment.SegmentName, replicaSegmentAvro)
+	replicaURL, ccid := node.StorageManager.GenerateLocation(currentSegment.SegmentName, replicaSegmentAvro)
 	log.Info("eth binary file should be available: ", replicaURL)
 
 	log.Info("submitting block-replica segment proof for: ", currentSegment.SegmentName)
@@ -226,7 +226,7 @@ func (node *ethAgentNode) encodeProveAndUploadReplicaSegment(ctx context.Context
 		// success. Store now...
 		log.Info("Proof-chain tx hash: ", pTxHash, " for block-replica segment: ", currentSegment.SegmentName)
 		filename := objectFileName(currentSegment.SegmentName, pTxHash)
-		err = node.StorageManager.Store(ctx, ccid, filename, replicaSegmentAvro)
+		err = node.StorageManager.Store(ccid, filename, replicaSegmentAvro)
 
 		if err != nil {
 			return "", fmt.Errorf("error in storing object: %w", err)

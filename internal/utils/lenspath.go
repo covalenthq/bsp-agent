@@ -6,7 +6,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// data
 var dataLens = createLenspath([]string{"replicaEvent", "*", "data"})
+var withdrawalsLens = composeLenspath(dataLens, []string{"Withdrawals"})
+var uncleLens = composeLenspath(dataLens, []string{"Uncles"})
+var blobTxSidecarsLens = composeLenspath(dataLens, []string{"BlobTxSidecars"})
+
+// transactions
 var transactionsLens = composeLenspath(dataLens, []string{"Transactions", "*"})
 var vLens = composeLenspath(transactionsLens, []string{"v"})
 var rLens = composeLenspath(transactionsLens, []string{"r"})
@@ -14,13 +20,22 @@ var sLens = composeLenspath(transactionsLens, []string{"s"})
 var toLens = composeLenspath(transactionsLens, []string{"to"})
 var fromLens = composeLenspath(transactionsLens, []string{"from"})
 
+// blob data
+var blobsLens = composeLenspath(blobTxSidecarsLens, []string{"Blobs"})
+var commitmentsLens = composeLenspath(blobTxSidecarsLens, []string{"Commitments"})
+var proofsLens = composeLenspath(blobTxSidecarsLens, []string{"Proofs"})
+
+// blob tx fields
+var blobFeeCapLens = composeLenspath(transactionsLens, []string{"blobFeeCap"})
+var blobHashesLens = composeLenspath(transactionsLens, []string{"blobHashes"})
+var blobGasLens = composeLenspath(transactionsLens, []string{"blobGas"})
+
+// header
 var headerLens = composeLenspath(dataLens, []string{"Header"})
 var withdrawalsRootLens = composeLenspath(headerLens, []string{"withdrawalsRoot"})
 var blobGasUsedLens = composeLenspath(headerLens, []string{"blobGasUsed"})
 var excessBlobGasLens = composeLenspath(headerLens, []string{"excessBlobGas"})
 var parentBeaconRootLens = composeLenspath(headerLens, []string{"parentBeaconBlockRoot"})
-var withdrawalsLens = composeLenspath(dataLens, []string{"Withdrawals"})
-var uncleLens = composeLenspath(dataLens, []string{"Uncles"})
 
 // utilities for lenspath
 

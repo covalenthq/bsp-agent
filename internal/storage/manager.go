@@ -2,7 +2,6 @@
 package storage
 
 import (
-	"context"
 	"fmt"
 	"os"
 
@@ -40,7 +39,7 @@ func NewStorageManager(conf *config.StorageConfig) (*Manager, error) {
 }
 
 // GenerateLocation calculates the non-local location (ipfs) for the given segment and data, cid is returned in case of ipfs
-func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string, replicaSegmentAvro []byte) (string, cid.Cid) {
+func (manager *Manager) GenerateLocation(segmentName string, replicaSegmentAvro []byte) (string, cid.Cid) {
 	config := manager.StorageConfig
 	var replicaURL string
 	var ccid = cid.Undef
@@ -63,7 +62,7 @@ func (manager *Manager) GenerateLocation(ctx context.Context, segmentName string
 
 // Store the given data in the stores supported by the agent.
 // cid is needed for IFPS based stores, and cid.Undef can be passed in case IPFS is not needed.
-func (manager *Manager) Store(ctx context.Context, ccid cid.Cid, filename string, data []byte) error {
+func (manager *Manager) Store(ccid cid.Cid, filename string, data []byte) error {
 	// write to local store
 	var err error
 

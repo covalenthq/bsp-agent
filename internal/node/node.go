@@ -24,7 +24,7 @@ import (
 // start (processing) -> stop (processing) -> close.
 type AgentNode interface {
 	NodeChainType() ChainType
-	Start(ctx context.Context)
+	Start(_ context.Context)
 	StopProcessing()
 	Close()
 }
@@ -103,7 +103,7 @@ func (anode *agentNode) NodeChainType() ChainType {
 	return ""
 }
 
-func (anode *agentNode) Start(ctx context.Context) {
+func (anode *agentNode) Start(_ context.Context) {
 	log.Fatal("Start() shouldn't be called directly for AgentNode")
 }
 

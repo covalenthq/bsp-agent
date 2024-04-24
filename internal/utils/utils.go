@@ -32,7 +32,7 @@ const (
 	// BspAgentVersionMajor is Major version component of the current release
 	BspAgentVersionMajor = 1
 	// BspAgentVersionMinor is Minor version component of the current release
-	BspAgentVersionMinor = 5
+	BspAgentVersionMinor = 7
 	// BspAgentVersionPatch is Patch version component of the current release
 	BspAgentVersionPatch = 0
 )
@@ -53,9 +53,8 @@ func NewRedisClient(rconfig *config.RedisConfig) (*redis.Client, string, string,
 	pass, _ := redisURL.User.Password()
 	if pass != "" {
 		log.Fatal("remove password from connection string cli flag and add it in .envrc as `REDIS_PWD`")
-	} else {
-		pwd = rconfig.Password
 	}
+	pwd = rconfig.Password
 
 	dbString := strings.ReplaceAll(redisURL.Path, "/", "")
 	urlMap, err := url.ParseQuery(redisURL.RawQuery)
@@ -111,12 +110,12 @@ func AckTrimStreamSegment(redisClient *redis.Client, segmentLength int, streamKe
 		redisClient.XAck(streamKey, consumerGroup, streamIDs...)
 		redisClient.XDel(streamKey, streamIDs...)
 		xlen := redisClient.XLen(streamKey)
-		len, err := xlen.Result()
+		length, err := xlen.Result()
 		if err != nil {
 			log.Error("failed to extract length of stream key: ", streamKey, "with error: ", err)
 		}
 
-		return len, nil
+		return length, nil
 	}
 
 	return 0, fmt.Errorf("failed to match streamIDs length to segment length config")
@@ -238,6 +237,14 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	unwrapType(data, blobGasUsedLens, "int")
 	unwrapType(data, excessBlobGasLens, "int")
 	unwrapType(data, parentBeaconRootLens, "string")
+	unwrapType(data, blobFeeCapLens, "bytes")
+	unwrapType(data, blobHashesLens, "array")
+	unwrapType(data, blobGasLens, "int")
+
+	unwrapType(data, blobTxSidecarsLens, "array")
+	unwrapType(data, blobsLens, "string")
+	unwrapType(data, commitmentsLens, "string")
+	unwrapType(data, proofsLens, "string")
 
 	return data
 }
@@ -268,6 +275,14 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, blobGasUsedLens, "int")
 	wrapType(data, excessBlobGasLens, "int")
 	wrapType(data, parentBeaconRootLens, "string")
+	wrapType(data, blobFeeCapLens, "bytes")
+	wrapType(data, blobHashesLens, "array")
+	wrapType(data, blobGasLens, "int")
+
+	wrapType(data, blobTxSidecarsLens, "array")
+	wrapType(data, blobsLens, "string")
+	wrapType(data, commitmentsLens, "string")
+	wrapType(data, proofsLens, "string")
 
 	return data
 }
