@@ -2,6 +2,7 @@
 package types
 
 import (
+	"github.com/ethereum/go-ethereum/crypto/kzg4844"
 	"github.com/ubiq/go-ubiq/common"
 )
 
@@ -22,6 +23,7 @@ type BlockReplica struct {
 	Senders         []common.Address
 	State           *StateSpecimen `json:"State"`
 	Withdrawals     []*Withdrawal
+	BlobTxSidecars  []*BlobTxSidecar
 }
 type StateSpecimen struct {
 	AccountRead   []*AccountRead
@@ -85,6 +87,9 @@ type Transaction struct {
 	V            *BigInt         `json:"v" rlp:"nilString"`
 	R            *BigInt         `json:"r" rlp:"nilString"`
 	S            *BigInt         `json:"s" rlp:"nilString"`
+	BlobFeeCap   *BigInt         `json:"blobFeeCap" rlp:"optional"`
+	BlobHashes   []common.Hash   `json:"blobHashes" rlp:"optional"`
+	BlobGas      uint64          `json:"blobGas" rlp:"optional"`
 }
 
 // AccessList is an EIP-2930 access list.
@@ -133,4 +138,11 @@ type StorageRead struct {
 type CodeRead struct {
 	Hash common.Hash
 	Code []byte
+}
+
+// BlobTxSidecar contains the blobs of a blob transaction.
+type BlobTxSidecar struct {
+	Blobs       []kzg4844.Blob       // Blobs needed by the blob pool
+	Commitments []kzg4844.Commitment // Commitments needed by the blob pool
+	Proofs      []kzg4844.Proof      // Proofs needed by the blob pool
 }

@@ -18,7 +18,7 @@ type Structure struct {
 	X *types.BigInt `json:"x"`
 }
 
-func TestGolangBindings(t *testing.T) {
+func TestGolangBindings(_ *testing.T) {
 	var val *big.Int
 	var success bool
 	if val, success = new(big.Int).SetString("21810676825935641000", 10); !success {

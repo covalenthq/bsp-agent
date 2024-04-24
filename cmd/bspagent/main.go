@@ -1,3 +1,4 @@
+// Decodes, packs, encodes, proves, stores and uploads chain state in avro produced by EVM Execution Layer nodes
 package main
 
 import (

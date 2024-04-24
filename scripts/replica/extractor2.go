@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"math"
 	"os"
 	"path"
@@ -96,7 +95,7 @@ func generateTestForOneBlock() {
 
 func writeFile(outputDir string, filename string, data []byte) {
 	filepath := path.Join(outputDir, filename)
-	if err := ioutil.WriteFile(filepath, data, 0600); err != nil {
+	if err := os.WriteFile(filepath, data, 0600); err != nil {
 		panic(err)
 	}
 }
@@ -116,7 +115,7 @@ func getAvroCodec(path string) *goavro.Codec {
 
 // picks out the replica files in `path` which fall within start-end range and given chainID
 func filterReplicaSegmentFiles(path string, start int64, end int64, chainID string) []fs.FileInfo {
-	allFiles, err := ioutil.ReadDir(path)
+	allFiles, err := os.ReadDir(path)
 	if err != nil {
 		log.Error("unable to read files from directory: ", err)
 	}
@@ -137,7 +136,7 @@ func filterReplicaSegmentFiles(path string, start int64, end int64, chainID stri
 			}
 			// NOTE: the 2nd condition (fileNameInt <= end) works is segment length is 1 i.e. the block replica segment has 1 replica only (which is the case now)
 			if fileNameInt >= start && fileNameInt <= end {
-				filteredFiles = append(filteredFiles, fileInfo)
+				filteredFiles = append(filteredFiles, fileInfo.(fs.FileInfo))
 			}
 		}
 	}
@@ -208,6 +207,7 @@ func getComponents(segment *event.ReplicationSegment) []*blockPair {
 			Senders:         replica.Data.Senders,
 			State:           replica.Data.State,
 			Withdrawals:     replica.Data.Withdrawals,
+			BlobTxSidecars:  replica.Data.BlobTxSidecars,
 		}
 
 		result := types.BlockReplica{
@@ -222,6 +222,7 @@ func getComponents(segment *event.ReplicationSegment) []*blockPair {
 			Senders:         replica.Data.Senders,
 			State:           &types.StateSpecimen{},
 			Withdrawals:     replica.Data.Withdrawals,
+			BlobTxSidecars:  replica.Data.BlobTxSidecars,
 		}
 		pairs = append(pairs, &blockPair{
 			specimen: &specimen,
