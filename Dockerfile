@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-s -w" -o bsp-extractor-2 ./s
 FROM alpine:3.20
 RUN mkdir /app
 WORKDIR /app
-RUN apk update && apk add --no-cache bash=5.1.16-r0
+RUN apk update && apk add --no-cache bash
 RUN mkdir -p bin/block-ethereum bin/block-elrond
 COPY --from=builder /build/bsp-agent /app
 COPY --from=builder /build/entry.sh /app
