@@ -9,7 +9,7 @@ require (
 	github.com/covalenthq/lenspath v0.3.2
 	github.com/covalenthq/lumberjack/v3 v3.0.1
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
-	github.com/ethereum/go-ethereum v1.13.14
+	github.com/ethereum/go-ethereum v1.13.15
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/golang/snappy v0.0.5-0.20220116011046-fa5810519dcb
 	github.com/gorilla/websocket v1.5.1
