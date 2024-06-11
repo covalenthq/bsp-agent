@@ -25,10 +25,9 @@ require (
 )
 
 require (
-	cloud.google.com/go/bigquery v1.50.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
-	github.com/apache/arrow/go/v7 v7.0.0 // indirect
+	github.com/apache/arrow/go/v7 v7.0.1 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/benbjohnson/immutable v0.3.0 // indirect
 	github.com/bits-and-blooms/bitset v1.10.0 // indirect
@@ -39,15 +38,14 @@ require (
 	github.com/ethereum/c-kzg-4844 v0.4.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible // indirect
-	github.com/google/flatbuffers v2.0.8+incompatible // indirect
+	github.com/google/flatbuffers v22.9.30-0.20221019131441-5792623df42e+incompatible // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
-	github.com/influxdata/flux v0.170.1 // indirect
+	github.com/influxdata/flux v0.194.5 // indirect
 	github.com/influxdata/influxql v1.1.1-0.20211004132434-7e7d61973256 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20210311194329-9aa0e372d097 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
 	github.com/oapi-codegen/runtime v1.0.0 // indirect
 	github.com/onsi/gomega v1.19.0 // indirect
-	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
@@ -56,13 +54,11 @@ require (
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/xlab/treeprint v1.0.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
-	gonum.org/v1/gonum v0.11.0 // indirect
+	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
 
 require (
-	cloud.google.com/go v0.110.0 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
@@ -78,7 +74,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
-	github.com/influxdata/influxdb v1.10.0
+	github.com/influxdata/influxdb v1.11.5
 	github.com/influxdata/influxdb-client-go/v2 v2.13.0
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -111,9 +107,9 @@ require (
 	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/net v0.18.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/tools v0.15.0 // indirect
+	golang.org/x/tools v0.16.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	lukechampine.com/blake3 v1.1.6 // indirect
