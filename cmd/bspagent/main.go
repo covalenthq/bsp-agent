@@ -59,12 +59,16 @@ func init() {
 
 	utils.Version()
 	log.SetOutput(outWriter)
-	log.SetLevel(log.InfoLevel)
+
+	// **Reduced logging verbosity:**
+	log.SetLevel(log.WarnLevel)
+	log.SetReportCaller(false)
+
 	log.WithFields(log.Fields{"file": "main.go"}).Info("bsp-agent is running...")
 }
 
 func main() {
-	log.Info("bsp-agent command line config: ", utils.GetConfig(flag.CommandLine))
+	log.WithFields(log.Fields{"operation": "configuration"}).Info("bsp-agent command line config: ", utils.GetConfig(flag.CommandLine))
 	chainType := getChainFromConfig(agconfig)
 	agentNode = node.NewAgentNode(chainType, agconfig)
 
@@ -83,10 +87,10 @@ func main() {
 
 func setupMetrics() {
 	if !agconfig.MetricsConfig.Enabled {
-		log.Info("metrics not enabled - skipping metrics setup...")
-
+		log.Warn("Metrics not enabled. Skipping metrics setup.")
 		return
 	}
+	log.Info("Enabling metrics collection...")
 
 	go metrics.CollectProcessMetrics(3 * time.Second)
 	if agconfig.MetricsConfig.HTTPServerAddr != "" {
