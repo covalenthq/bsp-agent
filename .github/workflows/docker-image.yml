@@ -3,11 +3,11 @@ name: docker-image
 on:
   push:
     branches:
-    - "main"
+      - "main"
   pull_request:
-    branches: 
-    - "main"
-    - "develop"
+    branches:
+      - "main"
+      - "develop"
 jobs:
   bsp-agent-eth:
     runs-on: ubuntu-latest
@@ -53,7 +53,7 @@ jobs:
         uses: xom9ikk/dotenv@v1.0.2
 
       - name: Run containers
-        run: docker-compose --env-file ".env" -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
+        run: docker compose --env-file ".env" -f "docker-compose-ci.yml" up --build --remove-orphans --exit-code-from agent
 
       - name: Check running agent
         run: docker inspect bsp-agent
@@ -67,4 +67,4 @@ jobs:
 
       - name: Stop containers
         if: always()
-        run: docker-compose -f "docker-compose-ci.yml" down
+        run: docker compose -f "docker-compose-ci.yml" down
