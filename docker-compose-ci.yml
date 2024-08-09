@@ -1,8 +1,8 @@
-version: '3'
+version: "3"
 
 services:
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner@sha256:91fecef2de1bb7d674b4925088d16df798881b0f76e655cf10db8938b5c67272"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
@@ -69,11 +69,11 @@ services:
       - --deterministic
       - --db=/ganache_data
       - --mnemonic
-      - 'minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef'
+      - "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef"
       - --networkId
-      - '5777'
+      - "5777"
       - --hostname
-      - '0.0.0.0'
+      - "0.0.0.0"
     depends_on:
       - redis-commander
     networks:
