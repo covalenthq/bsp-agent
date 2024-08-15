@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
@@ -16,9 +17,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 
-	"github.com/btcsuite/btcd/btcec/v2"
-	"github.com/btcsuite/btcd/btcutil"
-	"github.com/btcsuite/btcd/chaincfg"
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
 	"google.golang.org/grpc"
 )
@@ -178,25 +176,25 @@ func main() {
 		return
 	}
 
-	// Create a private key from bytes
-	privKey, _ := btcec.PrivKeyFromBytes(privKeyBytes)
-
+	// Create a new PrivKey object
+	privKey := &secp256k1.PrivKey{Key: privKeyBytes}
 	// Get the public key from the private key
-	pubKey := privKey.PubKey()
+	pubKey := privKey.PubKey().(*secp256k1.PubKey)
 
-	// Convert public key to compressed format
-	pubKeyCompressed := pubKey.SerializeCompressed()
-
-	// Generate a Bitcoin address (as an example)
-	addr, err := btcutil.NewAddressPubKey(pubKeyCompressed, &chaincfg.MainNetParams)
-	if err != nil {
-		fmt.Printf("Error generating address: %v\n", err)
-		return
+	// Convert to the API type
+	apiPrivKey := &secp256k1.PrivKey{
+		Key: privKey.Key,
+	}
+	apiPubKey := &secp256k1.PubKey{
+		Key: pubKey.Key,
 	}
 
-	fmt.Printf("Private Key: %x\n", privKey.Serialize())
-	fmt.Printf("Public Key: %x\n", pubKeyCompressed)
-	fmt.Printf("Address: %s\n", addr.EncodeAddress())
+	// Get the address from the public key
+	addr := types.AccAddress(pubKey.Address())
+
+	fmt.Printf("Private Key: %x\n", apiPrivKey.Key)
+	fmt.Printf("Public Key: %x\n", apiPubKey.Key)
+	fmt.Printf("Address: %s\n", addr)
 
 	sendProofTx()
 
