@@ -3,10 +3,6 @@
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ag4bebW9RGu/iKicJs6Bi37tlYkmXdDGTjJ6P0NCst08"}'
   type: local
 
-╰─ ./build/simd keys export alice \                                               ─╯
-    --home ./private/.simapp \
-    --keyring-backend test --unarmored-hex --unsafe
-
 WARNING: The private key will be exported as an unarmored hexadecimal string. USE AT YOUR OWN RISK. Continue? [y/N]: y
 96891492094e9e3aea0dd33cb6e065dee8331f5736fa93b5629edb4b2073631a
 
@@ -14,10 +10,6 @@ WARNING: The private key will be exported as an unarmored hexadecimal string. US
   name: bob
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A+ZGVx8UNoT/INhPzVORIpFI3KM7CDZZB3nfgQ9oGxuw"}'
   type: local
-
-╰─ ./build/simd keys export bob \                                                 ─╯
-    --home ./private/.simapp \
-    --keyring-backend test --unarmored-hex --unsafe
 
 WARNING: The private key will be exported as an unarmored hexadecimal string. USE AT YOUR OWN RISK. Continue? [y/N]: y
 ae87f7015182f1fe893c9b05e6c9412cb7c5531cb3451c033a13da4e5d3b6600
@@ -27,9 +19,24 @@ ae87f7015182f1fe893c9b05e6c9412cb7c5531cb3451c033a13da4e5d3b6600
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A3nIY6xnpwifGeaW0DC82B8wB0jwKDEY0S4Brzdq7ufS"}'
   type: local
 
-╰─ ./build/simd keys export carol \                                               ─╯
+WARNING: The private key will be exported as an unarmored hexadecimal string. USE AT YOUR OWN RISK. Continue? [y/N]: y
+1d77b70a31797a9c11e73f50acfde9422608f1e37de63a8037ad5c6f1c9fac0b
+
+
+- address: cosmos1xggleu0ugckstv08f9yjm88g5k4da2glz48jds
+  name: david
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ao4XTC7ZUMsNjjeAfFm/kvlpfV0E9EKb1f0uft93gZqZ"}'
+  type: local
+
+WARNING: The private key will be exported as an unarmored hexadecimal string. USE AT YOUR OWN RISK. Continue? [y/N]: y
+8a81accad0711457e225115492e6d490ea4767e49fcb2df10640f1caabf1b06d
+
+
+
+./build/simd keys export alice \
     --home ./private/.simapp \
     --keyring-backend test --unarmored-hex --unsafe
 
-WARNING: The private key will be exported as an unarmored hexadecimal string. USE AT YOUR OWN RISK. Continue? [y/N]: y
-1d77b70a31797a9c11e73f50acfde9422608f1e37de63a8037ad5c6f1c9fac0b
+export alice=$(./build/simd keys show alice --address \
+    --home ./private/.simapp \
+    --keyring-backend test)
