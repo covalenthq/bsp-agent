@@ -5,23 +5,80 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	"github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-
-	// "github.com/cosmos/cosmos-sdk/types/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-
-	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"google.golang.org/grpc"
 )
 
-func sendProofTx() error {
+func main() {
+
+	privKeyHexes := []string{
+		"96891492094e9e3aea0dd33cb6e065dee8331f5736fa93b5629edb4b2073631a",
+		"ae87f7015182f1fe893c9b05e6c9412cb7c5531cb3451c033a13da4e5d3b6600",
+		"1d77b70a31797a9c11e73f50acfde9422608f1e37de63a8037ad5c6f1c9fac0b",
+		"8a81accad0711457e225115492e6d490ea4767e49fcb2df10640f1caabf1b06d",
+	}
+
+	privateKeys, publicKeys, addresses, err := processPrivateKeys(privKeyHexes)
+	if err != nil {
+		fmt.Printf("Error processing private keys: %v\n", err)
+		return
+	}
+
+	for i := 0; i < 4; i++ {
+		fmt.Printf("Key Set %d:\n", i+1)
+		fmt.Printf("  Private Key: %x\n", privateKeys[i].Bytes())
+		fmt.Printf("  Public Key: %x\n", publicKeys[i].Bytes())
+		fmt.Printf("  Address: %s\n", addresses[i].String())
+		fmt.Println()
+	}
+
+	sendProofTx(privateKeys, publicKeys, addresses)
+
+}
+
+func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptotypes.PubKey, []sdk.AccAddress, error) {
+	if len(privKeyHexes) != 4 {
+		return nil, nil, nil, fmt.Errorf("expected 4 private keys, got %d", len(privKeyHexes))
+	}
+
+	var privateKeys []cryptotypes.PrivKey
+	var publicKeys []cryptotypes.PubKey
+	var addresses []sdk.AccAddress
+
+	for _, privKeyHex := range privKeyHexes {
+		// Decode the hex string to bytes
+		privKeyBytes, err := hex.DecodeString(privKeyHex)
+		if err != nil {
+			return nil, nil, nil, fmt.Errorf("error decoding private key: %v", err)
+		}
+
+		// Create a new PrivKey object
+		privKey := &secp256k1.PrivKey{Key: privKeyBytes}
+
+		// Get the public key from the private key
+		pubKey := privKey.PubKey()
+
+		// Generate Cosmos address
+		addr := sdk.AccAddress(pubKey.Address())
+
+		privateKeys = append(privateKeys, privKey)
+		publicKeys = append(publicKeys, pubKey)
+		addresses = append(addresses, addr)
+	}
+
+	return privateKeys, publicKeys, addresses, nil
+}
+
+func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress) error {
 	// Choose your codec: Amino or Protobuf. Here, we use Protobuf, given by the
 	// following function.
 	encCfg := simapp.MakeTestEncodingConfig()
@@ -29,21 +86,12 @@ func sendProofTx() error {
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
-	// create test keys
-	priv1, _, addr1 := testdata.KeyTestPubAddr()
-	priv2, _, addr2 := testdata.KeyTestPubAddr()
-	_, _, addr3 := testdata.KeyTestPubAddr()
-
-	fmt.Println(priv1, priv2, "Test Keys")
-
-	fmt.Println(addr1, addr2, " 1 & 2 Addresses")
-
 	// Define two x/bank MsgSend messages:
 	// - from addr1 to addr3,
 	// - from addr2 to addr3.
 	// This means that the transactions needs two signers: addr1 and addr2.
-	msg1 := banktypes.NewMsgSend(addr1, addr3, types.NewCoins(types.NewInt64Coin("stake", 12)))
-	msg2 := banktypes.NewMsgSend(addr2, addr3, types.NewCoins(types.NewInt64Coin("stake", 34)))
+	msg1 := banktypes.NewMsgSend(addresses[0], addresses[3], types.NewCoins(types.NewInt64Coin("stake", 100)))
+	msg2 := banktypes.NewMsgSend(addresses[1], addresses[3], types.NewCoins(types.NewInt64Coin("stake", 10)))
 
 	err := txBuilder.SetMsgs(msg1, msg2)
 	if err != nil {
@@ -55,9 +103,10 @@ func sendProofTx() error {
 	// txBuilder.SetMemo(...)
 	// txBuilder.SetTimeoutHeight(...)
 
-	privs := []cryptotypes.PrivKey{priv1, priv2}
-	accNums := []uint64{0, 1, 2} // The accounts' account numbers
-	accSeqs := []uint64{0, 1, 2} // The accounts' sequence numbers
+	privs := []cryptotypes.PrivKey{privateKeys[0], privateKeys[1]}
+	accNums := []uint64{0, 9, 8, 10} // The accounts' account numbers
+	accSeqs := []uint64{7, 2, 0, 0}  // The accounts' sequence numbers
+	// https://ctrl-felix.medium.com/how-do-i-get-the-cosmos-account-number-and-sequence-3f1643af285a
 
 	// First round: we gather all the signer infos. We use the "set empty
 	// signature" hack to do that.
@@ -115,9 +164,12 @@ func sendProofTx() error {
 
 	// Create a connection to the gRPC server.
 	grpcConn, err := grpc.Dial(
-		"127.0.0.1:9090",    // Or your gRPC server address.
+		"localhost:9090",    // Or your gRPC server address.
 		grpc.WithInsecure(), // The Cosmos SDK doesn't support any transport security mechanism.
 	)
+	if err != nil {
+		return err
+	}
 	defer grpcConn.Close()
 
 	// Broadcast the tx via gRPC. We create a new client for the Protobuf Tx
@@ -135,67 +187,21 @@ func sendProofTx() error {
 		return err
 	}
 
-	fmt.Println(grpcRes.TxResponse.Code, "response code") // Should be `0` if the tx is successful
+	fmt.Println(grpcRes.TxResponse.String(), "response code") // Should be `0` if the tx is successful
+
+	// This creates a gRPC client to query the x/bank service.
+	bankClient := banktypes.NewQueryClient(grpcConn)
+	bankRes, err := bankClient.Balance(
+		context.Background(),
+		&banktypes.QueryBalanceRequest{Address: addresses[3].String(), Denom: "stake"},
+	)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(bankRes.GetBalance(), "get balance") // Prints the account balance
+
+	fmt.Println("process completed")
 
 	return nil
-}
-
-// func simulateTx() error {
-//     // --snip--
-
-//     // Simulate the tx via gRPC. We create a new client for the Protobuf Tx
-//     // service.
-//     txClient := tx.NewServiceClient(grpcConn)
-//     txBytes := /* Fill in with your signed transaction bytes. */
-
-//     // We then call the Simulate method on this client.
-//     grpcRes, err := txClient.Simulate(
-//         context.Background(),
-//         &tx.SimulateRequest{
-//             TxBytes: txBytes,
-//         },
-//     )
-//     if err != nil {
-//         return err
-//     }
-
-//     fmt.Println(grpcRes.GasInfo) // Prints estimated gas used.
-
-//     return nil
-// }
-
-func main() {
-
-	// Assuming you have a private key as a hex string
-	privKeyHex := "96891492094e9e3aea0dd33cb6e065dee8331f5736fa93b5629edb4b2073631a"
-
-	// Decode the hex string to bytes
-	privKeyBytes, err := hex.DecodeString(privKeyHex)
-	if err != nil {
-		fmt.Printf("Error decoding private key: %v\n", err)
-		return
-	}
-
-	// Create a new PrivKey object
-	privKey := &secp256k1.PrivKey{Key: privKeyBytes}
-	// Get the public key from the private key
-	pubKey := privKey.PubKey().(*secp256k1.PubKey)
-
-	// Convert to the API type
-	apiPrivKey := &secp256k1.PrivKey{
-		Key: privKey.Key,
-	}
-	apiPubKey := &secp256k1.PubKey{
-		Key: pubKey.Key,
-	}
-
-	// Get the address from the public key
-	addr := types.AccAddress(pubKey.Address())
-
-	fmt.Printf("Private Key: %x\n", apiPrivKey.Key)
-	fmt.Printf("Public Key: %x\n", apiPubKey.Key)
-	fmt.Printf("Address: %s\n", addr)
-
-	sendProofTx()
-
 }
