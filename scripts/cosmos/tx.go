@@ -9,22 +9,32 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"google.golang.org/grpc"
 )
 
+// Add this at the package level or in an init() function
+var encCfg params.EncodingConfig
+
+func init() {
+	encCfg = simapp.MakeTestEncodingConfig()
+}
+
+// simd account
 func main() {
 
 	privKeyHexes := []string{
-		"96891492094e9e3aea0dd33cb6e065dee8331f5736fa93b5629edb4b2073631a",
-		"ae87f7015182f1fe893c9b05e6c9412cb7c5531cb3451c033a13da4e5d3b6600",
-		"1d77b70a31797a9c11e73f50acfde9422608f1e37de63a8037ad5c6f1c9fac0b",
-		"8a81accad0711457e225115492e6d490ea4767e49fcb2df10640f1caabf1b06d",
+		"96891492094e9e3aea0dd33cb6e065dee8331f5736fa93b5629edb4b2073631a", //alice
+		"ae87f7015182f1fe893c9b05e6c9412cb7c5531cb3451c033a13da4e5d3b6600", //bob
+		"1d77b70a31797a9c11e73f50acfde9422608f1e37de63a8037ad5c6f1c9fac0b", //carol
+		"8a81accad0711457e225115492e6d490ea4767e49fcb2df10640f1caabf1b06d", //david
 	}
 
 	privateKeys, publicKeys, addresses, err := processPrivateKeys(privKeyHexes)
@@ -33,16 +43,46 @@ func main() {
 		return
 	}
 
+	grpcConn, err := getGRPCConnection()
+	if err != nil {
+		fmt.Printf("Error processing grpc connection: %v\n", err)
+		return
+	}
+
+	sequenceList, err := queryAccountSequence(grpcConn, addresses)
+	if err != nil {
+		fmt.Printf("Error processing sequence queries: %v\n", err)
+		return
+	}
+
+	fmt.Println("GRPC connection status:", grpcConn.GetState())
+
+	// sendProofTx(privateKeys, publicKeys, addresses)
+
 	for i := 0; i < 4; i++ {
 		fmt.Printf("Key Set %d:\n", i+1)
 		fmt.Printf("  Private Key: %x\n", privateKeys[i].Bytes())
 		fmt.Printf("  Public Key: %x\n", publicKeys[i].Bytes())
 		fmt.Printf("  Address: %s\n", addresses[i].String())
+		fmt.Printf("  Sequence: %d\n", sequenceList[i])
 		fmt.Println()
 	}
 
-	sendProofTx(privateKeys, publicKeys, addresses)
+	defer grpcConn.Close()
 
+}
+
+func getGRPCConnection() (*grpc.ClientConn, error) {
+	// Create a connection to the gRPC server.
+	grpcConn, err := grpc.Dial(
+		"localhost:9090",    // Or your gRPC server address.
+		grpc.WithInsecure(), // The Cosmos SDK doesn't support any transport security mechanism.
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return grpcConn, nil
 }
 
 func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptotypes.PubKey, []sdk.AccAddress, error) {
@@ -76,6 +116,43 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 	}
 
 	return privateKeys, publicKeys, addresses, nil
+}
+
+func queryAccountSequence(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]uint64, error) {
+	// Create a new auth query client
+	authClient := authtypes.NewQueryClient(grpcConn)
+	sequences := make([]uint64, len(addresses))
+	// queryRes := make([]*authtypes.QueryAccountResponse, len(addresses))
+
+	for i, addr := range addresses {
+		// Query the account
+		res, err := authClient.Account(
+			context.Background(),
+			&authtypes.QueryAccountRequest{Address: addr.String()},
+		)
+		if err != nil {
+			// If the account is not found, set sequence to 0
+			if err.Error() == "rpc error: code = NotFound desc = account cosmos1... not found: key not found" {
+				sequences[i] = 0
+				continue
+			}
+			return nil, fmt.Errorf("failed to query account %s: %v", addr.String(), err)
+		}
+
+		// Create a new AccountI interface
+		var account authtypes.AccountI
+
+		// Unmarshal the account data
+		err = encCfg.InterfaceRegistry.UnpackAny(res.Account, &account)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unpack account %s: %v", addr.String(), err)
+		}
+
+		// Get the sequence number
+		sequences[i] = account.GetSequence()
+	}
+
+	return sequences, nil
 }
 
 func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress) error {
@@ -162,16 +239,10 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 
 	fmt.Println(txJSON, "txJson")
 
-	// Create a connection to the gRPC server.
-	grpcConn, err := grpc.Dial(
-		"localhost:9090",    // Or your gRPC server address.
-		grpc.WithInsecure(), // The Cosmos SDK doesn't support any transport security mechanism.
-	)
+	grpcConn, err := getGRPCConnection()
 	if err != nil {
 		return err
 	}
-	defer grpcConn.Close()
-
 	// Broadcast the tx via gRPC. We create a new client for the Protobuf Tx
 	// service.
 	txClient := tx.NewServiceClient(grpcConn)
