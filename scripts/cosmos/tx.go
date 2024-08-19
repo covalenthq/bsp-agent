@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -27,7 +28,7 @@ func init() {
 	encCfg = simapp.MakeTestEncodingConfig()
 }
 
-// simd account
+// simd accounts
 func main() {
 
 	privKeyHexes := []string{
@@ -49,7 +50,7 @@ func main() {
 		return
 	}
 
-	sequenceList, err := queryAccountSequence(grpcConn, addresses)
+	sequences, numbers, err := queryAccountSequence(grpcConn, addresses)
 	if err != nil {
 		fmt.Printf("Error processing sequence queries: %v\n", err)
 		return
@@ -57,19 +58,43 @@ func main() {
 
 	fmt.Println("GRPC connection status:", grpcConn.GetState())
 
-	// sendProofTx(privateKeys, publicKeys, addresses)
-
 	for i := 0; i < 4; i++ {
 		fmt.Printf("Key Set %d:\n", i+1)
 		fmt.Printf("  Private Key: %x\n", privateKeys[i].Bytes())
 		fmt.Printf("  Public Key: %x\n", publicKeys[i].Bytes())
 		fmt.Printf("  Address: %s\n", addresses[i].String())
-		fmt.Printf("  Sequence: %d\n", sequenceList[i])
+		fmt.Printf("  Sequence: %d\n", sequences[i])
+		fmt.Printf("  Account Number: %d\n", numbers[i])
 		fmt.Println()
 	}
 
+	sendProofTx(privateKeys, publicKeys, addresses, sequences, numbers)
+
+	time.Sleep(5 * time.Second)
+
+	getStakeBalances(grpcConn, addresses)
+
 	defer grpcConn.Close()
 
+}
+
+func getStakeBalances(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) error {
+	// This creates a gRPC client to query the x/bank service.
+	bankClient := banktypes.NewQueryClient(grpcConn)
+
+	for i, addr := range addresses {
+		bankRes, err := bankClient.Balance(
+			context.Background(),
+			&banktypes.QueryBalanceRequest{Address: addr.String(), Denom: "stake"},
+		)
+		if err != nil {
+			return fmt.Errorf("error querying balance for address %d: %v", i, err)
+		}
+
+		fmt.Printf("Address %d balance: %s\n", i, bankRes.GetBalance())
+	}
+
+	return nil
 }
 
 func getGRPCConnection() (*grpc.ClientConn, error) {
@@ -118,10 +143,11 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 	return privateKeys, publicKeys, addresses, nil
 }
 
-func queryAccountSequence(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]uint64, error) {
+func queryAccountSequence(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]uint64, []uint64, error) {
 	// Create a new auth query client
 	authClient := authtypes.NewQueryClient(grpcConn)
 	sequences := make([]uint64, len(addresses))
+	numbers := make([]uint64, len(addresses))
 	// queryRes := make([]*authtypes.QueryAccountResponse, len(addresses))
 
 	for i, addr := range addresses {
@@ -136,7 +162,7 @@ func queryAccountSequence(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress)
 				sequences[i] = 0
 				continue
 			}
-			return nil, fmt.Errorf("failed to query account %s: %v", addr.String(), err)
+			return nil, nil, fmt.Errorf("failed to query account %s: %v", addr.String(), err)
 		}
 
 		// Create a new AccountI interface
@@ -145,17 +171,18 @@ func queryAccountSequence(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress)
 		// Unmarshal the account data
 		err = encCfg.InterfaceRegistry.UnpackAny(res.Account, &account)
 		if err != nil {
-			return nil, fmt.Errorf("failed to unpack account %s: %v", addr.String(), err)
+			return nil, nil, fmt.Errorf("failed to unpack account %s: %v", addr.String(), err)
 		}
 
 		// Get the sequence number
 		sequences[i] = account.GetSequence()
+		numbers[i] = account.GetAccountNumber()
 	}
 
-	return sequences, nil
+	return sequences, numbers, nil
 }
 
-func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress) error {
+func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress, sequences []uint64, numbers []uint64) error {
 	// Choose your codec: Amino or Protobuf. Here, we use Protobuf, given by the
 	// following function.
 	encCfg := simapp.MakeTestEncodingConfig()
@@ -167,10 +194,10 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 	// - from addr1 to addr3,
 	// - from addr2 to addr3.
 	// This means that the transactions needs two signers: addr1 and addr2.
-	msg1 := banktypes.NewMsgSend(addresses[0], addresses[3], types.NewCoins(types.NewInt64Coin("stake", 100)))
-	msg2 := banktypes.NewMsgSend(addresses[1], addresses[3], types.NewCoins(types.NewInt64Coin("stake", 10)))
+	msg1 := banktypes.NewMsgSend(addresses[0], addresses[1], types.NewCoins(types.NewInt64Coin("stake", 100))) //where to send the funds
+	// msg2 := banktypes.NewMsgSend(addresses[1], addresses[3], types.NewCoins(types.NewInt64Coin("stake", 10)))
 
-	err := txBuilder.SetMsgs(msg1, msg2)
+	err := txBuilder.SetMsgs(msg1)
 	if err != nil {
 		return err
 	}
@@ -180,9 +207,9 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 	// txBuilder.SetMemo(...)
 	// txBuilder.SetTimeoutHeight(...)
 
-	privs := []cryptotypes.PrivKey{privateKeys[0], privateKeys[1]}
-	accNums := []uint64{0, 9, 8, 10} // The accounts' account numbers
-	accSeqs := []uint64{7, 2, 0, 0}  // The accounts' sequence numbers
+	privs := []cryptotypes.PrivKey{privateKeys[0]}
+	accNums := numbers
+	accSeqs := sequences
 	// https://ctrl-felix.medium.com/how-do-i-get-the-cosmos-account-number-and-sequence-3f1643af285a
 
 	// First round: we gather all the signer infos. We use the "set empty
@@ -237,7 +264,7 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 	}
 	txJSON := string(txJSONBytes)
 
-	fmt.Println(txJSON, "txJson")
+	fmt.Println("tx JSON:\n", txJSON)
 
 	grpcConn, err := getGRPCConnection()
 	if err != nil {
@@ -258,19 +285,7 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 		return err
 	}
 
-	fmt.Println(grpcRes.TxResponse.String(), "response code") // Should be `0` if the tx is successful
-
-	// This creates a gRPC client to query the x/bank service.
-	bankClient := banktypes.NewQueryClient(grpcConn)
-	bankRes, err := bankClient.Balance(
-		context.Background(),
-		&banktypes.QueryBalanceRequest{Address: addresses[3].String(), Denom: "stake"},
-	)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(bankRes.GetBalance(), "get balance") // Prints the account balance
+	fmt.Println("response code\n", grpcRes.TxResponse.String()) // Should be `0` if the tx is successful
 
 	fmt.Println("process completed")
 
