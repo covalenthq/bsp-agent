@@ -38,19 +38,22 @@ func main() {
 		"8a81accad0711457e225115492e6d490ea4767e49fcb2df10640f1caabf1b06d", //david
 	}
 
+	// Get public, private and account addresses from hex keys
 	privateKeys, publicKeys, addresses, err := processPrivateKeys(privKeyHexes)
 	if err != nil {
 		fmt.Printf("Error processing private keys: %v\n", err)
 		return
 	}
 
+	// Get the GRPC node connection
 	grpcConn, err := getGRPCConnection()
 	if err != nil {
 		fmt.Printf("Error processing grpc connection: %v\n", err)
 		return
 	}
 
-	sequences, numbers, err := queryAccountSequence(grpcConn, addresses)
+	// Get account information like nonce and number
+	sequences, numbers, err := queryAccountInfo(grpcConn, addresses)
 	if err != nil {
 		fmt.Printf("Error processing sequence queries: %v\n", err)
 		return
@@ -68,14 +71,19 @@ func main() {
 		fmt.Println()
 	}
 
+	// Send the proof transaction with account data
 	sendProofTx(privateKeys, publicKeys, addresses, sequences, numbers)
 
+	// Allow time for tx mine
 	time.Sleep(5 * time.Second)
 
+	// Get tx balances
 	getStakeBalances(grpcConn, addresses)
 
-	defer grpcConn.Close()
+	fmt.Println("process completed")
 
+	// Close connection
+	defer grpcConn.Close()
 }
 
 func getStakeBalances(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) error {
@@ -143,12 +151,11 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 	return privateKeys, publicKeys, addresses, nil
 }
 
-func queryAccountSequence(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]uint64, []uint64, error) {
+func queryAccountInfo(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]uint64, []uint64, error) {
 	// Create a new auth query client
 	authClient := authtypes.NewQueryClient(grpcConn)
 	sequences := make([]uint64, len(addresses))
 	numbers := make([]uint64, len(addresses))
-	// queryRes := make([]*authtypes.QueryAccountResponse, len(addresses))
 
 	for i, addr := range addresses {
 		// Query the account
@@ -186,6 +193,7 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 	// Choose your codec: Amino or Protobuf. Here, we use Protobuf, given by the
 	// following function.
 	encCfg := simapp.MakeTestEncodingConfig()
+	_ = publicKeys
 
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
@@ -210,7 +218,6 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 	privs := []cryptotypes.PrivKey{privateKeys[0]}
 	accNums := numbers
 	accSeqs := sequences
-	// https://ctrl-felix.medium.com/how-do-i-get-the-cosmos-account-number-and-sequence-3f1643af285a
 
 	// First round: we gather all the signer infos. We use the "set empty
 	// signature" hack to do that.
@@ -286,8 +293,6 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 	}
 
 	fmt.Println("response code\n", grpcRes.TxResponse.String()) // Should be `0` if the tx is successful
-
-	fmt.Println("process completed")
 
 	return nil
 }
