@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"time"
 
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -13,29 +12,32 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"google.golang.org/grpc"
+
+	covenet "github.com/covalenthq/covenet/x/covenet/types"
 )
 
-// Add this at the package level or in an init() function
 var encCfg params.EncodingConfig
 
 func init() {
 	encCfg = simapp.MakeTestEncodingConfig()
 }
 
-// simd accounts
+// covenet accounts
 func main() {
 
 	privKeyHexes := []string{
-		"96891492094e9e3aea0dd33cb6e065dee8331f5736fa93b5629edb4b2073631a", //alice
-		"ae87f7015182f1fe893c9b05e6c9412cb7c5531cb3451c033a13da4e5d3b6600", //bob
-		"1d77b70a31797a9c11e73f50acfde9422608f1e37de63a8037ad5c6f1c9fac0b", //carol
-		"8a81accad0711457e225115492e6d490ea4767e49fcb2df10640f1caabf1b06d", //david
+		"fa9c6a24f07a92c22ec9b84884608aa38da69fd839ad5f17b73d45aa00e644a4", //alice
+		"120da4010709c36f86728cecb50da1744e80041dcdfa7bbd3de42d8b4115d50f", //bob
+		"517e3db25d9851f9e70246a66d84aecf8860b5ed89d228ee46a69d250d6139ef", //carol
+		"bf98cafc87634fe68e1fb363f4776a84e962a5cd5ddaa3f9fa78088e5174e4ea", //david
+		"0e688674a156682a9828b27610327a5c6b26c36f6d5d9a5f34c587226c831266", //eve
 	}
 
 	// Get public, private and account addresses from hex keys
@@ -61,7 +63,7 @@ func main() {
 
 	fmt.Println("GRPC connection status:", grpcConn.GetState())
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i < 5; i++ {
 		fmt.Printf("Key Set %d:\n", i+1)
 		fmt.Printf("  Private Key: %x\n", privateKeys[i].Bytes())
 		fmt.Printf("  Public Key: %x\n", publicKeys[i].Bytes())
@@ -72,12 +74,12 @@ func main() {
 	}
 
 	// Send the proof transaction with account data
-	sendProofTx(privateKeys, publicKeys, addresses, sequences, numbers)
+	// sendProofTx(privateKeys, publicKeys, addresses, sequences, numbers)
 
 	// Allow time for tx mine
-	time.Sleep(5 * time.Second)
+	// time.Sleep(5 * time.Second)
 
-	// Get tx balances
+	//Get tx balances
 	getStakeBalances(grpcConn, addresses)
 
 	fmt.Println("process completed")
@@ -119,13 +121,22 @@ func getGRPCConnection() (*grpc.ClientConn, error) {
 }
 
 func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptotypes.PubKey, []sdk.AccAddress, error) {
-	if len(privKeyHexes) != 4 {
-		return nil, nil, nil, fmt.Errorf("expected 4 private keys, got %d", len(privKeyHexes))
+	if len(privKeyHexes) != 5 {
+		return nil, nil, nil, fmt.Errorf("expected 5 private keys, got %d", len(privKeyHexes))
 	}
 
 	var privateKeys []cryptotypes.PrivKey
 	var publicKeys []cryptotypes.PubKey
 	var addresses []sdk.AccAddress
+
+	// Set the bech32 prefix for your chain
+	const (
+		Bech32PrefixAccAddr = "cxtmos"
+	)
+
+	// Configure the address prefix
+	config := types.GetConfig()
+	config.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccAddr+"pub")
 
 	for _, privKeyHex := range privKeyHexes {
 		// Decode the hex string to bytes
@@ -137,15 +148,27 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 		// Create a new PrivKey object
 		privKey := &secp256k1.PrivKey{Key: privKeyBytes}
 
-		// Get the public key from the private key
+		// Derive public key
 		pubKey := privKey.PubKey()
 
-		// Generate Cosmos address
-		addr := sdk.AccAddress(pubKey.Address())
+		// Get the address bytes
+		addrBytes := types.AccAddress(pubKey.Address())
+
+		// Encode with the correct prefix
+		bech32Addr, err := bech32.ConvertAndEncode(Bech32PrefixAccAddr, addrBytes)
+		if err != nil {
+			return nil, nil, nil, fmt.Errorf("error encoding bech32 address: %v", err)
+		}
+
+		// If you specifically need a Covenet address type, you might do:
+		covenetAddr, err := covenet.CovenetAccAddressFromBech32(bech32Addr)
+		if err != nil {
+			return nil, nil, nil, fmt.Errorf("error converting to Covenet address: %v", err)
+		}
 
 		privateKeys = append(privateKeys, privKey)
 		publicKeys = append(publicKeys, pubKey)
-		addresses = append(addresses, addr)
+		addresses = append(addresses, covenetAddr)
 	}
 
 	return privateKeys, publicKeys, addresses, nil
