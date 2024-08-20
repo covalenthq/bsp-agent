@@ -33,11 +33,11 @@ func init() {
 func main() {
 
 	privKeyHexes := []string{
-		"fa9c6a24f07a92c22ec9b84884608aa38da69fd839ad5f17b73d45aa00e644a4", //alice
-		"120da4010709c36f86728cecb50da1744e80041dcdfa7bbd3de42d8b4115d50f", //bob
-		"517e3db25d9851f9e70246a66d84aecf8860b5ed89d228ee46a69d250d6139ef", //carol
-		"bf98cafc87634fe68e1fb363f4776a84e962a5cd5ddaa3f9fa78088e5174e4ea", //david
-		"0e688674a156682a9828b27610327a5c6b26c36f6d5d9a5f34c587226c831266", //eve
+		"619b2dd7558ffd6f4f0675527e02beff1a3e7cecf13234d043a5e00a6a575cb6", //alice
+		"54b14b20646947d5d9d07f7cd52ba62254a85102cff072b3899ab08ebb81b7d9", //bob
+		"2cbaf56ec09a017fcedafcc08146ead957dcbaafdf319c9d36b1df56043fc659", //carol
+		"39fe0bdce51e492f8c581f68d5c8f530872f906cc0f22379648bd2238a72e33a", //david
+		"d2e5bea6a544ae98c5164b23dbadd4df58be7910deb44d19064dd6d6e6e6df98", //eve
 	}
 
 	// Get public, private and account addresses from hex keys
