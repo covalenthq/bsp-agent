@@ -1,3 +1,5 @@
+COSMOSv0.46.12 (SIMD) KEYS
+
 - address: cosmos1m4jh5lad3u946arsdgq2n20nry6udfk8s5af9c
   name: alice
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ag4bebW9RGu/iKicJs6Bi37tlYkmXdDGTjJ6P0NCst08"}'
@@ -32,7 +34,6 @@ WARNING: The private key will be exported as an unarmored hexadecimal string. US
 8a81accad0711457e225115492e6d490ea4767e49fcb2df10640f1caabf1b06d
 
 
-
 ./build/simd keys export alice \
     --home ./private/.simapp \
     --keyring-backend test --unarmored-hex --unsafe
@@ -40,3 +41,41 @@ WARNING: The private key will be exported as an unarmored hexadecimal string. US
 export alice=$(./build/simd keys show alice --address \
     --home ./private/.simapp \
     --keyring-backend test)
+
+CXTMOSv0.1.0 (COVENED) KEYS
+
+- address: cxtmos19wsqpl3cvv0hktmkayhu7lem6azu0lr07ueyay
+  name: alice
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2ULQzVxQ0ERgR7E0dBiBSXGwj8ocYuAEk4A5UzNLTPo"}'
+  type: local
+
+fa9c6a24f07a92c22ec9b84884608aa38da69fd839ad5f17b73d45aa00e644a4
+
+- address: cxtmos1tjrcsg8x8r4k00cgv3la3zmv40sra0znzcnq9k
+  name: bob
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ao3ISvmoMIwZi7LhnWJGqDvHkLTxAuSXYdyFPeFOwAKL"}'
+  type: local
+
+120da4010709c36f86728cecb50da1744e80041dcdfa7bbd3de42d8b4115d50f
+
+- address: cxtmos1cy53xqgfnmfrcvvaqha5zj5es0aefruqpkgjgg
+  name: carol
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Agl7zt0hxxnMjUw3KV9PdWWB0ZVl/o3oarYICOOy9qLa"}'
+  type: local
+
+
+517e3db25d9851f9e70246a66d84aecf8860b5ed89d228ee46a69d250d6139ef
+
+- address: cxtmos1dn0gkk6wazqn46pfx48wtkzmxg4kw2nhgcjvre
+  name: david
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aur2L90JXNR0PlZMKcMOsZmkC9fx8YmtZ90spbPFDUvS"}'
+  type: local
+
+bf98cafc87634fe68e1fb363f4776a84e962a5cd5ddaa3f9fa78088e5174e4ea
+
+- address: cxtmos1pvjgd3eva8p8nf5ljn72cm8jd8ulz06dzfx7e6
+  name: eve
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Anbyo4f/s0TXZd9LzxODnupwLco2MAOiS2nnDqwhwl1C"}'
+  type: local
+
+0e688674a156682a9828b27610327a5c6b26c36f6d5d9a5f34c587226c831266
