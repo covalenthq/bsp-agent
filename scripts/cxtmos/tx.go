@@ -4,12 +4,11 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
@@ -17,16 +16,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"google.golang.org/grpc"
 
+	app "github.com/covalenthq/covenet/app"
+	params "github.com/covalenthq/covenet/app/params"
 	covenet "github.com/covalenthq/covenet/x/covenet/types"
 )
 
 var encCfg params.EncodingConfig
 
 func init() {
-	encCfg = simapp.MakeTestEncodingConfig()
+	encCfg = app.MakeEncodingConfig()
 }
 
 // covenet accounts
@@ -73,14 +73,15 @@ func main() {
 		fmt.Println()
 	}
 
-	// Send the proof transaction with account data
-	// sendProofTx(privateKeys, publicKeys, addresses, sequences, numbers)
+	//Send the proof transaction with account data
+	sendProofTx(privateKeys, publicKeys, addresses, sequences, numbers, encCfg)
 
-	// Allow time for tx mine
-	// time.Sleep(5 * time.Second)
+	//Allow time for tx mine
+	time.Sleep(5 * time.Second)
 
 	//Get tx balances
-	getStakeBalances(grpcConn, addresses)
+	// getStakeBalances(grpcConn, addresses)
+	// getCovenetSysInfo(grpcConn)
 
 	fmt.Println("process completed")
 
@@ -88,21 +89,16 @@ func main() {
 	defer grpcConn.Close()
 }
 
-func getStakeBalances(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) error {
-	// This creates a gRPC client to query the x/bank service.
-	bankClient := banktypes.NewQueryClient(grpcConn)
+func getCovenetSysInfo(grpcConn *grpc.ClientConn) error {
+	// This creates a gRPC client to query the x/covenet service.
+	covenetClient := covenet.NewQueryClient(grpcConn)
+	params := &covenet.QueryGetSystemInfoRequest{}
 
-	for i, addr := range addresses {
-		bankRes, err := bankClient.Balance(
-			context.Background(),
-			&banktypes.QueryBalanceRequest{Address: addr.String(), Denom: "stake"},
-		)
-		if err != nil {
-			return fmt.Errorf("error querying balance for address %d: %v", i, err)
-		}
-
-		fmt.Printf("Address %d balance: %s\n", i, bankRes.GetBalance())
+	res, err := covenetClient.SystemInfo(context.Background(), params)
+	if err != nil {
+		return err
 	}
+	fmt.Printf("System Info: %s\n", res)
 
 	return nil
 }
@@ -212,23 +208,17 @@ func queryAccountInfo(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]
 	return sequences, numbers, nil
 }
 
-func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress, sequences []uint64, numbers []uint64) error {
+func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress, sequences []uint64, numbers []uint64, encCfg params.EncodingConfig) error {
 	// Choose your codec: Amino or Protobuf. Here, we use Protobuf, given by the
-	// following function.
-	encCfg := simapp.MakeTestEncodingConfig()
 	_ = publicKeys
 
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
-	// Define two x/bank MsgSend messages:
-	// - from addr1 to addr3,
-	// - from addr2 to addr3.
-	// This means that the transactions needs two signers: addr1 and addr2.
-	msg1 := banktypes.NewMsgSend(addresses[0], addresses[1], types.NewCoins(types.NewInt64Coin("stake", 100))) //where to send the funds
-	// msg2 := banktypes.NewMsgSend(addresses[1], addresses[3], types.NewCoins(types.NewInt64Coin("stake", 10)))
+	proofMsg := covenet.NewMsgCreateProof(addresses[2].String(), 1, "specimen", 20578635, "0x951c58a73f21ba4eea2c69c93fdadd57291eb4dd70576ea350725a3609f44a09", "0xb4ef1b0b10188d36f08e053ae0a81162a258cd57df8590428cfea75f0cbfa45f", "ipfs://bafybeifcznetub6g37t54henvbijgqsyu4o67radj7gq4fx37th4pb3gsy")
+	//https://moonscan.io/tx/0xe8c6ee21ccc7588958b91436b346c8a50d2c5a383500b934aac28d7f22166aa9
 
-	err := txBuilder.SetMsgs(msg1)
+	err := txBuilder.SetMsgs(proofMsg)
 	if err != nil {
 		return err
 	}
@@ -238,48 +228,41 @@ func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.Pub
 	// txBuilder.SetMemo(...)
 	// txBuilder.SetTimeoutHeight(...)
 
-	privs := []cryptotypes.PrivKey{privateKeys[0]}
-	accNums := numbers
-	accSeqs := sequences
+	// Assuming we have a single private key, account number, and sequence
+	priv := privateKeys[2]
+	accNum := numbers[2]
+	accSeq := sequences[2]
 
-	// First round: we gather all the signer infos. We use the "set empty
-	// signature" hack to do that.
-	var sigsV2 []signing.SignatureV2
-	for i, priv := range privs {
-		sigV2 := signing.SignatureV2{
-			PubKey: priv.PubKey(),
-			Data: &signing.SingleSignatureData{
-				SignMode:  encCfg.TxConfig.SignModeHandler().DefaultMode(),
-				Signature: nil,
-			},
-			Sequence: accSeqs[i],
-		}
+	fmt.Println(accNum, accSeq, "account details")
 
-		sigsV2 = append(sigsV2, sigV2)
+	sigV2 := signing.SignatureV2{
+		PubKey: priv.PubKey(),
+		Data: &signing.SingleSignatureData{
+			SignMode:  encCfg.TxConfig.SignModeHandler().DefaultMode(),
+			Signature: nil,
+		},
+		Sequence: accSeq,
 	}
-	err = txBuilder.SetSignatures(sigsV2...)
+
+	err = txBuilder.SetSignatures(sigV2)
 	if err != nil {
 		return err
 	}
 
-	// Second round: all signer infos are set, so each signer can sign.
-	sigsV2 = []signing.SignatureV2{}
-	for i, priv := range privs {
-		signerData := xauthsigning.SignerData{
-			ChainID:       "learning-chain-1",
-			AccountNumber: accNums[i],
-			Sequence:      accSeqs[i],
-		}
-		sigV2, err := clientTx.SignWithPrivKey(
-			encCfg.TxConfig.SignModeHandler().DefaultMode(), signerData,
-			txBuilder, priv, encCfg.TxConfig, accSeqs[i])
-		if err != nil {
-			return err
-		}
-
-		sigsV2 = append(sigsV2, sigV2)
+	// Second round: actual signing
+	signerData := xauthsigning.SignerData{
+		ChainID:       "covenet",
+		AccountNumber: accNum,
+		Sequence:      accSeq,
 	}
-	err = txBuilder.SetSignatures(sigsV2...)
+	sigV2, err = clientTx.SignWithPrivKey(
+		encCfg.TxConfig.SignModeHandler().DefaultMode(), signerData,
+		txBuilder, priv, encCfg.TxConfig, accSeq)
+	if err != nil {
+		return err
+	}
+
+	err = txBuilder.SetSignatures(sigV2)
 	if err != nil {
 		return err
 	}
