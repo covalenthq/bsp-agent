@@ -76,11 +76,6 @@ services:
   agent:
     image: "us-docker.pkg.dev/covalent-project/network/bsp-agent:pre"
     container_name: bsp-agent
-    # links:
-    #   - "cqt-virtnet:proof-chain"
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
     restart: on-failure
     depends_on:
       covenet:
