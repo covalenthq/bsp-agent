@@ -3,6 +3,11 @@ FROM golang:1.22-alpine as builder
 RUN mkdir /build
 WORKDIR /build
 COPY . .
+RUN apk add --no-cache git
+RUN go env -w GOPRIVATE=github.com/covalenthq
+ARG GIT_TOKEN
+RUN git config --global url."https://noslav:${GIT_TOKEN}@github.com".insteadOf "https://github.com"
+
 RUN go mod download
 # Build the services
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-s -w" -o bsp-agent ./cmd/bspagent
@@ -12,7 +17,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-s -w" -o bsp-extractor-2 ./s
 FROM alpine:3.20
 RUN mkdir /app
 WORKDIR /app
-RUN apk update && apk add --no-cache bash
+RUN apk update && apk add --no-cache bash git
 RUN mkdir -p bin/block-ethereum bin/block-elrond
 COPY --from=builder /build/bsp-agent /app
 COPY --from=builder /build/entry.sh /app
