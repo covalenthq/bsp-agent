@@ -9,7 +9,6 @@ import (
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
@@ -18,15 +17,15 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"google.golang.org/grpc"
 
-	app "github.com/covalenthq/covenet/app"
-	params "github.com/covalenthq/covenet/app/params"
-	covenet "github.com/covalenthq/covenet/x/covenet/types"
+	covapp "github.com/covalenthq/covenet/app"
+	covparams "github.com/covalenthq/covenet/app/params"
+	covtypes "github.com/covalenthq/covenet/x/covenet/types"
 )
 
-var encCfg params.EncodingConfig
+var encCfg covparams.EncodingConfig
 
 func init() {
-	encCfg = app.MakeEncodingConfig()
+	encCfg = covapp.MakeEncodingConfig()
 }
 
 // covenet accounts
@@ -91,8 +90,8 @@ func main() {
 
 func getCovenetSysInfo(grpcConn *grpc.ClientConn) error {
 	// This creates a gRPC client to query the x/covenet service.
-	covenetClient := covenet.NewQueryClient(grpcConn)
-	params := &covenet.QueryGetSystemInfoRequest{}
+	covenetClient := covtypes.NewQueryClient(grpcConn)
+	params := &covtypes.QueryGetSystemInfoRequest{}
 
 	res, err := covenetClient.SystemInfo(context.Background(), params)
 	if err != nil {
@@ -131,7 +130,7 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 	)
 
 	// Configure the address prefix
-	config := types.GetConfig()
+	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccAddr+"pub")
 
 	for _, privKeyHex := range privKeyHexes {
@@ -148,7 +147,7 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 		pubKey := privKey.PubKey()
 
 		// Get the address bytes
-		addrBytes := types.AccAddress(pubKey.Address())
+		addrBytes := sdk.AccAddress(pubKey.Address())
 
 		// Encode with the correct prefix
 		bech32Addr, err := bech32.ConvertAndEncode(Bech32PrefixAccAddr, addrBytes)
@@ -157,7 +156,7 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 		}
 
 		// If you specifically need a Covenet address type, you might do:
-		covenetAddr, err := covenet.CovenetAccAddressFromBech32(bech32Addr)
+		covenetAddr, err := covtypes.CovenetAccAddressFromBech32(bech32Addr)
 		if err != nil {
 			return nil, nil, nil, fmt.Errorf("error converting to Covenet address: %v", err)
 		}
@@ -208,14 +207,14 @@ func queryAccountInfo(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]
 	return sequences, numbers, nil
 }
 
-func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress, sequences []uint64, numbers []uint64, encCfg params.EncodingConfig) error {
+func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress, sequences []uint64, numbers []uint64, encCfg covparams.EncodingConfig) error {
 	// Choose your codec: Amino or Protobuf. Here, we use Protobuf, given by the
 	_ = publicKeys
 
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
-	proofMsg := covenet.NewMsgCreateProof(addresses[2].String(), 1, "specimen", 20578635, "0x951c58a73f21ba4eea2c69c93fdadd57291eb4dd70576ea350725a3609f44a09", "0xb4ef1b0b10188d36f08e053ae0a81162a258cd57df8590428cfea75f0cbfa45f", "ipfs://bafybeifcznetub6g37t54henvbijgqsyu4o67radj7gq4fx37th4pb3gsy")
+	proofMsg := covtypes.NewMsgCreateProof(addresses[2].String(), 1, "specimen", 20578635, "0x951c58a73f21ba4eea2c69c93fdadd57291eb4dd70576ea350725a3609f44a09", "0xb4ef1b0b10188d36f08e053ae0a81162a258cd57df8590428cfea75f0cbfa45f", "ipfs://bafybeifcznetub6g37t54henvbijgqsyu4o67radj7gq4fx37th4pb3gsy")
 	//https://moonscan.io/tx/0xe8c6ee21ccc7588958b91436b346c8a50d2c5a383500b934aac28d7f22166aa9
 
 	err := txBuilder.SetMsgs(proofMsg)

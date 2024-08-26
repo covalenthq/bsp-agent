@@ -11,7 +11,6 @@ import (
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
@@ -22,14 +21,14 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
-	app "github.com/covalenthq/covenet/app"
-	params "github.com/covalenthq/covenet/app/params"
-	covenet "github.com/covalenthq/covenet/x/covenet/types"
+	covapp "github.com/covalenthq/covenet/app"
+	covparams "github.com/covalenthq/covenet/app/params"
+	covtypes "github.com/covalenthq/covenet/x/covenet/types"
 
-	ty "github.com/covalenthq/bsp-agent/internal/types"
+	bsptypes "github.com/covalenthq/bsp-agent/internal/types"
 )
 
-var encCfg params.EncodingConfig
+var encCfg covparams.EncodingConfig
 
 const (
 	proofTxTimeout  uint64 = 480
@@ -37,7 +36,7 @@ const (
 )
 
 func init() {
-	encCfg = app.MakeEncodingConfig()
+	encCfg = covapp.MakeEncodingConfig()
 }
 
 type CovenetInteractor struct {
@@ -64,10 +63,10 @@ func NewCovenetInteractor(config *config.AgentConfig) (*CovenetInteractor, error
 	return interactor, nil
 }
 
-func (interactor *CovenetInteractor) GetSystemInfo() (*covenet.SystemInfo, error) {
+func (interactor *CovenetInteractor) GetSystemInfo() (*covtypes.SystemInfo, error) {
 	// This creates a gRPC client to query the x/covenet service.
-	covenetClient := covenet.NewQueryClient(interactor.grpcClient)
-	params := &covenet.QueryGetSystemInfoRequest{}
+	covenetClient := covtypes.NewQueryClient(interactor.grpcClient)
+	params := &covtypes.QueryGetSystemInfoRequest{}
 
 	res, err := covenetClient.SystemInfo(context.Background(), params)
 	if err != nil {
@@ -104,8 +103,8 @@ func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptoty
 		Bech32PrefixAccAddr = "cxtmos"
 	)
 
-	// Configure the address prefix
-	config := types.GetConfig()
+	// Configure the address
+	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccAddr+"pub")
 
 	// Decode the hex string to bytes
@@ -121,7 +120,7 @@ func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptoty
 	pubKey := privKey.PubKey()
 
 	// Get the address bytes
-	addrBytes := types.AccAddress(pubKey.Address())
+	addrBytes := sdk.AccAddress(pubKey.Address())
 
 	// Encode with the correct prefix
 	bech32Addr, err := bech32.ConvertAndEncode(Bech32PrefixAccAddr, addrBytes)
@@ -130,7 +129,7 @@ func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptoty
 	}
 
 	// If you specifically need a Covenet address type
-	covenetAddr, err := covenet.CovenetAccAddressFromBech32(bech32Addr)
+	covenetAddr, err := covtypes.CovenetAccAddressFromBech32(bech32Addr)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("error converting to Covenet address: %v", err)
 	}
@@ -173,7 +172,7 @@ func (interactor *CovenetInteractor) GetAccountInfo() (uint64, uint64, error) {
 }
 
 // SendBlockReplicaProofTx makes a proof-chain tx for the block-replica that has been processed
-func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.Context, chainHeight uint64, blockReplica *ty.BlockReplica, resultSegment []byte, replicaURL string, txHash chan string) {
+func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.Context, chainHeight uint64, blockReplica *bsptypes.BlockReplica, resultSegment []byte, replicaURL string, txHash chan string) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
@@ -195,7 +194,7 @@ func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.
 	}
 }
 
-func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockReplica *ty.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte) error {
+func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte) error {
 
 	privK, pubK, address, err := interactor.ProcessKey()
 	if err != nil {
@@ -210,7 +209,7 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
-	proofMsg := covenet.NewMsgCreateProof(interactor.address.String(), int32(blockReplica.NetworkId), "specimen", chainHeight, blockReplica.Hash.String(), hex.EncodeToString(sha256Result[:]), replicaURL)
+	proofMsg := covtypes.NewMsgCreateProof(interactor.address.String(), int32(blockReplica.NetworkId), "specimen", chainHeight, blockReplica.Hash.String(), hex.EncodeToString(sha256Result[:]), replicaURL)
 
 	err = txBuilder.SetMsgs(proofMsg)
 	if err != nil {
