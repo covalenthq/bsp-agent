@@ -104,12 +104,19 @@ func (store *ipfsStore) createMultiformWriter(contents []byte) (*bytes.Buffer, s
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	if err := writer.WriteField("filedata", string(contents)); err != nil {
-		return body, "", fmt.Errorf("error writing form field: %w", err)
+	// Create a new form-data header with the filename and write the file content
+	part, err := writer.CreateFormFile("file", "specimen")
+	if err != nil {
+		return nil, "", fmt.Errorf("error creating form file: %w", err)
 	}
 
+	if _, err := part.Write(contents); err != nil {
+		return nil, "", fmt.Errorf("error writing file content: %w", err)
+	}
+
+	// Close the multipart writer
 	if err := writer.Close(); err != nil {
-		log.Error("error closing multipart writer", err)
+		return nil, "", fmt.Errorf("error closing multipart writer: %w", err)
 	}
 
 	return body, writer.FormDataContentType(), nil
