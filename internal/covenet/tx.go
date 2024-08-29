@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
@@ -32,7 +33,7 @@ var encCfg covparams.EncodingConfig
 
 const (
 	proofTxTimeout  uint64 = 480
-	retryCountLimit int    = 1 // 1 retry for proofchain submission
+	retryCountLimit int    = 3 // 3 retry for covenet proofchain submission
 )
 
 func init() {
@@ -72,7 +73,7 @@ func (interactor *CovenetInteractor) GetSystemInfo() (*covtypes.SystemInfo, erro
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("System Info: %s\n", res)
+	log.Info("System Info: ", res)
 
 	return &res.SystemInfo, nil
 }
@@ -87,16 +88,12 @@ func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 		return nil, err
 	}
 
-	log.Info("GRPC connection status:", grpcConn.GetState())
+	log.Info("GRPC connection status: ", grpcConn.GetState())
 
 	return grpcConn, nil
 }
 
 func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptotypes.PubKey, sdk.AccAddress, error) {
-	// log.Info("this is the private key from env:", interactor.config.CovenetConfig.PrivateKey)
-	// if len(interactor.config.CovenetConfig.PrivateKey) != 1 {
-	// 	return nil, nil, nil, fmt.Errorf("expected 1 private keys, got %d", len(interactor.config.CovenetConfig.PrivateKey))
-	// }
 
 	// Set the bech32 prefix for your chain
 	const (
@@ -134,7 +131,7 @@ func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptoty
 		return nil, nil, nil, fmt.Errorf("error converting to Covenet address: %v", err)
 	}
 
-	// set interactor values
+	// Set interactor values
 	interactor.pubKey = pubKey
 	interactor.address = covenetAddr
 
@@ -151,7 +148,7 @@ func (interactor *CovenetInteractor) GetAccountInfo() (uint64, uint64, error) {
 		&authtypes.QueryAccountRequest{Address: interactor.address.String()},
 	)
 	if err != nil {
-		// If the account is not found, set sequence to 0
+		// If the account is not found return 0 values with error
 		return 0, 0, fmt.Errorf("failed to query account %s: %v", interactor.address.String(), err)
 	}
 
@@ -173,6 +170,8 @@ func (interactor *CovenetInteractor) GetAccountInfo() (uint64, uint64, error) {
 
 // SendBlockReplicaProofTx makes a proof-chain tx for the block-replica that has been processed
 func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.Context, chainHeight uint64, blockReplica *bsptypes.BlockReplica, resultSegment []byte, replicaURL string, txHash chan string) {
+	// Empty error used for recursive retry tx call
+	var emptyErr error
 	ctx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(proofTxTimeout))
 	defer cancel()
 
@@ -185,22 +184,23 @@ func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.
 	}
 	sha256Result := sha256.Sum256(jsonResult)
 
-	err = interactor.CreateProofTx(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result)
+	// Call Create Proof With Retry Count at 0 and Empty Err
+	err = interactor.CreateProofTxWithRetry(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0, emptyErr)
 	if err != nil {
-		log.Error("error in creating proof on covenet: ", err.Error())
-		txHash <- ""
-
-		return
+		log.Error("covenet tx failed: ", err.Error())
 	}
 }
 
+// CreateProofTx creates a proof transaction on covenet and return errors on failuer
 func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte) error {
 
+	// Get account from private key
 	privK, pubK, address, err := interactor.ProcessKey()
 	if err != nil {
 		return fmt.Errorf("failed to process key %s: %v", interactor.address.String(), err)
 	}
 
+	// Get nonce and account number used for signature
 	acSeq, acNum, err := interactor.GetAccountInfo()
 	if err != nil {
 		return fmt.Errorf("failed to query account %s: %v", interactor.address.String(), err)
@@ -209,6 +209,7 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
+	// Create Msg from covenet types
 	proofMsg := covtypes.NewMsgCreateProof(interactor.address.String(), int32(blockReplica.NetworkId), "specimen", chainHeight, blockReplica.Hash.String(), hex.EncodeToString(sha256Result[:]), replicaURL)
 
 	err = txBuilder.SetMsgs(proofMsg)
@@ -222,7 +223,6 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	// txBuilder.SetTimeoutHeight(...)
 
 	// Assuming we have a single private key, account number, and sequence
-
 	log.Info("account details: ", address.String(), " number: ", acNum, " nonce: ", acSeq)
 
 	sigV2 := signing.SignatureV2{
@@ -260,17 +260,8 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	// Generated Protobuf-encoded bytes.
 	txBytes, err := encCfg.TxConfig.TxEncoder()(txBuilder.GetTx())
 
-	// Generate a JSON string.
-	txJSONBytes, err := encCfg.TxConfig.TxJSONEncoder()(txBuilder.GetTx())
-	if err != nil {
-		return err
-	}
-	txJSON := string(txJSONBytes)
-
-	log.Info("tx JSON:\n", txJSON)
-
-	// Broadcast the tx via gRPC. We create a new client for the Protobuf Tx
-	// service.
+	// Broadcast the tx via gRPC.
+	// We create a new client for the Protobuf Tx service.
 	txClient := tx.NewServiceClient(interactor.grpcClient)
 	// We then call the BroadcastTx method on this client.
 	grpcRes, err := txClient.BroadcastTx(
@@ -285,14 +276,50 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	}
 
 	log.Info("response code\n", grpcRes.TxResponse.String()) // Should be `0` if the tx is successful
-	// defer interactor.grpcClient.Close()
 
 	if grpcRes.TxResponse.Code != 0 {
-		log.Error("proof tx failed/reverted, retrying proof tx for block hash: ", blockReplica.Hash.String())
-		// executeWithRetry(ctx, interactor, proofChainContract, ethClient, opts, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1)
-		// return
+		return fmt.Errorf("transaction failed with code %d, for response: %s", grpcRes.TxResponse.Code, grpcRes.TxResponse.String())
 	}
 
 	txHash <- grpcRes.TxResponse.TxHash
 	return nil
+}
+
+func (interactor *CovenetInteractor) CreateProofTxWithRetry(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int, lastError error) error {
+
+	if retryCount >= retryCountLimit {
+		errStr := lastError.Error()
+		switch {
+		case strings.Contains(errStr, "submitted tx creator is already session member"):
+			log.Warn("skipping: covenet creator is already a session member")
+			txHash <- "presubmitted hash"
+		case strings.Contains(errStr, "proof session submitted out of acceptable live bounds"):
+			log.Warn("skipping: covenet Proof session out of acceptable live bounds")
+			txHash <- "out-of-bounds block"
+		// Add additional cases that need skipping based on response from covenet
+		// case strings.Contains(errStr, "the client connection is closing"):
+		// 	log.Warn("skipping: covenet client connection is closing")
+		// 	txHash <- "mine timeout"
+		default:
+			log.Error("too many errors in creating proof on covenet: ", errStr)
+			txHash <- ""
+		}
+		return fmt.Errorf("exceeded retry limit of %d attempts, with response %s", retryCountLimit, lastError)
+	}
+
+	err := interactor.CreateProofTx(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result)
+	if err != nil {
+		lastError = err
+		log.Error(err)
+	} else {
+		return nil
+	}
+
+	// Exponential backoff
+	backoffDuration := time.Duration(1<<uint(retryCount)) * time.Second
+	log.Info("Retrying Create Proof tx in: ", backoffDuration)
+	time.Sleep(backoffDuration)
+
+	// Recursive call with now incremented retry count
+	return interactor.CreateProofTxWithRetry(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1, lastError)
 }
