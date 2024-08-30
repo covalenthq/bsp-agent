@@ -11,7 +11,7 @@ type RedisEnvConfig struct {
 	Password string `envconfig:"REDIS_PWD" default:""`
 }
 
-// EWM node config
+// CovenetEnvConfig (ewm) node config
 type CovenetEnvConfig struct {
 	PrivateKey string `envconfig:"COVENET_PRIVATE_KEY"`
 	GRPCURL    string `envconfig:"COVENET_GRPC_URL"`

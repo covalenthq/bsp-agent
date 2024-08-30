@@ -49,6 +49,7 @@ type ChainConfig struct {
 	WebsocketURLs string
 }
 
+// CovenetConfig contains the gRPC url and private key for EWM node
 type CovenetConfig struct {
 	PrivateKey string
 	GRPCURL    string
