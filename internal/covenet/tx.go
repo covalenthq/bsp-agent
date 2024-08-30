@@ -24,14 +24,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
-	covapp "github.com/covalenthq/covenet/app"
-	covparams "github.com/covalenthq/covenet/app/params"
-	covtypes "github.com/covalenthq/covenet/x/covenet/types"
+	ewmapp "github.com/covalenthq/ewm-types/app"
+	ewmparams "github.com/covalenthq/ewm-types/app/params"
+	ewmtypes "github.com/covalenthq/ewm-types/x/ewm/types"
 
 	bsptypes "github.com/covalenthq/bsp-agent/internal/types"
 )
 
-var encCfg covparams.EncodingConfig
+var encCfg ewmparams.EncodingConfig
 
 const (
 	proofTxTimeout  uint64 = 480
@@ -39,7 +39,7 @@ const (
 )
 
 func init() {
-	encCfg = covapp.MakeEncodingConfig()
+	encCfg = ewmapp.MakeEncodingConfig()
 }
 
 type CovenetInteractor struct {
@@ -95,10 +95,10 @@ func NewCovenetInteractor(config *config.AgentConfig) (*CovenetInteractor, error
 	return interactor, nil
 }
 
-func (interactor *CovenetInteractor) GetSystemInfo() (*covtypes.SystemInfo, error) {
+func (interactor *CovenetInteractor) GetSystemInfo() (*ewmtypes.SystemInfo, error) {
 	// This creates a gRPC client to query the x/covenet service.
-	covenetClient := covtypes.NewQueryClient(interactor.grpcClient)
-	params := &covtypes.QueryGetSystemInfoRequest{}
+	covenetClient := ewmtypes.NewQueryClient(interactor.grpcClient)
+	params := &ewmtypes.QueryGetSystemInfoRequest{}
 
 	res, err := covenetClient.SystemInfo(context.Background(), params)
 	if err != nil {
@@ -160,7 +160,7 @@ func (interactor *CovenetInteractor) ProcessKey() error {
 	}
 
 	// If you specifically need a Covenet address type
-	covenetAddr, err := covtypes.CovenetAccAddressFromBech32(bech32Addr)
+	covenetAddr, err := ewmtypes.CovenetAccAddressFromBech32(bech32Addr)
 	if err != nil {
 		return fmt.Errorf("error converting to Covenet address: %v", err)
 	}
@@ -252,7 +252,7 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
 	// Create Msg from covenet types
-	proofMsg := covtypes.NewMsgCreateProof(interactor.address.String(), int32(blockReplica.NetworkId), "specimen", chainHeight, blockReplica.Hash.String(), hex.EncodeToString(sha256Result[:]), replicaURL)
+	proofMsg := ewmtypes.NewMsgCreateProof(interactor.address.String(), int32(blockReplica.NetworkId), "specimen", chainHeight, blockReplica.Hash.String(), hex.EncodeToString(sha256Result[:]), replicaURL)
 
 	err = txBuilder.SetMsgs(proofMsg)
 	if err != nil {
