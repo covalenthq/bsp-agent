@@ -28,7 +28,7 @@ require (
 
 require (
 	github.com/cosmos/cosmos-sdk v0.46.12
-	github.com/covalenthq/ewm-types v0.1.3
+	github.com/covalenthq/ewm-types v0.1.4
 	google.golang.org/grpc v1.64.1
 )
 
@@ -42,6 +42,7 @@ require (
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
 	github.com/apache/arrow/go/v12 v12.0.0 // indirect
@@ -105,7 +106,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hdevalence/ed25519consensus v0.0.0-20220222234857-c00d1f31bab3 // indirect
 	github.com/holiman/uint256 v1.3.1 // indirect
-	github.com/ignite/cli v0.25.1 // indirect
 	github.com/ignite/modules v0.0.0-20220912090139-7c325cae763a // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/influxdata/flux v0.170.1 // indirect

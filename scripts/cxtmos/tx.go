@@ -17,15 +17,15 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"google.golang.org/grpc"
 
-	covapp "github.com/covalenthq/covenet/app"
-	covparams "github.com/covalenthq/covenet/app/params"
-	covtypes "github.com/covalenthq/covenet/x/covenet/types"
+	ewmapp "github.com/covalenthq/ewm-types/app"
+	ewmparams "github.com/covalenthq/ewm-types/app/params"
+	ewmtypes "github.com/covalenthq/ewm-types/x/ewm/types"
 )
 
-var encCfg covparams.EncodingConfig
+var encCfg ewmparams.EncodingConfig
 
 func init() {
-	encCfg = covapp.MakeEncodingConfig()
+	encCfg = ewmapp.MakeEncodingConfig()
 }
 
 // covenet accounts
@@ -90,8 +90,8 @@ func main() {
 
 func getCovenetSysInfo(grpcConn *grpc.ClientConn) error {
 	// This creates a gRPC client to query the x/covenet service.
-	covenetClient := covtypes.NewQueryClient(grpcConn)
-	params := &covtypes.QueryGetSystemInfoRequest{}
+	covenetClient := ewmtypes.NewQueryClient(grpcConn)
+	params := &ewmtypes.QueryGetSystemInfoRequest{}
 
 	res, err := covenetClient.SystemInfo(context.Background(), params)
 	if err != nil {
@@ -156,7 +156,7 @@ func processPrivateKeys(privKeyHexes []string) ([]cryptotypes.PrivKey, []cryptot
 		}
 
 		// If you specifically need a Covenet address type, you might do:
-		covenetAddr, err := covtypes.CovenetAccAddressFromBech32(bech32Addr)
+		covenetAddr, err := ewmtypes.CovenetAccAddressFromBech32(bech32Addr)
 		if err != nil {
 			return nil, nil, nil, fmt.Errorf("error converting to Covenet address: %v", err)
 		}
@@ -207,14 +207,14 @@ func queryAccountInfo(grpcConn *grpc.ClientConn, addresses []sdk.AccAddress) ([]
 	return sequences, numbers, nil
 }
 
-func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress, sequences []uint64, numbers []uint64, encCfg covparams.EncodingConfig) error {
+func sendProofTx(privateKeys []cryptotypes.PrivKey, publicKeys []cryptotypes.PubKey, addresses []sdk.AccAddress, sequences []uint64, numbers []uint64, encCfg ewmparams.EncodingConfig) error {
 	// Choose your codec: Amino or Protobuf. Here, we use Protobuf, given by the
 	_ = publicKeys
 
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
-	proofMsg := covtypes.NewMsgCreateProof(addresses[2].String(), 1, "specimen", 20578635, "0x951c58a73f21ba4eea2c69c93fdadd57291eb4dd70576ea350725a3609f44a09", "0xb4ef1b0b10188d36f08e053ae0a81162a258cd57df8590428cfea75f0cbfa45f", "ipfs://bafybeifcznetub6g37t54henvbijgqsyu4o67radj7gq4fx37th4pb3gsy")
+	proofMsg := ewmtypes.NewMsgCreateProof(addresses[2].String(), 1, "specimen", 20578635, "0x951c58a73f21ba4eea2c69c93fdadd57291eb4dd70576ea350725a3609f44a09", "0xb4ef1b0b10188d36f08e053ae0a81162a258cd57df8590428cfea75f0cbfa45f", "ipfs://bafybeifcznetub6g37t54henvbijgqsyu4o67radj7gq4fx37th4pb3gsy")
 	//https://moonscan.io/tx/0xe8c6ee21ccc7588958b91436b346c8a50d2c5a383500b934aac28d7f22166aa9
 
 	err := txBuilder.SetMsgs(proofMsg)
