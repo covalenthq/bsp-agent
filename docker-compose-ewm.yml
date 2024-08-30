@@ -57,9 +57,9 @@ services:
     ports:
       - "8081:8081"
 
-  covenet:
+  ewm:
     image: us-docker.pkg.dev/covalent-project/network/covenet:pre
-    container_name: covenet-node
+    container_name: ewm-node
     restart: always
     entrypoint: >
       /bin/bash -l -c "
@@ -78,7 +78,7 @@ services:
     container_name: bsp-agent
     restart: on-failure
     depends_on:
-      covenet:
+      ewm:
         condition: service_started
     volumes:
       - /Users/pranay/.config/gcloud:/app/gcloud

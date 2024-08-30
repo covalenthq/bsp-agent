@@ -116,7 +116,7 @@ func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 
 	grpcConn, err := grpc.DialContext(
 		ctx,
-		"covenet-node:9090", //config.CovenetConfig.GRPCURL,
+		"ewm-node:9090", //config.CovenetConfig.GRPCURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
