@@ -9,8 +9,8 @@ import (
 	"gopkg.in/avro.v0"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
-	"github.com/covalenthq/bsp-agent/internal/covenet"
 	"github.com/covalenthq/bsp-agent/internal/event"
+	"github.com/covalenthq/bsp-agent/internal/ewm"
 	"github.com/covalenthq/bsp-agent/internal/metrics"
 	"github.com/covalenthq/bsp-agent/internal/proof"
 	"github.com/covalenthq/bsp-agent/internal/storage"
@@ -60,7 +60,7 @@ type agentNode struct {
 	proofchi *proof.ProofchainInteractor
 
 	// covenet
-	covenet *covenet.CovenetInteractor
+	covenet *ewm.CovenetInteractor
 
 	// redis derived settings
 	streamKey     string
@@ -188,7 +188,7 @@ func (anode *agentNode) setupMetrics() {
 }
 
 func (anode *agentNode) setupCovenetInteractor() {
-	covenetInteractor, err := covenet.NewCovenetInteractor(anode.AgentConfig)
+	covenetInteractor, err := ewm.NewCovenetInteractor(anode.AgentConfig)
 	if err != nil {
 		log.Fatalf("unable to setup covenet interactor: %v", err)
 	}

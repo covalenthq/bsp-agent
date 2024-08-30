@@ -1,4 +1,6 @@
-package covenet
+// Package ewm provides functionality for interacting with the Covenet blockchain,
+// including transaction creation, proof submission, and account management.
+package ewm
 
 import (
 	"context"
@@ -42,6 +44,7 @@ func init() {
 	encCfg = ewmapp.MakeEncodingConfig()
 }
 
+// CovenetInteractor handles interactions with the Covenet blockchain.
 type CovenetInteractor struct {
 	config         *config.AgentConfig
 	grpcClient     *grpc.ClientConn
@@ -61,7 +64,7 @@ func (interactor *CovenetInteractor) getPrivateKey() (cryptotypes.PrivKey, error
 	return &secp256k1.PrivKey{Key: privKeyBytes}, nil
 }
 
-// NewCovenetInteract sets up a new operator-interactor for covenet
+// NewCovenetInteractor creates and initializes a new CovenetInteractor.
 func NewCovenetInteractor(config *config.AgentConfig) (*CovenetInteractor, error) {
 	grpcConn, err := GetGRPCConnection(config)
 	if err != nil {
@@ -95,6 +98,7 @@ func NewCovenetInteractor(config *config.AgentConfig) (*CovenetInteractor, error
 	return interactor, nil
 }
 
+// GetSystemInfo retrieves the current system information from the Covenet blockchain.
 func (interactor *CovenetInteractor) GetSystemInfo() (*ewmtypes.SystemInfo, error) {
 	// This creates a gRPC client to query the x/covenet service.
 	covenetClient := ewmtypes.NewQueryClient(interactor.grpcClient)
@@ -109,6 +113,7 @@ func (interactor *CovenetInteractor) GetSystemInfo() (*ewmtypes.SystemInfo, erro
 	return &res.SystemInfo, nil
 }
 
+// GetGRPCConnection establishes a gRPC connection to the Covenet node.
 func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 	// Create a connection to the gRPC server.
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -116,7 +121,7 @@ func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 
 	grpcConn, err := grpc.DialContext(
 		ctx,
-		"ewm-node:9090", //config.CovenetConfig.GRPCURL,
+		config.CovenetConfig.GRPCURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
@@ -128,6 +133,7 @@ func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 	return grpcConn, nil
 }
 
+// ProcessKey initializes the interactor's public key and address from the private key in the config.
 func (interactor *CovenetInteractor) ProcessKey() error {
 	// Set the bech32 prefix for your chain
 	const (
@@ -172,18 +178,21 @@ func (interactor *CovenetInteractor) ProcessKey() error {
 	return nil
 }
 
+// GetLatestSequence returns the current sequence number for the interactor's account.
 func (interactor *CovenetInteractor) GetLatestSequence() uint64 {
 	interactor.sequenceMutex.Lock()
 	defer interactor.sequenceMutex.Unlock()
 	return interactor.sequenceNumber
 }
 
+// IncrementSequence increases the sequence number for the interactor's account by one.
 func (interactor *CovenetInteractor) IncrementSequence() {
 	interactor.sequenceMutex.Lock()
 	defer interactor.sequenceMutex.Unlock()
 	interactor.sequenceNumber++
 }
 
+// GetAccountInfo retrieves the current sequence number and account number for the interactor's account.
 func (interactor *CovenetInteractor) GetAccountInfo() (uint64, uint64, error) {
 	// Create a new auth query client
 	authClient := authtypes.NewQueryClient(interactor.grpcClient)
@@ -214,7 +223,7 @@ func (interactor *CovenetInteractor) GetAccountInfo() (uint64, uint64, error) {
 	return accountSequence, accountNumber, nil
 }
 
-// SendBlockReplicaProofTx makes a proof-chain tx for the block-replica that has been processed
+// SendCovenetBlockReplicaProofTx submits a block replica proof transaction to Covenet.
 func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.Context, chainHeight uint64, blockReplica *bsptypes.BlockReplica, resultSegment []byte, replicaURL string, txHash chan string) {
 	// Empty error used for recursive retry tx call
 	var emptyErr error
@@ -237,7 +246,7 @@ func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.
 	}
 }
 
-// CreateProofTx creates a proof transaction on covenet and return errors on failuer
+// CreateProofTx creates and broadcasts a proof transaction on the Covenet blockchain.
 func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte) error {
 
 	// Get account from private key
@@ -326,11 +335,10 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	}
 
 	return fmt.Errorf("transaction failed with code %d: %s", grpcRes.TxResponse.Code, grpcRes.TxResponse.String())
-
 }
 
+// CreateProofTxWithRetry attempts to create and broadcast a proof transaction with retries on failure.
 func (interactor *CovenetInteractor) CreateProofTxWithRetry(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int, lastError error) error {
-
 	if retryCount >= retryCountLimit {
 		errStr := lastError.Error()
 		switch {
