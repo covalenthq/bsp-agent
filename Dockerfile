@@ -4,9 +4,6 @@ RUN mkdir /build
 WORKDIR /build
 COPY . .
 RUN apk add --no-cache git
-RUN go env -w GOPRIVATE=github.com/covalenthq
-ARG GIT_TOKEN
-RUN git config --global url."https://noslav:${GIT_TOKEN}@github.com".insteadOf "https://github.com"
 
 RUN go mod download
 # Build the services

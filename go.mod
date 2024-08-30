@@ -28,8 +28,8 @@ require (
 
 require (
 	github.com/cosmos/cosmos-sdk v0.46.12
-	github.com/covalenthq/ewm-types v0.1.4
 	google.golang.org/grpc v1.64.1
+	github.com/covalenthq/ewm-types v0.1.5
 )
 
 require (
@@ -66,6 +66,7 @@ require (
 	github.com/cosmos/iavl v0.19.5 // indirect
 	github.com/cosmos/ibc-go/v5 v5.0.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
+
 	github.com/crate-crypto/go-kzg-4844 v1.0.0 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
