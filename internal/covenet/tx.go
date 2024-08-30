@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	clientTx "github.com/cosmos/cosmos-sdk/client/tx"
@@ -20,6 +21,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/covalenthq/bsp-agent/internal/config"
 	covapp "github.com/covalenthq/covenet/app"
@@ -41,13 +43,25 @@ func init() {
 }
 
 type CovenetInteractor struct {
-	config     *config.AgentConfig
-	grpcClient *grpc.ClientConn
-	pubKey     cryptotypes.PubKey
-	address    sdk.AccAddress
+	config         *config.AgentConfig
+	grpcClient     *grpc.ClientConn
+	pubKey         cryptotypes.PubKey
+	address        sdk.AccAddress
+	accountNumber  uint64
+	sequenceNumber uint64
+	sequenceMutex  sync.Mutex
 }
 
-// NewCovenetInteract sets up a new interactor for covenet
+// Set Private Key from Config Env Var Hex bytes
+func (interactor *CovenetInteractor) getPrivateKey() (cryptotypes.PrivKey, error) {
+	privKeyBytes, err := hex.DecodeString(interactor.config.CovenetConfig.PrivateKey)
+	if err != nil {
+		return nil, fmt.Errorf("error decoding private key: %v", err)
+	}
+	return &secp256k1.PrivKey{Key: privKeyBytes}, nil
+}
+
+// NewCovenetInteract sets up a new operator-interactor for covenet
 func NewCovenetInteractor(config *config.AgentConfig) (*CovenetInteractor, error) {
 	grpcConn, err := GetGRPCConnection(config)
 	if err != nil {
@@ -55,11 +69,28 @@ func NewCovenetInteractor(config *config.AgentConfig) (*CovenetInteractor, error
 	}
 
 	interactor := &CovenetInteractor{
-		config:     config,
-		grpcClient: grpcConn,
-		pubKey:     &secp256k1.PubKey{},
-		address:    sdk.AccAddress{},
+		config:         config,
+		grpcClient:     grpcConn,
+		pubKey:         &secp256k1.PubKey{},
+		address:        sdk.AccAddress{},
+		accountNumber:  0,
+		sequenceNumber: 0,
+		sequenceMutex:  sync.Mutex{},
 	}
+
+	// Process the key and set up the interactor account
+	err = interactor.ProcessKey()
+	if err != nil {
+		return nil, fmt.Errorf("failed to process key: %v", err)
+	}
+
+	// Cache initial account info
+	sequenceNum, accountNum, err := interactor.GetAccountInfo()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get initial account info: %v", err)
+	}
+	interactor.sequenceNumber = sequenceNum
+	interactor.accountNumber = accountNum
 
 	return interactor, nil
 }
@@ -80,9 +111,13 @@ func (interactor *CovenetInteractor) GetSystemInfo() (*covtypes.SystemInfo, erro
 
 func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 	// Create a connection to the gRPC server.
-	grpcConn, err := grpc.Dial(
-		"covenet-node:9090", //config.CovenetConfig.GRPCURL, // Or your gRPC server address.
-		grpc.WithInsecure(), // The Cosmos SDK doesn't support any transport security mechanism.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	grpcConn, err := grpc.DialContext(
+		ctx,
+		"covenet-node:9090", //config.CovenetConfig.GRPCURL,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		return nil, err
@@ -93,8 +128,7 @@ func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 	return grpcConn, nil
 }
 
-func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptotypes.PubKey, sdk.AccAddress, error) {
-
+func (interactor *CovenetInteractor) ProcessKey() error {
 	// Set the bech32 prefix for your chain
 	const (
 		Bech32PrefixAccAddr = "cxtmos"
@@ -107,7 +141,7 @@ func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptoty
 	// Decode the hex string to bytes
 	privKeyBytes, err := hex.DecodeString(interactor.config.CovenetConfig.PrivateKey)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("error decoding private key: %v", err)
+		return fmt.Errorf("error decoding private key: %v", err)
 	}
 
 	// Create a new PrivKey object
@@ -122,20 +156,32 @@ func (interactor *CovenetInteractor) ProcessKey() (cryptotypes.PrivKey, cryptoty
 	// Encode with the correct prefix
 	bech32Addr, err := bech32.ConvertAndEncode(Bech32PrefixAccAddr, addrBytes)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("error encoding bech32 address: %v", err)
+		return fmt.Errorf("error encoding bech32 address: %v", err)
 	}
 
 	// If you specifically need a Covenet address type
 	covenetAddr, err := covtypes.CovenetAccAddressFromBech32(bech32Addr)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("error converting to Covenet address: %v", err)
+		return fmt.Errorf("error converting to Covenet address: %v", err)
 	}
 
-	// Set interactor values
+	// Set interactor key address values
 	interactor.pubKey = pubKey
 	interactor.address = covenetAddr
 
-	return privKey, pubKey, covenetAddr, nil
+	return nil
+}
+
+func (interactor *CovenetInteractor) GetLatestSequence() uint64 {
+	interactor.sequenceMutex.Lock()
+	defer interactor.sequenceMutex.Unlock()
+	return interactor.sequenceNumber
+}
+
+func (interactor *CovenetInteractor) IncrementSequence() {
+	interactor.sequenceMutex.Lock()
+	defer interactor.sequenceMutex.Unlock()
+	interactor.sequenceNumber++
 }
 
 func (interactor *CovenetInteractor) GetAccountInfo() (uint64, uint64, error) {
@@ -195,16 +241,12 @@ func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.
 func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte) error {
 
 	// Get account from private key
-	privK, pubK, address, err := interactor.ProcessKey()
+	privK, err := interactor.getPrivateKey()
 	if err != nil {
-		return fmt.Errorf("failed to process key %s: %v", interactor.address.String(), err)
+		return fmt.Errorf("failed to get private key for address %s: %v", interactor.address.String(), err)
 	}
 
-	// Get nonce and account number used for signature
-	acSeq, acNum, err := interactor.GetAccountInfo()
-	if err != nil {
-		return fmt.Errorf("failed to query account %s: %v", interactor.address.String(), err)
-	}
+	sequence := interactor.GetLatestSequence()
 
 	// Create a new TxBuilder.
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
@@ -223,15 +265,15 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	// txBuilder.SetTimeoutHeight(...)
 
 	// Assuming we have a single private key, account number, and sequence
-	log.Info("account details: ", address.String(), " number: ", acNum, " nonce: ", acSeq)
+	log.Info("account details: ", interactor.address.String(), " number: ", interactor.accountNumber, " nonce: ", sequence)
 
 	sigV2 := signing.SignatureV2{
-		PubKey: pubK,
+		PubKey: interactor.pubKey,
 		Data: &signing.SingleSignatureData{
 			SignMode:  encCfg.TxConfig.SignModeHandler().DefaultMode(),
 			Signature: nil,
 		},
-		Sequence: acSeq,
+		Sequence: sequence,
 	}
 
 	err = txBuilder.SetSignatures(sigV2)
@@ -242,12 +284,12 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	// Second round: actual signing
 	signerData := xauthsigning.SignerData{
 		ChainID:       "covenet",
-		AccountNumber: acNum,
-		Sequence:      acSeq,
+		AccountNumber: interactor.accountNumber,
+		Sequence:      sequence,
 	}
 	sigV2, err = clientTx.SignWithPrivKey(
 		encCfg.TxConfig.SignModeHandler().DefaultMode(), signerData,
-		txBuilder, privK, encCfg.TxConfig, acSeq)
+		txBuilder, privK, encCfg.TxConfig, sequence)
 	if err != nil {
 		return err
 	}
@@ -277,12 +319,14 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 
 	log.Info("response code\n", grpcRes.TxResponse.String()) // Should be `0` if the tx is successful
 
-	if grpcRes.TxResponse.Code != 0 {
-		return fmt.Errorf("transaction failed with code %d, for response: %s", grpcRes.TxResponse.Code, grpcRes.TxResponse.String())
+	if grpcRes.TxResponse.Code == 0 {
+		interactor.IncrementSequence()
+		txHash <- grpcRes.TxResponse.TxHash
+		return nil
 	}
 
-	txHash <- grpcRes.TxResponse.TxHash
-	return nil
+	return fmt.Errorf("transaction failed with code %d: %s", grpcRes.TxResponse.Code, grpcRes.TxResponse.String())
+
 }
 
 func (interactor *CovenetInteractor) CreateProofTxWithRetry(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int, lastError error) error {
