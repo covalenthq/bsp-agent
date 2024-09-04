@@ -36,8 +36,9 @@ import (
 var encCfg ewmparams.EncodingConfig
 
 const (
-	proofTxTimeout  uint64 = 480
-	retryCountLimit int    = 3 // 3 retry for covenet proofchain submission
+	proofTxTimeout      uint64 = 480
+	retryCountLimit     int    = 3        // 3 retry for covenet proofchain
+	bech32PrefixAccAddr string = "cxtmos" // Set the bech32 prefix for your chain
 )
 
 func init() {
@@ -139,14 +140,9 @@ func GetGRPCConnection(config *config.AgentConfig) (*grpc.ClientConn, error) {
 
 // ProcessKey initializes the interactor's public key and address from the private key in the config.
 func (interactor *CovenetInteractor) ProcessKey() error {
-	// Set the bech32 prefix for your chain
-	const (
-		Bech32PrefixAccAddr = "cxtmos"
-	)
-
 	// Configure the address
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccAddr+"pub")
+	config.SetBech32PrefixForAccount(bech32PrefixAccAddr, bech32PrefixAccAddr+"pub")
 
 	// Decode the hex string to bytes
 	privKeyBytes, err := hex.DecodeString(interactor.config.CovenetConfig.PrivateKey)
@@ -164,7 +160,7 @@ func (interactor *CovenetInteractor) ProcessKey() error {
 	addrBytes := sdk.AccAddress(pubKey.Address())
 
 	// Encode with the correct prefix
-	bech32Addr, err := bech32.ConvertAndEncode(Bech32PrefixAccAddr, addrBytes)
+	bech32Addr, err := bech32.ConvertAndEncode(bech32PrefixAccAddr, addrBytes)
 	if err != nil {
 		return fmt.Errorf("error encoding bech32 address: %w", err)
 	}
@@ -245,23 +241,23 @@ func (interactor *CovenetInteractor) SendCovenetBlockReplicaProofTx(ctx context.
 	sha256Result := sha256.Sum256(jsonResult)
 
 	// Call Create Proof With Retry Count at 0 and Empty Err
-	err = interactor.CreateProofTxWithRetry(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0, emptyErr)
+	err = interactor.createProofTxWithRetry(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result, 0, emptyErr)
 	if err != nil {
 		log.Error("covenet tx failed: ", err.Error())
 	}
 }
 
 // CreateProofTx creates and broadcasts a proof transaction on the Covenet blockchain.
-func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte) error {
+func (interactor *CovenetInteractor) createProofTx(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte) error {
 	// Get account from private key
 	privK, err := interactor.getPrivateKey()
 	if err != nil {
 		return fmt.Errorf("failed to get private key for address %s: %w", interactor.address.String(), err)
 	}
-
+	// Get the nonce of the account
 	sequence := interactor.GetLatestSequence()
 
-	// Create a new TxBuilder.
+	// Create a new TxBuilder
 	txBuilder := encCfg.TxConfig.NewTxBuilder()
 
 	// Create Msg from covenet types
@@ -280,6 +276,7 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 	// Assuming we have a single private key, account number, and sequence
 	log.Info("account details: ", interactor.address.String(), " number: ", interactor.accountNumber, " nonce: ", sequence)
 
+	// First round: gather all the signer infos using the "set empty signature".
 	sigV2 := signing.SignatureV2{
 		PubKey: interactor.pubKey,
 		Data: &signing.SingleSignatureData{
@@ -294,12 +291,13 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 		return fmt.Errorf("failed to set signatures: %w", err)
 	}
 
-	// Second round: actual signing
+	// Second round: actual setting of the signature
 	signerData := xauthsigning.SignerData{
 		ChainID:       "covenet",
 		AccountNumber: interactor.accountNumber,
 		Sequence:      sequence,
 	}
+
 	sigV2, err = clientTx.SignWithPrivKey(
 		encCfg.TxConfig.SignModeHandler().DefaultMode(), signerData,
 		txBuilder, privK, encCfg.TxConfig, sequence)
@@ -345,7 +343,7 @@ func (interactor *CovenetInteractor) CreateProofTx(ctx context.Context, blockRep
 }
 
 // CreateProofTxWithRetry attempts to create and broadcast a proof transaction with retries on failure.
-func (interactor *CovenetInteractor) CreateProofTxWithRetry(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int, lastError error) error {
+func (interactor *CovenetInteractor) createProofTxWithRetry(ctx context.Context, blockReplica *bsptypes.BlockReplica, txHash chan string, chainHeight uint64, replicaURL string, sha256Result [sha256.Size]byte, retryCount int, lastError error) error {
 	if retryCount >= retryCountLimit {
 		errStr := lastError.Error()
 		switch {
@@ -367,7 +365,7 @@ func (interactor *CovenetInteractor) CreateProofTxWithRetry(ctx context.Context,
 		return fmt.Errorf("exceeded retry limit of attempts: %d, with response: %w", retryCountLimit, lastError)
 	}
 
-	err := interactor.CreateProofTx(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result)
+	err := interactor.createProofTx(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result)
 	if err != nil {
 		lastError = err
 		log.Errorf("retry count %d, error: %v", retryCount, err)
@@ -381,5 +379,5 @@ func (interactor *CovenetInteractor) CreateProofTxWithRetry(ctx context.Context,
 	time.Sleep(backoffDuration)
 
 	// Recursive call with now incremented retry count
-	return interactor.CreateProofTxWithRetry(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1, lastError)
+	return interactor.createProofTxWithRetry(ctx, blockReplica, txHash, chainHeight, replicaURL, sha256Result, retryCount+1, lastError)
 }
