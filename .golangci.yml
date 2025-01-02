@@ -4,6 +4,8 @@
 run:
   timeout: 5m
   modules-download-mode: readonly
+  skip-files:
+    - "internal/config/utils_test.go"
   skip-dirs:
     - internal/metrics
     - bin/

@@ -32,9 +32,9 @@ const (
 	// BspAgentVersionMajor is Major version component of the current release
 	BspAgentVersionMajor = 1
 	// BspAgentVersionMinor is Minor version component of the current release
-	BspAgentVersionMinor = 7
+	BspAgentVersionMinor = 8
 	// BspAgentVersionPatch is Patch version component of the current release
-	BspAgentVersionPatch = 4
+	BspAgentVersionPatch = 0
 )
 
 // BspAgentVersion holds the textual version string.
