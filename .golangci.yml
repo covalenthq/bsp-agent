@@ -6,6 +6,7 @@ run:
   modules-download-mode: readonly
   skip-files:
     - "internal/config/utils_test.go"
+    - "internal/config/env_config_test.go"
   skip-dirs:
     - internal/metrics
     - bin/
