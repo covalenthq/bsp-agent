@@ -30,14 +30,12 @@ type AgentNode interface {
 }
 
 // ChainType ChainType is the blockchain on which the agent is configured to run.
-// Current allowed values are "ethereum" and "elrond"
+// Current allowed values are "ethereum"
 type ChainType string
 
 const (
 	// Ethereum ChainType
 	Ethereum ChainType = "ethereum"
-	// Elrond ChainType
-	Elrond ChainType = "elrond"
 )
 
 type agentNode struct {
@@ -87,8 +85,6 @@ func NewAgentNode(chainType ChainType, aconfig *config.AgentConfig) AgentNode {
 	switch chainType {
 	case Ethereum:
 		return newEthAgentNode(anode)
-	case Elrond:
-		return newElrondAgentNode(anode)
 	default:
 		log.Fatalf("unknown chainType requested: %s", chainType)
 	}

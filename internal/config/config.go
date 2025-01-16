@@ -44,9 +44,6 @@ type ChainConfig struct {
 	PrivateKey   string
 	KeystorePath string
 	KeyStorePwd  string
-
-	// for elrond
-	WebsocketURLs string
 }
 
 // MetricsConfig contains config for collecting performance metrics
@@ -113,7 +110,6 @@ func (ac *AgentConfig) getConfigFromFlags() {
 
 	// proof-chain
 	flag.StringVar(&ac.ProofchainConfig.ProofChainAddr, "proof-chain-address", LookupEnvOrString("ProofChain", ""), "hex string address for deployed proof-chain contract")
-	flag.StringVar(&ac.ChainConfig.WebsocketURLs, "websocket-urls", LookupEnvOrString("WebsocketURLs", ""), "url to websockets clients separated by space")
 
 	// logs
 	flag.StringVar(&ac.LogFolder, "log-folder", LookupEnvOrString("LogFolder", logFolderDefault), "Location where the log files should be placed")

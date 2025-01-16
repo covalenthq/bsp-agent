@@ -13,7 +13,7 @@ FROM alpine:3.21
 RUN mkdir /app
 WORKDIR /app
 RUN apk update && apk add --no-cache bash
-RUN mkdir -p bin/block-ethereum bin/block-elrond
+RUN mkdir -p bin/block-ethereum
 COPY --from=builder /build/bsp-agent /app
 COPY --from=builder /build/entry.sh /app
 COPY --from=builder /build/data /app/data
