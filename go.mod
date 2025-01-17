@@ -11,14 +11,14 @@ require (
 	github.com/ethereum/go-ethereum v1.14.12
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/golang/snappy v0.0.5-0.20220116011046-fa5810519dcb
-	github.com/gorilla/websocket v1.5.3
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/ipfs/go-cid v0.1.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/linkedin/goavro/v2 v2.13.0
+	github.com/linkedin/goavro/v2 v2.13.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/ubiq/go-ubiq v3.0.1+incompatible
-	golang.org/x/sys v0.28.0
+	golang.org/x/sys v0.29.0
 	google.golang.org/api v0.122.0 // indirect
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 )

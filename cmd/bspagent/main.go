@@ -65,7 +65,7 @@ func init() {
 
 func main() {
 	log.Info("bsp-agent command line config: ", utils.GetConfig(flag.CommandLine))
-	chainType := getChainFromConfig(agconfig)
+	chainType := getChainFromConfig()
 	agentNode = node.NewAgentNode(chainType, agconfig)
 
 	setupMetrics()
@@ -96,11 +96,6 @@ func setupMetrics() {
 	}
 }
 
-func getChainFromConfig(agconfig *config.AgentConfig) node.ChainType {
-	webSockUrls := agconfig.ChainConfig.WebsocketURLs
-	if webSockUrls != "" {
-		return node.Elrond
-	}
-
+func getChainFromConfig() node.ChainType {
 	return node.Ethereum
 }
