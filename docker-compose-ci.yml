@@ -2,7 +2,7 @@ version: "3"
 
 services:
   ewm-das:
-    image: "us-docker.pkg.dev/covalent-project/network/ewm-das:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/ewm-das:stable"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ewm-das
