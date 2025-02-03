@@ -8,7 +8,7 @@ require (
 	github.com/covalenthq/lenspath v0.3.2
 	github.com/covalenthq/lumberjack/v3 v3.0.1
 	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
-	github.com/ethereum/go-ethereum v1.14.12
+	github.com/ethereum/go-ethereum v1.14.13
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/golang/snappy v0.0.5-0.20220116011046-fa5810519dcb
 	github.com/gorilla/websocket v1.5.3 // indirect
@@ -23,6 +23,8 @@ require (
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 )
 
+require github.com/stretchr/testify v1.9.0
+
 require (
 	cloud.google.com/go/bigquery v1.50.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
@@ -35,6 +37,7 @@ require (
 	github.com/consensys/gnark-crypto v0.12.1 // indirect
 	github.com/crate-crypto/go-ipa v0.0.0-20240223125850-b1e8a79f509c // indirect
 	github.com/crate-crypto/go-kzg-4844 v1.0.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set/v2 v2.6.0 // indirect
 	github.com/ethereum/c-kzg-4844 v1.0.0 // indirect
 	github.com/ethereum/go-verkle v0.1.1-0.20240829091221-dffa7562dbe9 // indirect
@@ -49,9 +52,9 @@ require (
 	github.com/oapi-codegen/runtime v1.0.0 // indirect
 	github.com/onsi/gomega v1.19.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/supranational/blst v0.3.13 // indirect
 	github.com/uber/jaeger-client-go v2.28.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
@@ -59,6 +62,7 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	gonum.org/v1/gonum v0.11.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
 
