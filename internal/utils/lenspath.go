@@ -36,6 +36,7 @@ var withdrawalsRootLens = composeLenspath(headerLens, []string{"withdrawalsRoot"
 var blobGasUsedLens = composeLenspath(headerLens, []string{"blobGasUsed"})
 var excessBlobGasLens = composeLenspath(headerLens, []string{"excessBlobGas"})
 var parentBeaconRootLens = composeLenspath(headerLens, []string{"parentBeaconBlockRoot"})
+var requestsHashLens = composeLenspath(headerLens, []string{"requestsHash"})
 
 // utilities for lenspath
 

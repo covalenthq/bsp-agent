@@ -245,6 +245,7 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	unwrapType(data, blobsLens, "string")
 	unwrapType(data, commitmentsLens, "string")
 	unwrapType(data, proofsLens, "string")
+	unwrapType(data, requestsHashLens, "string")
 
 	return data
 }
@@ -284,6 +285,8 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, commitmentsLens, "string")
 	wrapType(data, proofsLens, "string")
 
+	//EIP-7685
+	wrapType(data, requestsHashLens, "string")
 	return data
 }
 
