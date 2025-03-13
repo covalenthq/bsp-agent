@@ -69,6 +69,7 @@ type Header struct {
 	BlobGasUsed      *uint64        `json:"blobGasUsed" rlp:"optional"`
 	ExcessBlobGas    *uint64        `json:"excessBlobGas" rlp:"optional"`
 	ParentBeaconRoot *common.Hash   `json:"parentBeaconBlockRoot" rlp:"optional"`
+	RequestsHash     *common.Hash   `json:"requestsHash" rlp:"optional"`
 }
 
 type Transaction struct {
