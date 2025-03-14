@@ -1,6 +1,6 @@
 module github.com/covalenthq/bsp-agent
 
-go 1.22.5
+go 1.24.0
 
 require (
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
