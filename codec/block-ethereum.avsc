@@ -160,6 +160,14 @@
                                           "string"
                                        ],
                                        "default":"null"
+                                    },
+                                    {
+                                       "name":"requestsHash",
+                                       "type":[
+                                          "null",
+                                          "string"
+                                       ],
+                                       "default":"null"
                                     }
                                  ]
                               }
@@ -635,7 +643,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.37
+         "default":0.38
       }
    ]
 }

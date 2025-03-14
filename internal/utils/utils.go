@@ -32,9 +32,9 @@ const (
 	// BspAgentVersionMajor is Major version component of the current release
 	BspAgentVersionMajor = 1
 	// BspAgentVersionMinor is Minor version component of the current release
-	BspAgentVersionMinor = 8
+	BspAgentVersionMinor = 9
 	// BspAgentVersionPatch is Patch version component of the current release
-	BspAgentVersionPatch = 3
+	BspAgentVersionPatch = 0
 )
 
 // BspAgentVersion holds the textual version string.
@@ -245,6 +245,7 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	unwrapType(data, blobsLens, "string")
 	unwrapType(data, commitmentsLens, "string")
 	unwrapType(data, proofsLens, "string")
+	unwrapType(data, requestsHashLens, "string")
 
 	return data
 }
@@ -283,6 +284,9 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, blobsLens, "string")
 	wrapType(data, commitmentsLens, "string")
 	wrapType(data, proofsLens, "string")
+
+	// EIP-7685
+	wrapType(data, requestsHashLens, "string")
 
 	return data
 }
