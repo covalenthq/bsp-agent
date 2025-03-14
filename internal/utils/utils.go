@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"os/exec"
 	"os/user"
 	"path"
 	"runtime"
@@ -252,7 +253,7 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	// EIP-7702 (set EOA)
 	unwrapType(data, dataTxLens, "bytes")
 	unwrapType(data, authListLens, "array")
-	unwrapType(data, chainIdLens, "int")
+	unwrapType(data, chainIDLens, "int")
 	unwrapType(data, addressLens, "string")
 	unwrapType(data, nonceLens, "long")
 	unwrapType(data, yParityLens, "bytes")
@@ -303,7 +304,7 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	// EIP-7702 (set EOA)
 	wrapType(data, dataTxLens, "bytes")
 	wrapType(data, authListLens, "array")
-	wrapType(data, chainIdLens, "int")
+	wrapType(data, chainIDLens, "int")
 	wrapType(data, addressLens, "string")
 	wrapType(data, nonceLens, "long")
 	wrapType(data, yParityLens, "bytes")
@@ -321,5 +322,11 @@ func Version() {
 	fmt.Println("Go Version:", runtime.Version())
 	fmt.Println("Operating System:", runtime.GOOS)
 	fmt.Printf("GOPATH=%s\n", os.Getenv("GOPATH"))
-	fmt.Printf("GOROOT=%s\n", runtime.GOROOT())
+	goRootCmd := exec.Command("go", "env", "GOROOT")
+	goRootOutput, err := goRootCmd.Output()
+	if err != nil {
+		fmt.Println("Failed to get GOROOT:", err)
+	} else {
+		fmt.Printf("GOROOT=%s\n", strings.TrimSpace(string(goRootOutput)))
+	}
 }

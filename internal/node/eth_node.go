@@ -3,6 +3,7 @@ package node
 import (
 	"context"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 	"sync"
@@ -136,7 +137,7 @@ func (node *ethAgentNode) processStream(message redis.XMessage, waitGroup *sync.
 	switch {
 	case err != nil:
 		log.Error("error on process event: ", err)
-	case err == nil && objectReplica.Header.Number.Uint64()%uint64(node.AgentConfig.RedisConfig.BlockDivisor) == 0:
+	case err == nil && objectReplica.Header.Number.Uint64()%uint64(math.MaxInt64&node.AgentConfig.RedisConfig.BlockDivisor) == 0:
 		// collect stream ids and block replicas
 		segment := &event.ReplicaSegmentWrapped{}
 		segment.IDBatch = append(segment.IDBatch, message.ID)

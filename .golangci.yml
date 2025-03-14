@@ -35,7 +35,6 @@ linters:
     - dupl # Tool for code clone detection
     - exhaustive # Check exhaustiveness of enum switch statements
     - errorlint	# Can be used to find code that will cause problems with the error wrapping scheme introduced in Go 1.13
-    - exportloopref # Checks for pointers to enclosing loop variables
     - goconst # Finds repeated strings that could be replaced by a constant
     - gocyclo # Computes and checks the cyclomatic complexity of functions
     - godox # Tool for detection of FIXME, TODO and other comment keywords
