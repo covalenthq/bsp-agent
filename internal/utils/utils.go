@@ -245,7 +245,19 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	unwrapType(data, blobsLens, "string")
 	unwrapType(data, commitmentsLens, "string")
 	unwrapType(data, proofsLens, "string")
+
+	// EIP-7685 (EL-CL tx)
 	unwrapType(data, requestsHashLens, "string")
+
+	// EIP-7702 (set EOA)
+	unwrapType(data, dataTxLens, "bytes")
+	unwrapType(data, authListLens, "array")
+	unwrapType(data, chainIdLens, "int")
+	unwrapType(data, addressLens, "string")
+	unwrapType(data, nonceLens, "long")
+	unwrapType(data, yParityLens, "bytes")
+	unwrapType(data, rTxLens, "bytes")
+	unwrapType(data, sTxLens, "bytes")
 
 	return data
 }
@@ -285,8 +297,19 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, commitmentsLens, "string")
 	wrapType(data, proofsLens, "string")
 
-	//EIP-7685
+	// EIP-7685 (EL-CL tx)
 	wrapType(data, requestsHashLens, "string")
+
+	// EIP-7702 (set EOA)
+	wrapType(data, dataTxLens, "bytes")
+	wrapType(data, authListLens, "array")
+	wrapType(data, chainIdLens, "int")
+	wrapType(data, addressLens, "string")
+	wrapType(data, nonceLens, "long")
+	wrapType(data, yParityLens, "bytes")
+	wrapType(data, rTxLens, "bytes")
+	wrapType(data, sTxLens, "bytes")
+
 	return data
 }
 

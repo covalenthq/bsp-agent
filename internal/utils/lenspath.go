@@ -36,7 +36,19 @@ var withdrawalsRootLens = composeLenspath(headerLens, []string{"withdrawalsRoot"
 var blobGasUsedLens = composeLenspath(headerLens, []string{"blobGasUsed"})
 var excessBlobGasLens = composeLenspath(headerLens, []string{"excessBlobGas"})
 var parentBeaconRootLens = composeLenspath(headerLens, []string{"parentBeaconBlockRoot"})
+
+// EIP-7685 (EL-CL tx)
 var requestsHashLens = composeLenspath(headerLens, []string{"requestsHash"})
+
+// EIP-7702 (set EOA)
+var dataTxLens = composeLenspath(transactionsLens, []string{"Data"})
+var authListLens = composeLenspath(transactionsLens, []string{"AuthList"})
+var chainIdLens = composeLenspath(authListLens, []string{"chainId"})
+var addressLens = composeLenspath(authListLens, []string{"address"})
+var nonceLens = composeLenspath(authListLens, []string{"nonce"})
+var yParityLens = composeLenspath(authListLens, []string{"yParity"})
+var rTxLens = composeLenspath(authListLens, []string{"r"})
+var sTxLens = composeLenspath(authListLens, []string{"s"})
 
 // utilities for lenspath
 
