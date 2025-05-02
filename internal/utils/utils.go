@@ -292,7 +292,6 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, blobFeeCapLens, "bytes")
 	wrapType(data, blobHashesLens, "array")
 	wrapType(data, blobGasLens, "int")
-
 	wrapType(data, blobTxSidecarsLens, "array")
 	wrapType(data, blobsLens, "string")
 	wrapType(data, commitmentsLens, "string")
@@ -310,6 +309,9 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, yParityLens, "bytes")
 	wrapType(data, rTxLens, "bytes")
 	wrapType(data, sTxLens, "bytes")
+
+	// EIP-7685
+	wrapType(data, requestsHashLens, "string")
 
 	return data
 }
