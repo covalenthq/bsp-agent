@@ -191,7 +191,7 @@ func GetLogLocationURL(logPath string) (*url.URL, error) {
 	if err == nil {
 		if _, existErr := os.Stat(locationURL.Path); os.IsNotExist(existErr) {
 			// directory doesn't exist, create
-			createErr := os.Mkdir(locationURL.Path, os.ModePerm)
+			createErr := os.Mkdir(locationURL.Path, 0750)
 			if createErr != nil {
 				return nil, fmt.Errorf("error creating the directory: %w", createErr)
 			}
