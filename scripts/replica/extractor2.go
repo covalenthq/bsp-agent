@@ -58,7 +58,7 @@ func generateTestForOneBlock() {
 		filename := replicaSegmentFile.Name()
 		fileNameSplit := strings.Split(filename, "-")
 		directory := fileNameSplit[1] // block number is the directory
-		if err := os.MkdirAll(outputFilePathFlag, os.ModePerm); err != nil {
+		if err := os.MkdirAll(outputFilePathFlag, 0750); err != nil {
 			panic(err)
 		}
 		fileBuff, _, err := readReplicaFile(binaryFilePathFlag, filename)

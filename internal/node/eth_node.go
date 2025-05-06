@@ -132,11 +132,16 @@ func (node *ethAgentNode) processStream(message redis.XMessage, waitGroup *sync.
 	defer waitGroup.Done()
 	objectType := replica.Type()
 	objectReplica := replica.Data
-
+	blockDivisor := node.AgentConfig.RedisConfig.BlockDivisor
+	if blockDivisor <= 0 {
+		log.Error("block divisor is not set or is invalid: ", blockDivisor)
+		panic(fmt.Sprintf("block divisor is not set or is invalid: %d", blockDivisor))
+	}
+	divisor := uint64(blockDivisor)
 	switch {
 	case err != nil:
 		log.Error("error on process event: ", err)
-	case err == nil && objectReplica.Header.Number.Uint64()%uint64(node.AgentConfig.RedisConfig.BlockDivisor) == 0:
+	case err == nil && objectReplica.Header.Number.Uint64()%divisor == 0:
 		// collect stream ids and block replicas
 		segment := &event.ReplicaSegmentWrapped{}
 		segment.IDBatch = append(segment.IDBatch, message.ID)

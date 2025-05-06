@@ -341,6 +341,70 @@
                                              "int"
                                           ],
                                           "default":"null"
+                                       },
+                                       {
+                                          "name":"Data",
+                                          "type":[
+                                             "null",
+                                             "string"
+                                          ],
+                                          "default":"null"
+                                       },
+                                       {
+                                          "name":"AuthList",
+                                          "type":[
+                                             "null",
+                                             {
+                                                "type":"array",
+                                                "items":{
+                                                   "name":"AuthList_record",
+                                                   "type":"record",
+                                                   "fields":[
+                                                      {
+                                                         "name":"chainId",
+                                                         "type":{
+                                                            "type":"bytes",
+                                                            "logicalType":"decimal",
+                                                            "precision":1000
+                                                         }
+                                                      },
+                                                      {
+                                                         "name":"address",
+                                                         "type":"string"
+                                                      },
+                                                      {
+                                                         "name":"nonce",
+                                                         "type":"long"
+                                                      },
+                                                      {
+                                                         "name":"yParity",
+                                                         "type":{
+                                                            "type":"bytes",
+                                                            "logicalType":"decimal",
+                                                            "precision":1000
+                                                         }
+                                                      },
+                                                      {
+                                                         "name":"r",
+                                                         "type":{
+                                                            "type":"bytes",
+                                                            "logicalType":"decimal",
+                                                            "precision":1000
+                                                         }
+                                                      },
+                                                      {
+                                                         "name":"s",
+                                                         "type":{
+                                                            "type":"bytes",
+                                                            "logicalType":"decimal",
+                                                            "precision":1000
+                                                         }
+                                                      }
+                                                   ]
+                                                }
+                                             }
+                                          ],
+                                          "default":"null"
                                        }
                                     ]
                                  }

@@ -91,6 +91,19 @@ type Transaction struct {
 	BlobFeeCap   *BigInt         `json:"blobFeeCap" rlp:"optional"`
 	BlobHashes   []common.Hash   `json:"blobHashes" rlp:"optional"`
 	BlobGas      uint64          `json:"blobGas" rlp:"optional"`
+
+	Data     []byte                 `rlp:"optional"`
+	AuthList []SetCodeAuthorization `rlp:"optional"`
+}
+
+// SetCodeAuthorization is an authorization from an account to deploy code at its address.
+type SetCodeAuthorization struct {
+	ChainId *BigInt        `json:"chainId" gencodec:"required"`
+	Address common.Address `json:"address" gencodec:"required"`
+	Nonce   uint64         `json:"nonce" gencodec:"required"`
+	V       *BigInt        `json:"yParity" gencodec:"required"`
+	R       *BigInt        `json:"r" gencodec:"required"`
+	S       *BigInt        `json:"s" gencodec:"required"`
 }
 
 // AccessList is an EIP-2930 access list.

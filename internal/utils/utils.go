@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"os/exec"
 	"os/user"
 	"path"
 	"runtime"
@@ -34,7 +35,7 @@ const (
 	// BspAgentVersionMinor is Minor version component of the current release
 	BspAgentVersionMinor = 9
 	// BspAgentVersionPatch is Patch version component of the current release
-	BspAgentVersionPatch = 0
+	BspAgentVersionPatch = 1
 )
 
 // BspAgentVersion holds the textual version string.
@@ -190,7 +191,7 @@ func GetLogLocationURL(logPath string) (*url.URL, error) {
 	if err == nil {
 		if _, existErr := os.Stat(locationURL.Path); os.IsNotExist(existErr) {
 			// directory doesn't exist, create
-			createErr := os.Mkdir(locationURL.Path, os.ModePerm)
+			createErr := os.Mkdir(locationURL.Path, 0750)
 			if createErr != nil {
 				return nil, fmt.Errorf("error creating the directory: %w", createErr)
 			}
@@ -245,7 +246,19 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	unwrapType(data, blobsLens, "string")
 	unwrapType(data, commitmentsLens, "string")
 	unwrapType(data, proofsLens, "string")
+
+	// EIP-7685 (EL-CL tx)
 	unwrapType(data, requestsHashLens, "string")
+
+	// EIP-7702 (set EOA)
+	unwrapType(data, dataTxLens, "bytes")
+	unwrapType(data, authListLens, "array")
+	unwrapType(data, chainIDLens, "int")
+	unwrapType(data, addressLens, "string")
+	unwrapType(data, nonceLens, "long")
+	unwrapType(data, yParityLens, "bytes")
+	unwrapType(data, rTxLens, "bytes")
+	unwrapType(data, sTxLens, "bytes")
 
 	return data
 }
@@ -279,11 +292,23 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, blobFeeCapLens, "bytes")
 	wrapType(data, blobHashesLens, "array")
 	wrapType(data, blobGasLens, "int")
-
 	wrapType(data, blobTxSidecarsLens, "array")
 	wrapType(data, blobsLens, "string")
 	wrapType(data, commitmentsLens, "string")
 	wrapType(data, proofsLens, "string")
+
+	// EIP-7685 (EL-CL tx)
+	wrapType(data, requestsHashLens, "string")
+
+	// EIP-7702 (set EOA)
+	wrapType(data, dataTxLens, "bytes")
+	wrapType(data, authListLens, "array")
+	wrapType(data, chainIDLens, "int")
+	wrapType(data, addressLens, "string")
+	wrapType(data, nonceLens, "long")
+	wrapType(data, yParityLens, "bytes")
+	wrapType(data, rTxLens, "bytes")
+	wrapType(data, sTxLens, "bytes")
 
 	// EIP-7685
 	wrapType(data, requestsHashLens, "string")
@@ -299,5 +324,11 @@ func Version() {
 	fmt.Println("Go Version:", runtime.Version())
 	fmt.Println("Operating System:", runtime.GOOS)
 	fmt.Printf("GOPATH=%s\n", os.Getenv("GOPATH"))
-	fmt.Printf("GOROOT=%s\n", runtime.GOROOT())
+	goRootCmd := exec.Command("go", "env", "GOROOT")
+	goRootOutput, err := goRootCmd.Output()
+	if err != nil {
+		fmt.Println("Failed to get GOROOT:", err)
+	} else {
+		fmt.Printf("GOROOT=%s\n", strings.TrimSpace(string(goRootOutput)))
+	}
 }
