@@ -310,9 +310,6 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, rTxLens, "bytes")
 	wrapType(data, sTxLens, "bytes")
 
-	// EIP-7685
-	wrapType(data, requestsHashLens, "string")
-
 	return data
 }
 
