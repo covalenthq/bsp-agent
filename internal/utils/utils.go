@@ -213,6 +213,8 @@ func Writable(path string) bool {
 }
 
 // UnwrapAvroUnion unwraps avro wrapped maps
+//
+//nolint:dupl
 func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	if data == nil {
 		return nil
@@ -264,6 +266,8 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 }
 
 // MapToAvroUnion converts the several field in the replica map to an Avro Union type allowing <nil>
+//
+//nolint:dupl
 func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	if data == nil {
 		return nil
