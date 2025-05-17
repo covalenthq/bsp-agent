@@ -135,7 +135,7 @@
                                           "null",
                                           "string"
                                        ],
-                                       "default":"null"
+                                       "default":null
                                     },
                                     {
                                        "name":"blobGasUsed",
@@ -143,7 +143,7 @@
                                           "null",
                                           "int"
                                        ],
-                                       "default":"null"
+                                       "default":null
                                     },
                                     {
                                        "name":"excessBlobGas",
@@ -151,7 +151,7 @@
                                           "null",
                                           "int"
                                        ],
-                                       "default":"null"
+                                       "default":null
                                     },
                                     {
                                        "name":"parentBeaconBlockRoot",
@@ -159,7 +159,7 @@
                                           "null",
                                           "string"
                                        ],
-                                       "default":"null"
+                                       "default":null
                                     },
                                     {
                                        "name":"requestsHash",
@@ -167,7 +167,7 @@
                                           "null",
                                           "string"
                                        ],
-                                       "default":"null"
+                                       "default":null
                                     }
                                  ]
                               }
@@ -253,7 +253,7 @@
                                              "null",
                                              "string"
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"to",
@@ -261,7 +261,7 @@
                                              "null",
                                              "string"
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"v",
@@ -273,7 +273,7 @@
                                                 "precision":1000
                                              }
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"r",
@@ -285,7 +285,7 @@
                                                 "precision":1000
                                              }
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"s",
@@ -297,7 +297,7 @@
                                                 "precision":1000
                                              }
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"value",
@@ -321,7 +321,7 @@
                                                 "precision":1000
                                              }
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"blobHashes",
@@ -332,7 +332,7 @@
                                                 "items":"string"
                                              }
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"blobGas",
@@ -340,7 +340,7 @@
                                              "null",
                                              "int"
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"Data",
@@ -348,7 +348,7 @@
                                              "null",
                                              "string"
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        },
                                        {
                                           "name":"AuthList",
@@ -404,7 +404,7 @@
                                                 }
                                              }
                                           ],
-                                          "default":"null"
+                                          "default":null
                                        }
                                     ]
                                  }
@@ -419,7 +419,7 @@
                                     "items":"Header"
                                  }
                               ],
-                              "default":"null"
+                              "default":null
                            },
                            {
                               "name":"Receipts",
@@ -646,7 +646,7 @@
                                     }
                                  }
                               ],
-                              "default":"null"
+                              "default":null
                            },
                            {
                               "name":"BlobTxSidecars",
@@ -683,7 +683,7 @@
                                     }
                                  }
                               ],
-                              "default":"null"
+                              "default":null
                            }
                         ]
                      }
