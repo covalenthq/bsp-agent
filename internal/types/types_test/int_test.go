@@ -9,8 +9,8 @@ import (
 	"github.com/covalenthq/bsp-agent/internal/event"
 	"github.com/covalenthq/bsp-agent/internal/handler"
 	"github.com/covalenthq/bsp-agent/internal/types"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/linkedin/goavro/v2"
-	"github.com/ubiq/go-ubiq/common"
 	"gopkg.in/avro.v0"
 )
 
