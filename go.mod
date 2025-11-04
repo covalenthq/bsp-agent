@@ -17,7 +17,6 @@ require (
 	github.com/linkedin/goavro/v2 v2.13.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
-	github.com/ubiq/go-ubiq v3.0.1+incompatible
 	golang.org/x/sys v0.31.0
 	google.golang.org/api v0.122.0 // indirect
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
@@ -33,14 +32,11 @@ require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/benbjohnson/immutable v0.3.0 // indirect
 	github.com/bits-and-blooms/bitset v1.20.0 // indirect
-	github.com/consensys/bavard v0.1.31-0.20250406004941-2db259e4b582 // indirect
 	github.com/consensys/gnark-crypto v0.18.1 // indirect
 	github.com/crate-crypto/go-eth-kzg v1.3.0 // indirect
 	github.com/crate-crypto/go-ipa v0.0.0-20240724233137-53bbb0ceb27a // indirect
-	github.com/crate-crypto/go-kzg-4844 v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set/v2 v2.6.0 // indirect
-	github.com/ethereum/c-kzg-4844 v1.0.0 // indirect
 	github.com/ethereum/c-kzg-4844/v2 v2.1.0 // indirect
 	github.com/ethereum/go-verkle v0.2.2 // indirect
 	github.com/goccy/go-json v0.10.4 // indirect
@@ -50,7 +46,6 @@ require (
 	github.com/influxdata/flux v0.170.1 // indirect
 	github.com/influxdata/influxql v1.1.1-0.20211004132434-7e7d61973256 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20210311194329-9aa0e372d097 // indirect
-	github.com/mmcloughlin/addchain v0.4.0 // indirect
 	github.com/oapi-codegen/runtime v1.0.0 // indirect
 	github.com/onsi/gomega v1.19.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
@@ -65,7 +60,6 @@ require (
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	gonum.org/v1/gonum v0.11.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	rsc.io/tmplfunc v0.0.3 // indirect
 )
 
 require (
