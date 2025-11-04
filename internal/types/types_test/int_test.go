@@ -47,7 +47,7 @@ func TestGolangBindings(_ *testing.T) {
 func TestAvroConversion(t *testing.T) {
 	bigIntV, _ := new(big.Int).SetString("21810676825935641000", 10)
 	replicaCodec := setupReplicaCodec()
-	from := common.StringToAddress("0x21d3b08e73ba157cf46832f2b81644aeea4b4aa4")
+	from := common.HexToAddress("0x21d3b08e73ba157cf46832f2b81644aeea4b4aa4")
 	whash := common.BigToHash((&big.Int{}).SetInt64(3423423))
 	seg := event.ReplicationSegment{
 		BlockReplicaEvent: []*event.BlockReplicaEvent{
