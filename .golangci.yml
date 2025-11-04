@@ -4,14 +4,6 @@
 run:
   timeout: 5m
   modules-download-mode: readonly
-  skip-files:
-    - "internal/config/utils_test.go"
-    - "internal/config/env_config_test.go"
-  skip-dirs:
-    - internal/metrics
-    - bin/
-    - docs/
-    - data/
 
 linters:
   enable:
@@ -104,3 +96,11 @@ issues:
   exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
+  exclude-files:
+    - "internal/config/utils_test.go"
+    - "internal/config/env_config_test.go"
+  exclude-dirs:
+    - internal/metrics
+    - bin/
+    - docs/
+    - data/

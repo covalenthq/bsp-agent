@@ -136,7 +136,13 @@ func filterReplicaSegmentFiles(path string, start int64, end int64, chainID stri
 			}
 			// NOTE: the 2nd condition (fileNameInt <= end) works is segment length is 1 i.e. the block replica segment has 1 replica only (which is the case now)
 			if fileNameInt >= start && fileNameInt <= end {
-				filteredFiles = append(filteredFiles, fileInfo.(fs.FileInfo))
+				info, err := fileInfo.Info()
+				if err != nil {
+					log.Error("unable to get file info: ", err)
+
+					continue
+				}
+				filteredFiles = append(filteredFiles, info)
 			}
 		}
 	}

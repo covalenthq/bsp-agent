@@ -35,7 +35,7 @@ const (
 	// BspAgentVersionMinor is Minor version component of the current release
 	BspAgentVersionMinor = 9
 	// BspAgentVersionPatch is Patch version component of the current release
-	BspAgentVersionPatch = 1
+	BspAgentVersionPatch = 2
 )
 
 // BspAgentVersion holds the textual version string.
@@ -213,6 +213,8 @@ func Writable(path string) bool {
 }
 
 // UnwrapAvroUnion unwraps avro wrapped maps
+//
+//nolint:dupl
 func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 	if data == nil {
 		return nil
@@ -264,6 +266,8 @@ func UnwrapAvroUnion(data map[string]interface{}) map[string]interface{} {
 }
 
 // MapToAvroUnion converts the several field in the replica map to an Avro Union type allowing <nil>
+//
+//nolint:dupl
 func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	if data == nil {
 		return nil
@@ -309,9 +313,6 @@ func MapToAvroUnion(data map[string]interface{}) map[string]interface{} {
 	wrapType(data, yParityLens, "bytes")
 	wrapType(data, rTxLens, "bytes")
 	wrapType(data, sTxLens, "bytes")
-
-	// EIP-7685
-	wrapType(data, requestsHashLens, "string")
 
 	return data
 }
