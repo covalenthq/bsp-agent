@@ -27,7 +27,7 @@ jobs:
 
       - name: Lint
         run: |
-          # go get github.com/ethereum/go-ethereum/crypto/kzg4844
+          go get github.com/ethereum/go-ethereum/crypto/kzg4844
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.64.7
           ./bin/golangci-lint cache clean
           ./bin/golangci-lint run
