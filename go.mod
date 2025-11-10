@@ -17,7 +17,7 @@ require (
 	github.com/linkedin/goavro/v2 v2.13.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
-	golang.org/x/sys v0.31.0
+	golang.org/x/sys v0.38.0
 	google.golang.org/api v0.122.0 // indirect
 	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 )
