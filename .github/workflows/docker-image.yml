@@ -42,6 +42,7 @@ jobs:
           {
             echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}"
             echo "RPC_URL=${{ secrets.RPC_URL }}"
+            echo "ERIGON_NODE=${{ secrets.ERIGON_NODE }}"
             echo "FILEBASE_RPC_TOKEN=${{ secrets.FILEBASE_RPC_TOKEN }}"
             echo "PROOF_OUT_HEX=${{ secrets.PROOF_OUT_HEX }}"
           } >> .env
