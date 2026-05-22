@@ -88,8 +88,6 @@ services:
       - 8008
     entrypoint: >
       /bin/bash -l -c "
-       mkdir -p /root/.config/truffle/compilers;
-       wget -q -O /root/.config/truffle/compilers/soljson-v0.8.13+commit.abaa5c0e.js https://binaries.soliditylang.org/wasm/soljson-v0.8.13+commit.abaa5c0e.js;
        truffle migrate --network docker;
        nc -v agent 8008;
        sleep 100000;"
