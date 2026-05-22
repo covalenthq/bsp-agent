@@ -54,7 +54,7 @@
 
 Decodes, packs, encodes, proves, stores and uploads block-replicas (can be block-results, block-specimens, or any other pre-defined block types), which are primarily "block-specimens" produced by EVM or non-EVM byte code based blockchains.
 
-These block-replicas are produced by go-ethereum nodes / websocket block data sources modified with block-specimen producers(BSP) streamed into a redis channel. The agent first decodes them from their native RLP encoding, repacks them into segments of bigger chunks containing more than one block's worth of data, creates a proof transaction on the proof-chain smart contract (also called cqt-virtnet) with a sha-256 checksum of the data contained in the object, and finally persists them into storage (local and IPFS).
+These block-replicas are produced by go-ethereum nodes / websocket block data sources modified with block-specimen producers(BSP) streamed into a redis channel. The agent first decodes them from their native RLP encoding, repacks them into segments of bigger chunks containing more than one block's worth of data, creates a proof transaction on the proof-chain smart contract with a sha-256 checksum of the data contained in the object, and finally persists them into storage (local and IPFS via the `ewm-das` pinner sidecar).
 
 ## <span id="agent_resources">Resources</span>
 
@@ -153,12 +153,11 @@ For Elrond -
 
 An Ethereum (moonbeam) private key (for a public address that is pre-whitelisted and added as an operator on the covalent network staking contract) allows block-specimen producers (operators) to make proof transactions to the proof-chain contract and is required by the bsp-agent. Other env vars are optional depending on your redis, eth account configuration. Add the following to your `.envrc` at the root dir with final relative path `~/bsp-agent/.envrc`.
 
-An Ethereum (moonbeam) RPC URL specifies the ethereum client connection string used to make transactions to on proof-chain contract, the respective credentials to be able to write to the contract should be provided in the .envrc file as follows. An IPFS Service token should be provided which relates to the JWT token for accessing file uploads on IPFS as a node service - [Pinata](http://pinata.cloud) & account service token for [Web3.Storage](http://web3.storage). These two services are supported for file uploads.
+An Ethereum (moonbeam) RPC URL specifies the ethereum client connection string used to make transactions on the proof-chain contract; the respective credentials to be able to write to the contract should be provided in the `.envrc` file as follows. The agent does **not** hold any storage-service credentials itself — uploads are delegated over HTTP to the [`ewm-das`](https://github.com/covalenthq/ewm-das) pinner sidecar (Filebase-backed; the pinner reads `FILEBASE_RPC_TOKEN` from its own environment, scoped per-bucket from the Filebase console).
 
 ```env
     export MB_RPC_URL=http://127.0.0.1:7545
     export MB_PRIVATE_KEY=****************************************************************
-    export IPFS_SERVICE_TOKEN=*****
     export REDIS_PWD=your-redis-password #optional
     export MB_KEYSTORE_PATH=path/to/keystore/file.json #optional
     export MB_KEYSTORE_PWD=password/to/access/keystore/file.json #optional
@@ -176,7 +175,7 @@ For which you should see something like -
 
 ```bash
     direnv: loading ~/Documents/covalent/bsp-agent/.envrc
-    direnv: export +MB_PRIVATE_KEY +MB_RPC_URL +IPFS_SERVICE_TOKEN
+    direnv: export +MB_PRIVATE_KEY +MB_RPC_URL
 ```
 
 The remaining environment configuration is set up with flags provided to the bsp-agent during runtime.
@@ -205,7 +204,7 @@ go run ./cmd/bspagent/*.go \
   --proof-chain-address="0x8243AF52B91649547DC80814670Dd1683F360E4c" \
   --consumer-timeout=10000000  \
   --log-folder ./logs/  \
-  --ipfs-pinner-server="http://127.0.0.1:3000/""
+  --ipfs-pinner-server="http://127.0.0.1:5080/""
 ```
 
 Or update the Makefile with the correct `--proof-chain-address` and run with the following.
@@ -236,7 +235,7 @@ export REDIS_PWD=your-redis-pwd
 
 `--log-folder` - specifies the location (folder) where the log files have to be placed. In case of error (like permission errors), the logs are not recorded in files.
 
-`--ipfs-pinner-server` - specifies the http server for ipfs-pinner which interacts with ipfs to upload/download files.
+`--ipfs-pinner-server` - specifies the http endpoint for the `ewm-das` pinner sidecar (default listen address `:5080`), which the agent calls to upload/download CAR-packed block replicas and to obtain their CIDs. The pinner handles all Filebase / IPFS credential exchange internally.
 
 `--metrics` - enable metrics collection and reporting
 
@@ -252,8 +251,9 @@ Employ `docker-compose` to get all the necessary services along with the BSP age
 
 1. redis-srv (Open source (BSD licensed), in-memory data structure store)
 1. redis-commander-web (Redis web management tool written in node.js)
-1. ganache-cli (Ethereum blockchain & client)
-1. proof-chain (Validation (proofing) smart-contracts)
+1. ewm-das (IPFS pinner sidecar, Filebase-backed; listens on `:5080`)
+1. hardhat-node (Ethereum mainnet fork, via the `cqt-staking` image; serves RPC on `:8545`)
+1. proof-chain (BSP / BRP validation contracts deployed onto the hardhat fork by `cqt-staking`'s `docker:deploy` script)
 
 ```bash
     cd bsp-agent
