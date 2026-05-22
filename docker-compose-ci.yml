@@ -119,7 +119,7 @@ services:
         exit 0;"
     environment:
       - MB_PRIVATE_KEY=${PRIVATE_KEY}
-      - MB_RPC_URL=${RPC_URL}
+      - MB_RPC_URL=http://hardhat-node:8545/
       - BLOCKCHAIN=${BLOCKCHAIN}
     networks:
       - cxt-net
