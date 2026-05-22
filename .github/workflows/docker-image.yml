@@ -42,10 +42,9 @@ jobs:
           {
             echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}"
             echo "RPC_URL=${{ secrets.RPC_URL }}"
-            echo "WEB3_JWT=${{ secrets.WEB3_JWT }}"
-            echo "W3_AGENT_KEY=${{ secrets.W3_AGENT_KEY }}"
+            echo "ERIGON_NODE=${{ secrets.ERIGON_NODE }}"
+            echo "FILEBASE_RPC_TOKEN=${{ secrets.FILEBASE_RPC_TOKEN }}"
             echo "PROOF_OUT_HEX=${{ secrets.PROOF_OUT_HEX }}"
-            echo "W3_DELEGATION_FILE=${{ secrets.W3_DELEGATION_FILE }}"
           } >> .env
           cat .env
 
